@@ -1,0 +1,8 @@
+glob:.idea/workspace.xml
+glob:.idea/tasks.xml
+glob:.idea/*
+glob:nbproject/*
+glob:obj/*
+glob:out/*
+glob:target/*
+glob:*.iml
