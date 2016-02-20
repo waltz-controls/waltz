@@ -1,0 +1,1 @@
+This folder contains css files.

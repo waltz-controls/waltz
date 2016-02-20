@@ -1,0 +1,70 @@
+load('jmvc/generate/loader.js');
+
+if(_args.length < 2){
+	print("Usage: js jmvc/generate/scaffold model_type model_name app_name[optional]")
+	print("model_type := " + MVC.gModelTypes.join('|'))
+	print("model_name := under_scoped_name");
+	print("app_name := under_scoped_name. If present newly created model and controller will be added to the application\n");
+	quit();
+}
+
+var app;
+var app_path = '';
+if(_args[2]){
+	app = load_app(_args[2]);
+	app_path += app.name + '/';
+} else {
+	app = {models:[],controllers:[],tests:{unit:[],functional:[]}}
+}
+
+
+var controller_name = MVC.String.pluralize(_args[1])
+var data = {
+	name      : controller_name,
+	class_name: MVC.String.classize(controller_name)+'Controller',
+	scaffold  : true
+}
+
+
+c = new View({absolute_url: "jmvc/rhino/command/templates/controller.ejs"});
+MVCOptions.save("controllers/"+app_path+controller_name+"_controller.js",  c.render(data)  )
+
+app.controllers.push(app_path+controller_name);
+
+print("Generating ... controllers/"+app_path+controller_name+"_controller.js");
+
+
+t = new View({absolute_url: "jmvc/rhino/command/templates/controller_test.ejs"});
+MVCOptions.save("test/functional/"+app_path+controller_name+"_controller_test.js",  t.render(data)  );
+
+app.tests.functional.push(app_path+controller_name);
+
+print("               test/functional/"+app_path+controller_name+"_controller_test.js");
+
+var data = {
+	 name      : _args[1],
+	 class_name: MVC.String.classize(_args[1]),
+	 type      : MVC.String.classize(_args[0])
+}
+
+v = new View({absolute_url: "jmvc/rhino/command/templates/model.ejs"});
+MVCOptions.save("models/"+app_path+data.name+".js",  v.render(data)  );
+
+app.models.push(app_path+data.name);
+
+print("\n               models/"+app_path+data.name+".js");
+
+t = new View({absolute_url: "jmvc/rhino/command/templates/unit_test.ejs"});
+MVCOptions.save("test/unit/"+app_path+data.name+"_test.js",  t.render(data)  );
+app.tests.unit.push(app_path+data.name);
+
+print("               test/unit/"+app_path+data.name+"_test.js");
+
+if(_args[2]){
+	save_app(app);
+}
+
+print("\n               Done!\n");
+if(!_args[2]){
+print("\n               Make sure to add to your application files!\n");
+}
