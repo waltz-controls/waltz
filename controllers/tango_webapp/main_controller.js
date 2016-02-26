@@ -75,7 +75,7 @@ TangoWebapp.MainController = MVC.Controller.extend('main',{
             ]
         });
 
-        tree.data =  [{id:"root", value:"Cars", open:true, data:[
+        var treedata =  [{id:"root", value:"Cars", open:true, data:[
             { id:"1", open:true, value:"Toyota", data:[
                 { id:"1.1", value:"Avalon" },
                 { id:"1.2", value:"Corolla" },
@@ -87,6 +87,6 @@ TangoWebapp.MainController = MVC.Controller.extend('main',{
             ]}
         ]}];
 
-        $$('myTree').refresh();
+        $$('myTree').parse(treedata);
     }
 });
