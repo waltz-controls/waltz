@@ -1,7 +1,6 @@
 TangoWebapp.DeviceTreeConfig = {
     view: "tree",
     id:"device_tree",
-    ITEM_ID:1,
     activeTitle:true,
     type:'lineTree',
     //url:TangoWebapp.rest_api_url + '/devices',
@@ -30,7 +29,7 @@ TangoWebapp.DeviceTreeConfig = {
                     .then(function(response){
                         return {
                             parent: id,
-                            data: response.json().output.map(function(el){ return {id:me.ITEM_ID++,value:el,webix_kids:true}})
+                            data: response.json().output.map(function(el){ return {value:el,webix_kids:true}})
                         };
                     }));
 
