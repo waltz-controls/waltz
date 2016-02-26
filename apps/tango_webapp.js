@@ -14,7 +14,7 @@ include.plugins(
 
 include(function(){ //runs after prior includes are loaded
   include.models(
-        
+      "DataBase"
     );
   include.controllers(
         "tango_webapp/main"
@@ -23,3 +23,7 @@ include(function(){ //runs after prior includes are loaded
         
     );
 });
+
+include.resources(
+    "webix/device_tree", "webix/server_tree"
+);
