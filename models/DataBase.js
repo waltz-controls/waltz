@@ -2,7 +2,7 @@
  * This file is generated using mtango cmd tool
  * Do not edit it manually!
  */
-DataBase = MVC.Class.extend('DataBase',
+DataBase = MVC.Model.extend('DataBase',
     /* @Static */
     {
         //@Generated from tango server - a list of attributes, type mapping is defined in the generator
@@ -839,7 +839,7 @@ DataBase = MVC.Class.extend('DataBase',
     },
     /* @Prototype */
     {
-        deviceProxy: null,
+        _url: null,
         /**
          * @constructor
          *
@@ -849,15 +849,12 @@ DataBase = MVC.Class.extend('DataBase',
          *
          * All instances of this model dedicated to a single device utilize single DeviceProxy.
          *
-         * @param {string} url -- an url of mtango.server, e.g. http://localhost:8080/mtango
+         * @param {string} url -- an url of mtango.server, e.g. http://localhost:8080/rest/rc2
          * @param {string} device -- tango device, e.g. sys/database/2
          */
         init: function(url, device){
             if(!url || !device) throw "IllegalArgument: this constructor accepts exactly two arguments: an url to mtango.server[e.g. http://localhost:8080/mtango] and a tango device[e.g. sys/database/2]!"
-            var deviceProxy = mtango.DeviceProxy.find_one(device);
-            if(!deviceProxy) deviceProxy = new mtango.DeviceProxy({url:url,device:device});
-            this.deviceProxy = deviceProxy;
-            deviceProxy.wrapped_by = this;
+            this._url = url + "/devices/" + device;
         },
         
         
@@ -2098,29 +2095,18 @@ DataBase = MVC.Class.extend('DataBase',
          * @param {Object|Function} cbks: onSuccess - callback [required]; onFailure - panic callback [optional]
          */
         DbGetDeviceDomainList : function(argin, cbks){
-            if(argin.onSuccess || argin.onFailure || argin.onComplete){
-                cbks = argin;
-                argin = null;
+            var promise = webix.ajax().put(this._url + '/commands/DbGetDeviceDomainList?input=' + argin);
+            if(cbks) {
+                var callbacks = this.Class._clean_callbacks(cbks);
+                if (callbacks.onFailure) promise.fail(callbacks.onFailure);
+                if (callbacks.onSuccess) return promise.then(callbacks.onSuccess);
             }
-            if(!(cbks.onSuccess || cbks.onComplete)) cbks.onSuccess =
+            else return promise.then(
                 function(response){
-                    console.debug("Command[sys/database/2/DbGetDeviceDomainList] has succeed with argout[" + response.argout + "] on " + new Date(response.timestamp))
-                };
-            this.deviceProxy.executeCommand("DbGetDeviceDomainList",{argin:argin},cbks);
+                    return response.json();
+                }
+            );
         },
-        /**
-         * @returns {mtango.DeviceCommand} a new DeviceCommand instance
-         */
-        create_new_DeviceCommand_DbGetDeviceDomainList : function(){
-            var attributes = {
-                name: 'DbGetDeviceDomainList',
-                proxy: this.deviceProxy
-            }
-            MVC.Object.extend(attributes, this.Class.commands['DbGetDeviceDomainList']);
-            return new mtango.DeviceCommand(attributes);
-        },
-        
-        
         /**
          * Executes command DbGetDeviceExportedList on the remote server
          *
@@ -2158,29 +2144,18 @@ DataBase = MVC.Class.extend('DataBase',
          * @param {Object|Function} cbks: onSuccess - callback [required]; onFailure - panic callback [optional]
          */
         DbGetDeviceFamilyList : function(argin, cbks){
-            if(argin.onSuccess || argin.onFailure || argin.onComplete){
-                cbks = argin;
-                argin = null;
+            var promise = webix.ajax().put(this._url + '/commands/DbGetDeviceFamilyList?input=' + argin);
+            if(cbks) {
+                var callbacks = this.Class._clean_callbacks(cbks);
+                if (callbacks.onFailure) promise.fail(callbacks.onFailure);
+                if (callbacks.onSuccess) return promise.then(callbacks.onSuccess);
             }
-            if(!(cbks.onSuccess || cbks.onComplete)) cbks.onSuccess =
+            else return promise.then(
                 function(response){
-                    console.debug("Command[sys/database/2/DbGetDeviceFamilyList] has succeed with argout[" + response.argout + "] on " + new Date(response.timestamp))
-                };
-            this.deviceProxy.executeCommand("DbGetDeviceFamilyList",{argin:argin},cbks);
+                    return response.json();
+                }
+            );
         },
-        /**
-         * @returns {mtango.DeviceCommand} a new DeviceCommand instance
-         */
-        create_new_DeviceCommand_DbGetDeviceFamilyList : function(){
-            var attributes = {
-                name: 'DbGetDeviceFamilyList',
-                proxy: this.deviceProxy
-            }
-            MVC.Object.extend(attributes, this.Class.commands['DbGetDeviceFamilyList']);
-            return new mtango.DeviceCommand(attributes);
-        },
-        
-        
         /**
          * Executes command DbGetDeviceInfo on the remote server
          *
@@ -2188,29 +2163,19 @@ DataBase = MVC.Class.extend('DataBase',
          * @param {Object|Function} cbks: onSuccess - callback [required]; onFailure - panic callback [optional]
          */
         DbGetDeviceInfo : function(argin, cbks){
-            if(argin.onSuccess || argin.onFailure || argin.onComplete){
-                cbks = argin;
-                argin = null;
+            var promise = webix.ajax().put(this._url + '/commands/DbGetDeviceInfo?input=' + argin);
+            if(cbks) {
+                var callbacks = this.Class._clean_callbacks(cbks);
+                if (callbacks.onFailure) promise.fail(callbacks.onFailure);
+                if (callbacks.onSuccess) return promise.then(callbacks.onSuccess);
             }
-            if(!(cbks.onSuccess || cbks.onComplete)) cbks.onSuccess =
+            else return promise.then(
                 function(response){
-                    console.debug("Command[sys/database/2/DbGetDeviceInfo] has succeed with argout[" + response.argout + "] on " + new Date(response.timestamp))
-                };
-            this.deviceProxy.executeCommand("DbGetDeviceInfo",{argin:argin},cbks);
+                    return response.json();
+                }
+            );
         },
-        /**
-         * @returns {mtango.DeviceCommand} a new DeviceCommand instance
-         */
-        create_new_DeviceCommand_DbGetDeviceInfo : function(){
-            var attributes = {
-                name: 'DbGetDeviceInfo',
-                proxy: this.deviceProxy
-            }
-            MVC.Object.extend(attributes, this.Class.commands['DbGetDeviceInfo']);
-            return new mtango.DeviceCommand(attributes);
-        },
-        
-        
+
         /**
          * Executes command DbGetDeviceList on the remote server
          *
@@ -2248,29 +2213,18 @@ DataBase = MVC.Class.extend('DataBase',
          * @param {Object|Function} cbks: onSuccess - callback [required]; onFailure - panic callback [optional]
          */
         DbGetDeviceMemberList : function(argin, cbks){
-            if(argin.onSuccess || argin.onFailure || argin.onComplete){
-                cbks = argin;
-                argin = null;
+            var promise = webix.ajax().put(this._url + '/commands/DbGetDeviceMemberList?input=' + argin);
+            if(cbks) {
+                var callbacks = this.Class._clean_callbacks(cbks);
+                if (callbacks.onFailure) promise.fail(callbacks.onFailure);
+                if (callbacks.onSuccess) return promise.then(callbacks.onSuccess);
             }
-            if(!(cbks.onSuccess || cbks.onComplete)) cbks.onSuccess =
+            else return promise.then(
                 function(response){
-                    console.debug("Command[sys/database/2/DbGetDeviceMemberList] has succeed with argout[" + response.argout + "] on " + new Date(response.timestamp))
-                };
-            this.deviceProxy.executeCommand("DbGetDeviceMemberList",{argin:argin},cbks);
+                    return response.json();
+                }
+            );
         },
-        /**
-         * @returns {mtango.DeviceCommand} a new DeviceCommand instance
-         */
-        create_new_DeviceCommand_DbGetDeviceMemberList : function(){
-            var attributes = {
-                name: 'DbGetDeviceMemberList',
-                proxy: this.deviceProxy
-            }
-            MVC.Object.extend(attributes, this.Class.commands['DbGetDeviceMemberList']);
-            return new mtango.DeviceCommand(attributes);
-        },
-        
-        
         /**
          * Executes command DbGetDeviceProperty on the remote server
          *
