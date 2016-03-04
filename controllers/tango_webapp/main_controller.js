@@ -1,24 +1,26 @@
 /**
-* Main controller
-*
-* @type {TangoWebapp.MainController}
-*/
-TangoWebapp.MainController = MVC.Controller.extend('main',{
+ * Main controller
+ *
+ * @type {TangoWebapp.MainController}
+ */
+TangoWebapp.MainController = MVC.Controller.extend('main', {
     /**
-    * This is the main entry point of the application. This function is invoked after jmvc has been completely initialized.
-    *
-    * @param {Object} params
-    */
-    load: function(params){
+     * This is the main entry point of the application. This function is invoked after jmvc has been completely initialized.
+     *
+     * @param {Object} params
+     */
+    load: function (params) {
         //TODO jsTangORB must be migrated to ajax first
         //TangoWebapp.db = new DataBase('http://localhost:8080/localhost/rest/rc2','sys/database/2');
         //TODO ask user for rest_host
         TangoWebapp.rest_api_url = 'http://localhost:8080/localhost/rest/rc2';
         //draw ui
-    	webix.ui({
-            rows:[
-                { view:"template",
-                    type:"header", template:"Tango Web Application" },
+        webix.ui({
+            rows: [
+                {
+                    view: "template",
+                    type: "header", template: "Tango Web Application"
+                },
                 {
                     cols: [
                         {
@@ -27,29 +29,39 @@ TangoWebapp.MainController = MVC.Controller.extend('main',{
                                 {
                                     header: "Device",
                                     body: TangoWebapp.DeviceTreeConfig
+                                },
+                                {
+                                    header: "Server",
+                                    body: TangoWebapp.ServerTreeConfig
+                                }
+                            ]
                         },
+                        {view: "resizer"},
                         {
-                            header: "Server",
-                            body: TangoWebapp.ServerTreeConfig
-                }
-            ]
-            },
-                        {view:"resizer"},
-                        {
-                            view: "datatable",
-                            autoConfig: true,
-                            editable: false,
-                            url: 'http://localhost:8080/localhost/rest/rc2/devices/sys/tg_test/1'
+                            view: "tabview",
+                            cells: [
+                                {
+                                    header: "Device Info",
+                                    body: TangoWebapp.DeviceInfoDataViewConfig
+                                },
+                                {
+                                    header: "...",
+                                    body: {
+                                        template: "Opens device panel"
+                                    }
+                                }
+                            ]
                         }
+
 
 
                     ]
                 },
-                {view:"resizer"},
+                {view: "resizer"},
                 {
                     view: "datatable",
                     autoConfig: true,
-                    data:[]
+                    data: []
                 }
             ]
         });
