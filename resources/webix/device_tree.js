@@ -14,24 +14,21 @@ TangoWebapp.DeviceTreeConfig = {
         onDataRequest:function(id, cbk, url){
             var item = this.getItem(id);
             if(item) webix.message("Getting children of " + item.value);
+            var promise;
             if(id == 0)//domain
-                url = TangoWebapp.rest_api_url + '/devices/sys/database/2/commands/DbGetDeviceDomainList?input=*';
+                promise = TangoWebapp.db.DbGetDeviceDomainList("*");
             else if(item.$level == 1)//family
-                url = TangoWebapp.rest_api_url + '/devices/sys/database/2/commands/DbGetDeviceFamilyList?input=' + item.value + '/*';
+                promise = TangoWebapp.db.DbGetDeviceFamilyList(item.value + '/*');
             else if(item.$level == 2)//member
-                url = TangoWebapp.rest_api_url + '/devices/sys/database/2/commands/DbGetDeviceMemberList?input=' + this.getItem(item.$parent).value + '/'+ item.value + '/*';
+                promise = TangoWebapp.db.DbGetDeviceMemberList(this.getItem(item.$parent).value + '/'+ item.value + '/*');
             else {
-
-                return false;//TODO load aka jive or stop
+                return false;//ignore member
             }
 
-            var me = this;
-            this.parse(
-                webix.ajax().put(url)
-                    .then(function(response){
+            this.parse(promise.then(function(response){
                         return {
                             parent: id,
-                            data: response.json().output.map(function(el){ return {value:el,webix_kids:true}})
+                            data: response.output.map(function(el){ return {value:el,webix_kids:true}})
                         };
                     }));
 

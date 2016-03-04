@@ -14,6 +14,7 @@ TangoWebapp.MainController = MVC.Controller.extend('main', {
         //TangoWebapp.db = new DataBase('http://localhost:8080/localhost/rest/rc2','sys/database/2');
         //TODO ask user for rest_host
         TangoWebapp.rest_api_url = 'http://localhost:8080/localhost/rest/rc2';
+        TangoWebapp.db = new DataBase(TangoWebapp.rest_api_url, 'sys/database/2');
         //draw ui
         webix.ui({
             rows: [
