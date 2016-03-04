@@ -20,10 +20,10 @@ include(function(){ //runs after prior includes are loaded
         "tango_webapp/main"
     );
   include.views(
-        
+      "views/device_info"
     );
 });
 
 include.resources(
-    "webix/device_tree", "webix/server_tree"
+    "webix/device_tree", "webix/server_tree", "webix/device_info_dataview"
 );
