@@ -18,14 +18,12 @@ TangoWebapp.MainController = MVC.Controller.extend('main', {
         //draw ui
         webix.ui({
             rows: [
-                {
-                    view: "template",
-                    type: "header", template: "Tango Web Application"
-                },
+                TangoWebapp.ToolbarConfig,
                 {
                     cols: [
                         {
                             view: "tabview",
+                            width: 250,
                             cells: [
                                 {
                                     header: "Device",
@@ -39,30 +37,17 @@ TangoWebapp.MainController = MVC.Controller.extend('main', {
                         },
                         {view: "resizer"},
                         {
-                            view: "tabview",
+                            view: "multiview",
+                            animate:false,
                             cells: [
-                                {
-                                    header: "Device Info",
-                                    body: TangoWebapp.DeviceInfoDataViewConfig
-                                },
-                                {
-                                    header: "...",
-                                    body: {
-                                        template: "Opens device panel"
-                                    }
-                                }
+                                TangoWebapp.DeviceInfoDataViewConfig,
+                                TangoWebapp.DevicePropertiesDataViewConfig
                             ]
                         }
 
 
 
                     ]
-                },
-                {view: "resizer"},
-                {
-                    view: "datatable",
-                    autoConfig: true,
-                    data: []
                 }
             ]
         });
