@@ -30,16 +30,15 @@
 				url:{
 					$proxy:true,
 					load:function(view, callback, details){
-						console.log(details);
 						if (details){
 							var data = [];
 							for (var i=0; i<details.count; i++)
-								data.push("x"+(i+1+details.from));
+								data.push("x"+(i+1+details.start));
 
 							//need to be async
 							webix.delay(function(){	
 								webix.ajax.$callback(view, callback, {
-									pos:details.from,
+									pos:details.start,
 									data:data
 								});
 							});
