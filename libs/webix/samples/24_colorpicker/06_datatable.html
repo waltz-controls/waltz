@@ -43,15 +43,16 @@
 		
 
 
-			var cte = "<span style='background-color:#value#; border-radius:4px; padding-right:10px;'>&nbsp</span> #value#";
+			var cSt = "<span style='background-color:#start#; border-radius:4px; padding-right:10px;'>&nbsp</span> #start#";
+			var cEnd = "<span style='background-color:#end#; border-radius:4px; padding-right:10px;'>&nbsp</span> #end#";
 			grida = webix.ui({
 				container:"testB",
 				view:"datatable",
 				columns:[
 					{ id:"id",							header:"", css:"rank",  		width:50},
 					{ id:"title",	editor:"text",		header:"Film title",width:200},
-					{ id:"start",	editor:"color",	template:cte, 	header:"Color A",	width:120},
-					{ id:"end",		editor:"color",	template:cte,	header:"Color B", 	width:120}
+					{ id:"start",	editor:"color",	template:cSt, 	header:"Color A",	width:120},
+					{ id:"end",		editor:"color",	template:cEnd,	header:"Color B", 	width:120}
 				],
 				
 				editable:true,

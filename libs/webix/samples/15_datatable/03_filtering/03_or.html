@@ -28,15 +28,15 @@
 				data:small_film_set
 			});	
 
-			//there is no built in or filters
+			//there are no built-in OR filters
 			//but they can be created easily
 			grid.filterByAll=function(){
-				//get fitler values
+				//get filter values
 				var title = this.getFilter("title").value;
 				var year = this.getFilter("year").value;
-				//unfilter if values was not selected
+				//unfilter if values were not selected
 				if (!title	&& !year) return this.filter();
-				//filter using or logic
+				//filter using OR logic
 				this.filter(function(obj){
 					if (year !== "" && obj.year == year) return true;
 					if (title !== "" && obj.title.toLowerCase().indexOf(title)!=-1) return true;

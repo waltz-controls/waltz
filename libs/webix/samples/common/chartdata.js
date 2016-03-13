@@ -116,7 +116,7 @@ var scatter_dataset2 = [
 ];
 var month_dataset = [
 	{ sales:"20", month:"Jan", color: "#ee3639" },
-	{ sales:"30", month:"Fen", color: "#ee9e36" },
+	{ sales:"30", month:"Feb", color: "#ee9e36" },
 	{ sales:"50", month:"Mar", color: "#eeea36" },
 	{ sales:"40", month:"Apr", color: "#a9ee36" },
 	{ sales:"70", month:"May", color: "#36d3ee" },
