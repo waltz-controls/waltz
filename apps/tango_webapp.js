@@ -25,5 +25,7 @@ include(function(){ //runs after prior includes are loaded
 });
 
 include.resources(
-    "webix/device_tree", "webix/server_tree", "webix/device_info_dataview"
+    "webix/device_tree", "webix/server_tree", "webix/toolbar",
+    //dataviews
+    "webix/device_info_view", "webix/device_properties_view"
 );
