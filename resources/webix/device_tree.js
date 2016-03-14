@@ -1,15 +1,86 @@
-TangoWebapp.DeviceTreeConfig = {
-    view: "tree",
-    id:"device_tree",
-    //activeTitle:true,
-    type:'lineTree',
+webix.protoUI({
+    name: "DeviceTree",
+    defaults:{
+        //activeTitle:true,
+        type:'lineTree'
+    },
+    $init:function(){
+        this.attachEvent('onDataRequest',this.on.onDataRequest);
+        this.attachEvent('onItemClick',this.on.onItemClick);
+
+
+        this.loadBranch(0, null, null);
+    },
+    handleResponse:function(parent_id, level){
+        return function(response){
+            return {
+                parent: parent_id,
+                data: response.output.map(
+                    function (el) {
+                        if (level == 2) {
+                            return {
+                                value: el, data: [
+                                    {
+                                        value: 'Properties',
+                                        handleClick: function () {
+                                            $$(this.value).show();
+                                            //TODO load
+                                        }
+                                    },
+                                    {
+                                        value: 'Polling',
+                                        handleClick: function () {
+                                            $$(this.value).show();
+                                        }
+                                    },
+                                    {
+                                        value: 'Event',
+                                        handleClick: function () {
+                                            $$(this.value).show();
+                                        }
+                                    },
+                                    {
+                                        value: 'Attribute config',
+                                        handleClick: function () {
+                                            $$(this.value).show();
+                                        }
+                                    },
+                                    {
+                                        value: 'Pipe config',
+                                        handleClick: function () {
+                                            $$(this.value).show();
+                                        }
+                                    },
+                                    {
+                                        value: 'Attribute properties',
+                                        webix_kids: true,
+                                        handleClick: function () {
+                                            //TODO load device attribute properties
+                                            $$(this.value).show();
+                                        }
+                                    },
+                                    {
+                                        value: 'Logging',
+                                        handleClick: function () {
+                                            $$(this.value).show();
+                                        }
+                                    }
+                                ]
+                            };
+                        } else {
+                            return {value: el, webix_kids: true};
+                        }
+                    })
+            }
+        };
+    },
     //url:TangoWebapp.rest_api_url + '/devices',
     on:{
         onItemClick:function(id, e, node){
             var item = this.getItem(id);
             if(item.$level == 3) {//member
-                $$('device_info').show();
-                $$('device_info_data').loadNext(1,0,null,this.getItem(this.getItem(item.$parent).$parent).value + '/' + this.getItem(item.$parent).value + '/'+ item.value);
+                var url = this.getItem(this.getItem(item.$parent).$parent).value + '/' + this.getItem(item.$parent).value + '/' + item.value;
+                $$('device_info').loadAndShow(url);
             } else if(item.$level == 4){ //Properties, Event etc
                 item.handleClick();
             }
@@ -33,54 +104,16 @@ TangoWebapp.DeviceTreeConfig = {
 
 
             }
-            this.parse(promise.then(function(response){
-                        return {
-                            parent: id,
-                            data: response.output.map(
-                                function(el) {
-                                    if (level == 2) {
-                                        return {
-                                            value: el, data: [
-                                                {value: 'Properties',
-                                                handleClick:function(){
-                                                    $$('device_properties').show();
-                                                    //TODO load
-                                                }},
-                                                {value: 'Polling',
-                                                    handleClick:function(){
-                                                        alert(this.value);
-                                                    }},
-                                                {value: 'Event',
-                                                    handleClick:function(){
-                                                        alert(this.value);
-                                                    }},
-                                                {value: 'Pipe config',
-                                                    handleClick:function(){
-                                                        alert(this.value);
-                                                    }},
-                                                {value: 'Attribute config',
-                                                    handleClick:function(){
-                                                        alert(this.value);
-                                                    }},
-                                                {value: 'Attribute properties',
-                                                    handleClick:function(){
-                                                        alert(this.value);
-                                                    }},
-                                                {value: 'Logging',
-                                                    handleClick:function(){
-                                                        alert(this.value);
-                                                    }}
-                                            ]
-                                        };
-                                    } else {
-                                        return {value: el, webix_kids: true};
-                                    }
-                                })
-                        };
-                    }));
+            this.parse(promise.then(this.handleResponse(id, level)));
 
 
             return false;//cancel default behaviour
         }
     }
-};
+},webix.IdSpace, webix.EventSystem, webix.ui.tree);
+
+
+    TangoWebapp.DeviceTreeConfig = {
+        view: "DeviceTree",
+        id: "device_tree"
+    };

@@ -40,8 +40,14 @@ TangoWebapp.MainController = MVC.Controller.extend('main', {
                             view: "multiview",
                             animate:false,
                             cells: [
-                                TangoWebapp.DeviceInfoDataViewConfig,
-                                TangoWebapp.DevicePropertiesDataViewConfig
+                                TangoWebapp.DeviceInfoViewConfig,
+                                TangoWebapp.DevicePropertiesViewConfig,
+                                TangoWebapp.DevicePollingViewConfig,
+                                TangoWebapp.DeviceEventViewConfig,
+                                TangoWebapp.DeviceAttrConfigViewConfig,
+                                TangoWebapp.DevicePipeConfViewConfig,
+                                TangoWebapp.DeviceAttrPropsViewConfig,
+                                TangoWebapp.DeviceLoggingViewConfig
                             ]
                         }
 
@@ -52,8 +58,6 @@ TangoWebapp.MainController = MVC.Controller.extend('main', {
             ]
         });
 
-
-        $$('device_tree').loadBranch(0, null, TangoWebapp.rest_api_url + '/devices/sys/database/2/commands/DbGetDeviceDomainList?input=*');
 
         //webix.ajax().put(TangoWebapp.rest_api_url + '/devices/sys/database/2/commands/DbGetDeviceDomainList?input=*')
         //    .then(function(response){
