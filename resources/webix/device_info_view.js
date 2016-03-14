@@ -3,6 +3,8 @@ webix.protoUI({
     loadAndShow: function (url) {
         webix.message("Requesting device info for " + url);
 
+        this.$$("header").setValues({name:url}, true);
+
         this.$$('device_info_data').loadNext(1,0,webix.bind(function(response){
             this.show();
             return response.json();
@@ -11,7 +13,7 @@ webix.protoUI({
     defaults: {
         rows: [
             {
-                view: "template",
+                id:"header",
                 type: "header",
                 template: "Device Info [#name#]"
             },
