@@ -29,6 +29,7 @@ webix.protoUI({
         type: 'lineTree'
     },
     $init: function () {
+        this.attachEvent('onItemDblClick', this.on.onItemDblClick);
         this.attachEvent('onDataRequest', this.on.onDataRequest);
         this.attachEvent('onItemClick', this.on.onItemClick);
         this.attachEvent('onBeforeContextMenu', this.on.onBeforeContextMenu);
@@ -37,44 +38,57 @@ webix.protoUI({
 
         this.loadBranch(0, null, null);
     },
-    handleResponse: function (parent_id, level) {
+    handleResponse: function (parent_id, item) {
+        var that = this;
         return function (response) {
             return {
                 parent: parent_id,
                 data: response.output.map(
                     function (el) {
-                        if (level == 2) {
+                        if (item && item.$level == 2) {
                             return {
-                                value: el, data: [
+                                _name: that.getItem(item.$parent).value + "/" + item.value + "/" + el,
+                                value: el,
+                                data: [
                                     {
                                         value: 'Properties',
                                         handleClick: function () {
-                                            $$(this.value).show();
+                                            var thisView = $$(this.value);
+                                            thisView.show();
+                                            thisView.getParentView().show();
                                             //TODO load
                                         }
                                     },
                                     {
                                         value: 'Polling',
                                         handleClick: function () {
-                                            $$(this.value).show();
+                                            var thisView = $$(this.value);
+                                            thisView.show();
+                                            thisView.getParentView().show();
                                         }
                                     },
                                     {
                                         value: 'Event',
                                         handleClick: function () {
-                                            $$(this.value).show();
+                                            var thisView = $$(this.value);
+                                            thisView.show();
+                                            thisView.getParentView().show();
                                         }
                                     },
                                     {
                                         value: 'Attribute config',
                                         handleClick: function () {
-                                            $$(this.value).show();
+                                            var thisView = $$(this.value);
+                                            thisView.show();
+                                            thisView.getParentView().show();
                                         }
                                     },
                                     {
                                         value: 'Pipe config',
                                         handleClick: function () {
-                                            $$(this.value).show();
+                                            var thisView = $$(this.value);
+                                            thisView.show();
+                                            thisView.getParentView().show();
                                         }
                                     },
                                     {
@@ -82,13 +96,17 @@ webix.protoUI({
                                         webix_kids: true,
                                         handleClick: function () {
                                             //TODO load device attribute properties
-                                            $$(this.value).show();
+                                            var thisView = $$(this.value);
+                                            thisView.show();
+                                            thisView.getParentView().show();
                                         }
                                     },
                                     {
                                         value: 'Logging',
                                         handleClick: function () {
-                                            $$(this.value).show();
+                                            var thisView = $$(this.value);
+                                            thisView.show();
+                                            thisView.getParentView().show();
                                         }
                                     }
                                 ]
@@ -103,10 +121,31 @@ webix.protoUI({
     //url:TangoWebapp.rest_api_url + '/devices',
     onContext: {},
     on: {
+        onItemDblClick:function(id, e, node){
+            webix.message("DblClick " + id);
+            var item = this.getItem(id);
+            if(item.$level == 3) {//member
+                if(!$$("atk" + id)) {
+                    $$("mainTabview").addView(
+                        {
+                            header: "ATKPanel [" + item._name + "]",
+                            close: true,
+                            body: {
+                                view: "ATKPanel",
+                                id: "atk" + id
+                            }
+                        }
+                    );
+                }
+                $$("atk" + id).show();
+            }
+
+        },
         onItemClick: function (id, e, node) {
             var item = this.getItem(id);
             if (item.$level == 3) {//member
-                var url = this.getItem(this.getItem(item.$parent).$parent).value + '/' + this.getItem(item.$parent).value + '/' + item.value;
+                //var url = this.getItem(this.getItem(item.$parent).$parent).value + '/' + this.getItem(item.$parent).value + '/' + item.value;
+                var url = item._name;
                 $$('device_info').loadAndShow(url);
             } else if (item.$level == 4) { //Properties, Event etc
                 item.handleClick();
@@ -114,7 +153,6 @@ webix.protoUI({
         },
         onDataRequest: function (id, cbk, url) {
             var item = this.getItem(id);
-            var level = item ? item.$level : 0;
             if (item) webix.message("Getting children of " + item.value);
             var promise;
             if (id == 0)//domain
@@ -131,7 +169,7 @@ webix.protoUI({
 
 
             }
-            this.parse(promise.then(this.handleResponse(id, level)));
+            this.parse(promise.then(this.handleResponse(id, item)));
 
 
             return false;//cancel default behaviour
