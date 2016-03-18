@@ -23,7 +23,8 @@ webix.protoUI({
             {id: "btnFile", value: "File", width: 100, align: "left"},
             {id: "btnEdit", value: "Edit", submenu:[{id:"changeTangoHost", value:"Change Tango Host"},"Create Server"]},
             {id: "btnTools", value: "Tools", width: 100, align: "left"},
-            {id: "btnFilter", value: "Filter", width: 100, align: "left"}]
+            {id: "btnFilter", value: "Filter", width: 100, align: "left"},
+            {id: "btnHelp", value: "Help", width: 100, align: "left"}]
     }
 
 },webix.IdSpace, webix.EventSystem ,webix.ui.menu);

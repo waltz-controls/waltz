@@ -37,20 +37,27 @@ TangoWebapp.MainController = MVC.Controller.extend('main', {
                         },
                         {view: "resizer"},
                         {
-                            view: "multiview",
-                            animate:false,
+                            view: "tabview",
+                            id: "mainTabview",
                             cells: [
-                                TangoWebapp.DeviceInfoViewConfig,
-                                TangoWebapp.DevicePropertiesViewConfig,
-                                TangoWebapp.DevicePollingViewConfig,
-                                TangoWebapp.DeviceEventViewConfig,
-                                TangoWebapp.DeviceAttrConfigViewConfig,
-                                TangoWebapp.DevicePipeConfViewConfig,
-                                TangoWebapp.DeviceAttrPropsViewConfig,
-                                TangoWebapp.DeviceLoggingViewConfig
+                                {
+                                    header:"",
+                                    view: "multiview",
+                                    id: "device_multiview",
+                                    animate: false,
+                                    cells: [
+                                        TangoWebapp.DeviceInfoViewConfig,
+                                        TangoWebapp.DevicePropertiesViewConfig,
+                                        TangoWebapp.DevicePollingViewConfig,
+                                        TangoWebapp.DeviceEventViewConfig,
+                                        TangoWebapp.DeviceAttrConfigViewConfig,
+                                        TangoWebapp.DevicePipeConfViewConfig,
+                                        TangoWebapp.DeviceAttrPropsViewConfig,
+                                        TangoWebapp.DeviceLoggingViewConfig
+                                    ]
+                                }
                             ]
                         }
-
 
 
                     ]

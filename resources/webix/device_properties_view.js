@@ -1,5 +1,15 @@
 webix.protoUI({
     name: "DeviceProperties",
+    show: function (url) {
+        webix.message("Requesting device properties for " + url);
+
+        //this.$$("header").setValues({name:url}, true);
+        //
+        //this.$$('device_info_data').loadNext(1,0,webix.bind(function(response){
+        //    this.show();
+        //    return response.json();
+        //},this), url);
+    },
     defaults: {
         rows: [
             {
