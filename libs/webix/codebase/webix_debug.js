@@ -5896,7 +5896,7 @@ webix.MouseEvents={
 	},
 	//process oncontextmenu events
 	_onContext: function(e) {
-		this._mouseEvent(e, this.on_context, "BeforeContextMenu", "AfterContextMenu");
+		return this._mouseEvent(e, this.on_context, "BeforeContextMenu", "AfterContextMenu");
 	},
 	/*
 		event throttler - ignore events which occurs too fast
@@ -5965,7 +5965,7 @@ webix.MouseEvents={
 					this._item_clicked = id;
 					if (this.callEvent){
 						//it will be triggered only for first detected ID, in case of nested elements
-						if (!this.callEvent("on"+name,[id,e,trg])) return;
+						if (!this.callEvent("on"+name,[id,e,trg])) return false;
 						if (pair) this.callEvent("on"+pair,[id,e,trg]);
 					}
 					//set found flag

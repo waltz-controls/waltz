@@ -1,18 +1,44 @@
 webix.protoUI({
     name: "DeviceTree",
-    defaults:{
+    _ctxMenu:webix.ui({
+        view: "contextmenu",
+        autoheight: true,
+        on: {
+            onItemClick: function (id) {
+                alert(id + " on row " + this.getContext().id);
+            }
+        }
+        }),
+    _ctxMember: [
+            "Copy",
+            "Paste",
+            "Delete",
+            {$template: "Separator"},
+            "Monitor device",
+            "Test device",
+            "Define device alias",
+            "Restart device",
+            {$template: "Separator"},
+            "Go to Server node",
+            "Go to Admin device node",
+            {$template: "Separator"},
+            "Log viewer"
+        ],
+    defaults: {
         //activeTitle:true,
-        type:'lineTree'
+        type: 'lineTree'
     },
-    $init:function(){
-        this.attachEvent('onDataRequest',this.on.onDataRequest);
-        this.attachEvent('onItemClick',this.on.onItemClick);
+    $init: function () {
+        this.attachEvent('onDataRequest', this.on.onDataRequest);
+        this.attachEvent('onItemClick', this.on.onItemClick);
+        this.attachEvent('onBeforeContextMenu', this.on.onBeforeContextMenu);
 
+        this._ctxMenu.attachTo(this);
 
         this.loadBranch(0, null, null);
     },
-    handleResponse:function(parent_id, level){
-        return function(response){
+    handleResponse: function (parent_id, level) {
+        return function (response) {
             return {
                 parent: parent_id,
                 data: response.output.map(
@@ -75,31 +101,32 @@ webix.protoUI({
         };
     },
     //url:TangoWebapp.rest_api_url + '/devices',
-    on:{
-        onItemClick:function(id, e, node){
+    onContext: {},
+    on: {
+        onItemClick: function (id, e, node) {
             var item = this.getItem(id);
-            if(item.$level == 3) {//member
+            if (item.$level == 3) {//member
                 var url = this.getItem(this.getItem(item.$parent).$parent).value + '/' + this.getItem(item.$parent).value + '/' + item.value;
                 $$('device_info').loadAndShow(url);
-            } else if(item.$level == 4){ //Properties, Event etc
+            } else if (item.$level == 4) { //Properties, Event etc
                 item.handleClick();
             }
         },
-        onDataRequest:function(id, cbk, url){
+        onDataRequest: function (id, cbk, url) {
             var item = this.getItem(id);
-            var level = item ? item.$level: 0;
-            if(item) webix.message("Getting children of " + item.value);
+            var level = item ? item.$level : 0;
+            if (item) webix.message("Getting children of " + item.value);
             var promise;
-            if(id == 0)//domain
+            if (id == 0)//domain
                 promise = TangoWebapp.db.DbGetDeviceDomainList("*");
-            else if(item.$level == 1)//family
+            else if (item.$level == 1)//family
                 promise = TangoWebapp.db.DbGetDeviceFamilyList(item.value + '/*');
-            else if(item.$level == 2)//member
-                promise = TangoWebapp.db.DbGetDeviceMemberList(this.getItem(item.$parent).value + '/'+ item.value + '/*');
+            else if (item.$level == 2)//member
+                promise = TangoWebapp.db.DbGetDeviceMemberList(this.getItem(item.$parent).value + '/' + item.value + '/*');
             else {
                 return false;//ignore member
             }
-            if(item) {
+            if (item) {
                 webix.message("Getting children of " + item.value);
 
 
@@ -108,12 +135,23 @@ webix.protoUI({
 
 
             return false;//cancel default behaviour
+        },
+        onBeforeContextMenu: function (id, e, node) {
+            var item = this.getItem(id);
+            if (item.$level == 3) {//member
+                var url = this.getItem(this.getItem(item.$parent).$parent).value + '/' + this.getItem(item.$parent).value + '/' + item.value;
+                this._ctxMenu.clearAll();
+                this._ctxMenu.parse(this._ctxMember);
+                return true;
+            } else {
+                return false;
+            }
         }
     }
-},webix.IdSpace, webix.EventSystem, webix.ui.tree);
+}, webix.IdSpace, webix.EventSystem, webix.ui.tree);
 
 
-    TangoWebapp.DeviceTreeConfig = {
-        view: "DeviceTree",
-        id: "device_tree"
-    };
+TangoWebapp.DeviceTreeConfig = {
+    view: "DeviceTree",
+    id: "device_tree"
+};
