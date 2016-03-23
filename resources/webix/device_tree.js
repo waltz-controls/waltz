@@ -5,7 +5,16 @@ webix.protoUI({
         autoheight: true,
         on: {
             onItemClick: function (id) {
-                alert(id + " on row " + this.getContext().id);
+                var item = this.getContext().obj.getItem(this.getContext().id);
+                switch(id){
+                    case "Test device":{
+                        $$("testDeviceWindow").getHead().setValues({name:item._name}, true); //TODO event
+                        $$("testDeviceWindow").show();
+                        break;
+                    }
+                    default:
+                        debugger;
+                }
             }
         }
         }),
