@@ -30,6 +30,11 @@ webix.protoUI({
                     width: "auto"
                 },
                 on: {
+                    onBeforeRender:function(obj){
+                        var tabbar = $$('mainTabview').getTabbar();
+                        tabbar.config.options[0].value = this.getTopParentView().name; //TODO
+                        tabbar.refresh();
+                    },
                     onDataRequest: function (count, start, cbk, url) {
                         TangoWebapp.db.DbGetDeviceInfo(url, cbk).then(webix.bind(function (response) {
                             var info = response.output;

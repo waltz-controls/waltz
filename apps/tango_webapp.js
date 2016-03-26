@@ -6,7 +6,6 @@ include.resources(
     
 );
 include.engines(
-    'jsTangORB'
 );
 include.plugins(
     "controller","view","model"
