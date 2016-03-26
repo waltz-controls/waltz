@@ -38,10 +38,14 @@ webix.protoUI({
         type: 'lineTree'
     },
     $init: function () {
-        this.attachEvent('onItemDblClick', this.on.onItemDblClick);
-        this.attachEvent('onDataRequest', this.on.onDataRequest);
-        this.attachEvent('onItemClick', this.on.onItemClick);
-        this.attachEvent('onBeforeContextMenu', this.on.onBeforeContextMenu);
+        for(var e in this.on){
+            if(this.on.hasOwnProperty(e))
+                this.attachEvent(e, this.on[e]);
+        }
+        //this.attachEvent('onItemDblClick', this.on.onItemDblClick);
+        //this.attachEvent('onDataRequest', this.on.onDataRequest);
+        //this.attachEvent('onItemClick', this.on.onItemClick);
+        //this.attachEvent('onBeforeContextMenu', this.on.onBeforeContextMenu);
 
         this._ctxMenu.attachTo(this);
 
@@ -154,7 +158,11 @@ webix.protoUI({
             var item = this.getItem(id);
             if (item.$level == 3) {//member
                 //var url = this.getItem(this.getItem(item.$parent).$parent).value + '/' + this.getItem(item.$parent).value + '/' + item.value;
-                var url = item._name;
+                var name = item._name;
+
+                var url = TangoWebapp.rest_api_url + "/device/" + name;
+                if(!Device.find_one(url)) new Device({url:url});
+
                 $$('device_info').loadAndShow(url);
             } else if (item.$level == 4) { //Properties, Event etc
                 item.handleClick();

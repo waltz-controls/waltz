@@ -3,7 +3,8 @@ webix.protoUI({
     loadAndShow: function (url) {
         webix.message("Requesting device info for " + url);
 
-        this.$$("header").setValues({name:url}, true);
+        $$('mainTabview').getTabbar().config.options[0].value = "Device info [" +url+ "]";
+        $$('mainTabview').getTabbar().refresh();
 
         this.$$('device_info_data').loadNext(1,0,webix.bind(function(response){
             this.show();
@@ -12,11 +13,6 @@ webix.protoUI({
     },
     defaults: {
         rows: [
-            {
-                id:"header",
-                type: "header",
-                template: "Device Info [#name#]"
-            },
             {
                 view: "dataview",
                 id: "device_info_data",
@@ -30,12 +26,7 @@ webix.protoUI({
                     width: "auto"
                 },
                 on: {
-                    onBeforeRender:function(obj){
-                        var tabbar = $$('mainTabview').getTabbar();
-                        tabbar.config.options[0].value = this.getTopParentView().name; //TODO
-                        tabbar.refresh();
-                    },
-                    onDataRequest: function (count, start, cbk, url) {
+                     onDataRequest: function (count, start, cbk, url) {
                         TangoWebapp.db.DbGetDeviceInfo(url, cbk).then(webix.bind(function (response) {
                             var info = response.output;
                             this.clearAll();

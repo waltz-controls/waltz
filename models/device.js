@@ -1,8 +1,13 @@
 Device = MVC.Model.extend("device",
     /*@Static */
     {
+        id: 'url',
         fetch:function(inst){
-            return webix.ajax().get(inst.id)
+            //TODO fail
+            return webix.ajax().get(inst.url).then(function(resp) {
+                var device = resp.json();
+                return device;
+            });
         }
     },
     /*@Prototype */
@@ -22,8 +27,8 @@ Device = MVC.Model.extend("device",
          */
         info:function(){
             if(this._info == null){
-                return this.Class.fetch(this).then(function(inst){
-                    return this;
+                return this._info = this.Class.fetch(this).then(function(dev){
+                    return dev.info;
                 });
             }
             return this._info;
@@ -34,7 +39,9 @@ Device = MVC.Model.extend("device",
          */
         commands:function(){
             if(this._commands == null){
-                return this.Class.fetch(this)._commands;
+                return this._commands =this.Class.fetch(this).then(function(dev){
+                    return dev.commands;
+                });
             }
             return this._commands;
         },
@@ -44,9 +51,14 @@ Device = MVC.Model.extend("device",
          */
         attributes:function(){
             if(this._attributes == null){
-                return this.Class.fetch(this)._attributes;
+                return this._attributes = this.Class.fetch(this).then(function(dev){
+                    return dev.attributes;
+                });
             }
-            return _attributes;
+            return this._attributes;
+        },
+        update:function(){
+            this.Class.fetch(this);
         }
 
     }
