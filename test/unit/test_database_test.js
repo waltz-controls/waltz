@@ -1,6 +1,6 @@
 new MVC.Test.Unit('test_database',{
    test_DbGetDeviceInfo: function() {
-      var db = new DataBase('http://localhost:8080/localhost/rest/rc2','sys/database/2');
+      var db = new DataBase('sys/database/2');
 
       var respone = db.DbGetDeviceInfo('sys/tg_test/1');
 
