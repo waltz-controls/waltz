@@ -10,11 +10,12 @@ TangoWebapp.MainController = MVC.Controller.extend('main', {
      * @param {Object} params
      */
     load: function (params) {
-        //TODO jsTangORB must be migrated to ajax first
-        //TangoWebapp.db = new DataBase('http://localhost:8080/localhost/rest/rc2','sys/database/2');
         //TODO ask user for rest_host
-        TangoWebapp.rest_api_url = 'http://localhost:8080/localhost/rest/rc2';
-        TangoWebapp.db = new DataBase(TangoWebapp.rest_api_url, 'sys/database/2');
+        TangoWebapp.rest_api_url = 'http://localhost:8080/hzgxenvtest.desy.de/rest/rc2';
+        TangoWebapp.rest = new TangoREST(TangoWebapp.rest_api_url);
+
+
+        TangoWebapp.db = new DataBase('sys/database/2');
         //draw ui
         webix.ui({
             rows: [

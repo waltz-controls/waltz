@@ -1,22 +1,13 @@
 Device = MVC.Model.extend("device",
     /*@Static */
     {
-        attributes:{
-            url: 'string',
-            name:'string'
-        },
-        id: 'url',
+        id: 'name',
         fetch:function(inst){
-            //TODO fail
-            return webix.ajax().get(inst.__link).then(function(resp) {
-                var device = resp.json();
-                return device;
-            });
+            return TangoWebapp.rest.devices(inst.name).get();
         }
     },
     /*@Prototype */
     {
-        __link:null,
         //properties reference to promise objects
         _info:null,
         _commands:null,
@@ -27,9 +18,8 @@ Device = MVC.Model.extend("device",
          * @constructor
          * @param attrs
          */
-        init:function(attrs){
-            this._super(attrs);
-            this.__link = this.url + '/devices/' + this.name;
+        init: function(name){
+            this._super({name:name});
         },
         /**
          *
@@ -76,12 +66,7 @@ Device = MVC.Model.extend("device",
          * @return promise
          */
         state:function(){
-            return webix.ajax().get(this.__link + "/state").then(function(resp){
-                return resp.json();
-            }).fail(function(resp){
-                console.error('Request failed!');
-                webix.message({type:'error', text:'Request failed!'})//TODO fail
-            });
+            return TangoWebapp.rest.devices(this.name).get("/state");
         },
         update:function(){
             var promise = this.Class.fetch(this);
