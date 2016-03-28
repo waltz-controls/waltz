@@ -31,4 +31,4 @@ do
   fi
 done
 ARGS=$ARGS]
-$JAVA_HOME/bin/java -classpath .:jmvc/rhino/compiler.jar:jmvc/rhino/compiler-integration.jar:jmvc/rhino/js.jar org.mozilla.javascript.tools.shell.Main -e _args=$ARGS -e 'load('"'"$1"'"')'
+java -classpath .:jmvc/rhino/compiler.jar:jmvc/rhino/compiler-integration.jar:jmvc/rhino/js.jar org.mozilla.javascript.tools.shell.Main -e _args=$ARGS -e 'load('"'"$1"'"')'
