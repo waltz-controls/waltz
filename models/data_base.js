@@ -1383,17 +1383,13 @@ DataBase = MVC.Model.extend('DataBase',
          * @param {Object|Function} cbks: onSuccess - callback [required]; onFailure - panic callback [optional]
          */
         DbGetDeviceMemberList : function(argin, cbks){
-            var promise = webix.ajax().put(this._url + '/commands/DbGetDeviceMemberList?input=' + argin);
+            var promise = TangoWebapp.rest.devices(this.name).commands('DbGetDeviceMemberList').exec('input', argin);
             if(cbks) {
                 var callbacks = this.Class._clean_callbacks(cbks);
                 if (callbacks.onFailure) promise.fail(callbacks.onFailure);
                 if (callbacks.onSuccess) return promise.then(callbacks.onSuccess);
             }
-            else return promise.then(
-                function(response){
-                    return response.json();
-                }
-            );
+            else return promise;
         },
         /**
          * Executes command DbGetDeviceProperty on the remote server

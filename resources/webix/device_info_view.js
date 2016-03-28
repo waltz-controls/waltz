@@ -8,7 +8,7 @@ webix.protoUI({
 
         this.$$('device_info_data').loadNext(1,0,webix.bind(function(response){
             this.show();
-            return response.json();
+            return response;
         },this), url);
     },
     defaults: {

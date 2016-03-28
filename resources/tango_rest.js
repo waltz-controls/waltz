@@ -48,7 +48,7 @@ TangoREST.prototype.exec = function () {
  * @returns {*|string|string|string|string|string}
  * @private
  */
-TangoREST.prototype._resetUrl = function(){
+TangoREST.prototype._resetUrl = function () {
     var url = this._url;
     this._url = this._root;
     return url;
@@ -63,11 +63,7 @@ TangoREST.prototype._resetUrl = function(){
 TangoREST.prototype._success = function (resp) {
     var json = resp.json();
 
-    if (json.quality == 'FAILURE' && json.errors && json.errors.length > 0) {
-        for (var i = 0, size = json.errors.length; i < size; ++i) {
-            console.error(json.errors[i].severity + ":" + json.errors[i].description);
-            webix.message({type: 'error', text: json.errors[i].description});
-        }
+    if (json.quality == 'FAILURE') {
         throw json;
     }
 
@@ -75,11 +71,18 @@ TangoREST.prototype._success = function (resp) {
 };
 
 TangoREST.prototype._failure = function (resp) {
-    console.error(resp.statusText + ":" + resp.responseURL);
-    webix.message({type: 'error', text: resp.statusText + ":" + resp.responseURL});
-    throw resp;
-};
+    if (resp.errors && resp.errors.length > 0) //tango rest specific
+        for (var i = 0, size = resp.errors.length; i < size; ++i) {
+            console.error(resp.errors[i].severity + ":" + resp.errors[i].description);
+            webix.message({type: 'error', text: resp.errors[i].description});
+        }
+    else { //general failure
+        console.error(resp.statusText + ":" + resp.responseURL);
+        webix.message({type: 'error', text: resp.statusText + ":" + resp.responseURL});
 
+    }
+    //throw resp; //TODO
+};
 
 
 /**
@@ -89,7 +92,7 @@ TangoREST.prototype._failure = function (resp) {
 TangoREST.prototype.get = function (what) {
     //TODO save stack trace
     var url = this._resetUrl();
-    if(what) url += what;
+    if (what) url += what;
     return webix.ajax().get(url).then(this._success).fail(this._failure);
 };
 
@@ -97,8 +100,8 @@ TangoREST.prototype.get = function (what) {
  *
  * @returns {Promise}
  */
-TangoREST.prototype.put = function(what){
+TangoREST.prototype.put = function (what) {
     var url = this._resetUrl();
-    if(what) url += what;
+    if (what) url += what;
     return webix.ajax().put(url).then(this._success).fail(this._failure);
 };

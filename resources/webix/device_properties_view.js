@@ -1,7 +1,7 @@
 webix.protoUI({
     name: "DeviceProperties",
-    show: function (url) {
-        webix.message("Requesting device properties for " + url);
+    //show: function (url) {
+    //    webix.message("Requesting device properties for " + url);
 
         //this.$$("header").setValues({name:url}, true);
         //
@@ -9,6 +9,9 @@ webix.protoUI({
         //    this.show();
         //    return response.json();
         //},this), url);
+    //},
+    $init:function(){
+
     },
     defaults: {
         rows: [
@@ -23,7 +26,11 @@ webix.protoUI({
                 columns: [
                     {header: "Property name"},
                     {header: "Value"}
-                ]
+                ],
+                data: '',
+                on:{
+
+                }
             },
             {
                 view: "toolbar",
@@ -37,9 +44,10 @@ webix.protoUI({
             }
         ]
     }
-}, webix.IdSpace, webix.ui.layout);
+}, webix.IdSpace, webix.EventSystem, webix.ui.layout);
 
 TangoWebapp.DevicePropertiesViewConfig = {
     view: "DeviceProperties",
     id: "Properties"
 };
+
