@@ -1,6 +1,7 @@
 include.unit_tests(
     'test_database',
-    'test_device'
+    'test_device',
+    'tango_rest'
 );
 include.functional_tests(
     
