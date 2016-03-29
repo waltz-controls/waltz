@@ -1,5 +1,6 @@
 TangoWebapp.DeviceTabActivator = {
     activate:function(){
+        this.getParentView().show();
         this.show();
 
         //update tab label

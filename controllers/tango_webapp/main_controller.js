@@ -11,7 +11,7 @@ TangoWebapp.MainController = MVC.Controller.extend('main', {
      */
     load: function (params) {
         //TODO ask user for rest_host
-        TangoWebapp.rest_api_url = 'http://localhost:8080/hzgxenvtest.desy.de/rest/rc2';
+        TangoWebapp.rest_api_url = 'http://localhost:8080/localhost/rest/rc2';
         TangoWebapp.rest = new TangoREST(TangoWebapp.rest_api_url);
 
 
@@ -56,16 +56,7 @@ TangoWebapp.MainController = MVC.Controller.extend('main', {
                                         TangoWebapp.DevicePipeConfViewConfig,
                                         TangoWebapp.DeviceAttrPropsViewConfig,
                                         TangoWebapp.DeviceLoggingViewConfig
-                                    ],
-                                    on:{
-                                        onViewChange:function(){
-                                            var tabbar = this.getParentView().getParentView().getTabbar();
-                                            tabbar.config.options[0].value = $$(this.getValue()).name + "[" + TangoWebapp.getDevice().name + "]"; //TODO get current device from dataCollection and set its name
-                                            tabbar.refresh();
-
-                                            this.show();
-                                        }
-                                    }
+                                    ]
                                 }
                             ]
                         }
