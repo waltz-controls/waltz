@@ -16,6 +16,8 @@ TangoWebapp.MainController = MVC.Controller.extend('main', {
 
 
         TangoWebapp.db = new DataBase('sys/database/2');
+
+        TangoWebapp.devices = new webix.DataCollection();
         //draw ui
         webix.ui({
             rows: [
@@ -54,7 +56,16 @@ TangoWebapp.MainController = MVC.Controller.extend('main', {
                                         TangoWebapp.DevicePipeConfViewConfig,
                                         TangoWebapp.DeviceAttrPropsViewConfig,
                                         TangoWebapp.DeviceLoggingViewConfig
-                                    ]
+                                    ],
+                                    on:{
+                                        onViewChange:function(){
+                                            var tabbar = this.getParentView().getParentView().getTabbar();
+                                            tabbar.config.options[0].value = $$(this.getValue()).name + "[" + TangoWebapp.getDevice().name + "]"; //TODO get current device from dataCollection and set its name
+                                            tabbar.refresh();
+
+                                            this.show();
+                                        }
+                                    }
                                 }
                             ]
                         }
@@ -66,11 +77,7 @@ TangoWebapp.MainController = MVC.Controller.extend('main', {
         });
 
 
-        $$("Properties").$$('device_properties_data').bind($$('device_tree'), '$data', function(obj, source){
-            if (!obj) return this.clearAll();
-            var fulldata = [].concat(source.data.getBranch(obj.id)).concat(obj.records);
-            this.data.importData(fulldata, true);
-        });
+
         //webix.ajax().put(TangoWebapp.rest_api_url + '/devices/sys/database/2/commands/DbGetDeviceDomainList?input=*')
         //    .then(function(response){
         //        var data = response.json().output.map(function(el){ return {id:el, value:el, webix_kids:true}});

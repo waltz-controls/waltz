@@ -50,75 +50,57 @@ webix.protoUI({
         this.loadBranch(0, null, null);
     },
     handleResponse: function (parent_id, item) {
-        var that = this;
+        var self = this;
         return function (response) {
             return {
                 parent: parent_id,
                 data: response.output.map(
                     function (el) {
                         if (item && item.$level == 2) {
+                            var name = self.getItem(item.$parent).value + "/" + item.value + "/" + el;
+                            if(Device.find_one(name)) debugger;
+                            var device = new Device(name);
+                            var dev_id = TangoWebapp.devices.add(device);
                             return {
-                                _name: that.getItem(item.$parent).value + "/" + item.value + "/" + el,
+                                _view_id:'device_info',
+                                _device_id: dev_id,
                                 value: el,
                                 data: [
                                     {
                                         value: 'Properties',
-                                        handleClick: function () {
-                                            var thisView = $$(this.value);
-                                            thisView.show();
-                                            thisView.getParentView().show();
-                                            //TODO load
-                                        }
+                                        _device_id: dev_id,
+                                        _view_id: 'device_properties'
                                     },
                                     {
                                         value: 'Polling',
-                                        handleClick: function () {
-                                            var thisView = $$(this.value);
-                                            thisView.show();
-                                            thisView.getParentView().show();
-                                        }
+                                        _device_id: dev_id,
+                                        _view_id: 'device_polling'
                                     },
                                     {
                                         value: 'Event',
-                                        handleClick: function () {
-                                            var thisView = $$(this.value);
-                                            thisView.show();
-                                            thisView.getParentView().show();
-                                        }
+                                        _device_id: dev_id,
+                                        _view_id: 'device_events'
                                     },
                                     {
                                         value: 'Attribute config',
-                                        handleClick: function () {
-                                            var thisView = $$(this.value);
-                                            thisView.show();
-                                            thisView.getParentView().show();
-                                        }
+                                        _device_id: dev_id,
+                                        _view_id: 'device_attr_config'
                                     },
                                     {
                                         value: 'Pipe config',
-                                        handleClick: function () {
-                                            var thisView = $$(this.value);
-                                            thisView.show();
-                                            thisView.getParentView().show();
-                                        }
+                                        _device_id: dev_id,
+                                        _view_id: 'device_pipe_config'
                                     },
                                     {
                                         value: 'Attribute properties',
+                                        _device_id: dev_id,
                                         webix_kids: true,
-                                        handleClick: function () {
-                                            //TODO load device attribute properties
-                                            var thisView = $$(this.value);
-                                            thisView.show();
-                                            thisView.getParentView().show();
-                                        }
+                                        _view_id: 'device_attr_properties'
                                     },
                                     {
                                         value: 'Logging',
-                                        handleClick: function () {
-                                            var thisView = $$(this.value);
-                                            thisView.show();
-                                            thisView.getParentView().show();
-                                        }
+                                        _device_id: dev_id,
+                                        _view_id: 'device_logging'
                                     }
                                 ]
                             };
@@ -154,15 +136,9 @@ webix.protoUI({
         },
         onItemClick: function (id, e, node) {
             var item = this.getItem(id);
-            if (item.$level == 3) {//member
-                //var url = this.getItem(this.getItem(item.$parent).$parent).value + '/' + this.getItem(item.$parent).value + '/' + item.value;
-                var name = item._name;
-
-                if(!Device.find_one(name)) new Device(name);
-
-                $$('device_info').loadAndShow(name);
-            } else if (item.$level == 4) { //Properties, Event etc
-                item.handleClick();
+            if (item.$level == 3 || item.$level == 4) { //device, Properties, Event etc
+                TangoWebapp.devices.setCursor(item._device_id);
+                $$(item._view_id).activate();
             }
         },
         onDataRequest: function (id, cbk, url) {

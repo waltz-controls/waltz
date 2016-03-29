@@ -1,12 +1,7 @@
 webix.protoUI({
-    name: "DevicePolling",
+    name: "Device Polling",
     defaults: {
         rows: [
-            {
-                view: "template",
-                type: "header",
-                template: "Device Polling [#name#]"
-            },
             {
                 view: "tabview",
                 cells: [
@@ -60,9 +55,9 @@ webix.protoUI({
 
         ]
     }
-}, webix.IdSpace, webix.ui.layout);
+}, webix.IdSpace, TangoWebapp.DeviceTabActivator, webix.ui.layout);
 
 TangoWebapp.DevicePollingViewConfig = {
-    view: "DevicePolling",
-    id: "Polling"
+    view: "Device Polling",
+    id: "device_polling"
 };

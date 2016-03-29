@@ -1,12 +1,7 @@
 webix.protoUI({
-    name: "DeviceAttrProps",
+    name: "Device Attr Props",
     defaults: {
         rows: [
-            {
-                view: "template",
-                type: "header",
-                template: "Device attributes' properties [#name#]"
-            },
             {
                 view: "tabview",
                 cells: [
@@ -35,9 +30,9 @@ webix.protoUI({
 
         ]
     }
-}, webix.IdSpace, webix.ui.layout);
+}, webix.IdSpace, TangoWebapp.DeviceTabActivator, webix.ui.layout);
 
 TangoWebapp.DeviceAttrPropsViewConfig = {
-    view: "DeviceAttrProps",
-    id: "Attribute properties"
+    view: "Device Attr Props",
+    id: "device_attr_properties"
 };

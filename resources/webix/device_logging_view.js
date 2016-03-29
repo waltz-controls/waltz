@@ -1,12 +1,7 @@
 webix.protoUI({
-    name: "DeviceLogging",
+    name: "Device Logging",
     defaults: {
         rows: [
-            {
-                view: "template",
-                type: "header",
-                template: "Logging [#name#]"
-            },
             {
                 id: "display",
                 view: "datatable",
@@ -26,9 +21,9 @@ webix.protoUI({
 
         ]
     }
-}, webix.IdSpace, webix.ui.layout);
+}, webix.IdSpace, TangoWebapp.DeviceTabActivator, webix.ui.layout);
 
 TangoWebapp.DeviceLoggingViewConfig = {
-    view: "DeviceLogging",
-    id: "Logging"
+    view: "Device Logging",
+    id: "device_logging"
 };

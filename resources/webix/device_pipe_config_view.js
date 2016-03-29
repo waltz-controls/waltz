@@ -1,12 +1,7 @@
 webix.protoUI({
-    name: "DevicePipeConfig",
+    name: "Device Pipe Config",
     defaults: {
         rows: [
-            {
-                view: "template",
-                type: "header",
-                template: "Logging [#name#]"
-            },
             {
                 view: "tabview",
                 cells: [
@@ -58,9 +53,9 @@ webix.protoUI({
 
         ]
     }
-}, webix.IdSpace, webix.ui.layout);
+}, webix.IdSpace, TangoWebapp.DeviceTabActivator, webix.ui.layout);
 
 TangoWebapp.DevicePipeConfViewConfig = {
-    view: "DevicePipeConfig",
-    id: "Pipe config"
+    view: "Device Pipe Config",
+    id: "device_pipe_config"
 };

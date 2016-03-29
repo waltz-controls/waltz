@@ -1,5 +1,5 @@
 webix.protoUI({
-    name: "DeviceProperties",
+    name: "Device Properties",
     //show: function (url) {
     //    webix.message("Requesting device properties for " + url);
 
@@ -11,15 +11,16 @@ webix.protoUI({
         //},this), url);
     //},
     $init:function(){
-
+        this.$ready.push(function(){
+            this.$$('device_properties_data').bind($$('device_tree'), '$data', function(obj, source){
+                if (!obj) return this.clearAll();
+                var fulldata = [].concat(source.data.getBranch(obj.id)).concat(obj.records);
+                this.data.importData(fulldata, true);
+            });
+        });
     },
     defaults: {
         rows: [
-            {
-                view: "template",
-                type: "header",
-                template: "Device properties [#name#]"
-            },
             {
                 view: "datatable",
                 id:"device_properties_data",
@@ -44,10 +45,10 @@ webix.protoUI({
             }
         ]
     }
-}, webix.IdSpace, webix.EventSystem, webix.ui.layout);
+}, webix.IdSpace, webix.EventSystem, TangoWebapp.DeviceTabActivator, webix.ui.layout);
 
 TangoWebapp.DevicePropertiesViewConfig = {
-    view: "DeviceProperties",
-    id: "Properties"
+    view: "Device Properties",
+    id: "device_properties"
 };
 

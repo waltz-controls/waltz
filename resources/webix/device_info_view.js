@@ -1,15 +1,36 @@
 webix.protoUI({
-    name: "DeviceInfo",
-    loadAndShow: function (url) {
-        webix.message("Requesting device info for " + url);
+    name: "Device Info",
+    bind: function(){
+        this.$$('device_info_data').bind(TangoWebapp.devices, "$data", function(device, devices){
+            this.clearAll();
+            if(!device) {
+                return;
+            }
 
-        $$('mainTabview').getTabbar().config.options[0].value = "Device info [" +url+ "]";
-        $$('mainTabview').getTabbar().refresh();
-
-        this.$$('device_info_data').loadNext(1,0,webix.bind(function(response){
-            this.show();
-            return response;
-        },this), url);
+            this.parse(
+                TangoWebapp.db.DbGetDeviceInfo(TangoWebapp.getDevice().name).then(
+                    function(response){
+                        var info = response.output;
+                        return {
+                            name: info.svalue[0],
+                            type_id: info.svalue[2],
+                            oir: info.svalue[1],
+                            iiop_version: "1.2",
+                            host: info.svalue[4], //TODO jive returns different
+                            port: 0,//TODO
+                            server: info.svalue[3],
+                            server_pid: info.lvalue[1],
+                            exported: info.lvalue[0] == 1,
+                            last_exported: info.svalue[5],
+                            last_unexported: info.svalue[6]
+                        }
+                    }
+                )
+            );
+        });
+    },
+    $init: function(){
+        this.$ready.push(this.bind);
     },
     defaults: {
         rows: [
@@ -25,33 +46,12 @@ webix.protoUI({
                     height: "auto",
                     width: "auto"
                 },
-                on: {
-                     onDataRequest: function (count, start, cbk, url) {
-                        TangoWebapp.db.DbGetDeviceInfo(url, cbk).then(webix.bind(function (response) {
-                            var info = response.output;
-                            this.clearAll();
-                            this.parse({
-                                name: info.svalue[0],
-                                type_id: info.svalue[2],
-                                oir: info.svalue[1],
-                                iiop_version: "1.2",
-                                host: info.svalue[4], //TODO jive returns different
-                                port: 0,//TODO
-                                server: info.svalue[3],
-                                server_pid: info.lvalue[1],
-                                exported: info.lvalue[0] == 1,
-                                last_exported: info.svalue[5],
-                                last_unexported: info.svalue[6]
-                            });
-                        }, this));
-                        return false;
-                    }
-                }
+                dataFeed: "..."
             }]
     }
-}, webix.IdSpace, webix.ui.layout);
+}, webix.IdSpace, TangoWebapp.DeviceTabActivator, webix.ui.layout);
 
 TangoWebapp.DeviceInfoViewConfig = {
-    view: "DeviceInfo",
+    view: "Device Info",
     id: "device_info"
 };
