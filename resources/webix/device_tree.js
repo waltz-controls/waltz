@@ -8,8 +8,7 @@ webix.protoUI({
                 var item = this.getContext().obj.getItem(this.getContext().id);
                 switch(id){
                     case "Test device":{
-                        $$("testDeviceWindow").getHead().setValues({name:item._name}, true); //TODO event
-                        $$("testDeviceWindow").show();
+                        webix.ui({view:"Device Panel"}).show();
                         break;
                     }
                     default:
@@ -167,7 +166,7 @@ webix.protoUI({
         onBeforeContextMenu: function (id, e, node) {
             var item = this.getItem(id);
             if (item.$level == 3) {//member
-                var url = this.getItem(this.getItem(item.$parent).$parent).value + '/' + this.getItem(item.$parent).value + '/' + item.value;
+                TangoWebapp.devices.setCursor(item._device_id);
                 this._ctxMenu.clearAll();
                 this._ctxMenu.parse(this._ctxMember);
                 return true;
