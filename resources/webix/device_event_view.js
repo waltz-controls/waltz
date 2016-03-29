@@ -1,12 +1,7 @@
 webix.protoUI({
-    name: "DeviceEvent",
+    name: "Device Event",
     defaults: {
         rows: [
-            {
-                view: "template",
-                type: "header",
-                template: "Event [#name#]"
-            },
             {
                 view: "tabview",
                 cells: [
@@ -60,9 +55,9 @@ webix.protoUI({
 
         ]
     }
-}, webix.IdSpace, webix.ui.layout);
+}, webix.IdSpace, TangoWebapp.DeviceTabActivator, webix.ui.layout);
 
 TangoWebapp.DeviceEventViewConfig = {
-    view: "DeviceEvent",
-    id: "Event"
+    view: "Device Event",
+    id: "device_events"
 };

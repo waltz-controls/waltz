@@ -3,7 +3,7 @@ include.css(
     
 );
 include.resources(
-    "tango_rest"
+    "tango_rest", "tango_helpers"
 );
 include.engines(
 );
@@ -24,6 +24,8 @@ include(function(){ //runs after prior includes are loaded
 });
 
 include.resources(
+    //
+    "webix/device_tab_activator",
     //
     "webix/device_tree", "webix/server_tree", "webix/toolbar",
     //dataviews

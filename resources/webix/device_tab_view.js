@@ -1,7 +1,6 @@
 webix.protoUI({
     name: "DeviceTabView",
     defaults:{
-        id:"device_tab_multiview",
         animate: false,
         cells: [
             TangoWebapp.DeviceInfoViewConfig,
@@ -19,5 +18,6 @@ webix.protoUI({
 
 
 TangoWebapp.DeviceTabConfig = webix.ui({
+    id:"device_tab_multiview",
     view: "DeviceTabView"
 });
