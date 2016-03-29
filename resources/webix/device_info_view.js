@@ -3,12 +3,10 @@ webix.protoUI({
     bind: function(){
         this.$$('device_info_data').bind(TangoWebapp.devices, "$data", function(device, devices){
             this.clearAll();
-            if(!device) {
-                return;
-            }
+            if(!device) return;
 
             this.parse(
-                TangoWebapp.db.DbGetDeviceInfo(TangoWebapp.getDevice().name).then(
+                TangoWebapp.db.DbGetDeviceInfo(device.name).then(
                     function(response){
                         var info = response.output;
                         return {

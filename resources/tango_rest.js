@@ -81,7 +81,7 @@ TangoREST.prototype._failure = function (resp) {
         webix.message({type: 'error', text: resp.statusText + ":" + resp.responseURL});
 
     }
-    //throw resp; //TODO
+    throw resp; //TODO
 };
 
 

@@ -1,23 +1,14 @@
 webix.protoUI({
     name: "Device Properties",
-    //show: function (url) {
-    //    webix.message("Requesting device properties for " + url);
-
-        //this.$$("header").setValues({name:url}, true);
-        //
-        //this.$$('device_info_data').loadNext(1,0,webix.bind(function(response){
-        //    this.show();
-        //    return response.json();
-        //},this), url);
-    //},
-    $init:function(){
-        this.$ready.push(function(){
-            this.$$('device_properties_data').bind($$('device_tree'), '$data', function(obj, source){
-                if (!obj) return this.clearAll();
-                var fulldata = [].concat(source.data.getBranch(obj.id)).concat(obj.records);
-                this.data.importData(fulldata, true);
-            });
+    bind:function(){
+        this.$$('device_properties_data').bind(TangoWebapp.devices, '$data', function(device, devices){
+            if(!device) return this.clearAll();
+            //this.parse(device.properties());
+            //TODO load from db
         });
+    },
+    $init:function(){
+        this.$ready.push(this.bind);
     },
     defaults: {
         rows: [
@@ -28,10 +19,7 @@ webix.protoUI({
                     {header: "Property name"},
                     {header: "Value"}
                 ],
-                data: '',
-                on:{
-
-                }
+                dataFeed: '...'
             },
             {
                 view: "toolbar",
