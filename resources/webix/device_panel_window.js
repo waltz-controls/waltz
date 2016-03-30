@@ -17,7 +17,7 @@ webix.protoUI({
             this.$$('commands-list').parse(device.commands());
         });
     },
-    _command: new View({url:'views/command_out.ejs'}),
+    _command: new View({url:'views/dev_panel_command_out.ejs'}),
     executeCommand:function(){
         var o = this.$$('frm').getValues();
 
@@ -95,6 +95,7 @@ webix.protoUI({
 
 webix.protoUI({
     _dataRecord: null,
+    _attribute_info:new View({url:'views/dev_panel_attribute_info.ejs'}),
     name: "DevPanelAttributes",
     $init:function(config){
         var device = this._device = config.device;
@@ -106,7 +107,7 @@ webix.protoUI({
                 var self = this;
                 TangoWebapp.rest.devices(device.name).attributes(attr.name).get('/info').then(function(resp){
                     self.getTopParentView()._dataRecord = new webix.DataRecord(resp);
-                    self.elements['info'].setValue(new View({url:'views/dev_panel_attribute_info.ejs'}).render(resp))
+                    self.elements['info'].setValue(self.getTopParentView()._attribute_info.render(resp))
                 });
 
 
@@ -196,7 +197,75 @@ webix.protoUI({
 webix.protoUI({
     _device:null,
     name:"Device Panel",
+    getBody:function(device){
+        return {
+            body: {
+                view: "layout",
+                rows: [
+                    {
+                        view: "tabview",
+                        cells: [
+                            {
+                                header: "Commands",
+                                body: {
+                                    view: "DevPanelCommands",
+                                    device: device
+                                }
+                            },
+                            {
+                                header: "Attributes",
+                                body: {
+                                    view: "DevPanelAttributes",
+                                    device: device
+                                }
+                            },
+                            {
+                                header: "Pipes",
+                                body: {
+                                    template: "Pipes body"
+                                }
+                            },
+                            {
+                                header: "Admin",
+                                body: {
+                                    template: "Admin body"
+                                }
+                            }
+                        ]
+                    },
+                    {view: "resizer"},
+                    {
+                        id: 'tmpLog',
+                        view: "textarea"
+                    },
+                    {
+                        view: "toolbar",
+                        cols: [
+                            {
+                                view: "button", id: "btnClear", value: "Clear history", width: 100, align: "right",
+                                click: function () {
+                                    this.getTopParentView().$$('tmpLog').setValue('');
+                                }
+                            },
+                            {
+                                view: "button",
+                                id: "btnDismiss",
+                                value: "Close",
+                                width: 100,
+                                align: "right",
+                                click: function () {
+                                    this.getTopParentView().close()
+                                }
+                            }]
+                    }
+
+                ]
+            }
+        };
+    },
     $init: function(config){
+        webix.extend(config, this.getBody(config.device));
+
         var device = this._device = config.device;
         this.$ready.push(function(){
             this.getHead().setValues({name:device.name});
