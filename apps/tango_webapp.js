@@ -19,7 +19,7 @@ include(function(){ //runs after prior includes are loaded
       "tango_webapp/main"
     );
   include.views(
-      "views/device_info", "views/command_out", "views/dev_panel_attribute_info", "views/dev_panel_attribute_out"
+      "views/device_info", "views/dev_panel_command_out", "views/dev_panel_attribute_info", "views/dev_panel_attribute_out"
     );
 });
 
