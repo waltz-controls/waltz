@@ -24,6 +24,17 @@ TangoREST.prototype.commands = function (name) {
     return this;
 };
 
+/**
+ *
+ * @param name
+ * @returns {TangoREST}
+ */
+TangoREST.prototype.attributes = function(name){
+    //TODO check devices branch
+    this._url += '/attributes/';
+    this._url += name;
+    return this;
+};
 
 /**
  * @returns {Promise}

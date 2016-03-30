@@ -11,8 +11,8 @@ TangoWebapp.MainController = MVC.Controller.extend('main', {
      */
     load: function (params) {
         //TODO ask user for rest_host
-        TangoWebapp.rest_api_url = 'http://localhost:8080/localhost/rest/rc2';
-        TangoWebapp.rest = new TangoREST(TangoWebapp.rest_api_url);
+        TangoWebapp.rest_api_url = 'http://localhost:8080/localhost/rest';
+        TangoWebapp.rest = new TangoREST(TangoWebapp.rest_api_url + '/rc2');
 
 
         TangoWebapp.db = new DataBase('sys/database/2');
