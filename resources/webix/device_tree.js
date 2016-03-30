@@ -8,7 +8,7 @@ webix.protoUI({
                 var item = this.getContext().obj.getItem(this.getContext().id);
                 switch(id){
                     case "Test device":{
-                        webix.ui({view:"Device Panel"}).show();
+                        TangoWebapp.openDevicePanel(TangoWebapp.getDevice());
                         break;
                     }
                     default:

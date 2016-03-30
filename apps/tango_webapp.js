@@ -19,7 +19,7 @@ include(function(){ //runs after prior includes are loaded
       "tango_webapp/main"
     );
   include.views(
-      "views/device_info"
+      "views/device_info", "views/command_out"
     );
 });
 
@@ -35,5 +35,5 @@ include.resources(
     //atk
     "webix/atk_panel_view",
     //windows
-    "webix/test_device_window"
+    "webix/device_panel_window"
 );

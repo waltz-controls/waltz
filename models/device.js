@@ -74,6 +74,13 @@ Device = MVC.Model.extend("device",
             this._attributes = promise.then(function(dev){ return dev.attributes;});
             this._commands = promise.then(function(dev){ return dev.commands;});
             this._properties = promise.then(function(dev){ return dev.properties;});
+        },
+        executeCommand:function(cmd, argin){
+            var command = TangoWebapp.rest.devices(this.name).commands(cmd);
+            if(argin)
+                return command.exec('input',argin);
+            else
+                return command.exec();
         }
 
     }
