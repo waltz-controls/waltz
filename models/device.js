@@ -81,6 +81,12 @@ Device = MVC.Model.extend("device",
                 return command.exec('input',argin);
             else
                 return command.exec();
+        },
+        readAttribute:function(attr){
+            return TangoWebapp.rest.devices(this.name).attributes(attr).get('/value');
+        },
+        writeAttribute:function(attr, argin){
+            return TangoWebapp.rest.devices(this.name).attributes(attr).put('?value=' + argin)
         }
 
     }
