@@ -23,7 +23,7 @@ webix.protoUI({
 
         var self = this;
         this.getTopParentView().updateLog(this._device.executeCommand(o.cmd_name, o.argin).then(function (resp) {
-            return self._command.render(resp);
+            return self._command.render(webix.extend(resp, {input:null}));
         }));
     },
     defaults: {
@@ -159,6 +159,16 @@ webix.protoUI({
             );
 
         } else if (o.data_format == "IMAGE") {
+            this._device.readAttribute(o.name).then(
+                function (resp) {
+                    webix.ui(
+                        {
+                            view: 'Image',
+                            name: device.name + '/' + resp.name,
+                            data: resp.value
+                        }).show();
+                }
+            );
 
         } else {
             webix.assert_error("Unsupported data format: " + o.data_format);

@@ -33,7 +33,7 @@ include.resources(
     "webix/device_attribute_config_view", "webix/device_logging_view", "webix/device_pipe_config_view", "webix/device_attribute_properties_view",
     //"webix/device_tab_view",
     //plot
-    "webix/spectrum_plot",
+    "webix/spectrum_plot","webix/image_plot",
     //atk
     "webix/atk_panel_view",
     //windows

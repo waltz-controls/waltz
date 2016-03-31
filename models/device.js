@@ -77,7 +77,7 @@ Device = MVC.Model.extend("device",
         },
         executeCommand:function(cmd, argin){
             var command = TangoWebapp.rest.devices(this.name).commands(cmd);
-            if(argin)
+            if(argin && argin != "")
                 return command.exec('input',argin);
             else
                 return command.exec();
