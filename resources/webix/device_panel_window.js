@@ -10,7 +10,7 @@ webix.protoUI({
                     return resp.info;
                 }));
                 this.elements['btnExecCmd'].enable();
-                //TODO enable plot
+                this.elements['btnPlotCmd'].enable(); //TODO enable conditionally
             })
         });
         this.$ready.push(function () {
@@ -25,6 +25,21 @@ webix.protoUI({
         this.getTopParentView().updateLog(this._device.executeCommand(o.cmd_name, o.argin).then(function (resp) {
             return self._command.render(webix.extend(resp, {input:null}));
         }));
+    },
+    plotCommand:function(){
+        var o = this.$$('frm').getValues();
+        var device = this._device;
+            this._device.executeCommand(o.cmd_name, o.argin).then(
+                function (resp) {
+                    webix.ui(
+                        {
+                            view: 'Plot',
+                            name: device.name + '/' + resp.name,
+                            data: resp.output
+                        }).show();
+                }
+            );
+
     },
     defaults: {
         cols: [
@@ -80,11 +95,11 @@ webix.protoUI({
                     },
                     {
                         view: 'button',
-                        id: 'btnPlotCmd',
+                        name: 'btnPlotCmd',
                         disabled: true,
                         value: 'Plot',
                         click: function () {
-
+                            this.getTopParentView().plotCommand();
                         }
                     }
                 ]
