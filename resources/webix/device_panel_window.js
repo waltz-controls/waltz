@@ -1,28 +1,28 @@
 webix.protoUI({
     name: "DevPanelCommands",
-    $init: function(config){
+    $init: function (config) {
         var device = this._device = config.device;
-        this.$ready.push(function(){
-            this.$$('frm').bind(this.$$('commands-list'),'$data',function(cmd, cmds){
-                if(!cmd) return this.clear();
-                if(webix.debug_bind) webix.message("Requesting data for cmd " + cmd.name);
-                this.parse(TangoWebapp.rest.devices(device.name).commands(cmd.name).get().then(function(resp){
+        this.$ready.push(function () {
+            this.$$('frm').bind(this.$$('commands-list'), '$data', function (cmd, cmds) {
+                if (!cmd) return this.clear();
+                if (webix.debug_bind) webix.message("Requesting data for cmd " + cmd.name);
+                this.parse(TangoWebapp.rest.devices(device.name).commands(cmd.name).get().then(function (resp) {
                     return resp.info;
                 }));
                 this.elements['btnExecCmd'].enable();
                 //TODO enable plot
             })
         });
-        this.$ready.push(function(){
+        this.$ready.push(function () {
             this.$$('commands-list').parse(device.commands());
         });
     },
-    _command: new View({url:'views/dev_panel_command_out.ejs'}),
-    executeCommand:function(){
+    _command: new View({url: 'views/dev_panel_command_out.ejs'}),
+    executeCommand: function () {
         var o = this.$$('frm').getValues();
 
         var self = this;
-        this.getTopParentView().updateLog(this._device.executeCommand(o.cmd_name, o.argin).then(function(resp){
+        this.getTopParentView().updateLog(this._device.executeCommand(o.cmd_name, o.argin).then(function (resp) {
             return self._command.render(resp);
         }));
     },
@@ -91,54 +91,80 @@ webix.protoUI({
             }
         ]
     }
-}, webix.IdSpace ,webix.ui.layout);
+}, webix.IdSpace, webix.ui.layout);
 
 webix.protoUI({
     _dataRecord: null,
-    _attribute_info:new View({url:'views/dev_panel_attribute_info.ejs'}),
+    _attribute_info: new View({url: 'views/dev_panel_attribute_info.ejs'}),
     name: "DevPanelAttributes",
-    $init:function(config){
+    $init: function (config) {
         var device = this._device = config.device;
-        this.$ready.push(function(){
-            this.$$('frm').bind(this.$$('attributes-list'),'$data',function(attr, attrs){
-                if(!attr) return this.clear();
-                if(webix.debug_bind) webix.message("Requesting data for attr " + attr.name);
+        this.$ready.push(function () {
+            this.$$('frm').bind(this.$$('attributes-list'), '$data', function (attr, attrs) {
+                if (!attr) return this.clear();
+                if (webix.debug_bind) webix.message("Requesting data for attr " + attr.name);
 
                 var self = this;
-                TangoWebapp.rest.devices(device.name).attributes(attr.name).get('/info').then(function(resp){
+                TangoWebapp.rest.devices(device.name).attributes(attr.name).get('/info').then(function (resp) {
                     self.getTopParentView()._dataRecord = new webix.DataRecord(resp);
                     self.elements['info'].setValue(self.getTopParentView()._attribute_info.render(resp))
+                    self.elements['btnRead'].enable();
+                    if (resp.writable.contains("WRITE"))
+                        self.elements['btnWrite'].enable();
+                    else
+                        self.elements['btnWrite'].disable();
+                    if (resp.data_format == 'SPECTRUM' || resp.data_format == 'IMAGE') {
+                        self.elements['btnPlot'].enable();
+                    } else {
+                        self.elements['btnPlot'].disable();
+                    }
                 });
-
-
-                this.elements['btnRead'].enable();
-                this.elements['btnWrite'].enable();
-                //TODO enable plot
             })
         });
-        this.$ready.push(function(){
+        this.$ready.push(function () {
             this.$$('attributes-list').parse(device.attributes());
         });
     },
-    _attribute_out: new View({url:'views/dev_panel_attribute_out.ejs'}),
-    readAttribute:function(){
+    _attribute_out: new View({url: 'views/dev_panel_attribute_out.ejs'}),
+    readAttribute: function () {
         var o = this._dataRecord.getValues();
 
         var self = this;
-        this.getTopParentView().updateLog(this._device.readAttribute(o.name).then(function(resp){
+        this.getTopParentView().updateLog(this._device.readAttribute(o.name).then(function (resp) {
             return self._attribute_out.render(resp);
         }));
     },
-    writeAttribute:function(){
+    writeAttribute: function () {
         var argin = this.$$('frm').elements['argin'].getValue();
         var o = this._dataRecord.getValues();
 
         var self = this;
-        this.getTopParentView().updateLog(this._device.writeAttribute(o.name, argin).then(function(resp){
+        this.getTopParentView().updateLog(this._device.writeAttribute(o.name, argin).then(function (resp) {
             return self._attribute_out.render(resp);
         }));
     },
-    defaults:{
+    plotAttribute: function () {
+        var o = this._dataRecord.getValues();
+        var device = this._device;
+        if (o.data_format == "SPECTRUM") {
+            this._device.readAttribute(o.name).then(
+                function (resp) {
+                    webix.ui(
+                        {
+                            view: 'Plot',
+                            name: device.name + '/' + resp.name,
+                            data: resp.value
+                        }).show();
+                }
+            );
+
+        } else if (o.data_format == "IMAGE") {
+
+        } else {
+            webix.assert_error("Unsupported data format: " + o.data_format);
+        }
+    },
+    defaults: {
         cols: [
             {
                 view: "list",
@@ -195,9 +221,9 @@ webix.protoUI({
 }, webix.IdSpace, webix.ui.layout);
 
 webix.protoUI({
-    _device:null,
-    name:"Device Panel",
-    getBody:function(device){
+    _device: null,
+    name: "Device Panel",
+    getBody: function (device) {
         return {
             body: {
                 view: "layout",
@@ -263,17 +289,17 @@ webix.protoUI({
             }
         };
     },
-    $init: function(config){
+    $init: function (config) {
         webix.extend(config, this.getBody(config.device));
 
         var device = this._device = config.device;
-        this.$ready.push(function(){
-            this.getHead().setValues({name:device.name});
+        this.$ready.push(function () {
+            this.getHead().setValues({name: device.name});
         })
     },
-    updateLog:function(promise){
+    updateLog: function (promise) {
         var log = this.$$('tmpLog');
-        promise.then(function(val){
+        promise.then(function (val) {
             log.setValue(log.getValue() + "\n" + val);
         });
     },
@@ -284,4 +310,4 @@ webix.protoUI({
         height: 640,
         width: 720
     }
-},webix.IdSpace,webix.EventSystem,webix.ui.window);
+}, webix.IdSpace, webix.EventSystem, webix.ui.window);
