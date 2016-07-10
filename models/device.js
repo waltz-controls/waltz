@@ -56,10 +56,8 @@ Device = MVC.Model.extend("device",
          * @return promise
          */
         properties:function(){
-            if(this._properties == null){
-                this.update();
-            }
-            return this._properties;
+            var properties = TangoWebapp.rest.devices(this.name).get("/properties");
+            return properties;
         },
         /**
          *
@@ -73,7 +71,7 @@ Device = MVC.Model.extend("device",
             this._info = promise.then(function(dev){return dev.info;});
             this._attributes = promise.then(function(dev){ return dev.attributes;});
             this._commands = promise.then(function(dev){ return dev.commands;});
-            this._properties = promise.then(function(dev){ return dev.properties;});
+            //this._properties = promise.then(function(dev){ return dev.properties;});
         },
         executeCommand:function(cmd, argin){
             var command = TangoWebapp.rest.devices(this.name).commands(cmd);
