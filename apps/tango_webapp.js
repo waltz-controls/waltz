@@ -16,7 +16,7 @@ include(function(){ //runs after prior includes are loaded
       "data_base","device"
     );
   include.controllers(
-      "tango_webapp/main"
+      "tango_webapp/main", "tango_webapp/webix/device_properties_view"
     );
   include.views(
       "views/device_info", "views/dev_panel_command_out", "views/dev_panel_attribute_info", "views/dev_panel_attribute_out"

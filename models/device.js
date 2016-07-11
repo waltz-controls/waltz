@@ -16,7 +16,7 @@ Device = MVC.Model.extend("device",
         /**
          *
          * @constructor
-         * @param attrs
+         * @param name
          */
         init: function(name){
             this._super({name:name});
@@ -85,7 +85,25 @@ Device = MVC.Model.extend("device",
         },
         writeAttribute:function(attr, argin){
             return TangoWebapp.rest.devices(this.name).attributes(attr).put('?value=' + argin)
-        }
+        },
+        updateProperties: function (props) {
+            function toUrl(props) {
+                var result = [];
+                for (var p in props) {
+                    if (!props.hasOwnProperty(p)) continue;
 
+                    var values = props[p];
+                    result.push.apply(result, values.map(function (el) {
+                        return p + "=" + el;
+                    }));
+                }
+                return result.join('&');
+            }
+
+            TangoWebapp.rest.devices(this.name).properties().put('?' + toUrl(props));
+        },
+        deleteProperty: function (name) {
+            TangoWebapp.rest.devices(this.name).properties().delete('/' + name);
+        }
     }
 );

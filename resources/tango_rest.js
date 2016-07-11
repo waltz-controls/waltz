@@ -13,6 +13,14 @@ TangoREST.prototype.devices = function (name) {
 };
 
 /**
+ * @returns {TangoREST}
+ */
+TangoREST.prototype.properties = function () {
+    this._url += '/properties';
+    return this;
+};
+
+/**
  *
  * @param name
  * @returns {TangoREST}
@@ -72,13 +80,17 @@ TangoREST.prototype._resetUrl = function () {
  * @private
  */
 TangoREST.prototype._success = function (resp) {
-    var json = resp.json();
+    if (resp.text().length != 0) {
+        var json = resp.json();
 
-    if (json.quality == 'FAILURE') {
-        throw json;
+        if (json.quality == 'FAILURE') {
+            throw json;
+        }
+
+        return json;
+    } else {
+        webix.log("Response content is empty...");
     }
-
-    return json;
 };
 
 TangoREST.prototype._failure = function (resp) {
@@ -115,4 +127,10 @@ TangoREST.prototype.put = function (what) {
     var url = this._resetUrl();
     if (what) url += what;
     return webix.ajax().put(url).then(this._success).fail(this._failure);
+};
+
+TangoREST.prototype.delete = function (what) {
+    var url = this._resetUrl();
+    if (what) url += what;
+    return webix.ajax().del(url).then(this._success).fail(this._failure);
 };
