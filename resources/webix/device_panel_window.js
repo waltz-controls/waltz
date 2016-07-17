@@ -23,7 +23,7 @@ webix.protoUI({
 
         var self = this;
         this.getTopParentView().updateLog(this._device.executeCommand(o.cmd_name, o.argin).then(function (resp) {
-            return self._command.render(webix.extend(resp, {input:null}));
+            return self._command.render(webix.extend(resp, {input:null, output:null}));
         }));
     },
     plotCommand:function(){
@@ -246,6 +246,88 @@ webix.protoUI({
 }, webix.IdSpace, webix.ui.layout);
 
 webix.protoUI({
+    name: "DevPanelPipes",
+    $init: function (config) {
+        var device = this._device = config.device;
+        this.$ready.push(function () {
+            this.$$('frm').bind(this.$$('pipes-list'), '$data', function (pipe, cmds) {
+                if (!pipe) return this.clear();
+                if (webix.debug_bind) webix.message("Requesting data for pipe " + pipe.name);
+                this.elements['btnRead'].enable();
+                this.elements['btnWrite'].enable();
+            })
+        });
+        this.$ready.push(function () {
+            this.$$('pipes-list').parse(device.pipes());
+        });
+    },
+    _output: new View({url: 'views/dev_panel_pipe_out.ejs'}),
+    readPipe: function () {
+        var o = this.$$('pipes-list').getSelectedItem();
+
+        var self = this;
+        this.getTopParentView().updateLog(this._device.readPipe(o.name).then(function (resp) {
+            return self._output.render(resp);
+        }));
+    },
+    writePipe:function(){
+        var pipe = this.$$('pipes-list').getSelectedItem();
+        var argin = JSON.parse(this.$$('frm').getValues().argin);
+        this.getTopParentView().updateLog(this._device.writePipe(pipe.name, argin).then(function (resp) {
+            return this._output.render(resp);
+        }.bind(this)));
+    },
+    defaults: {
+        cols: [
+            {
+                view: "list",
+                id: 'pipes-list',
+                select: true,
+                template: "#name#"
+            },
+            {
+                id: 'frm',
+                view: 'form',
+                //dataFeed: '...',
+                elements: [
+                    {
+                        view: 'textarea',
+                        name: 'argin'
+                    },
+                    {
+                        view: 'button',
+                        name: 'btnRead',
+                        value: 'Read',
+                        disabled: true,
+                        click: function () {
+                            this.getTopParentView().readPipe();
+                        }
+                    },
+                    {
+                        view: 'button',
+                        name: 'btnWrite',
+                        disabled: true,
+                        value: 'Write',
+                        click: function () {
+                            this.getTopParentView().writePipe();
+                        }
+                    },
+                    {
+                        view: 'button',
+                        name: 'btnHelp',
+                        disabled: true,
+                        value: 'Help',
+                        click: function () {
+                            this.getTopParentView().help();
+                        }
+                    }
+                ]
+            }
+        ]
+    }
+}, webix.IdSpace, webix.ui.layout);
+
+webix.protoUI({
     _device: null,
     name: "Device Panel",
     getBody: function (device) {
@@ -273,7 +355,8 @@ webix.protoUI({
                             {
                                 header: "Pipes",
                                 body: {
-                                    template: "Pipes body"
+                                    view: "DevPanelPipes",
+                                    device: device
                                 }
                             },
                             {

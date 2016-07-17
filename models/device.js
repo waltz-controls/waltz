@@ -12,6 +12,7 @@ Device = MVC.Model.extend("device",
         _info:null,
         _commands:null,
         _attributes:null,
+        _pipes: null,
         _properties:null,
         /**
          *
@@ -51,6 +52,15 @@ Device = MVC.Model.extend("device",
             }
             return this._attributes;
         },
+        pipes:function(){
+            var pipes = TangoWebapp.rest.devices(this.name).get("/pipes");
+            return pipes;
+            //TODO mTangoSDK #103
+            //if(this._pipes == null){
+            //    this.update();
+            //}
+            //return this._pipes;
+        },
         /**
          *
          * @return promise
@@ -71,7 +81,7 @@ Device = MVC.Model.extend("device",
             this._info = promise.then(function(dev){return dev.info;});
             this._attributes = promise.then(function(dev){ return dev.attributes;});
             this._commands = promise.then(function(dev){ return dev.commands;});
-            //this._properties = promise.then(function(dev){ return dev.properties;});
+            this._pipes = promise.then(function(dev){ return dev.pipes;});
         },
         executeCommand:function(cmd, argin){
             var command = TangoWebapp.rest.devices(this.name).commands(cmd);
@@ -104,6 +114,12 @@ Device = MVC.Model.extend("device",
         },
         deleteProperty: function (name) {
             TangoWebapp.rest.devices(this.name).properties().delete('/' + name);
+        },
+        readPipe:function(name){
+            return TangoWebapp.rest.devices(this.name).pipes(name).get();
+        },
+        writePipe:function(name, obj){
+            return TangoWebapp.rest.devices(this.name).pipes(name).put("",obj);
         }
     }
 );
