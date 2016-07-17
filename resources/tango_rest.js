@@ -21,6 +21,14 @@ TangoREST.prototype.properties = function () {
 };
 
 /**
+ * @returns {TangoREST}
+ */
+TangoREST.prototype.pipes = function (name) {
+    this._url += '/pipes/' + name;
+    return this;
+};
+
+/**
  *
  * @param name
  * @returns {TangoREST}
@@ -123,10 +131,12 @@ TangoREST.prototype.get = function (what) {
  *
  * @returns {Promise}
  */
-TangoREST.prototype.put = function (what) {
+TangoREST.prototype.put = function (what, data) {
     var url = this._resetUrl();
     if (what) url += what;
-    return webix.ajax().put(url).then(this._success).fail(this._failure);
+    return webix.ajax().headers({
+        "Content-type":"application/json"
+    }).put(url, data).then(this._success).fail(this._failure);
 };
 
 TangoREST.prototype.delete = function (what) {
