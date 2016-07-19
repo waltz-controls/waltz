@@ -1,0 +1,241 @@
+<?xml version="1.0"?>
+<project name="JavaScriptMVC ant utilities" basedir="../..">
+    <echo>Basedir = ${basedir}</echo>
+
+    <property environment="env"/>
+    <property name="application.name" value="${app}"/>
+    <echo>application.name = ${application.name}</echo>
+    <property name="build.dir" value="${target.directory}"/>
+    <echo>build.dir = ${build.dir}</echo>
+
+    <target name="test">
+        <echo>Running unit tests...</echo>
+        <exec executable="cmd" failonerror="true" failifexecutionfails="true" osfamily="windows">
+            <arg line="/c"/>
+            <arg line="js.bat"/>
+            <arg line="apps/${application.name}/run_unit.js"/>
+        </exec>
+        <exec executable="${basedir}/js.sh" failonerror="true" failifexecutionfails="true" osfamily="unix">
+            <arg line="apps/${application.name}/run_unit.js"/>
+        </exec>
+    </target>
+
+
+    <target name="compress-javascript">
+        <echo>Compressing javascript...</echo>
+        <exec executable="cmd" failonerror="true" failifexecutionfails="true" osfamily="windows">
+            <arg line="/c"/>
+            <arg line="js.bat"/>
+            <arg line="apps/${application.name}/compress.js"/>
+        </exec>
+        <exec executable="${basedir}/js.sh" failonerror="true" failifexecutionfails="true" osfamily="unix">
+            <arg line="apps/${application.name}/compress.js"/>
+        </exec>
+        <antcall target="-post-compress-javascript"/>
+    </target>
+
+    <target name="-post-compress-javascript">
+        <fail message="production.js was not found. Task 'compress-javascript' has failed.">
+            <condition>
+                <not>
+                    <available file="production.js" filepath="apps/${application.name}"/>
+                </not>
+            </condition>
+        </fail>
+    </target>
+
+    <!--TODO -->
+    <target name="compress-css">
+        <!--<echo>Compressing css...</echo>-->
+        <!--<echo>Executing: java -jar exec/yuicompressor-2.4.7.jar - -type css -o '.css$:.min.css'-->
+        <!--${src}/stylesheets/*.css-->
+        <!--</echo>-->
+        <!--<exec dir="${root}" executable="cmd" failonerror="true" failifexecutionfails="true">-->
+        <!--<arg line="/c"/>-->
+        <!--<arg line="java"/>-->
+        <!--<arg line="-jar"/>-->
+        <!--<arg line="exec/yuicompressor-2.4.7.jar"/>-->
+        <!--<arg line="- -type"/>-->
+        <!--<arg line="css"/>-->
+        <!--<arg line="-o"/>-->
+        <!--<arg line="'.css$:.min.css'"/>-->
+        <!--<arg line="${src}/stylesheets/*.css"/>-->
+        <!--</exec>-->
+    </target>
+
+
+    <target name="-copy-jmvc-core">
+        <copy todir="${build.dir}/jmvc" overwrite="true">
+            <fileset dir="jmvc">
+                <include name="include.js"/>
+            </fileset>
+        </copy>
+    </target>
+
+    <target name="-move-app-productionjs">
+        <move todir="${build.dir}/apps/${application.name}">
+            <fileset dir="apps/${application.name}">
+                <include name="**/production.js"/>
+            </fileset>
+        </move>
+    </target>
+
+    <target name="-copy-app-mainjs">
+        <copy todir="${build.dir}/apps/">
+            <fileset dir="apps">
+                <include name="**/${application.name}.js"/>
+            </fileset>
+        </copy>
+    </target>
+
+    <target name="-copy-libs">
+        <copy todir="${build.dir}/libs/">
+            <fileset dir="libs">
+                <include name="*.min.js"/>
+            </fileset>
+        </copy>
+    </target>
+
+    <target name="-copy-app-resources">
+        <copy todir="${build.dir}/resources/">
+            <fileset dir="resources">
+                <!--shared resources-->
+                <include name="*.*"/>
+                <!--app resources-->
+                <include name="**/${application.name}/*.*"/>
+            </fileset>
+        </copy>
+    </target>
+
+    <target name="-copy-app-images">
+        <copy todir="${build.dir}/images">
+            <fileset dir="images">
+                <!--shared images-->
+                <include name="*.gif"/>
+                <include name="*.png"/>
+                <include name="*.jpg"/>
+                <!--app images-->
+                <include name="**/${application.name}/*.gif"/>
+                <include name="**/${application.name}/*.png"/>
+                <include name="**/${application.name}/*.jpg"/>
+            </fileset>
+        </copy>
+    </target>
+
+    <target name="-copy-app-stylesheets">
+        <copy todir="${build.dir}/stylesheets">
+            <fileset dir="stylesheets">
+                <include name="*.css"/>
+                <!--jquery ui theme-->
+                <include name="smoothness/**/*.*"/>
+                <!-- app specific css -->
+                <include name="**/${application.name}/*.css"/>
+            </fileset>
+        </copy>
+        <!-- TODO if images then copy-->
+        <!--<copy todir="${build.dir}/stylesheets/images">
+            <fileset dir="stylesheets/images">
+                <include name="**/*.*"/>
+            </fileset>
+        </copy>-->
+    </target>
+
+    <target name="-copy-engines">
+        <copy todir="${build.dir}/engines">
+            <fileset dir="engines">
+                <!--js files are already included in production.js-->
+                <include name="**/*.css"/>
+                <include name="**/*.gif"/>
+                <include name="**/*.png"/>
+                <include name="**/*.jpg"/>
+            </fileset>
+        </copy>
+    </target>
+
+    <target name="generate-production-html">
+        <copy file="apps/${application.name}/index.html" todir="${build.dir}" overwrite="true"/>
+        <replace file="${build.dir}/index.html">
+            <replacefilter token=",development" value=",production"/>
+            <replacefilter token=",test" value=",production"/>
+            <replacefilter token="../../jmvc/include.js?" value="jmvc/include.js?"/>
+            <replacefilter token=".js" value=".min.js"/>
+            <replacefilter token="../../" value=""/>
+            <replacefilter token="jmvc/include.min.js?" value="jmvc/include.js?"/>
+        </replace>
+    </target>
+
+    <target name="-copy-index-html">
+        <copy file="apps/${application.name}/index.html" todir="${to.dir}" overwrite="true"/>
+        <replace file="${to.dir}/index.html">
+            <replacefilter token=",development" value=",production"/>
+            <replacefilter token=",test" value=",production"/>
+            <replacefilter token=".js" value=".min.js"/>
+            <replacefilter token="jmvc/include.min.js?" value="jmvc/include.js?"/>
+        </replace>
+    </target>
+
+    <target name="build" depends="compress-javascript,compress-css">
+        <echo>Making build dir...</echo>
+        <mkdir dir="${build.dir}"/>
+        <antcall target="-copy-jmvc-core"/>
+
+        <antcall target="-copy-engines"/>
+
+        <antcall target="-move-app-productionjs"/>
+
+        <antcall target="-copy-app-mainjs"/>
+
+        <antcall target="-copy-libs"/>
+
+        <antcall target="-copy-app-resources"/>
+
+        <antcall target="-copy-app-images"/>
+
+        <antcall target="-copy-app-stylesheets"/>
+
+        <antcall target="-copy-index-html">
+            <param name="to.dir" value="${build.dir}/apps/${application.name}"/>
+        </antcall>
+    </target>
+
+    <target name="-apply-ant-target">
+        <property name="target" value="${target}"/>
+        <dirset dir="apps" includes="*" id="jmvc.apps"/>
+
+        <apply executable="ant" dir="${basedir}" relative="true"
+               verbose="true" failonerror="true" parallel="false" osfamily="unix">
+            <dirset refid="jmvc.apps"/>
+            <arg line="-f jmvc/ant/build.xml"/>
+            <arg value="${target}"/>
+            <arg value="-Dtarget.directory=${build.dir}"/>
+            <srcfile prefix="-Dapp="/>
+        </apply>
+
+        <apply executable="cmd" dir="${basedir}" relative="true"
+               verbose="true" failonerror="true" parallel="false" osfamily="windows">
+            <dirset refid="jmvc.apps"/>
+            <arg value="/c"/>
+            <arg value="ant"/>
+            <arg line="-f jmvc\ant\build.xml"/>
+            <arg value="${target}"/>
+            <arg value="-Dtarget.directory=${build.dir}"/>
+            <arg value="-Dapp="/>
+        </apply>
+    </target>
+
+    <target name="build-all">
+        <antcall target="-apply-ant-target">
+            <param name="target">build</param>
+        </antcall>
+    </target>
+
+    <target name="test-all">
+        <antcall target="-apply-ant-target">
+            <param name="target">test</param>
+        </antcall>
+    </target>
+
+    <target name="clean">
+        <delete dir="${build.dir}"/>
+    </target>
+</project>

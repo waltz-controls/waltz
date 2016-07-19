@@ -1,0 +1,22 @@
+if(!_args[0]){
+	print("USAGE: js jmvc/remove/app name\n")
+	print("name     := under_scoped_name.\n");
+	quit();
+}
+load('jmvc/generate/loader.js');
+
+var app_name = _args[0];
+
+var app = load_app(app_name);
+
+MVCOptions.remove('apps/' + app.name);
+print("Deleting... apps/" + app.name);
+MVCOptions.remove('apps/' + app.name + '.js');
+print("            apps/" + app.name + ".js");
+['controllers','models','resources','stylesheets','test/unit','test/functional','test/fixtures','views'].forEach(function(entity){
+    MVCOptions.remove(entity + '/' + app.name);
+    print("            "+entity+"/"+ app.name);
+});
+
+print("            Done!");
+
