@@ -1,15 +1,20 @@
 webix.protoUI({
-    name: "Device Pipe Config",
-    defaults: {
+    name: "Device Pipe Config"
+}, webix.IdSpace, TangoWebapp.DeviceTabActivator, webix.ui.layout);
+
+TangoWebapp.newDevicePipeConf = function () {
+    return {
+        view: "Device Pipe Config",
+        id  : "device_pipe_config",
         rows: [
             {
-                view: "tabview",
+                view : "tabview",
                 cells: [
                     {
                         header: "Label",
-                        body: {
-                            id: "label",
-                            view: "datatable",
+                        body  : {
+                            id     : "label",
+                            view   : "datatable",
                             columns: [
                                 {header: "Pipe name"},
                                 {header: "Label"}
@@ -19,9 +24,9 @@ webix.protoUI({
                     },
                     {
                         header: "Description",
-                        body: {
-                            id: "description",
-                            view: "datatable",
+                        body  : {
+                            id     : "description",
+                            view   : "datatable",
                             columns: [
                                 {header: "Pipe name"},
                                 {header: "Description"}
@@ -31,9 +36,9 @@ webix.protoUI({
                     },
                     {
                         header: "Settings",
-                        body: {
-                            id: "settings",
-                            view: "datatable",
+                        body  : {
+                            id     : "settings",
+                            view   : "datatable",
                             columns: [
                                 {header: "Parameters name"},
                                 {header: "Value"}
@@ -52,10 +57,6 @@ webix.protoUI({
             }
 
         ]
-    }
-}, webix.IdSpace, TangoWebapp.DeviceTabActivator, webix.ui.layout);
 
-TangoWebapp.DevicePipeConfViewConfig = {
-    view: "Device Pipe Config",
-    id: "device_pipe_config"
+    }
 };

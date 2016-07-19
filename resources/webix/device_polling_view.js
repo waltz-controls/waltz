@@ -1,6 +1,11 @@
 webix.protoUI({
-    name: "Device Polling",
-    defaults: {
+    name: "Device Polling"
+}, webix.IdSpace, TangoWebapp.DeviceTabActivator, webix.ui.layout);
+
+TangoWebapp.newDevicePolling = function () {
+    return {
+        view: "Device Polling",
+        id  : "device_polling",
         rows: [
             {
                 view: "tabview",
@@ -55,9 +60,4 @@ webix.protoUI({
 
         ]
     }
-}, webix.IdSpace, TangoWebapp.DeviceTabActivator, webix.ui.layout);
-
-TangoWebapp.DevicePollingViewConfig = {
-    view: "Device Polling",
-    id: "device_polling"
 };
