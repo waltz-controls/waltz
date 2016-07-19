@@ -27,7 +27,7 @@ webix.protoUI({
                             {
                                 header: "Start page",
                                 body  : {
-                                    template: "Hello"
+                                    template: new View({url:'views/start_page.ejs'}).render()
                                 }
                             }
                         ]

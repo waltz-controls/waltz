@@ -1,4 +1,5 @@
-TangoWebapp.DevicePropertiesView = {
+webix.protoUI({
+    name    : "DeviceProperties",
     refresh              : function () {
         var deviceProperties = this.getTopParentView();
         var dtable = deviceProperties.$$('device_properties_data');
@@ -35,84 +36,84 @@ TangoWebapp.DevicePropertiesView = {
         });
 
         dtable.remove(dtable.getSelectedId());
-    }
-};
-
-webix.protoUI({
-    name    : "DeviceProperties",
+    },
     _device : null,
-    $init   : function () {
+    _getUI: function(){
+        var top = this;
+        return {
+            rows: [
+                {
+                    view    : "datatable",
+                    id      : "device_properties_data",
+                    select     : "row",
+                    multiselect: true,
+                    editable   : true,
+                    columns : [
+                        {id: "name", header: "Property name", minWidth: 200},
+                        {id: "values", header: "Value", fillspace: true, editor: "text"}
+                    ],
+                    dataFeed: '...'
+                },
+                {
+                    view    : "form",
+                    id      : "frmNewProperty",
+                    elements: [
+                        {
+                            margin: 5,
+                            cols  : [
+                                {
+                                    view : "button",
+                                    id   : "btnNewPropertyAdd",
+                                    value: "Add",
+                                    type : "form",
+                                    click: top.addNewProperty, maxWidth: 100
+                                },
+                                {view: "text", name: "name", validate: webix.rules.isNotEmpty, width: 200},
+                                {view: "text", name: "values", validate: webix.rules.isNotEmpty, fillspace: true}
+                            ]
+                        }
+                    ]
+                },
+                {
+                    view: "toolbar",
+                    id: "devPropertiesToolbar",
+                    cols: [
+                        {
+                            view : "button",
+                            id   : "btnRefresh",
+                            value: "Refresh",
+                            width: 100,
+                            align: "left",
+                            click: top.refresh
+                        },
+                        {
+                            view : "button",
+                            id   : "btnApply",
+                            value: "Apply",
+                            width: 100,
+                            align: "left",
+                            click: top.apply
+                        },
+                        {
+                            view : "button",
+                            id   : "btnDelete",
+                            value: "Delete",
+                            width: 100,
+                            align: "left",
+                            click: top.remove
+                        }]
+                }
+            ]
+        }
+    },
+    $init   : function (config) {
+        webix.extend(config, this._getUI());
         this.$ready.push(function () {
             this.$$('device_properties_data').parse(this._device.properties());
         }.bind(this));
         this.$ready.push(function () {
             this.$$('frmNewProperty').bind(this.$$('device_properties_data'));
         }.bind(this));
-    },
-    defaults: {
-        rows: [
-            {
-                view    : "datatable",
-                id      : "device_properties_data",
-                select     : "row",
-                multiselect: true,
-                editable   : true,
-                columns : [
-                    {id: "name", header: "Property name", minWidth: 200},
-                    {id: "values", header: "Value", fillspace: true, editor: "text"}
-                ],
-                dataFeed: '...'
-            },
-            {
-                view    : "form",
-                id      : "frmNewProperty",
-                elements: [
-                    {
-                        margin: 5,
-                        cols  : [
-                            {
-                                view : "button",
-                                id   : "btnNewPropertyAdd",
-                                value: "Add",
-                                type : "form",
-                                click: TangoWebapp.DevicePropertiesView.addNewProperty, maxWidth: 100
-                            },
-                            {view: "text", name: "name", validate: webix.rules.isNotEmpty, width: 200},
-                            {view: "text", name: "values", validate: webix.rules.isNotEmpty, fillspace: true}
-                        ]
-                    }
-                ]
-            },
-            {
-                view: "toolbar",
-                id: "devPropertiesToolbar",
-                cols: [
-                    {
-                        view : "button",
-                        id   : "btnRefresh",
-                        value: "Refresh",
-                        width: 100,
-                        align: "left",
-                        click: TangoWebapp.DevicePropertiesView.refresh
-                    },
-                    {
-                        view : "button",
-                        id   : "btnApply",
-                        value: "Apply",
-                        width: 100,
-                        align: "left",
-                        click: TangoWebapp.DevicePropertiesView.apply
-                    },
-                    {
-                        view : "button",
-                        id   : "btnDelete",
-                        value: "Delete",
-                        width: 100,
-                        align: "left",
-                        click: TangoWebapp.DevicePropertiesView.remove
-                    }]
-            }
-        ]
     }
 }, webix.IdSpace, webix.EventSystem, TangoWebapp.DeviceSetter, TangoWebapp.DeviceTabActivator, webix.ui.layout);
 

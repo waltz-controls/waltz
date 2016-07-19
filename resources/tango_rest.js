@@ -104,13 +104,12 @@ TangoREST.prototype._success = function (resp) {
 TangoREST.prototype._failure = function (resp) {
     if (resp.errors && resp.errors.length > 0) //tango rest specific
         for (var i = 0, size = resp.errors.length; i < size; ++i) {
-            console.error(resp.errors[i].severity + ":" + resp.errors[i].description);
             webix.message({type: 'error', text: resp.errors[i].description});
+            console.error(resp.errors[i].severity + ":" + resp.errors[i].description);
         }
     else { //general failure
-        console.error(resp.statusText + ":" + resp.responseURL);
         webix.message({type: 'error', text: resp.statusText + ":" + resp.responseURL});
-
+        console.error(resp.statusText + ":" + resp.responseURL);
     }
     throw resp; //TODO
 };
