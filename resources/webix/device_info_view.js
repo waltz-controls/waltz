@@ -1,12 +1,10 @@
 webix.protoUI({
-    name: "Device Info",
-    bind: function(){
-        this.$$('device_info_data').bind(TangoWebapp.devices, "$data", function(device, devices){
-            this.clearAll();
-            if(!device) return;
-
-            this.parse(
-                TangoWebapp.db.DbGetDeviceInfo(device.name).then(
+    _device: null,
+    name   : "DeviceInfo",
+    $init  : function (config) {
+        this.$ready.push(function () {
+            this.$$('device_info_data').parse(
+                TangoWebapp.db.DbGetDeviceInfo(this._device.name).then(
                     function(response){
                         var info = response.output;
                         return {
@@ -25,10 +23,7 @@ webix.protoUI({
                     }
                 )
             );
-        });
-    },
-    $init: function(){
-        this.$ready.push(this.bind);
+        }.bind(this));
     },
     defaults: {
         rows: [
@@ -47,9 +42,12 @@ webix.protoUI({
                 dataFeed: "..."
             }]
     }
-}, webix.IdSpace, TangoWebapp.DeviceTabActivator, webix.ui.layout);
+}, webix.IdSpace, TangoWebapp.DeviceSetter, TangoWebapp.DeviceTabActivator, webix.ui.layout);
 
-TangoWebapp.DeviceInfoViewConfig = {
-    view: "Device Info",
-    id: "device_info"
+TangoWebapp.newDeviceInfo = function (device) {
+    return {
+        device: device,
+        view  : "DeviceInfo",
+        id    : "device_info"
+    }
 };

@@ -137,7 +137,19 @@ webix.protoUI({
             var item = this.getItem(id);
             if (item.$level == 3 || item.$level == 4) { //device, Properties, Event etc
                 TangoWebapp.devices.setCursor(item._device_id);
-                $$(item._view_id).activate();
+                var devId = "dev" + item._device_id;
+                if (!$$(devId)) {
+                    $$("main-tabview").addView(
+                        TangoWebapp.newDeviceView(
+                            {
+                                device: TangoWebapp.getDevice(),
+                                id    : devId
+                            })
+                    );
+                }
+                $$(devId).show();
+
+                $$(devId).$$(item._view_id).activate();
             }
         },
         onDataRequest: function (id, cbk, url) {

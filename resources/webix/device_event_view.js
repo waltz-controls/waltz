@@ -1,6 +1,11 @@
 webix.protoUI({
-    name: "Device Event",
-    defaults: {
+    name: "Device Event"
+}, webix.IdSpace, TangoWebapp.DeviceTabActivator, webix.ui.layout);
+
+TangoWebapp.newDeviceEvents = function () {
+    return {
+        view: "Device Event",
+        id  : "device_events",
         rows: [
             {
                 view: "tabview",
@@ -55,9 +60,4 @@ webix.protoUI({
 
         ]
     }
-}, webix.IdSpace, TangoWebapp.DeviceTabActivator, webix.ui.layout);
-
-TangoWebapp.DeviceEventViewConfig = {
-    view: "Device Event",
-    id: "device_events"
 };

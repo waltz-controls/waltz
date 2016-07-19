@@ -25,7 +25,7 @@ include(function(){ //runs after prior includes are loaded
 
 include.resources(
     //
-    "webix/device_tab_activator",
+    "webix/mixin",
     //
     "webix/device_tree", "webix/server_tree", "webix/toolbar",
     //dataviews
@@ -37,5 +37,7 @@ include.resources(
     //atk
     "webix/atk_panel_view",
     //windows
-    "webix/device_panel_window"
+    "webix/device_panel_window",
+    "webix/device_view",
+    "webix/main"
 );

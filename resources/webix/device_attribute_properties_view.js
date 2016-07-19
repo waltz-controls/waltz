@@ -1,16 +1,21 @@
 webix.protoUI({
-    name: "Device Attr Props",
-    defaults: {
+    name: "Device Attr Props"
+}, webix.IdSpace, TangoWebapp.DeviceTabActivator, webix.ui.layout);
+
+TangoWebapp.newDeviceAttrProps = function () {
+    return {
+        view: "Device Attr Props",
+        id  : "device_attr_properties",
         rows: [
             {
-                view: "tabview",
+                view : "tabview",
                 cells: [
                     //TODO dynamically add tabs when loaded?
                     {
                         header: "Prop1",
-                        body: {
-                            id: "name",
-                            view: "datatable",
+                        body  : {
+                            id     : "name",
+                            view   : "datatable",
                             columns: [
                                 {header: "Property name"},
                                 {header: "Value"}
@@ -30,9 +35,4 @@ webix.protoUI({
 
         ]
     }
-}, webix.IdSpace, TangoWebapp.DeviceTabActivator, webix.ui.layout);
-
-TangoWebapp.DeviceAttrPropsViewConfig = {
-    view: "Device Attr Props",
-    id: "device_attr_properties"
 };
