@@ -8,7 +8,7 @@ webix.protoUI({
                 var item = this.getContext().obj.getItem(this.getContext().id);
                 switch(id){
                     case "Test device":{
-                        TangoWebapp.openDevicePanel(TangoWebapp.getDevice());
+                        TangoWebapp.helpers.openDevicePanel(TangoWebapp.helpers.getDevice());
                         break;
                     }
                     default:
@@ -142,7 +142,7 @@ webix.protoUI({
                     $$("main-tabview").addView(
                         TangoWebapp.newDeviceView(
                             {
-                                device: TangoWebapp.getDevice(),
+                                device: TangoWebapp.helpers.getDevice(),
                                 id    : devId
                             })
                     );

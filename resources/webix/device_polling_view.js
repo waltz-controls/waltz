@@ -1,63 +1,162 @@
 webix.protoUI({
-    name: "Device Polling"
-}, webix.IdSpace, TangoWebapp.DeviceTabActivator, webix.ui.layout);
+    refresh: function () {
+        var map = function (el) {
+            var lines = el.split('\n');
+            return {
+                name    : lines[0].split(' = ')[1],
+                isPolled: true,
+                period  : lines[1].split(' = ')[1]
+            };
+        };
 
-TangoWebapp.newDevicePolling = function () {
-    return {
-        view: "Device Polling",
-        id  : "device_polling",
-        rows: [
-            {
-                view: "tabview",
-                cells: [
-                    {
-                        header: "Commands",
-                        body: {
-                            id: "commands",
-                            view: "datatable",
-                            columns: [
-                                {header: "Command name"},
-                                {header: "Is Polled"},
-                                {header: "Period (ms)"}
-                            ]
+        var f = function (resp) {
+            return function(collection) {
+                return function (type) {
+                    var polled = resp.output.filter(function (el) {
+                        return el.indexOf(type + " name") > -1
+                    }).map(map);
 
-                        }
-                    },
-                    {
-                        header: "Attributes",
-                        body: {
-                            id: "attributes",
-                            view: "datatable",
-                            columns: [
-                                {header: "Attribute name"},
-                                {header: "Is Polled"},
-                                {header: "Period (ms)"}
-                            ]
+                    TangoWebapp.helpers.iterate(collection, function(id, item){
+                        var found = polled.find(function(el){
+                            return el.name === item.name;
+                        });
 
-                        }
-                    },
-                    {
-                        header: "Settings",
-                        body: {
-                            id: "settings",
-                            view: "datatable",
-                            columns: [
-                                {header: "Parameters name"},
-                                {header: "Value"}
-                            ]
-
-                        }
-                    }
-                ]
-            },
-            {
-                view: "toolbar",
-                cols: [
-                    {view: "button", id: "btnRefresh", value: "Refresh", width: 100, align: "left"},
-                    {view: "button", id: "btnApply", value: "Apply", width: 100, align: "left"},
-                    {view: "button", id: "btnReset", value: "Reset", width: 100, align: "left"}]
+                        if(found) collection.updateItem(id, found);
+                    });
+                }
             }
+        };
 
-        ]
+        this.getTopParentView()._admin.then(function (admin) {
+            return admin.executeCommand("DevPollStatus", this._device.name);
+        }.bind(this.getTopParentView())).then(function (resp) {
+            f(resp)(this._commands)('command');
+            f(resp)(this._attributes)('attribute');
+        }.bind(this.getTopParentView()));
+    },
+    apply:function(){
+        TangoWebapp.helpers.iterate(this.getTopParentView()._commands, function(el, item){
+            if(item.isPolled)
+                this._admin.execCommand("AddObjPolling","["+item.period+"]["+this._device.name+",command,"+item.name+"]");
+        }.bind(this.getTopParentView()));
+        TangoWebapp.helpers.iterate(this.getTopParentView()._attributes, function(el, item){
+            if(item.isPolled)
+                this._admin.execCommand("AddObjPolling","["+item.period+"]["+this._device.name+",attribute,"+item.name+"]");
+        }.bind(this.getTopParentView()));
+    },
+    _getUI : function () {
+        var top = this;
+        return {
+            rows: [
+                {
+                    height: 5
+                },
+                {
+                    view : "tabview",
+                    cells: [
+                        {
+                            header: "Commands",
+                            body  : {
+                                id     : "commands",
+                                view   : "datatable",
+                                editable   : true,
+                                columns: [
+                                    {id: "name", header: "Command name"},
+                                    {id: "isPolled", header: "Is Polled", template:"{common.checkbox()}"},
+                                    {id: "period", header: "Period (ms)", fillspace: true, editor: "text"}
+                                ]
+
+                            }
+                        },
+                        {
+                            header: "Attributes",
+                            body  : {
+                                id     : "attributes",
+                                view   : "datatable",
+                                editable   : true,
+                                columns: [
+                                    {id: "name", header: "Attribute"},
+                                    {id: "isPolled", header: "Is Polled", template:"{common.checkbox()}"},
+                                    {id: "period", header: "Period (ms)", fillspace: true, editor: "text"}
+                                ]
+
+                            }
+                        },
+                        {
+                            header: "Settings",
+                            body  : {
+                                id     : "settings",
+                                editable   : true,
+                                view   : "datatable",
+                                columns: [
+                                    {header: "Parameters name", editor: "text"},
+                                    {header: "Value", editor: "text"}
+                                ]
+
+                            }
+                        }
+                    ]
+                },
+                {
+                    view: "toolbar",
+                    cols: [
+                        {
+                            view : "button",
+                            id   : "btnRefresh",
+                            value: "Refresh",
+                            width: 100,
+                            align: "left",
+                            click: top.refresh
+                        },
+                        {view: "button", id: "btnApply", value: "Apply", width: 100, align: "left", click: top.apply},
+                        {view: "button", id: "btnReset", value: "Reset", width: 100, align: "left"}]
+                }
+            ]
+        }
+    },
+    name   : "DevicePolling",
+    map    : function (arg) {
+        return arg.map(function (el) {
+            return {
+                name    : el.name,
+                isPolled: false,
+                period  : ""
+            }
+        });
+    },
+    $init  : function (config) {
+        webix.extend(config, this._getUI());
+
+        this._commands = new webix.DataCollection();
+        this._commands.parse(config.device.commands().then(this.map));
+
+        this._attributes = new webix.DataCollection();
+        this._attributes.parse(config.device.attributes().then(this.map));
+
+
+        var className = TangoWebapp.db.DbGetClassForDevice(config.device.name);
+
+        this._admin = className.then(function (resp) {
+            return new Device("dserver/" + resp.output + "/" + config.device.name.split('/')[0]);
+        }.bind(this));
+
+        this.$ready.push(function () {
+            this.$$commands = this.$$('commands');
+            this.$$attributes = this.$$('attributes');
+            this.$$settings = this.$$('settings');
+
+            this.$$commands.data.sync(this._commands);
+            this.$$attributes.data.sync(this._attributes);
+        }.bind(this));
+
+        this.$ready.push(this.refresh);
+    }
+}, webix.IdSpace, TangoWebapp.DeviceTabActivator, TangoWebapp.DeviceSetter, webix.ui.layout);
+
+TangoWebapp.newDevicePolling = function (device) {
+    return {
+        device: device,
+        view  : "DevicePolling",
+        id    : "device_polling"
     }
 };
