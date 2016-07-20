@@ -10,8 +10,7 @@ webix.protoUI({
         };
 
         var f = function (resp) {
-            return function(collection) {
-                return function (type) {
+            return function(collection,type) {
                     var polled = resp.output.filter(function (el) {
                         return el.indexOf(type + " name") > -1
                     }).map(map);
@@ -23,15 +22,14 @@ webix.protoUI({
 
                         if(found) collection.updateItem(id, found);
                     });
-                }
             }
         };
 
         this.getTopParentView()._admin.then(function (admin) {
             return admin.executeCommand("DevPollStatus", this._device.name);
         }.bind(this.getTopParentView())).then(function (resp) {
-            f(resp)(this._commands)('command');
-            f(resp)(this._attributes)('attribute');
+            f(resp)(this._commands,'command');
+            f(resp)(this._attributes,'attribute');
         }.bind(this.getTopParentView()));
     },
     apply:function(){
@@ -90,7 +88,7 @@ webix.protoUI({
                                 view   : "datatable",
                                 editable   : true,
                                 columns: [
-                                    {id: "name", header: "Command name"},
+                                    {id: "name", header: "Command", width: 250},
                                     {id: "isPolled", header: "Is Polled", template:"{common.checkbox()}"},
                                     {id: "period", header: "Period (ms)", fillspace: true, editor: "text"}
                                 ],
@@ -106,7 +104,7 @@ webix.protoUI({
                                 view   : "datatable",
                                 editable   : true,
                                 columns: [
-                                    {id: "name", header: "Attribute"},
+                                    {id: "name", header: "Attribute", width: 250},
                                     {id: "isPolled", header: "Is Polled", template:"{common.checkbox()}"},
                                     {id: "period", header: "Period (ms)", fillspace: true, editor: "text"}
                                 ],
@@ -178,12 +176,9 @@ webix.protoUI({
         this._attributes = new webix.DataCollection();
         this._attributes.parse(config.device.attributes().then(this.map));
 
-
-        var className = TangoWebapp.db.DbGetClassForDevice(config.device.name);
-
-        this._admin = className.then(function (resp) {
-            return new Device("dserver/" + resp.output + "/" + config.device.name.split('/')[0]);
-        }.bind(this));
+        this._admin = config.device.info().then(function (info) {
+            return new Device("dserver/" + info.server);
+        });
 
         this.$ready.push(function () {
             this.$$commands = this.$$('commands');
