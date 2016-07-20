@@ -39,6 +39,7 @@ webix.protoUI({
 
         var device_name = top._device.name;
 
+        //TODO UpdObjPolling???
         TangoWebapp.helpers.iterate(top._commands, function(el, item){
             if(item.isPolled)
                 this._admin.then(function(admin){
@@ -53,12 +54,23 @@ webix.protoUI({
         }.bind(top));
     },
     reset: function(){
-        var top = this.getTopParentView();
+        var device_name = this._device.name;
 
-        var device_name = top._device.name;
+        TangoWebapp.helpers.iterate(this._commands, function(el, item){
+                this._admin.then(function(admin){
+                    admin.executeCommand("RemObjPolling",[device_name,"command",item.name]);
+                });
+        }.bind(this));
+        TangoWebapp.helpers.iterate(this._attributes, function(el, item){
+                this._admin.then(function(admin){
+                    admin.executeCommand("RemObjPolling",[device_name,"attribute",item.name]);
+                });
+        }.bind(this));
 
-        webix.ui({
-
+        webix.alert({
+            title:"Confirm reset",
+            type:"alert-warning",
+            text:"Done. Restart " +device_name+ "!"
         });
     },
     _getUI : function () {
@@ -130,7 +142,19 @@ webix.protoUI({
                             click: top.refresh
                         },
                         {view: "button", id: "btnApply", value: "Apply", width: 100, align: "left", click: top.apply},
-                        {view: "button", id: "btnReset", value: "Reset", width: 100, align: "left"}]
+                        {view: "button", id: "btnReset", value: "Reset", width: 100, align: "left", click: function(){
+                            webix.confirm({
+                                title:"Confirm reset",
+                                ok:"Yes",
+                                cancel:"No",
+                                type:"confirm-error",
+                                text:"This will reset configuration for all commands and attributes.\n Continue?",
+                                callback:function(ok){
+                                    if(ok)
+                                        top.callEvent('onResetConfirmed');
+                                }
+                            });
+                        }}]
                 }
             ]
         }
@@ -171,8 +195,15 @@ webix.protoUI({
         }.bind(this));
 
         this.$ready.push(this.refresh);
+    },
+    defaults:{
+        on:{
+            onResetConfirmed:function(){
+                this.reset();
+            }
+        }
     }
-}, webix.IdSpace, TangoWebapp.DeviceTabActivator, TangoWebapp.DeviceSetter, webix.ui.layout);
+}, webix.IdSpace, webix.EventSystem, TangoWebapp.DeviceTabActivator, TangoWebapp.DeviceSetter, webix.ui.layout);
 
 TangoWebapp.newDevicePolling = function (device) {
     return {
