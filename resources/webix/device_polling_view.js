@@ -10,23 +10,38 @@ webix.protoUI({
         };
 
         var f = function (resp) {
-            return function (type) {
-                return resp.output.filter(function (el) {
-                    return el.indexOf(type + " name") > -1
-                }).map(map);
+            return function(collection) {
+                return function (type) {
+                    var polled = resp.output.filter(function (el) {
+                        return el.indexOf(type + " name") > -1
+                    }).map(map);
+
+                    TangoWebapp.helpers.iterate(collection, function(id, item){
+                        var found = polled.find(function(el){
+                            return el.name === item.name;
+                        });
+
+                        if(found) collection.updateItem(id, found);
+                    });
+                }
             }
         };
 
         this.getTopParentView()._admin.then(function (admin) {
             return admin.executeCommand("DevPollStatus", this._device.name);
         }.bind(this.getTopParentView())).then(function (resp) {
-            var result = f(resp);
-
-            this.$$commands.clearAll();
-            this.$$commands.parse(result("command"));
-
-            this.$$attributes.clearAll();
-            this.$$attributes.parse(result("attribute"));
+            f(resp)(this._commands)('command');
+            f(resp)(this._attributes)('attribute');
+        }.bind(this.getTopParentView()));
+    },
+    apply:function(){
+        TangoWebapp.helpers.iterate(this.getTopParentView()._commands, function(el, item){
+            if(item.isPolled)
+                this._admin.execCommand("AddObjPolling","["+item.period+"]["+this._device.name+",command,"+item.name+"]");
+        }.bind(this.getTopParentView()));
+        TangoWebapp.helpers.iterate(this.getTopParentView()._attributes, function(el, item){
+            if(item.isPolled)
+                this._admin.execCommand("AddObjPolling","["+item.period+"]["+this._device.name+",attribute,"+item.name+"]");
         }.bind(this.getTopParentView()));
     },
     _getUI : function () {
@@ -44,10 +59,11 @@ webix.protoUI({
                             body  : {
                                 id     : "commands",
                                 view   : "datatable",
+                                editable   : true,
                                 columns: [
                                     {id: "name", header: "Command name"},
-                                    {id: "isPolled", header: "Is Polled"},
-                                    {id: "period", header: "Period (ms)", fillspace: true}
+                                    {id: "isPolled", header: "Is Polled", template:"{common.checkbox()}"},
+                                    {id: "period", header: "Period (ms)", fillspace: true, editor: "text"}
                                 ]
 
                             }
@@ -57,10 +73,11 @@ webix.protoUI({
                             body  : {
                                 id     : "attributes",
                                 view   : "datatable",
+                                editable   : true,
                                 columns: [
-                                    {id: "name", header: "Attribute name"},
-                                    {id: "isPolled", header: "Is Polled"},
-                                    {id: "period", header: "Period (ms)", fillspace: true}
+                                    {id: "name", header: "Attribute"},
+                                    {id: "isPolled", header: "Is Polled", template:"{common.checkbox()}"},
+                                    {id: "period", header: "Period (ms)", fillspace: true, editor: "text"}
                                 ]
 
                             }
@@ -69,10 +86,11 @@ webix.protoUI({
                             header: "Settings",
                             body  : {
                                 id     : "settings",
+                                editable   : true,
                                 view   : "datatable",
                                 columns: [
-                                    {header: "Parameters name"},
-                                    {header: "Value"}
+                                    {header: "Parameters name", editor: "text"},
+                                    {header: "Value", editor: "text"}
                                 ]
 
                             }
@@ -90,15 +108,31 @@ webix.protoUI({
                             align: "left",
                             click: top.refresh
                         },
-                        {view: "button", id: "btnApply", value: "Apply", width: 100, align: "left"},
+                        {view: "button", id: "btnApply", value: "Apply", width: 100, align: "left", click: top.apply},
                         {view: "button", id: "btnReset", value: "Reset", width: 100, align: "left"}]
                 }
             ]
         }
     },
     name   : "DevicePolling",
+    map    : function (arg) {
+        return arg.map(function (el) {
+            return {
+                name    : el.name,
+                isPolled: false,
+                period  : ""
+            }
+        });
+    },
     $init  : function (config) {
         webix.extend(config, this._getUI());
+
+        this._commands = new webix.DataCollection();
+        this._commands.parse(config.device.commands().then(this.map));
+
+        this._attributes = new webix.DataCollection();
+        this._attributes.parse(config.device.attributes().then(this.map));
+
 
         var className = TangoWebapp.db.DbGetClassForDevice(config.device.name);
 
@@ -110,6 +144,9 @@ webix.protoUI({
             this.$$commands = this.$$('commands');
             this.$$attributes = this.$$('attributes');
             this.$$settings = this.$$('settings');
+
+            this.$$commands.data.sync(this._commands);
+            this.$$attributes.data.sync(this._attributes);
         }.bind(this));
 
         this.$ready.push(this.refresh);

@@ -1,6 +1,6 @@
 new Test.Functional('device_panel',{
    test_open: function() {
-      TangoWebapp.openDevicePanel(new Device('sys/tg_test/1'));
+      TangoWebapp.helpers.openDevicePanel(new Device('sys/tg_test/1'));
 
       this.assert(true);
    },
