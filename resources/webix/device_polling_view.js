@@ -35,14 +35,31 @@ webix.protoUI({
         }.bind(this.getTopParentView()));
     },
     apply:function(){
-        TangoWebapp.helpers.iterate(this.getTopParentView()._commands, function(el, item){
+        var top = this.getTopParentView();
+
+        var device_name = top._device.name;
+
+        TangoWebapp.helpers.iterate(top._commands, function(el, item){
             if(item.isPolled)
-                this._admin.execCommand("AddObjPolling","["+item.period+"]["+this._device.name+",command,"+item.name+"]");
-        }.bind(this.getTopParentView()));
-        TangoWebapp.helpers.iterate(this.getTopParentView()._attributes, function(el, item){
+                this._admin.then(function(admin){
+                    admin.executeCommand("AddObjPolling","["+item.period+"]["+device_name+",command,"+item.name+"]");
+                });
+        }.bind(top));
+        TangoWebapp.helpers.iterate(top._attributes, function(el, item){
             if(item.isPolled)
-                this._admin.execCommand("AddObjPolling","["+item.period+"]["+this._device.name+",attribute,"+item.name+"]");
-        }.bind(this.getTopParentView()));
+                this._admin.then(function(admin){
+                    admin.executeCommand("AddObjPolling","["+item.period+"]["+device_name+",attribute,"+item.name+"]");
+                });
+        }.bind(top));
+    },
+    reset: function(){
+        var top = this.getTopParentView();
+
+        var device_name = top._device.name;
+
+        webix.ui({
+
+        });
     },
     _getUI : function () {
         var top = this;
@@ -64,8 +81,10 @@ webix.protoUI({
                                     {id: "name", header: "Command name"},
                                     {id: "isPolled", header: "Is Polled", template:"{common.checkbox()}"},
                                     {id: "period", header: "Period (ms)", fillspace: true, editor: "text"}
-                                ]
-
+                                ],
+                                rules:{
+                                    "period": webix.rules.isNumber
+                                }
                             }
                         },
                         {
@@ -78,8 +97,10 @@ webix.protoUI({
                                     {id: "name", header: "Attribute"},
                                     {id: "isPolled", header: "Is Polled", template:"{common.checkbox()}"},
                                     {id: "period", header: "Period (ms)", fillspace: true, editor: "text"}
-                                ]
-
+                                ],
+                                rules:{
+                                    "period": webix.rules.isNumber
+                                }
                             }
                         },
                         {
