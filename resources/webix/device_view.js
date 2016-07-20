@@ -32,7 +32,7 @@ TangoWebapp.newDeviceView = function (config) {
                 {
                     device: config.device,
                     header: "Polling",
-                    body  : TangoWebapp.newDevicePolling()
+                    body: TangoWebapp.newDevicePolling(config.device)
                 },
                 {
                     device: config.device,
