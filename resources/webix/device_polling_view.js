@@ -88,7 +88,7 @@ webix.protoUI({
                                 view   : "datatable",
                                 editable   : true,
                                 columns: [
-                                    {id: "name", header: "Command", width: 250},
+                                    {id: "name", header: "Command", width: TangoWebapp.consts.NAME_COLUMN_WIDTH},
                                     {id: "isPolled", header: "Is Polled", template:"{common.checkbox()}"},
                                     {id: "period", header: "Period (ms)", fillspace: true, editor: "text"}
                                 ],
@@ -104,7 +104,7 @@ webix.protoUI({
                                 view   : "datatable",
                                 editable   : true,
                                 columns: [
-                                    {id: "name", header: "Attribute", width: 250},
+                                    {id: "name", header: "Attribute", width: TangoWebapp.consts.NAME_COLUMN_WIDTH},
                                     {id: "isPolled", header: "Is Polled", template:"{common.checkbox()}"},
                                     {id: "period", header: "Period (ms)", fillspace: true, editor: "text"}
                                 ],
@@ -198,7 +198,7 @@ webix.protoUI({
             }
         }
     }
-}, webix.IdSpace, webix.EventSystem, TangoWebapp.DeviceTabActivator, TangoWebapp.DeviceSetter, webix.ui.layout);
+}, webix.IdSpace, webix.EventSystem, TangoWebapp.mixin.DeviceTabActivator, TangoWebapp.mixin.DeviceSetter, webix.ui.layout);
 
 TangoWebapp.newDevicePolling = function (device) {
     return {

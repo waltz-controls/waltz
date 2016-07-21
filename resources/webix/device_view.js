@@ -25,42 +25,32 @@ TangoWebapp.newDeviceView = function (config) {
 
                 },
                 {
-                    device: config.device,
                     header: "Properties",
                     body  : TangoWebapp.newDeviceProperties(config.device)
                 },
                 {
-                    device: config.device,
                     header: "Polling",
                     body: TangoWebapp.newDevicePolling(config.device)
                 },
                 {
-                    device: config.device,
                     header: "Events",
-                    body  : TangoWebapp.newDeviceEvents()
+                    body  : TangoWebapp.newDeviceEvents(config.device)
                 },
                 {
-                    device: config.device,
                     header: "Attributes config",
-                    body  : TangoWebapp.newDeviceAttrConfig()
+                    body  : TangoWebapp.newDeviceAttrConfig(config.device)
                 },
                 {
-                    device: config.device,
                     header: "Pipes config",
-                    body  : TangoWebapp.newDevicePipeConf()
+                    body  : TangoWebapp.newDevicePipeConf(config.device)
                 },
                 {
-                    device: config.device,
                     header: "Attributes properties",
-                    body  : TangoWebapp.newDeviceAttrProps()
+                    body  : TangoWebapp.newDeviceAttrProps(config.device)
                 },
                 {
-                    device: config.device,
                     header: "Logging",
-                    body  : {
-                        view: "Device Logging",
-                        id  : "device_logging"
-                    }
+                    body  : TangoWebapp.newDeviceLogging(config.device)
                 }
             ]
         }

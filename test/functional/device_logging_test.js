@@ -1,6 +1,6 @@
 include('../mock_device');
 
-new Test.Functional('device_properties', {
+new Test.Functional('logging_window', {
     test_open: function () {
         var device = new MockDevice(); //TODO mock
 
@@ -8,16 +8,16 @@ new Test.Functional('device_properties', {
         webix.ui(
             {
                 view      : 'window',
-                id        : 'properties_window',
+                id        : 'logging_window',
                 move      : true,
                 fullscreen: true,
-                body      : TangoWebapp.newDeviceProperties(device)
+                body      : TangoWebapp.newDeviceLogging(device)
             }
         ).show();
-        this.assert($$('properties_window'));
+        this.assert($$('logging_window'));
     },
 
     test_close: function () {
-        $$('properties_window').close();
+        $$('logging_window').close();
     }
 });

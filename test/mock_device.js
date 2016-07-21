@@ -159,9 +159,13 @@ MockDevice = Device.extend(
          * @return promise
          */
         attributes        : function () {
+            //TODO replace with resolve
             return webix.promise.fcall(function () {
                 return this._attributes;
             }.bind(this));
+        },
+        attributeInfo:function(){
+            webix.assert(false, "Not implemented!")
         },
         pipes             : function () {
             return webix.promise.fcall(function () {

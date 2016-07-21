@@ -14,6 +14,7 @@ Device = MVC.Model.extend("device",
         _attributes:null,
         _pipes: null,
         _properties:null,
+        _attributesInfo: null,
         /**
          *
          * @constructor
@@ -51,6 +52,12 @@ Device = MVC.Model.extend("device",
                 this.update();
             }
             return this._attributes;
+        },
+        /**
+         * @return promise
+         */
+        attributeInfo:function(attr){
+            return TangoWebapp.rest.devices(this.name).attributes(attr).get('/info');
         },
         pipes:function(){
             var pipes = TangoWebapp.rest.devices(this.name).get("/pipes");
