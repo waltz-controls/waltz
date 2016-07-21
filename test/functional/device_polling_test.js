@@ -1,7 +1,7 @@
 include('../mock_device');
 
 new Test.Functional('device_polling', {
-    test_start: function () {
+    test_open: function () {
         var device = new MockDevice(); //TODO mock
 
 

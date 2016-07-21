@@ -6,7 +6,9 @@ include.unit_tests(
 include.functional_tests(
     'device_panel',
     'device_properties',
-    'device_polling'
+    'device_polling',
+    'device_events',
+    'device_logging'
 );
 
 webix.debug_bind = true;

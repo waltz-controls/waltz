@@ -3,7 +3,8 @@ include.css(
     
 );
 include.resources(
-    "tango_rest", "tango_helpers"
+    //
+    "tango_consts","tango_mixins", "tango_rest", "tango_helpers"
 );
 include.engines(
 );
@@ -24,8 +25,6 @@ include(function(){ //runs after prior includes are loaded
 });
 
 include.resources(
-    //
-    "webix/mixin",
     //
     "webix/device_tree", "webix/server_tree", "webix/toolbar",
     //dataviews

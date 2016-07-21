@@ -49,7 +49,7 @@ webix.protoUI({
                     multiselect: true,
                     editable   : true,
                     columns : [
-                        {id: "name", header: "Property name", minWidth: 200},
+                        {id: "name", header: "Property name", width: TangoWebapp.consts.NAME_COLUMN_WIDTH},
                         {id: "values", header: "Value", fillspace: true, editor: "text"}
                     ],
                     dataFeed: '...'
@@ -115,7 +115,7 @@ webix.protoUI({
             this.$$('frmNewProperty').bind(this.$$('device_properties_data'));
         }.bind(this));
     }
-}, webix.IdSpace, webix.EventSystem, TangoWebapp.DeviceSetter, TangoWebapp.DeviceTabActivator, webix.ui.layout);
+}, webix.IdSpace, webix.EventSystem, TangoWebapp.mixin.DeviceSetter, TangoWebapp.mixin.DeviceTabActivator, webix.ui.layout);
 
 TangoWebapp.newDeviceProperties = function (device) {
     return {
