@@ -25,7 +25,13 @@ webix.protoUI({
             {id: "btnTools", value: "Tools", width: 100, align: "left"},
             {id: "btnFilter", value: "Filter", width: 100, align: "left"},
             {id: "btnHelp", value: "Help", width: 100, align: "left", submenu: [{id: "btnAbout", value: "About"}]}
-        ]
+        ],
+        on:{
+            onMenuItemClick:function(id){
+                webix.message("Click: "+this.getMenuItem(id).value);
+                if(this[id]) this[id]();
+            }
+        }
     }
 
 },webix.IdSpace, webix.EventSystem ,webix.ui.menu);
@@ -34,11 +40,5 @@ webix.protoUI({
 
     TangoWebapp.ToolbarConfig = {
         view: "MainToolbar",
-        id: "mainToolbar",
-        on:{
-            onMenuItemClick:function(id){
-                webix.message("Click: "+this.getMenuItem(id).value);
-                if(this[id]) this[id]();
-            }
-        }
+        id: "mainToolbar"
     };
