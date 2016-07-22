@@ -1,4 +1,10 @@
 webix.protoUI({
+    updateRoot:function(rootValue){
+        this.clearAll();
+        this.add({id: 'root', value: rootValue, open:false, data:[]});
+        this.loadBranch('root', null, null);
+        this.refresh();
+    },
     name: "DeviceTree",
     _ctxMenu:webix.ui({
         view: "contextmenu",
@@ -7,10 +13,12 @@ webix.protoUI({
             onItemClick: function (id) {
                 var item = this.getContext().obj.getItem(this.getContext().id);
                 switch(id){
-                    case "Test device":{
+                    case "Test device":
                         TangoWebapp.helpers.openDevicePanel(TangoWebapp.helpers.getDevice());
                         break;
-                    }
+                    case "Change root...":
+                        TangoWebapp.helpers.changeTangoHost();
+                        break;
                     default:
                         debugger;
                 }
@@ -36,17 +44,93 @@ webix.protoUI({
         //activeTitle:true,
         type: 'lineTree',
         select:true,
-        data:''
+        on: {
+            onItemDblClick:function(id, e, node){
+                webix.message("DblClick " + id);
+                var item = this.getItem(id);
+                if(item.$level == 4) {//member
+                    if(!$$("atk" + id)) {
+                        $$("mainTabview").addView(
+                            {
+                                header: "ATKPanel [" + item._name + "]",
+                                close: true,
+                                body: {
+                                    view: "ATKPanel",
+                                    id: "atk" + id
+                                }
+                            }
+                        );
+                    }
+                    $$("atk" + id).show();
+                }
+
+            },
+            onItemClick: function (id, e, node) {
+                var item = this.getItem(id);
+                if (item.$level == 4 || item.$level == 5) { //device, Properties, Event etc
+                    TangoWebapp.devices.setCursor(item._device_id);
+                    var devId = "dev" + item._device_id;
+                    if (!$$(devId)) {
+                        $$("main-tabview").addView(
+                            TangoWebapp.newDeviceView(
+                                {
+                                    device: TangoWebapp.helpers.getDevice(),
+                                    id    : devId
+                                })
+                        );
+                    }
+                    $$(devId).show();
+
+                    $$(devId).$$(item._view_id).activate();
+                }
+            },
+            onDataRequest: function (id, cbk, url) {
+                var item = this.getItem(id);
+                if (item) webix.message("Getting children of " + item.value);
+                var promise;
+                if (id === 'root')//domain
+                    promise = TangoWebapp.db.DbGetDeviceDomainList("*");
+                else if (item.$level == 2)//family
+                    promise = TangoWebapp.db.DbGetDeviceFamilyList(item.value + '/*');
+                else if (item.$level == 3)//member
+                    promise = TangoWebapp.db.DbGetDeviceMemberList(this.getItem(item.$parent).value + '/' + item.value + '/*');
+                else {
+                    return false;//ignore member
+                }
+                if (item) {
+                    webix.message("Getting children of " + item.value);
+
+
+                }
+                this.parse(promise.then(this.handleResponse(id, item)));
+
+
+                return false;//cancel default behaviour
+            },
+            onBeforeContextMenu: function (id, e, node) {
+                var item = this.getItem(id);
+                if (id === 'root'){
+                    this._ctxMenu.clearAll();
+                    this._ctxMenu.parse(["Change root..."]);
+                    return true;
+                }  else if (item.$level == 4) {//member
+                    TangoWebapp.devices.setCursor(item._device_id);
+                    this._ctxMenu.clearAll();
+                    this._ctxMenu.parse(this._ctxMember);
+                    return true;
+                } else {
+                    return false;
+                }
+            }
+        }
     },
     $init: function () {
-        for(var e in this.on){
-            if(this.on.hasOwnProperty(e))
-                this.attachEvent(e, this.on[e]);
-        }
-
         this._ctxMenu.attachTo(this);
 
-        this.loadBranch(0, null, null);
+        this.$ready.push(function(){
+            this.updateRoot(TangoWebapp.consts.REST_API_URL);
+        }.bind(this));
+
     },
     handleResponse: function (parent_id, item) {
         var self = this;
@@ -55,7 +139,7 @@ webix.protoUI({
                 parent: parent_id,
                 data: response.output.map(
                     function (el) {
-                        if (item && item.$level == 2) {
+                        if (item && item.$level == 3) {
                             var name = self.getItem(item.$parent).value + "/" + item.value + "/" + el;
                             if(Device.find_one(name)) debugger;
                             var device = new Device(name);
@@ -111,82 +195,7 @@ webix.protoUI({
         };
     },
     //url:TangoWebapp.rest_api_url + '/devices',
-    onContext: {},
-    on: {
-        onItemDblClick:function(id, e, node){
-            webix.message("DblClick " + id);
-            var item = this.getItem(id);
-            if(item.$level == 3) {//member
-                if(!$$("atk" + id)) {
-                    $$("mainTabview").addView(
-                        {
-                            header: "ATKPanel [" + item._name + "]",
-                            close: true,
-                            body: {
-                                view: "ATKPanel",
-                                id: "atk" + id
-                            }
-                        }
-                    );
-                }
-                $$("atk" + id).show();
-            }
-
-        },
-        onItemClick: function (id, e, node) {
-            var item = this.getItem(id);
-            if (item.$level == 3 || item.$level == 4) { //device, Properties, Event etc
-                TangoWebapp.devices.setCursor(item._device_id);
-                var devId = "dev" + item._device_id;
-                if (!$$(devId)) {
-                    $$("main-tabview").addView(
-                        TangoWebapp.newDeviceView(
-                            {
-                                device: TangoWebapp.helpers.getDevice(),
-                                id    : devId
-                            })
-                    );
-                }
-                $$(devId).show();
-
-                $$(devId).$$(item._view_id).activate();
-            }
-        },
-        onDataRequest: function (id, cbk, url) {
-            var item = this.getItem(id);
-            if (item) webix.message("Getting children of " + item.value);
-            var promise;
-            if (id == 0)//domain
-                promise = TangoWebapp.db.DbGetDeviceDomainList("*");
-            else if (item.$level == 1)//family
-                promise = TangoWebapp.db.DbGetDeviceFamilyList(item.value + '/*');
-            else if (item.$level == 2)//member
-                promise = TangoWebapp.db.DbGetDeviceMemberList(this.getItem(item.$parent).value + '/' + item.value + '/*');
-            else {
-                return false;//ignore member
-            }
-            if (item) {
-                webix.message("Getting children of " + item.value);
-
-
-            }
-            this.parse(promise.then(this.handleResponse(id, item)));
-
-
-            return false;//cancel default behaviour
-        },
-        onBeforeContextMenu: function (id, e, node) {
-            var item = this.getItem(id);
-            if (item.$level == 3) {//member
-                TangoWebapp.devices.setCursor(item._device_id);
-                this._ctxMenu.clearAll();
-                this._ctxMenu.parse(this._ctxMember);
-                return true;
-            } else {
-                return false;
-            }
-        }
-    }
+    onContext: {}
 }, webix.IdSpace, webix.EventSystem, webix.ui.tree);
 
 

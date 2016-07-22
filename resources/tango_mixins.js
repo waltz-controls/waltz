@@ -2,8 +2,7 @@ TangoWebapp.mixin = {};
 
 TangoWebapp.mixin.DeviceTabActivator = {
     activate:function(){
-        this.getParentView().show();
-        this.show();
+        this.show(true);
     }
 };
 
