@@ -29,7 +29,7 @@ TangoWebapp.helpers = {
 
             popup.close();
 
-            $$('device_tree').updateRoot(newTangoRestApiUrl);
+            $$('device_tree').updateRoot(TangoWebapp.consts.REST_API_URL);
         };
 
         popup = webix.ui({
