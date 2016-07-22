@@ -23,9 +23,9 @@ TangoWebapp.helpers = {
 
         var btnOK = function () {
             var form = popup.getChildViews()[0];
-            var newTangoRestApiUrl = form.getValues()['tango_rest_url'];
+            TangoWebapp.consts.REST_API_URL = form.getValues()['tango_rest_url'];
 
-            TangoWebapp.rest = new TangoREST(newTangoRestApiUrl + '/' + TangoWebapp.consts.REST_API_VERSION);
+            TangoWebapp.rest = new TangoREST(TangoWebapp.consts.REST_API_URL + '/' + TangoWebapp.consts.REST_API_VERSION);
 
             popup.close();
 
