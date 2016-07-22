@@ -3,6 +3,7 @@ include.css(
     
 );
 include.resources(
+    "tango_webapp/version",
     //
     "tango_consts","tango_mixins", "tango_rest", "tango_helpers"
 );
