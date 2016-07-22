@@ -1,18 +1,6 @@
 webix.protoUI({
-    _changeTangoHostWindow:webix.ui({
-        view:"window",
-        id:"changeTangoHostWindow",
-        position:"center",
-        move:true,
-        height:250,
-        width:300,
-        head:{view:"button", label:"Close", width:70, click:("$$('changeTangoHostWindow').hide();"), align:"right"},
-        body:{
-            template:"Some text"
-        }
-    }),
     changeTangoHost:function(){
-        this._changeTangoHostWindow.show();
+        TangoWebapp.helpers.changeTangoHost();
     },
     name: "MainToolbar",
     $init:function(){
