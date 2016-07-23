@@ -22,7 +22,7 @@ TangoWebapp.helpers = {
         var popup;
 
         var btnOK = function () {
-            var form = popup.getChildViews()[0];
+            var form = popup.getChildViews()[1]; //0 - spacer
             TangoWebapp.consts.REST_API_URL = form.getValues()['tango_rest_url'];
 
             TangoWebapp.rest = new TangoREST(TangoWebapp.consts.REST_API_URL + '/' + TangoWebapp.consts.REST_API_VERSION);
@@ -33,7 +33,7 @@ TangoWebapp.helpers = {
         };
 
         popup = webix.ui({
-            view: "popup",
+            view: "window",
             zIndex:1,
             toFront: true,
             autoheight: true,
