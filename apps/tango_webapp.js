@@ -1,4 +1,4 @@
-include.namespace('TangoWebapp');
+include.application('TangoWebapp','0.1-SNAPSHOT');
 include.css(
     
 );
