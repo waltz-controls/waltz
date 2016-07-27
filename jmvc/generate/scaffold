@@ -1,17 +1,17 @@
 load('jmvc/generate/loader.js');
 
-if(_args.length < 2){
+if(arguments.length < 2){
 	print("Usage: js jmvc/generate/scaffold model_type model_name app_name[optional]")
 	print("model_type := " + MVC.gModelTypes.join('|'))
 	print("model_name := under_scoped_name");
 	print("app_name := under_scoped_name. If present newly created model and controller will be added to the application\n");
-	quit();
+	exit(127);
 }
 
 var app;
 var app_path = '';
-if(_args[2]){
-	app = load_app(_args[2]);
+if(arguments[2]){
+	app = load_app(arguments[2]);
 	app_path += app.name + '/';
 } else {
 	app = {models:[],controllers:[],tests:{unit:[],functional:[]}}
@@ -60,11 +60,11 @@ app.tests.unit.push(app_path+data.name);
 
 print("               test/unit/"+app_path+data.name+"_test.js");
 
-if(_args[2]){
+if(arguments[2]){
 	save_app(app);
 }
 
 print("\n               Done!\n");
-if(!_args[2]){
+if(!arguments[2]){
 print("\n               Make sure to add to your application files!\n");
 }

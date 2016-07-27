@@ -8,7 +8,7 @@ MVC.Test.Controller = MVC.Test.Functional.extend({
 		var part = MVC.String.classize(name);
 		var controller_name = part+'Controller';
 		this.controller = window[controller_name];
-		if(!this.controller) alert('There is no controller named '+controller_name);
+		if(!this.controller) MVC.Console.log('There is no controller named '+controller_name);
 		this.unit = name;
 		this._super(part+'TestController', tests);
 	},

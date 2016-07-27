@@ -1,10 +1,5 @@
-if(include.get_env() != 'test' && typeof console != 'undefined'){
-	MVC.Console.log = function(message){
-			console.log(message)
-	};
-}else{
-	
-	MVC.Console = {};
+if(include.get_env() === 'test' && !window._rhino){
+    MVC.Console = {};
 	MVC.Console.window = window.open(MVC.mvc_root+'/plugins/debug/console.html', 'test', "width=600,height=400,resizable=yes,scrollbars=yes");
 	MVC.Console.log = function(message, html){
 		var el = MVC.Console.window.document.createElement(html ? 'p' : 'pre' );

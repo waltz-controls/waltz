@@ -1,11 +1,11 @@
-if(!_args[0]){
+if(!arguments[0]){
 	print("USAGE: js jmvc/remove/app name\n")
 	print("name     := under_scoped_name.\n");
-	quit();
+	exit(127);
 }
 load('jmvc/generate/loader.js');
 
-var app_name = _args[0];
+var app_name = arguments[0];
 
 var app = load_app(app_name);
 

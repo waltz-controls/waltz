@@ -1,6 +1,6 @@
-if(_args < 2 || _args[0]!="install"){
+if(arguments < 2 || arguments[0]!="install"){
   print("Usage: js plugin install url_or_name name")
-  quit();
+  exit(127);
 }
 
 load('jmvc/rhino/command/prompt.js')
@@ -10,5 +10,5 @@ load('jmvc/rhino/command/plugin.js')
 load('jmvc/rhino/command/file.js')
 load('jmvc/rhino/command/recursive_http_fetcher.js');
 
-e = new Plugin(_args[1], _args[2]);
+e = new Plugin(arguments[1], arguments[2]);
 e.install_using_http();

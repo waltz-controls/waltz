@@ -1,19 +1,19 @@
-if(_args.length != 3){
+if(arguments.length != 3){
 	print("USAGE: js jmvc/remove/entity type name app_name\n")
 	print("type    := controller|engine|model|resource|stylesheet|test/unit|test/functional|view\n")
 	print("name     := under_scoped_name.\n");
 	print("app_name := under_scoped_name.\n");
-	quit();
+	exit(127);
 }
 load('jmvc/generate/loader.js');
 
 var app_path = '';
-if(_args[2]){
-    app_path += _args[2] + '/';
+if(arguments){
+    app_path += arguments[2] + '/';
 }
 
-what = _args[0];
-name = _args[1];
+what = arguments[0];
+name = arguments[1];
 path = what;
 path += (what == 'test/unit' || what == 'test/functional') ? '/' : 's/';
 path += app_path + name;
@@ -35,7 +35,7 @@ switch(what){
 
 MVCOptions.remove(path);
 
-var app = load_app(_args[2]);
+var app = load_app(arguments[2]);
 
 var entities;
 if(what == 'test/unit')
@@ -47,11 +47,11 @@ else
 
 var ndx = entities.indexOf(app_path+name)
 if(ndx > -1)
-    for(;ndx > -1;ndx=entities.indexOf(app_path+_args[0])){
+    for(;ndx > -1;ndx=entities.indexOf(app_path+arguments[0])){
         entities.splice(ndx, 1);
     }
 
 save_app(app);
 
-print("            "+what+"["+name+"] has been removed from the application["+app.application_name+"].\n");
+print("            "+what+"["+name+"] has been removed from the application["+app.name+"].\n");
 print("            Done!\n");

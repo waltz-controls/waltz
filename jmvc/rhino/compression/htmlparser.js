@@ -320,11 +320,11 @@
                         xhr.send(null);
                         js = xhr.responseText;
 
-                        loadText(js, oldCurParent.getAttribute('src'));
+                        load({script:js, name:oldCurParent.getAttribute('src')});
 
                     }else{
                         js =  oldCurParent.innerHTML.replace(/&amp;/g, '&').replace(/&lt;/g, '<').replace(/&gt;/g, '>');
-                        loadText(js, "InlineScript"+(scripts)+".js");
+                        load({script:js, name: "InlineScript"+(scripts)+".js"});
                     }
                     
                     

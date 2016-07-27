@@ -4,6 +4,9 @@
  * Copyright 2007 John Resig, under the MIT License
  */
 
+//load compatability script, see https://wiki.openjdk.java.net/display/Nashorn/Rhino+Migration+Guide
+load("nashorn:mozilla_compat.js")
+
 if(typeof window != 'undefined') delete window;
 if(typeof document != 'undefined') delete document;
 if(typeof include != 'undefined') delete include;
@@ -36,6 +39,11 @@ var self = window;
         get height(){
             return java.awt.Toolkit.getDefaultToolkit().getScreenSize().height;
         }
+    }
+    window.console = {
+        log: print,
+        warn: print,
+        error: print
     }
 	window._rhino = true;
 	var curLocation = (new java.io.File("./")).toURL();
@@ -126,26 +134,29 @@ var self = window;
 	
 	window.setTimeout = function(fn, time){
 		var num;
-		return num = setInterval(function(){
+		num = setInterval(function(){
 			fn();
 			clearInterval(num);
 		}, time);
-	};
+        return num;
+    };
 	
 	window.setInterval = function(fn, time){
 		var num = timers.length;
-		
-		timers[num] = new java.lang.Thread(new java.lang.Runnable({
+
+        var Thread = Java.type("java.lang.Thread");
+        fn = Java.synchronized(fn);
+		timers[num] = new Thread(new java.lang.Runnable({
 			run: function(){
 				while (true){
-					java.lang.Thread.currentThread().sleep(time);
+					Thread.sleep(time);
 					fn();
 				}
 			}
 		}));
-		
+
 		timers[num].start();
-	
+
 		return num;
 	};
 	
@@ -484,7 +495,7 @@ var self = window;
 			html = html.replace(/<\/?([A-Z]+)/g, function(m){
 				return m.toLowerCase();
 			});
-			html = HTMLtoXML(html);
+			//html = HTMLtoXML(html);
 			var nodes = this.ownerDocument.importNode(
 				new DOMDocument( new java.io.ByteArrayInputStream(
 					(new java.lang.String("<wrap>" + html + "</wrap>"))

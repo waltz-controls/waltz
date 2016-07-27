@@ -1,26 +1,26 @@
-if(_args.length < 2){
+if(arguments.length < 2){
 	print("USAGE: js jmvc/generate/test type test_name app_name[optional]")
 	print("type := unit | functional")
 	print("app_name := under_scoped_name. If present newly created test will be added to the application\n");
-	quit();
+	exit(127);
 }
 load('jmvc/generate/loader.js');
 
 var app;
 var app_path = '';
-if(_args[2]){
-	app = load_app(_args[2]);
+if(arguments[2]){
+	app = load_app(arguments[2]);
 	app_path += app.name + '/';
 } else {
 	app = {tests:{unit:[],functional:[]}}
 }
 
 var data = {
-	name      : _args[1],
-	class_name: MVC.String.classize(_args[1]) + 'Test'
+	name      : arguments[1],
+	class_name: MVC.String.classize(arguments[1]) + 'Test'
 }
 
-ttype = _args[0].toLowerCase();
+ttype = arguments[0].toLowerCase();
 
 if(ttype != 'unit' && ttype != 'functional') throw "IllegalArgument: unknown test type["+ttype+"]. Must be one of [unit,test]";
 
@@ -31,11 +31,11 @@ app.tests[ttype].push(app_path+data.name);
 
 print("Generating ... test/"+ttype+"/"+app_path+data.name+"_test.js");
 
-if(_args[2]){
+if(arguments[2]){
 	save_app(app);
 }
 
 print("\n               Done!\n");
-if(!_args[2]){
+if(!arguments[2]){
 print("\n               Make sure to add to your application files!\n");
 }

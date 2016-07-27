@@ -1,6 +1,6 @@
-<div><h1><%= name%> <label>API</label></h1>
+<div><h1><%= this.name%> <label>API</label></h1>
 
-<div id='shortcuts'><%= get_quicklinks()%></div>
+<div id='shortcuts'><%= this.get_quicklinks()%></div>
 <%if(this.author){%>
     <div class='author'>Author: <%= this.author %></div>
 <%}%>
@@ -12,5 +12,5 @@
 <%}%>
 <div class='group'><%= this.cleaned_comment() %></div>
 
-<%= make(children)%>
+<%= this.make(children)%>
 </div>

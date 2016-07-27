@@ -1,24 +1,25 @@
-if(!_args[0]){
+if(!arguments[0]){
 	print("Usage: js jmvc/generate/controller name app_name[optional]")
 	print("name := under_scoped_name");
 	print("app_name := under_scoped_name. If present newly created controller will be added to the application\n")
-	quit();
+	exit(127);
 }
 
 load('jmvc/generate/loader.js');
 
+var attachToApp = typeof arguments[1] != 'undefined';
 var app;
 var app_path = '';
-if(_args[1]){
-	app = load_app(_args[1]);
+if(attachToApp){
+	app = load_app(arguments[1]);
 	app_path += app.name + '/';
 } else {
 	app = {controllers:[],tests:{functional:[]}}
 }
 
 var data = {
-	name: _args[0],
-	class_name: MVC.String.classize(_args[0]) + 'Controller'
+	name: arguments[0],
+	class_name: MVC.String.classize(arguments[0]) + 'Controller'
 }
 
 c = new View({absolute_url: "jmvc/rhino/command/templates/controller.ejs"});
@@ -39,11 +40,11 @@ app.tests.functional.push(app_path+data.name+"_controller");
 
 print("                test/functional/"+app_path+data.name+"_controller_test.js");
 
-if(_args[1]){
+if(attachToApp){
 	save_app(app);
 }
 
 print("\n               Done!\n");
-if(!_args[1]){
+if(!attachToApp){
 print("\n               Make sure to add to your application files!\n");
 }

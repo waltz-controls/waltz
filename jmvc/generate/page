@@ -1,9 +1,9 @@
-if(_args.length < 2){
+if(arguments.length < 2){
 	print("Creates an html page that loads one of your applications.\n")
 	print("USAGE: js jmvc/generate/test app_name page_location\n")
 	print("app_name := under_scoped_name\n");
 	print();
-	quit();
+	exit(127);
 }
 load('jmvc/generate/loader.js');
 
@@ -13,7 +13,7 @@ File = java.io.File
 var jmvc = new String(new File('').getAbsoluteFile().toString());
 var jmvc_folders = jmvc.split(/\/|\\/);
 
-var loc = _args[1]
+var loc = arguments[1]
 var loc_folders = loc.split(/\/|\\/);
 
 //for each .. in loc folders, replace with jmvc folder

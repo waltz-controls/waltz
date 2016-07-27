@@ -1,13 +1,13 @@
-if(!_args[0]){
+if(!arguments[0]){
 	print("Usage: js jmvc/generate/engine engine_name")
 	print("engine_name := under_scoped_name\n");
-	quit();
+	exit(127);
 }
 load('jmvc/generate/loader.js');
 
 var data = {
-	class_name: MVC.String.classize(_args[0]),
-	application_name: _args[0]
+	class_name: MVC.String.classize(arguments[0]),
+	application_name: arguments[0]
 }
 
 

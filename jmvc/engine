@@ -1,6 +1,6 @@
-if(_args < 2 || _args[0]!="install"){
+if(arguments < 2 || arguments[0]!="install"){
 	print("Usage: js jmvc/engine install url name")
-	quit();
+	exit(127);
 }
 load('jmvc/rhino/command/prompt.js')
 load('jmvc/rhino/command/parse.js')
@@ -9,7 +9,7 @@ load('jmvc/rhino/command/plugin.js')
 load('jmvc/rhino/command/file.js')
 load('jmvc/rhino/command/recursive_http_fetcher.js');
 
-e = new Engine(_args[1], _args[2]);
+e = new Engine(arguments[1], arguments[2]);
 e.install_using_http();
 
 

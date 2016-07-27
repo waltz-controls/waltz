@@ -1,11 +1,20 @@
-include.namespace = function(namespace){
+//TODO move into include.js
+include.application = function(namespace, version){
     include.app().namespace = namespace;
+    include.app().version = version;
 };
 
 include.css = function(){
     for(var i = 0, size = arguments.length;i<size;++i){
         if(!MVC.Array.include(include.app().stylesheets,arguments[i]))
             include.app().stylesheets.push(arguments[i]);
+    }
+}
+
+include.libs = function(){
+    for(var i = 0, size = arguments.length;i<size;++i){
+        if(!MVC.Array.include(include.app().libs,arguments[i]))
+            include.app().libs.push(arguments[i]);
     }
 }
 
@@ -74,6 +83,7 @@ create_app = function(app_name){
     var app = {
         name: app_name,
         namespace: MVC.String.classize(app_name),
+        version: '0.1-SNAPSHOT',
         stylesheets: [],
         libs:[],
         engines: [],

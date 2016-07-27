@@ -1,35 +1,35 @@
 load('jmvc/generate/loader.js');
 
-if(!_args[0]){
+if(!arguments[0]){
 	print("USAGE: js jmvc/generate/model name type[optional] app_name[optional]");
 	print("name := under_scoped_name");
 	print("type := " + MVC.gModelTypes.join('|'));
 	print("app_name := under_scoped_name. If present newly created model will be added to the application\n");
 	print();
-	quit();
+	exit(127);
 }
 
+var attachToApp = typeof arguments[2] != 'undefined';
 var app;
 var app_path = '';
-print("_args.length = " + _args.length);
-print("is second arg type = " + MVC.Array.include(MVC.gModelTypes,_args[1]));
-if(_args.length == 1 || (_args.length == 2 && MVC.Array.include(MVC.gModelTypes,_args[1]))){
+
+if(arguments.length == 1 || (arguments.length == 2 && MVC.Array.include(MVC.gModelTypes,arguments[1]))){
 	app = {models:[],tests:{unit:[]}};
 } else {
-	if(_args.length == 2){
-		app = load_app(_args[1]);
-		_args[1] = undefined;
-		_args[2] = app.name;
+	if(arguments.length == 2){
+		app = load_app(arguments[1]);
+		arguments[1] = undefined;
+		arguments[2] = app.name;
 	} else {
-		app = load_app(_args[2]);
+		app = load_app(arguments[2]);
 	}
 	app_path += app.name + '/';
 }
 
 var data = {
-    name      : _args[0],
-	class_name: MVC.String.classize(_args[0]),
-	type      : MVC.String.classize((_args[1]) ? _args[1]: "model")
+    name      : arguments[0],
+	class_name: MVC.String.classize(arguments[0]),
+	type      : MVC.String.classize((arguments[1]) ? arguments[1]: "model")
 }
 
 v = new View({absolute_url: "jmvc/rhino/command/templates/model.ejs"});
@@ -43,11 +43,11 @@ app.tests.unit.push(app_path+data.name);
 
 print("               test/unit/"+app_path+data.name+"_test.js");
 
-if(_args[2]){
+if(attachToApp){
 	save_app(app);
 }
 
 print("\n               Done!\n");
-if(!_args[2]){
+if(!attachToApp){
 print("\n               Make sure to add to your application files!\n");
 }
