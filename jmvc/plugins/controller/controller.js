@@ -127,19 +127,7 @@ MVC.Controller = MVC.Class.extend(
             this.modelName = MVC.String.is_singular(this.className) ? this.className : MVC.String.singularize(this.className)
         if(this._should_attach_actions)
             this._create_actions();
-        //load tests
-        if(include.get_env() == 'test'){
-            var path = MVC.root.join('test/functional/'+this.className+'_controller_test.js');
-    		
-    		var exists = include.check_exists(path);
-    		if (exists) {
-				MVC.Console.log('Loading: "test/functional/' + this.className + '_controller_test.js"');
-                include('../test/functional/'+this.className+'_controller_test.js');
-			}
-			else {
-				MVC.Console.log('Test Controller not found at "test/functional/' + this.className + '_controller_test.js"');
-			}
-        }
+
         this._path =  include.get_path().match(/(.*?)controllers/)[1]+"controllers";
         this.action_name = 'init';
     },

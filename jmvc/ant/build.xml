@@ -10,12 +10,7 @@
 
     <target name="test">
         <echo>Running unit tests...</echo>
-        <exec executable="cmd" failonerror="true" failifexecutionfails="true" osfamily="windows">
-            <arg line="/c"/>
-            <arg line="js.bat"/>
-            <arg line="apps/${application.name}/run_unit.js"/>
-        </exec>
-        <exec executable="${basedir}/js.sh" failonerror="true" failifexecutionfails="true" osfamily="unix">
+        <exec executable="${basedir}/jmvcc" failonerror="true" failifexecutionfails="true" osfamily="unix">
             <arg line="apps/${application.name}/run_unit.js"/>
         </exec>
     </target>
@@ -23,12 +18,7 @@
 
     <target name="compress-javascript">
         <echo>Compressing javascript...</echo>
-        <exec executable="cmd" failonerror="true" failifexecutionfails="true" osfamily="windows">
-            <arg line="/c"/>
-            <arg line="js.bat"/>
-            <arg line="apps/${application.name}/compress.js"/>
-        </exec>
-        <exec executable="${basedir}/js.sh" failonerror="true" failifexecutionfails="true" osfamily="unix">
+        <exec executable="${basedir}/jmvcc" failonerror="true" failifexecutionfails="true" osfamily="unix">
             <arg line="apps/${application.name}/compress.js"/>
         </exec>
         <antcall target="-post-compress-javascript"/>

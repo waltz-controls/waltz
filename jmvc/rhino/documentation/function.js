@@ -29,7 +29,9 @@
 MVC.Doc.Function = MVC.Doc.Pair.extend('function',
 /* @static */
 {
-    code_match: /(?:([\w\.]+)|(["'][^"']+["']))\s*[:=]\s*function\(([^\)]*)/,
+    code_match: function(code) {
+        return code.match(/(?:([\w\.]+)|(["'][^"']+["']))\s*[:=]\s*function\(([^\)]*)/)
+    },
     init : function(){
         this.add(MVC.Doc.Directive.Return, MVC.Doc.Directive.Param, MVC.Doc.Directive.CodeStart, 
         MVC.Doc.Directive.CodeEnd,MVC.Doc.Directive.Plugin)

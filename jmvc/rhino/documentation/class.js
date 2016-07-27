@@ -36,7 +36,9 @@
 MVC.Doc.Class = MVC.Doc.Pair.extend('class',
 /* @Static */
 {
-    code_match: /([\w\.]+)\s*=\s*([\w\.]+?).extend\(/,
+    code_match:function(code){
+        return code.match(/([\w\.]+)\s*=\s*([\w\.]+?).extend\(/);
+    },
     starts_scope: true,
     listing: [],
     /**
@@ -90,7 +92,7 @@ MVC.Doc.Class = MVC.Doc.Pair.extend('class',
     },
     
     code_setup: function(){
-        var parts = this.code.match(this.Class.code_match);
+        var parts = this.Class.code_match(this.code);
         this.name = parts[1];
         this.inherits = parts[2];
     },
@@ -106,14 +108,11 @@ MVC.Doc.Class = MVC.Doc.Pair.extend('class',
      * @param {String} left_side The left side content / list of all documented classes & constructors.
      */
     toFile : function(left_side){
+        print("Rendering class "+this.name+"...")
+
         this.summary = left_side
-        try{
-            var res = this.Class._file_view.render(this)
-            MVCOptions.save('docs/classes/'+this.name+".html", res)
-        }catch(e ){
-            print("Unable to generate class for "+this.name+" !")
-            print("  Error: "+e)
-        }
+        var res = this.Class._file_view.render(this)
+        MVCOptions.save('docs/classes/'+this.name+".html", res)
     },
     /**
      * Creates links to functions and attributes in this class.

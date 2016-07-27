@@ -1,5 +1,5 @@
-<div><h1><%= name%> <label>API</label></h1>
-<div id='shortcuts'><%= get_quicklinks()%></div>
+<div><h1><%= this.name%> <label>API</label></h1>
+<div id='shortcuts'><%= this.get_quicklinks()%></div>
 <%if(this.author){%>
     <div class='author'>Author: <b><%= MVC.Doc.link(this.author) %></b></div>
 <%}%>

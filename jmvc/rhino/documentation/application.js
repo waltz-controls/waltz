@@ -1,5 +1,5 @@
 MVC.render_to = function(file, ejs, data){
-    var v = new View({text: readFile(ejs), name: ejs });
+    var v = new View({text: readFully(ejs), name: ejs });
     
     MVCOptions.save(file,  v.render(data)  );
     
@@ -98,7 +98,7 @@ MVC.Doc =
         MVCOptions.save(file,  this.render(ejs, data) );
     },
     render : function(ejs, data){
-         var v = new View({text: readFile(ejs), name: ejs });
+         var v = new View({text: readFully(ejs), name: ejs });
         return v.render(data)
     },
     /**
@@ -135,7 +135,7 @@ MVC.Doc =
      */
     objects : {},
     get_template : function(template_name){
-        var temp = readFile("jmvc/rhino/documentation/templates/"+template_name+".ejs");
+        var temp = readFully("jmvc/rhino/documentation/templates/"+template_name+".ejs");
         
         var v = new View({text: temp, name: template_name });
         return v;
@@ -161,7 +161,7 @@ MVC.Doc.Application = function(total, app_name){
     for(var s=0; s < total.length; s++){
         script = total[s];
         if(typeof script == "string"){
-            script = total[s] = {path: script, text: readFile(script)};
+            script = total[s] = {path: script, text: readFully(script)};
         }
         
         if(typeof script != 'function' && !script.process){

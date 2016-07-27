@@ -1,7 +1,11 @@
-include.namespace('<%= namespace %>');
+include.application('<%= namespace %>','<%= version %>');
 include.css(
     <%= print_resources(stylesheets) %>
 );
+include.libs(
+    <%= print_resources(libs) %>
+);
+
 include.resources(
     <%= print_resources(resources) %>
 );

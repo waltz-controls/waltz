@@ -120,7 +120,7 @@ MVC.Doc.Pair = MVC.Class.extend(
 
         //we need to add to a class if we 
         this.add_parent(scope);
-        
+
         if(this.Class.code_match(this.code))
             this.code_setup();
         this.comment_setup();

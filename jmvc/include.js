@@ -42,7 +42,8 @@ MVC.Object =  {
          */
         extend: function(d, s) { for (var p in s) d[p] = s[p]; return d;} 
     }
-MVC.Object.extend(MVC,{                                   
+MVC.Object.extend(MVC,{
+	version:"1.5.9",
 	Test: {},        
 	_no_conflict: false,    
     /**
@@ -451,6 +452,18 @@ include = function(){
 MVC.Object.extend(include,
 /* @Static */
 {
+	_namespace: null,//included app's namespace, aka org.my
+	_application: {
+		version: "UNKNOWN",
+		engines: [],
+		css: [],
+		resources: [],
+		libs:[],
+		plugins: [],
+		models:[],
+		controllers: [],
+		views: []
+	},//included application object
 	//Adds defaults to an included parameter
     add_defaults : function(inc){
     	if(typeof inc == 'string') 
@@ -651,6 +664,22 @@ MVC.Object.extend(include,
     engines: function(){
 		for(var i=0; i < arguments.length; i++) include.engine(arguments[i]);
 	},
+    /**
+     * Includes a list of libraries located in 'libs' folder
+     *
+     * '.js' suffix is appended to each library;
+     *
+     * In production mode '.min.js' suffix is appended.
+     *
+     */
+	libs: function(){
+        var lib;
+        for(var i=0; i < arguments.length; i++){
+            lib = arguments[i];
+            var current = new MVC.File("../libs/"+ lib + (include.get_env() === "production" ? ".min.js" : ".js")).join_current();
+            include.insert_head(MVC.root.join(current));
+        }
+	},
     // Returns a function that applies a function to a list of arguments.  Then includes those
     // arguments.
 	app: function(f){
@@ -742,12 +771,18 @@ MVC.Object.extend(include,
 	 * @function namespace
 	 */
 include.namespace = function(i){
-	var parts = i.split('.');
-	var namespace_root = parts[0];
-	for(var i = 1, size = parts.length, namespace = window[namespace_root] = {};i<size;++i){
-		namespace = namespace[parts[i]] = {};
-	}
+	throw "This feature is not supported!";
 };
+	/**
+	 *
+	 * @param app
+	 */
+	include.application = function(app, version){
+		if(arguments.length == 0) return include._application;
+		if(arguments.length != 2) throw "Exactly two arguments are expected here: application_name and application_version";
+		include._application.version = version;
+		window[app] = include._application;
+	};
 /**
  * @function controllers
  */

@@ -83,13 +83,10 @@ MVC.Doc.Constructor = MVC.Doc.Pair.extend('constructor',
     },
     code_setup: MVC.Doc.Function.prototype.code_setup,
     toFile : function(summary){
+        print("Rendering constructor for "+this.name+"...")
         this.summary = summary
-        //try{
-            var res = this.Class._file_view.render(this)
-            MVCOptions.save('docs/classes/'+this.name+".html", res)
-        //}catch(e ){
-        //    throw
-        //}
+        var res = this.Class._file_view.render(this)
+        MVCOptions.save('docs/classes/'+this.name+".html", res)
     },
     get_quicklinks : function(){
         var inside = this.linker().sort(MVC.Doc.Pair.sort_by_full_name);

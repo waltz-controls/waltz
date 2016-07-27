@@ -31,7 +31,7 @@
                 MVC.Console.log('Requesting "'+url+'".  As a fixture it would be:\n    "test/fixtures/'+left+right);
 
 			if(MVC.Console) MVC.Console.log('Loading "test/fixtures/'+left+right+'" for\n        "'+url+'"' );
-			
+
             url = MVC.root.join('test/fixtures/'+left+encodeURIComponent( right));
 			options.method = 'get';
             

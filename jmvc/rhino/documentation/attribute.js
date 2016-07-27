@@ -9,7 +9,7 @@
  * @code_end
  */
 MVC.Doc.Attribute = MVC.Doc.Pair.extend('attribute',
- /* @prototype */
+ /* @Static */
  {
      /**
       * Matches an attribute with code
@@ -18,7 +18,7 @@ MVC.Doc.Attribute = MVC.Doc.Pair.extend('attribute',
      code_match: function(code){
          return code.match(/(\w+)\s*[:=]\s*/) && !code.match(/(\w+)\s*[:=]\s*function\(([^\)]*)/)  
      }
- },{
+ }, /* @Prototype */{
      /**
       * Saves the name of the attribute
       */

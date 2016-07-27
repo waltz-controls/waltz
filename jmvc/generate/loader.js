@@ -48,4 +48,4 @@ render_to = function(file, ejs, data){
     first = false;
 };
 
-load('jmvc/generate/app_json.js');
+load('jmvc/generate/app.helper.js');

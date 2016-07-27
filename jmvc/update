@@ -2,7 +2,7 @@ load('jmvc/rhino/command/file.js')
 load('jmvc/rhino/command/parse.js')
 load('jmvc/rhino/command/recursive_http_fetcher.js');
 
-var fetcher = new RecursiveHTTPFetcher("https://bitbucket.org/api/1.0/repositories/ingvord/javascriptmvc-1.5.x/src/default/jmvc/", 0, "jmvc", false, "https://bitbucket.org/ingvord/javascriptmvc-1.5.x/raw/default/")
+var fetcher = new RecursiveHTTPFetcher("https://bitbucket.org/api/1.0/repositories/ingvord/javascriptmvc-1.5.x/src/1.5.9/jmvc/", 0, "jmvc", false, "https://bitbucket.org/ingvord/javascriptmvc-1.5.x/raw/1.5.9/")
 fetcher.quiet = false
 fetcher.fetch();
 print("  JavaScriptMVC updated!");
