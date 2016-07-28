@@ -3,7 +3,27 @@
  *  This is Free Software, copyright 2005 by Ryan Tomayko (rtomayko@gmail.com) 
      and is licensed MIT: (http://www.opensource.org/licenses/mit-license.php)
  */
+function readUrl(url) {
+    // Using JavaImporter to resolve classes
+    // from specified java packages within the
+    // 'with' statement below
 
+    with (new JavaImporter(java.io, java.net)) {
+        // more or less regular java code except for static types
+        var is = new URL(url).openStream();
+        try {
+            var reader = new BufferedReader(
+                new InputStreamReader(is));
+            var buf = '', line = null;
+            while ((line = reader.readLine()) != null) {
+                buf += line;
+            }
+        } finally {
+            reader.close();
+        }
+        return buf;
+    }
+}
 
 
 /**
@@ -48,7 +68,7 @@ RecursiveHTTPFetcher.prototype = {
         }catch(ignored){}
 
         new MVC.File(f).download_from( link, true );
-        var newsrc = readFile(f);
+        var newsrc = readFully(f);
         var p = "   "
         if(oldsrc){
             if(oldsrc == newsrc)

@@ -842,4 +842,25 @@ var self = window;
 		status: 0
 	};
 
+    window.DOMImplementation = function(){
+
+    }
+
+    DOMImplementation.prototype.createDocument = function(){
+        throw "Unsupported"
+    }
+
+    DOMImplementation.prototype.createDocumentType = function(){
+        throw "Unsupported"
+    }
+
+    DOMImplementation.prototype.createHTMLDocument = function(){
+        throw "Unsupported"
+    }
+
+    DOMImplementation.prototype.hasFeature = function(){
+        return true;
+    }
+
+    window.document.implementation = window.DOMImplementation;
 })();
