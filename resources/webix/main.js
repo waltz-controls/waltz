@@ -2,7 +2,7 @@ webix.protoUI({
     name    : "Main",
     defaults: {
         rows: [
-            TangoWebapp.ToolbarConfig,
+            TangoWebapp.ui.newMainToolbar(),
             {
                 cols: [
                     {

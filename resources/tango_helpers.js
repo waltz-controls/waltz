@@ -54,5 +54,9 @@ TangoWebapp.helpers = {
         });
 
         popup.show();
+    },
+
+    serverWizard:function(data){
+        alert(data["server_instance_name"]);
     }
 };
