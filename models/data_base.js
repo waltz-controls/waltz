@@ -864,7 +864,13 @@ DataBase = MVC.Model.extend('DataBase',
          * @param {Object|Function} cbks: onSuccess - callback [required]; onFailure - panic callback [optional]
          */
         DbAddDevice : function(argin, cbks){
-            throw "Not yet implemented!";
+            var promise = TangoWebapp.rest.devices(this.name).commands('DbAddDevice').exec('input', argin);
+            if (cbks) {
+                var callbacks = this.Class._clean_callbacks(cbks);
+                if (callbacks.onFailure) promise.fail(callbacks.onFailure);
+                if (callbacks.onSuccess) return promise.then(callbacks.onSuccess);
+            }
+            else return promise;
         },
         
         
