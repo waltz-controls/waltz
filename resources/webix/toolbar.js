@@ -88,8 +88,10 @@ webix.protoUI({
                     {
                         view: "button", value: "Apply", width: 100, align: "center", click: function () {
                         var $$serverWizard = $$('frmServerWizard');
-                        if($$serverWizard.validate())
-                            TangoWebapp.helpers.serverWizard($$serverWizard.getValues())
+                        if($$serverWizard.validate()) {
+                            TangoWebapp.helpers.serverWizard($$serverWizard.getValues());
+                            this.getTopParentView().hide();
+                        }
                     }
                     },
                     {
@@ -132,7 +134,7 @@ webix.protoUI({
                     label: "TANGO_REST_URL:",
                     labelWidth: 150
                 },
-                {view: "button", id: "btnRefresh", type: "iconButton", icon: "refresh", width: 40, click: top.refresh},
+                {view: "button", id: "btnRefresh", type: "iconButton", icon: "refresh", width: 36, click: top.refresh},
                 {
                     view: "button",
                     id: "btnAddWizard",
@@ -147,9 +149,9 @@ webix.protoUI({
                 {
                     view: "button",
                     id: "btnRefresh",
-                    type: "icon",
+                    type: "iconButton",
                     icon: "question",
-                    width: 40,
+                    width: 36,
                     click: top.help,
                     align: "right"
                 }

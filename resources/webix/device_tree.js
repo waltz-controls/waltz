@@ -19,6 +19,11 @@ webix.protoUI({
                     case "Change root...":
                         TangoWebapp.helpers.changeTangoHost();
                         break;
+                    case "Delete":
+                        TangoWebapp.helpers.deleteDevice(TangoWebapp.helpers.getDevice()).then(function(){
+                            this.getContext().obj.remove(this.getContext().id);
+                        }.bind(this));
+                        break;
                     default:
                         debugger;
                 }
@@ -26,17 +31,17 @@ webix.protoUI({
         }
         }),
     _ctxMember: [
-            "Copy",
-            "Paste",
+            //"Copy",
+            //"Paste",
             "Delete",
             {$template: "Separator"},
             "Monitor device",
             "Test device",
-            "Define device alias",
+            //"Define device alias",
             "Restart device",
-            {$template: "Separator"},
-            "Go to Server node",
-            "Go to Admin device node",
+            //{$template: "Separator"},
+            //"Go to Server node",
+            //"Go to Admin device node",
             {$template: "Separator"},
             "Log viewer"
         ],
@@ -141,8 +146,9 @@ webix.protoUI({
                     function (el) {
                         if (item && item.$level == 3) {
                             var name = self.getItem(item.$parent).value + "/" + item.value + "/" + el;
-                            if(Device.find_one(name)) debugger;
-                            var device = new Device(name);
+                            var device;
+                            if(!(device = Device.find_one(name))) //TODO when changing tango host this may lead to falsy device, i.e. device from previous db
+                                device = new Device(name);
                             var dev_id = TangoWebapp.devices.add(device);
                             return {
                                 _view_id:'device_info',
@@ -199,7 +205,9 @@ webix.protoUI({
 }, webix.IdSpace, webix.EventSystem, webix.ui.tree);
 
 
-TangoWebapp.DeviceTreeConfig = {
-    view: "DeviceTree",
-    id: "device_tree"
+TangoWebapp.ui.newDeviceTree = function(){
+    return {
+        view: "DeviceTree",
+        id: "device_tree"
+    }
 };
