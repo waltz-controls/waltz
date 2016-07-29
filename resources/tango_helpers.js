@@ -58,7 +58,13 @@ TangoWebapp.helpers = {
 
     serverWizard:function(data){
         data.devices.forEach(function(dev){
-            TangoWebapp.db.DbAddDevice([data.server, dev, data.className]);
+            TangoWebapp.db.DbAddDevice([data.server, dev, data.className]).then(function(resp){
+                webix.message(resp.input[1] + " has been added.");
+            });
         });
+    },
+
+    deleteDevice: function(dev){
+        return TangoWebapp.db.DbDeleteDevice(dev.name);
     }
 };

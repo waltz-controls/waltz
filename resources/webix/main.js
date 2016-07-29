@@ -11,7 +11,7 @@ webix.protoUI({
                         cells: [
                             {
                                 header: "Device",
-                                body  : TangoWebapp.DeviceTreeConfig
+                                body  : TangoWebapp.ui.newDeviceTree()
                             },
                             {
                                 header: "Server",
