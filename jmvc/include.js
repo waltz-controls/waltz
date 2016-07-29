@@ -780,8 +780,8 @@ include.namespace = function(i){
 	include.application = function(app, version){
 		if(arguments.length == 0) return include._application;
 		if(arguments.length != 2) throw "Exactly two arguments are expected here: application_name and application_version";
-		include._application.version = version;
 		window[app] = include._application;
+		window[app].version = include._application.version = version;
 	};
 /**
  * @function controllers

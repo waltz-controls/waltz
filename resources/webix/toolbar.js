@@ -1,32 +1,163 @@
 webix.protoUI({
-    changeTangoHost:function(){
+    _help_popup: webix.ui({
+        view: "popup",
+        zIndex: 1,
+        toFront: true,
+        position: "center",
+        autoheight: true,
+        minHeight: 480,
+        minWidth: 320,
+        body: {
+            rows: [
+                {template: new View({url: "views/help.ejs"}).render()}
+            ]
+        }
+    }),
+    _wizard_window: webix.ui({
+        view: "window",
+        zIndex: 1,
+        toFront: true,
+        position: "center",
+        autofocus: true,
+        autoheight: true,
+        minwidth: 320,
+        close: true,
+        move: true,
+        headHeight: 20,
+        head: {template: "New server wizard"},
+        body: {
+            rows: [
+                {
+                    view: "form",
+                    id: "frmServerWizard",
+                    elements: [
+                        {
+                            view: "text",
+                            name: "server_instance_name",
+                            label: "ServerName/Instance:",
+                            labelWidth: 150,
+                            labelPosition: "top",
+                            placeholder: "server/instance, i.e. TangoTest/test",
+                            validate:function(value){
+                                return /^[\w]*\/[\w]*$/.test(value);
+                            }, invalidMessage:"Incorrect server/instance"
+                        },
+                        {
+                            view: "text",
+                            name: "server_class_name",
+                            label: "Class name:",
+                            labelWidth: 150,
+                            labelPosition: "top",
+                            placeholder: "MyClass",
+                            validate: webix.rules.isNotEmpty,
+                            invalidMessage:"Can not be empty"
+                        },
+                        {
+                            view: "textarea",
+                            name: "server_devices",
+                            label: "Devices:",
+                            height: 200,
+                            labelWidth: 150,
+                            labelPosition: "top",
+                            placeholder: "instance/family/member, i.e. sys/tg_test/1",
+                            validate:function(value){
+                                var rv = false;
+                                var devices = value.split('\n');
+                                do{
+                                    rv = /[\w]*\/[\w]*\/[\w]*/.test(devices.shift());
+                                } while (rv && devices.length != 0);
+                                return rv;
+                            }, invalidMessage:"Incorrect devices"
+                        }
+                    ]
+                },
+                {
+                    view: "toolbar", cols: [
+                    {},
+                    {
+                        view: "button", value: "Apply", width: 100, align: "center", click: function () {
+                        var $$serverWizard = $$('frmServerWizard');
+                        if($$serverWizard.validate())
+                            TangoWebapp.helpers.serverWizard($$serverWizard.getValues())
+                    }
+                    },
+                    {
+                        view: "button", value: "Close", width: 100, align: "right", click: function () {
+                        this.getTopParentView().hide()
+                    }
+                    }]
+                }
+            ]
+        }
+    }),
+    refresh: function () {
+        var top = this.getTopParentView();
+
+        TangoWebapp.consts.REST_API_URL = top.$$('txtTangoRestApiUrl').getValue();
+
+        TangoWebapp.rest = new TangoREST(TangoWebapp.consts.REST_API_URL + '/' + TangoWebapp.consts.REST_API_VERSION);
+
+        $$('device_tree').updateRoot(TangoWebapp.consts.REST_API_URL);
+    },
+    wizard: function () {
+        var top = this.getTopParentView();
+
+        top._wizard_window.show();
+    },
+    help: function () {
+        var top = this.getTopParentView();
+        top._help_popup.show();
+    },
+    _getUI: function () {
+        var top = this;
+        var versionLabel = "ver." + TangoWebapp.version;
+        return {
+            height: 50,
+            cols: [
+                {
+                    view: "text",
+                    id: "txtTangoRestApiUrl",
+                    value: TangoWebapp.consts.REST_API_URL,
+                    label: "TANGO_REST_URL:",
+                    labelWidth: 150
+                },
+                {view: "button", id: "btnRefresh", type: "iconButton", icon: "refresh", width: 40, click: top.refresh},
+                {
+                    view: "button",
+                    id: "btnAddWizard",
+                    label: "Add server wizard",
+                    type: "iconButton",
+                    icon: "magic",
+                    width: 180,
+                    click: top.wizard
+                },
+                {},
+                {view: "label", label: versionLabel, align: "right", width: 180},
+                {
+                    view: "button",
+                    id: "btnRefresh",
+                    type: "icon",
+                    icon: "question",
+                    width: 40,
+                    click: top.help,
+                    align: "right"
+                }
+            ]
+        }
+    },
+    changeTangoHost: function () {
         TangoWebapp.helpers.changeTangoHost();
     },
     name: "MainToolbar",
-    $init:function(){
-
-    },
-    defaults: {
-        data: [
-            {id: "btnFile", value: "File", width: 100, align: "left"},
-            {id: "btnEdit", value: "Edit", submenu:[{id:"changeTangoHost", value:"Change Tango Host"},"Create Server"]},
-            {id: "btnTools", value: "Tools", width: 100, align: "left"},
-            {id: "btnFilter", value: "Filter", width: 100, align: "left"},
-            {id: "btnHelp", value: "Help", width: 100, align: "left", submenu: [{id: "btnAbout", value: "About"}]}
-        ],
-        on:{
-            onMenuItemClick:function(id){
-                webix.message("Click: "+this.getMenuItem(id).value);
-                if(this[id]) this[id]();
-            }
-        }
+    $init: function (config) {
+        webix.extend(config, this._getUI());
     }
-
-},webix.IdSpace, webix.EventSystem ,webix.ui.menu);
-
+}, webix.IdSpace, webix.EventSystem, webix.ui.toolbar);
 
 
-    TangoWebapp.ToolbarConfig = {
+TangoWebapp.ui.newMainToolbar = function () {
+    return {
         view: "MainToolbar",
         id: "mainToolbar"
-    };
+    }
+};

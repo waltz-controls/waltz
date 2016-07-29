@@ -1,1 +1,0 @@
-TangoWebapp.version = "development";
