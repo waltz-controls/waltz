@@ -1,4 +1,16 @@
 webix.protoUI({
+    name:"textarea0",
+    $cssName:"textarea",
+    getValue:function(){
+        var rv = webix.ui.textarea.prototype.getValue.call(this);
+        return rv.split('\n');
+    },
+    setValue:function(value){
+        webix.ui.textarea.prototype.setValue.call(this, value.join('\n'));
+    }
+}, webix.ui.textarea);
+
+webix.protoUI({
     _help_popup: webix.ui({
         view: "popup",
         zIndex: 1,
@@ -33,7 +45,7 @@ webix.protoUI({
                     elements: [
                         {
                             view: "text",
-                            name: "server_instance_name",
+                            name: "server",
                             label: "ServerName/Instance:",
                             labelWidth: 150,
                             labelPosition: "top",
@@ -44,7 +56,7 @@ webix.protoUI({
                         },
                         {
                             view: "text",
-                            name: "server_class_name",
+                            name: "className",
                             label: "Class name:",
                             labelWidth: 150,
                             labelPosition: "top",
@@ -53,8 +65,8 @@ webix.protoUI({
                             invalidMessage:"Can not be empty"
                         },
                         {
-                            view: "textarea",
-                            name: "server_devices",
+                            view: "textarea0",
+                            name: "devices",
                             label: "Devices:",
                             height: 200,
                             labelWidth: 150,
@@ -62,10 +74,9 @@ webix.protoUI({
                             placeholder: "instance/family/member, i.e. sys/tg_test/1",
                             validate:function(value){
                                 var rv = false;
-                                var devices = value.split('\n');
                                 do{
-                                    rv = /[\w]*\/[\w]*\/[\w]*/.test(devices.shift());
-                                } while (rv && devices.length != 0);
+                                    rv = /[\w]*\/[\w]*\/[\w]*/.test(value.shift());
+                                } while (rv && value.length != 0);
                                 return rv;
                             }, invalidMessage:"Incorrect devices"
                         }

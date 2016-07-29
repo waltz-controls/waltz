@@ -57,6 +57,8 @@ TangoWebapp.helpers = {
     },
 
     serverWizard:function(data){
-        alert(data["server_instance_name"]);
+        data.devices.forEach(function(dev){
+            TangoWebapp.db.DbAddDevice([data.server, dev, data.className]);
+        });
     }
 };
