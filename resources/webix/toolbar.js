@@ -125,7 +125,6 @@ webix.protoUI({
         var top = this;
         var versionLabel = "ver." + TangoWebapp.version;
         return {
-            height: 50,
             cols: [
                 {
                     view: "text",
@@ -164,6 +163,9 @@ webix.protoUI({
     name: "MainToolbar",
     $init: function (config) {
         webix.extend(config, this._getUI());
+    },
+    defaults:{
+        height: 40
     }
 }, webix.IdSpace, webix.EventSystem, webix.ui.toolbar);
 
