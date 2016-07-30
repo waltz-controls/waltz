@@ -42,7 +42,7 @@ webix.protoUI({
                 dataFeed: "..."
             }]
     }
-}, webix.IdSpace, TangoWebapp.mixin.DeviceSetter, TangoWebapp.mixin.DeviceTabActivator, webix.ui.layout);
+}, webix.IdSpace, TangoWebapp.mixin.DeviceSetter, TangoWebapp.mixin.TabActivator, webix.ui.layout);
 
 TangoWebapp.ui.newDeviceInfo = function (device) {
     return {

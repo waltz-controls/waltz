@@ -115,7 +115,7 @@ webix.protoUI({
             this.$$('frmNewProperty').bind(this.$$('device_properties_data'));
         }.bind(this));
     }
-}, webix.IdSpace, webix.EventSystem, TangoWebapp.mixin.DeviceSetter, TangoWebapp.mixin.DeviceTabActivator, webix.ui.layout);
+}, webix.IdSpace, webix.EventSystem, TangoWebapp.mixin.DeviceSetter, TangoWebapp.mixin.TabActivator, webix.ui.layout);
 
 TangoWebapp.ui.newDeviceProperties = function (device) {
     return {
