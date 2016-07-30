@@ -1,6 +1,6 @@
 webix.protoUI({
     name: "Device Pipe Config"
-}, webix.IdSpace, TangoWebapp.mixin.DeviceTabActivator, webix.ui.layout);
+}, webix.IdSpace, TangoWebapp.mixin.TabActivator, webix.ui.layout);
 
 TangoWebapp.ui.newDevicePipeConf = function () {
     return {

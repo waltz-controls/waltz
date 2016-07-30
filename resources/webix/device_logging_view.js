@@ -91,7 +91,7 @@ webix.protoUI({
             //this.refresh();
         }.bind(this));
     }
-}, webix.IdSpace, TangoWebapp.mixin.DeviceTabActivator, TangoWebapp.mixin.DeviceSetter, webix.ui.layout);
+}, webix.IdSpace, TangoWebapp.mixin.TabActivator, TangoWebapp.mixin.DeviceSetter, webix.ui.layout);
 
 TangoWebapp.ui.newDeviceLogging = function (device) {
     return {

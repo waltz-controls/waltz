@@ -3,12 +3,7 @@ webix.protoUI({
         var top = this.getTopParentView();
         var device = top._device;
 
-        var attributesInfo = device.attributes().then(function (attrs) {
-            return webix.promise.all(attrs.map(function (attr) {
-                return device.attributeInfo(attr.name);
-            }));
-        });
-
+        var attributesInfo = device.attributesInfo();
         var map_change = function (attr) {
             return {
                 name      : attr.name,
@@ -126,7 +121,7 @@ webix.protoUI({
             this.refresh();
         }.bind(this));
     }
-}, webix.IdSpace, TangoWebapp.mixin.DeviceTabActivator, TangoWebapp.mixin.DeviceSetter, webix.ui.layout);
+}, webix.IdSpace, TangoWebapp.mixin.TabActivator, TangoWebapp.mixin.DeviceSetter, webix.ui.layout);
 
 TangoWebapp.ui.newDeviceEvents = function (device) {
     return {

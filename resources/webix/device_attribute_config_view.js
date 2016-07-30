@@ -1,6 +1,6 @@
 webix.protoUI({
     name: "Device Attr Config"
-}, webix.IdSpace, TangoWebapp.mixin.DeviceTabActivator, webix.ui.layout);
+}, webix.IdSpace, TangoWebapp.mixin.TabActivator, webix.ui.layout);
 
 TangoWebapp.ui.newDeviceAttrConfig = function () {
     return {

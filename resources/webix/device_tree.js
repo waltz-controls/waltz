@@ -14,8 +14,11 @@ webix.protoUI({
             onItemClick: function (id) {
                 var item = this.getContext().obj.getItem(this.getContext().id);
                 switch(id){
+                    case "Monitor device":
+                        TangoWebapp.helpers.openAtkTab(TangoWebapp.getDevice());
+                        break;
                     case "Test device":
-                        TangoWebapp.helpers.openDevicePanel(TangoWebapp.helpers.getDevice());
+                        TangoWebapp.helpers.openDevicePanel(TangoWebapp.getDevice());
                         break;
                     case "Delete":
                         TangoWebapp.helpers.deleteDevice(TangoWebapp.getDevice()).then(function(){
@@ -52,19 +55,7 @@ webix.protoUI({
                 webix.message("DblClick " + id);
                 var item = this.getItem(id);
                 if(item.$level == 4) {//member
-                    if(!$$("atk" + id)) {
-                        $$("mainTabview").addView(
-                            {
-                                header: "ATKPanel [" + item._name + "]",
-                                close: true,
-                                body: {
-                                    view: "ATKPanel",
-                                    id: "atk" + id
-                                }
-                            }
-                        );
-                    }
-                    $$("atk" + id).show();
+                    TangoWebapp.helpers.openAtkTab(TangoWebapp.getDevice());
                 }
 
             },

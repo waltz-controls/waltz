@@ -108,6 +108,16 @@ Device = MVC.Model.extend("device",
         writeAttribute:function(attr, argin){
             return this.api.devices(this.name).attributes(attr).put('?value=' + argin)
         },
+        attributesInfo:function(){
+            var self = this;
+            if(this._attributesInfo) return this._attributesInfo;
+            else
+            return this._attributesInfo = this.attributes().then(function (attrs) {
+                return webix.promise.all(attrs.map(function (attr) {
+                    return self.attributeInfo(attr.name);
+                }));
+            });
+        },
         updateProperties: function (props) {
             function toUrl(props) {
                 var result = [];
