@@ -1,7 +1,18 @@
-TangoWebapp.helpers = {
+MVC.Object.extend(TangoWebapp,{
+    getDatabase: function(){
+        return TangoWebapp.databases.getItem(TangoWebapp.databases.getCursor())
+    },
 
     getDevice: function () {
         return TangoWebapp.devices.getItem(TangoWebapp.devices.getCursor());//TODO assert
+    }
+});
+
+TangoWebapp.helpers = {
+    createDatabase:function(){
+        var db = new DataBase();//takes values from TangoWebapp.consts
+        var dbId = TangoWebapp.databases.add(db);
+        TangoWebapp.databases.setCursor(db.id = dbId);
     },
 
     openDevicePanel: function (device) {

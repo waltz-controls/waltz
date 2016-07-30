@@ -8,7 +8,10 @@ Device = MVC.Model.extend("device",
     },
     /*@Prototype */
     {
+        _api: null,
+        _db: null,
         //properties reference to promise objects
+        _admin:null,
         _info:null,
         _commands:null,
         _attributes:null,
@@ -19,9 +22,11 @@ Device = MVC.Model.extend("device",
          *
          * @constructor
          * @param name
+         * @param api -- tango rest api
          */
-        init: function(name){
+        init: function(name, api){
             this._super({name:name});
+            this._api = api;
         },
         /**
          *
@@ -57,10 +62,10 @@ Device = MVC.Model.extend("device",
          * @return promise
          */
         attributeInfo:function(attr){
-            return TangoWebapp.rest.devices(this.name).attributes(attr).get('/info');
+            return this._api.devices(this.name).attributes(attr).get('/info');
         },
         pipes:function(){
-            var pipes = TangoWebapp.rest.devices(this.name).get("/pipes");
+            var pipes = this._api.devices(this.name).get("/pipes");
             return pipes;
             //TODO mTangoSDK #103
             //if(this._pipes == null){
@@ -73,7 +78,7 @@ Device = MVC.Model.extend("device",
          * @return promise
          */
         properties:function(){
-            var properties = TangoWebapp.rest.devices(this.name).get("/properties");
+            var properties = this._api.devices(this.name).get("/properties");
             return properties;
         },
         /**
@@ -81,7 +86,7 @@ Device = MVC.Model.extend("device",
          * @return promise
          */
         state:function(){
-            return TangoWebapp.rest.devices(this.name).get("/state");
+            return this._api.devices(this.name).get("/state");
         },
         update:function(){
             var promise = this.Class.fetch(this);
@@ -91,17 +96,17 @@ Device = MVC.Model.extend("device",
             this._pipes = promise.then(function(dev){ return dev.pipes;});
         },
         executeCommand:function(cmd, argin){
-            var command = TangoWebapp.rest.devices(this.name).commands(cmd);
+            var command = this._api.devices(this.name).commands(cmd);
             if(argin && argin != "")
                 return command.exec('input',argin);
             else
                 return command.exec();
         },
         readAttribute:function(attr){
-            return TangoWebapp.rest.devices(this.name).attributes(attr).get('/value');
+            return this._api.devices(this.name).attributes(attr).get('/value');
         },
         writeAttribute:function(attr, argin){
-            return TangoWebapp.rest.devices(this.name).attributes(attr).put('?value=' + argin)
+            return this._api.devices(this.name).attributes(attr).put('?value=' + argin)
         },
         updateProperties: function (props) {
             function toUrl(props) {
@@ -117,16 +122,16 @@ Device = MVC.Model.extend("device",
                 return result.join('&');
             }
 
-            TangoWebapp.rest.devices(this.name).properties().put('?' + toUrl(props));
+            this._api.devices(this.name).properties().put('?' + toUrl(props));
         },
         deleteProperty: function (name) {
-            TangoWebapp.rest.devices(this.name).properties().delete('/' + name);
+            this._api.devices(this.name).properties().delete('/' + name);
         },
         readPipe:function(name){
-            return TangoWebapp.rest.devices(this.name).pipes(name).get();
+            return this._api.devices(this.name).pipes(name).get();
         },
         writePipe:function(name, obj){
-            return TangoWebapp.rest.devices(this.name).pipes(name).put("",obj);
+            return this._api.devices(this.name).pipes(name).put("",obj);
         }
     }
 );

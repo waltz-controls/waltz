@@ -10,13 +10,10 @@ TangoWebapp.MainController = MVC.Controller.extend('main', {
      * @param {Object} params
      */
     load: function (params) {
-        //TODO ask user for rest_host
-        TangoWebapp.rest = new TangoREST(TangoWebapp.consts.REST_API_URL + '/' + TangoWebapp.consts.REST_API_VERSION);
-
-        TangoWebapp.db = new DataBase('sys/database/2');
-
+        TangoWebapp.databases = new webix.DataCollection();
         TangoWebapp.devices = new webix.DataCollection();
 
+        TangoWebapp.helpers.createDatabase();
 
         //draw ui
         webix.ui({

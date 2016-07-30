@@ -108,9 +108,9 @@ webix.protoUI({
 
         TangoWebapp.consts.REST_API_URL = top.$$('txtTangoRestApiUrl').getValue();
 
-        TangoWebapp.rest = new TangoREST(TangoWebapp.consts.REST_API_URL + '/' + TangoWebapp.consts.REST_API_VERSION);
+        TangoWebapp.helpers.createDatabase();
 
-        $$('device_tree').updateRoot(TangoWebapp.consts.REST_API_URL);
+        $$('device_tree').updateRoot();
     },
     wizard: function () {
         var top = this.getTopParentView();
