@@ -59,12 +59,7 @@ TangoREST.prototype.exec = function () {
     //TODO check commands branch
     if (arguments.length > 0) {
         this._url += "?";
-        for (var i = 0, size = arguments.length; i < size; ++i) {
-            this._url += arguments[i];
-            this._url += '=';
-            this._url += arguments[++i];
-            this._url += '&'
-        }
+        this._url += Array.from(arguments).map(function(arg){return "input="+arg}).join('&');
     }
 
     return this.put();

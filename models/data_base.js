@@ -864,7 +864,7 @@ DataBase = MVC.Model.extend('DataBase',
          * @param {Object|Function} cbks: onSuccess - callback [required]; onFailure - panic callback [optional]
          */
         DbAddDevice : function(argin, cbks){
-            var promise = TangoWebapp.rest.devices(this.name).commands('DbAddDevice').exec('input', argin);
+            var promise = TangoWebapp.rest.devices(this.name).commands('DbAddDevice').exec.apply(TangoWebapp.rest, argin);
             if (cbks) {
                 var callbacks = this.Class._clean_callbacks(cbks);
                 if (callbacks.onFailure) promise.fail(callbacks.onFailure);
@@ -947,7 +947,7 @@ DataBase = MVC.Model.extend('DataBase',
          * @param {Object|Function} cbks: onSuccess - callback [required]; onFailure - panic callback [optional]
          */
         DbDeleteDevice : function(argin, cbks){
-            var promise = TangoWebapp.rest.devices(this.name).commands('DbDeleteDevice').exec('input', argin);
+            var promise = TangoWebapp.rest.devices(this.name).commands('DbDeleteDevice').exec(argin);
             if (cbks) {
                 var callbacks = this.Class._clean_callbacks(cbks);
                 if (callbacks.onFailure) promise.fail(callbacks.onFailure);
@@ -1173,7 +1173,7 @@ DataBase = MVC.Model.extend('DataBase',
          * @param {Object|Function} cbks: onSuccess - callback [required]; onFailure - panic callback [optional]
          */
         DbGetClassForDevice : function(argin, cbks){
-            var promise = TangoWebapp.rest.devices(this.name).commands('DbGetClassForDevice').exec('input', argin);
+            var promise = TangoWebapp.rest.devices(this.name).commands('DbGetClassForDevice').exec(argin);
             if (cbks) {
                 var callbacks = this.Class._clean_callbacks(cbks);
                 if (callbacks.onFailure) promise.fail(callbacks.onFailure);
@@ -1333,7 +1333,7 @@ DataBase = MVC.Model.extend('DataBase',
          * @param {Object|Function} cbks: onSuccess - callback [required]; onFailure - panic callback [optional]
          */
         DbGetDeviceDomainList : function(argin, cbks){
-            var promise = TangoWebapp.rest.devices(this.name).commands("DbGetDeviceDomainList").exec('input',argin);
+            var promise = TangoWebapp.rest.devices(this.name).commands("DbGetDeviceDomainList").exec(argin);
             if(cbks) {
                 var callbacks = this.Class._clean_callbacks(cbks);
                 if (callbacks.onFailure) promise.fail(callbacks.onFailure);
@@ -1359,7 +1359,7 @@ DataBase = MVC.Model.extend('DataBase',
          * @param {Object|Function} cbks: onSuccess - callback [required]; onFailure - panic callback [optional]
          */
         DbGetDeviceFamilyList : function(argin, cbks){
-            var promise = TangoWebapp.rest.devices(this.name).commands("DbGetDeviceFamilyList").exec('input',argin);
+            var promise = TangoWebapp.rest.devices(this.name).commands("DbGetDeviceFamilyList").exec(argin);
             if(cbks) {
                 var callbacks = this.Class._clean_callbacks(cbks);
                 if (callbacks.onFailure) promise.fail(callbacks.onFailure);
@@ -1374,7 +1374,7 @@ DataBase = MVC.Model.extend('DataBase',
          * @param {Object|Function} cbks: onSuccess - callback [required]; onFailure - panic callback [optional]
          */
         DbGetDeviceInfo : function(argin, cbks){
-            var promise = TangoWebapp.rest.devices(this.name).commands('DbGetDeviceInfo').exec('input', argin);
+            var promise = TangoWebapp.rest.devices(this.name).commands('DbGetDeviceInfo').exec(argin);
             if(cbks) {
                 var callbacks = this.Class._clean_callbacks(cbks);
                 if (callbacks.onFailure) promise.fail(callbacks.onFailure);
@@ -1401,7 +1401,7 @@ DataBase = MVC.Model.extend('DataBase',
          * @param {Object|Function} cbks: onSuccess - callback [required]; onFailure - panic callback [optional]
          */
         DbGetDeviceMemberList : function(argin, cbks){
-            var promise = TangoWebapp.rest.devices(this.name).commands('DbGetDeviceMemberList').exec('input', argin);
+            var promise = TangoWebapp.rest.devices(this.name).commands('DbGetDeviceMemberList').exec(argin);
             if(cbks) {
                 var callbacks = this.Class._clean_callbacks(cbks);
                 if (callbacks.onFailure) promise.fail(callbacks.onFailure);
