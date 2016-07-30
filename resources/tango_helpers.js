@@ -15,6 +15,22 @@ TangoWebapp.helpers = {
         TangoWebapp.databases.setCursor(db.id = dbId);
     },
 
+    openDeviceTab: function(device, tabId){
+        var devId = "dev" + device.id;
+        if (!$$(devId)) {
+            $$("main-tabview").addView(
+                TangoWebapp.ui.newDeviceView(
+                    {
+                        device: device,
+                        id    : devId
+                    })
+            );
+        }
+        $$(devId).show();
+
+        $$(devId).$$(tabId).activate();
+    },
+
     openDevicePanel: function (device) {
         webix.ui({
             view: 'Device Panel',
@@ -69,13 +85,13 @@ TangoWebapp.helpers = {
 
     serverWizard:function(data){
         data.devices.forEach(function(dev){
-            TangoWebapp.db.DbAddDevice([data.server, dev, data.className]).then(function(resp){
+            TangoWebapp.getDatabase().DbAddDevice([data.server, dev, data.className]).then(function(resp){
                 webix.message(resp.input[1] + " has been added.");
             });
         });
     },
 
     deleteDevice: function(dev){
-        return TangoWebapp.db.DbDeleteDevice(dev.name);
+        return TangoWebapp.getDatabase().DbDeleteDevice(dev.name);
     }
 };

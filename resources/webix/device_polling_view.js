@@ -200,7 +200,7 @@ webix.protoUI({
     }
 }, webix.IdSpace, webix.EventSystem, TangoWebapp.mixin.DeviceTabActivator, TangoWebapp.mixin.DeviceSetter, webix.ui.layout);
 
-TangoWebapp.newDevicePolling = function (device) {
+TangoWebapp.ui.newDevicePolling = function (device) {
     return {
         device: device,
         view  : "DevicePolling",

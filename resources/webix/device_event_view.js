@@ -128,7 +128,7 @@ webix.protoUI({
     }
 }, webix.IdSpace, TangoWebapp.mixin.DeviceTabActivator, TangoWebapp.mixin.DeviceSetter, webix.ui.layout);
 
-TangoWebapp.newDeviceEvents = function (device) {
+TangoWebapp.ui.newDeviceEvents = function (device) {
     return {
         device: device,
         view  : "DeviceEvent",

@@ -11,7 +11,7 @@ webix.protoUI({
     }
 }, webix.IdSpace, webix.ui.tabview);
 
-TangoWebapp.newDeviceView = function (config) {
+TangoWebapp.ui.newDeviceView = function (config) {
     return {
         header: "Device [" + config.device.name + "]",
         close : true,
@@ -21,36 +21,36 @@ TangoWebapp.newDeviceView = function (config) {
             cells: [
                 {
                     header: "Info",
-                    body  : TangoWebapp.newDeviceInfo(config.device)
+                    body  : TangoWebapp.ui.newDeviceInfo(config.device)
 
                 },
                 {
                     header: "Properties",
-                    body  : TangoWebapp.newDeviceProperties(config.device)
+                    body  : TangoWebapp.ui.newDeviceProperties(config.device)
                 },
                 {
                     header: "Polling",
-                    body: TangoWebapp.newDevicePolling(config.device)
+                    body: TangoWebapp.ui.newDevicePolling(config.device)
                 },
                 {
                     header: "Events",
-                    body  : TangoWebapp.newDeviceEvents(config.device)
+                    body  : TangoWebapp.ui.newDeviceEvents(config.device)
                 },
                 {
                     header: "Attributes config",
-                    body  : TangoWebapp.newDeviceAttrConfig(config.device)
+                    body  : TangoWebapp.ui.newDeviceAttrConfig(config.device)
                 },
                 {
                     header: "Pipes config",
-                    body  : TangoWebapp.newDevicePipeConf(config.device)
+                    body  : TangoWebapp.ui.newDevicePipeConf(config.device)
                 },
                 {
                     header: "Attributes properties",
-                    body  : TangoWebapp.newDeviceAttrProps(config.device)
+                    body  : TangoWebapp.ui.newDeviceAttrProps(config.device)
                 },
                 {
                     header: "Logging",
-                    body  : TangoWebapp.newDeviceLogging(config.device)
+                    body  : TangoWebapp.ui.newDeviceLogging(config.device)
                 }
             ]
         }
