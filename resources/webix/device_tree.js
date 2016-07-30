@@ -1,7 +1,8 @@
 webix.protoUI({
-    updateRoot:function(rootValue){
+    updateRoot:function(){
+        var db = TangoWebapp.getDatabase();
         this.clearAll();
-        this.add({id: 'root', value: rootValue, open:false, data:[]});
+        this.add({id: 'root', value: db.url, webix_kids: true});
         this.loadBranch('root', null, null);
         this.refresh();
     },
@@ -15,9 +16,6 @@ webix.protoUI({
                 switch(id){
                     case "Test device":
                         TangoWebapp.helpers.openDevicePanel(TangoWebapp.helpers.getDevice());
-                        break;
-                    case "Change root...":
-                        TangoWebapp.helpers.changeTangoHost();
                         break;
                     case "Delete":
                         TangoWebapp.helpers.deleteDevice(TangoWebapp.helpers.getDevice()).then(function(){
@@ -94,11 +92,11 @@ webix.protoUI({
                 if (item) webix.message("Getting children of " + item.value);
                 var promise;
                 if (id === 'root')//domain
-                    promise = TangoWebapp.db.DbGetDeviceDomainList("*");
+                    promise = TangoWebapp.getDatabase().DbGetDeviceDomainList("*");
                 else if (item.$level == 2)//family
-                    promise = TangoWebapp.db.DbGetDeviceFamilyList(item.value + '/*');
+                    promise = TangoWebapp.getDatabase().DbGetDeviceFamilyList(item.value + '/*');
                 else if (item.$level == 3)//member
-                    promise = TangoWebapp.db.DbGetDeviceMemberList(this.getItem(item.$parent).value + '/' + item.value + '/*');
+                    promise = TangoWebapp.getDatabase().DbGetDeviceMemberList(this.getItem(item.$parent).value + '/' + item.value + '/*');
                 else {
                     return false;//ignore member
                 }
@@ -114,11 +112,7 @@ webix.protoUI({
             },
             onBeforeContextMenu: function (id, e, node) {
                 var item = this.getItem(id);
-                if (id === 'root'){
-                    this._ctxMenu.clearAll();
-                    this._ctxMenu.parse(["Change root..."]);
-                    return true;
-                }  else if (item.$level == 4) {//member
+                if (item.$level == 4) {//member
                     TangoWebapp.devices.setCursor(item._device_id);
                     this._ctxMenu.clearAll();
                     this._ctxMenu.parse(this._ctxMember);
@@ -133,7 +127,7 @@ webix.protoUI({
         this._ctxMenu.attachTo(this);
 
         this.$ready.push(function(){
-            this.updateRoot(TangoWebapp.consts.REST_API_URL);
+            this.updateRoot();
         }.bind(this));
 
     },
