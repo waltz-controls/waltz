@@ -84,7 +84,7 @@ webix.protoUI({
             return new Device("dserver/" + info.server);
         });
 
-        this._db = TangoWebapp.db;
+        this._db = TangoWebapp.getDatabase();
 
         this.$ready.push(function () {
             //request logging levels from admin device
@@ -93,7 +93,7 @@ webix.protoUI({
     }
 }, webix.IdSpace, TangoWebapp.mixin.DeviceTabActivator, TangoWebapp.mixin.DeviceSetter, webix.ui.layout);
 
-TangoWebapp.newDeviceLogging = function (device) {
+TangoWebapp.ui.newDeviceLogging = function (device) {
     return {
         device: device,
         view  : "DeviceLogging",

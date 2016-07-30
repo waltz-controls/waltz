@@ -1,14 +1,14 @@
 Device = MVC.Model.extend("device",
     /*@Static */
     {
-        id: 'name',
         fetch:function(inst){
-            return TangoWebapp.rest.devices(inst.name).get();
+            return inst.api.devices(inst.name).get();
         }
     },
     /*@Prototype */
     {
-        _api: null,
+        id: null,
+        api: null,
         _db: null,
         //properties reference to promise objects
         _admin:null,
@@ -24,9 +24,9 @@ Device = MVC.Model.extend("device",
          * @param name
          * @param api -- tango rest api
          */
-        init: function(name, api){
-            this._super({name:name});
-            this._api = api;
+        init: function(name, dbId, api){
+            this._super({name:name, id: dbId + '/' + name});
+            this.api = api;
         },
         /**
          *
@@ -62,10 +62,10 @@ Device = MVC.Model.extend("device",
          * @return promise
          */
         attributeInfo:function(attr){
-            return this._api.devices(this.name).attributes(attr).get('/info');
+            return this.api.devices(this.name).attributes(attr).get('/info');
         },
         pipes:function(){
-            var pipes = this._api.devices(this.name).get("/pipes");
+            var pipes = this.api.devices(this.name).get("/pipes");
             return pipes;
             //TODO mTangoSDK #103
             //if(this._pipes == null){
@@ -78,7 +78,7 @@ Device = MVC.Model.extend("device",
          * @return promise
          */
         properties:function(){
-            var properties = this._api.devices(this.name).get("/properties");
+            var properties = this.api.devices(this.name).get("/properties");
             return properties;
         },
         /**
@@ -86,7 +86,7 @@ Device = MVC.Model.extend("device",
          * @return promise
          */
         state:function(){
-            return this._api.devices(this.name).get("/state");
+            return this.api.devices(this.name).get("/state");
         },
         update:function(){
             var promise = this.Class.fetch(this);
@@ -96,17 +96,17 @@ Device = MVC.Model.extend("device",
             this._pipes = promise.then(function(dev){ return dev.pipes;});
         },
         executeCommand:function(cmd, argin){
-            var command = this._api.devices(this.name).commands(cmd);
+            var command = this.api.devices(this.name).commands(cmd);
             if(argin && argin != "")
                 return command.exec('input',argin);
             else
                 return command.exec();
         },
         readAttribute:function(attr){
-            return this._api.devices(this.name).attributes(attr).get('/value');
+            return this.api.devices(this.name).attributes(attr).get('/value');
         },
         writeAttribute:function(attr, argin){
-            return this._api.devices(this.name).attributes(attr).put('?value=' + argin)
+            return this.api.devices(this.name).attributes(attr).put('?value=' + argin)
         },
         updateProperties: function (props) {
             function toUrl(props) {
@@ -122,16 +122,16 @@ Device = MVC.Model.extend("device",
                 return result.join('&');
             }
 
-            this._api.devices(this.name).properties().put('?' + toUrl(props));
+            this.api.devices(this.name).properties().put('?' + toUrl(props));
         },
         deleteProperty: function (name) {
-            this._api.devices(this.name).properties().delete('/' + name);
+            this.api.devices(this.name).properties().delete('/' + name);
         },
         readPipe:function(name){
-            return this._api.devices(this.name).pipes(name).get();
+            return this.api.devices(this.name).pipes(name).get();
         },
         writePipe:function(name, obj){
-            return this._api.devices(this.name).pipes(name).put("",obj);
+            return this.api.devices(this.name).pipes(name).put("",obj);
         }
     }
 );

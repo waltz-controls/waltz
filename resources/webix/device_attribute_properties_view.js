@@ -2,7 +2,7 @@ webix.protoUI({
     name: "Device Attr Props"
 }, webix.IdSpace, TangoWebapp.mixin.DeviceTabActivator, webix.ui.layout);
 
-TangoWebapp.newDeviceAttrProps = function () {
+TangoWebapp.ui.newDeviceAttrProps = function () {
     return {
         view: "Device Attr Props",
         id  : "device_attr_properties",

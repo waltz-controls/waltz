@@ -4,7 +4,7 @@ webix.protoUI({
     $init  : function (config) {
         this.$ready.push(function () {
             this.$$('device_info_data').parse(
-                TangoWebapp.db.DbGetDeviceInfo(this._device.name).then(
+                TangoWebapp.getDatabase().DbGetDeviceInfo(this._device.name).then(
                     function(response){
                         var info = response.output;
                         return {
@@ -44,7 +44,7 @@ webix.protoUI({
     }
 }, webix.IdSpace, TangoWebapp.mixin.DeviceSetter, TangoWebapp.mixin.DeviceTabActivator, webix.ui.layout);
 
-TangoWebapp.newDeviceInfo = function (device) {
+TangoWebapp.ui.newDeviceInfo = function (device) {
     return {
         device: device,
         view  : "DeviceInfo",

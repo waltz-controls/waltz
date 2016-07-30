@@ -2,7 +2,7 @@ webix.protoUI({
     updateRoot:function(){
         var db = TangoWebapp.getDatabase();
         this.clearAll();
-        this.add({id: 'root', value: db.url, webix_kids: true});
+        this.add({id: 'root', value: db.url, _db: db, webix_kids: true});
         this.loadBranch('root', null, null);
         this.refresh();
     },
@@ -18,7 +18,7 @@ webix.protoUI({
                         TangoWebapp.helpers.openDevicePanel(TangoWebapp.helpers.getDevice());
                         break;
                     case "Delete":
-                        TangoWebapp.helpers.deleteDevice(TangoWebapp.helpers.getDevice()).then(function(){
+                        TangoWebapp.helpers.deleteDevice(TangoWebapp.getDevice()).then(function(){
                             this.getContext().obj.remove(this.getContext().id);
                         }.bind(this));
                         break;
@@ -71,20 +71,8 @@ webix.protoUI({
             onItemClick: function (id, e, node) {
                 var item = this.getItem(id);
                 if (item.$level == 4 || item.$level == 5) { //device, Properties, Event etc
-                    TangoWebapp.devices.setCursor(item._device_id);
-                    var devId = "dev" + item._device_id;
-                    if (!$$(devId)) {
-                        $$("main-tabview").addView(
-                            TangoWebapp.newDeviceView(
-                                {
-                                    device: TangoWebapp.helpers.getDevice(),
-                                    id    : devId
-                                })
-                        );
-                    }
-                    $$(devId).show();
-
-                    $$(devId).$$(item._view_id).activate();
+                    TangoWebapp.devices.setCursor(item._device_id);//TODO does getItem automatically sets cursor???
+                    TangoWebapp.helpers.openDeviceTab(TangoWebapp.getDevice(), item._view_id);
                 }
             },
             onDataRequest: function (id, cbk, url) {
@@ -126,63 +114,65 @@ webix.protoUI({
     $init: function () {
         this._ctxMenu.attachTo(this);
 
-        this.$ready.push(function(){
-            this.updateRoot();
-        }.bind(this));
-
+        this.$ready.push(this.updateRoot);
     },
     handleResponse: function (parent_id, item) {
         var self = this;
         return function (response) {
+            //create device node
             return {
                 parent: parent_id,
                 data: response.output.map(
                     function (el) {
                         if (item && item.$level == 3) {
+                            var db = self.getItem('root')._db;
                             var name = self.getItem(item.$parent).value + "/" + item.value + "/" + el;
+                            var deviceId = db.id + '/' + name; //used for model lookup
                             var device;
-                            if(!(device = Device.find_one(name))) //TODO when changing tango host this may lead to falsy device, i.e. device from previous db
-                                device = new Device(name);
-                            var dev_id = TangoWebapp.devices.add(device);
+                            if(!(device = Device.find_one(deviceId))) {
+                                device = new Device(name, db.id, db.api);
+                                var dev_id = TangoWebapp.devices.add(device);
+                                webix.assert(dev_id == deviceId, "dev_id and deviceId must match");
+                            }
                             return {
                                 _view_id:'device_info',
-                                _device_id: dev_id,
+                                _device_id: deviceId,
                                 value: el,
                                 data: [
                                     {
                                         value: 'Properties',
-                                        _device_id: dev_id,
+                                        _device_id: deviceId,
                                         _view_id: 'device_properties'
                                     },
                                     {
                                         value: 'Polling',
-                                        _device_id: dev_id,
+                                        _device_id: deviceId,
                                         _view_id: 'device_polling'
                                     },
                                     {
                                         value: 'Event',
-                                        _device_id: dev_id,
+                                        _device_id: deviceId,
                                         _view_id: 'device_events'
                                     },
                                     {
                                         value: 'Attribute config',
-                                        _device_id: dev_id,
+                                        _device_id: deviceId,
                                         _view_id: 'device_attr_config'
                                     },
                                     {
                                         value: 'Pipe config',
-                                        _device_id: dev_id,
+                                        _device_id: deviceId,
                                         _view_id: 'device_pipe_config'
                                     },
                                     {
                                         value: 'Attribute properties',
-                                        _device_id: dev_id,
+                                        _device_id: deviceId,
                                         webix_kids: true,
                                         _view_id: 'device_attr_properties'
                                     },
                                     {
                                         value: 'Logging',
-                                        _device_id: dev_id,
+                                        _device_id: deviceId,
                                         _view_id: 'device_logging'
                                     }
                                 ]
