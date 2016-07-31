@@ -1,10 +1,8 @@
 webix.protoUI(
     {
-        name: 'Plot',
+        name: 'Spectrum',
         getChart: function (config) {
             return {
-                body: {
-                    view: 'chart',
                     id: 'chart',
                     type: "line",
                     value: "#value#",
@@ -18,14 +16,10 @@ webix.protoUI(
                         values: [{text: config.name, color: "#f6960a"}],
                         align: 'center'
                     }
-                }
             }
         },
         $init: function (config) {
             webix.extend(config, this.getChart(config));
-            this.$ready.push(function () {
-                this.getHead().setValues({name: config.name});
-            });
             this._data = config.data.map(function (el, ndx, value) {
                 return {id: ndx, value: el};
             });
@@ -36,9 +30,12 @@ webix.protoUI(
             });
         },
         defaults: {
-            move: true,
-            head: {template: 'Plot attribute [#name#]'},
-            width: 1024,
-            height: 480
+
         }
-    }, webix.IdSpace, webix.ui.window);
+    }, webix.IdSpace, webix.ui.chart);
+
+TangoWebapp.ui.newSpectrumView = function(config){
+    return webix.extend({
+        view:"Spectrum"
+    }, config);
+};

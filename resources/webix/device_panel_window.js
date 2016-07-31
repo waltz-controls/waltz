@@ -164,24 +164,14 @@ webix.protoUI({
         if (o.data_format == "SPECTRUM") {
             this._device.readAttribute(o.name).then(
                 function (resp) {
-                    webix.ui(
-                        {
-                            view: 'Plot',
-                            name: device.name + '/' + resp.name,
-                            data: resp.value
-                        }).show();
+                    TangoWebapp.helpers.openSpectrumWindow(resp);
                 }
             );
 
         } else if (o.data_format == "IMAGE") {
             this._device.readAttribute(o.name).then(
                 function (resp) {
-                    webix.ui(
-                        {
-                            view: 'Image',
-                            name: device.name + '/' + resp.name,
-                            data: resp.value
-                        }).show();
+                    TangoWebapp.helpers.openImageWindow(resp);
                 }
             );
 

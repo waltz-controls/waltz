@@ -21,7 +21,9 @@ webix.protoUI({
         minWidth: 320,
         body: {
             rows: [
-                {template: new View({url: "views/help.ejs"}).render()}
+                {
+                    margin: 5,
+                    template: new View({url: "views/help.ejs"}).render()}
             ]
         }
     }),
