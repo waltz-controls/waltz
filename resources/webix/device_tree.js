@@ -62,7 +62,7 @@ webix.protoUI({
             onItemClick: function (id, e, node) {
                 var item = this.getItem(id);
                 if (item.$level == 4 || item.$level == 5) { //device, Properties, Event etc
-                    TangoWebapp.devices.setCursor(item._device_id);//TODO does getItem automatically sets cursor???
+                    TangoWebapp.devices.setCursor(item._device_id);//TODO does getItem automatically set cursor???
                     TangoWebapp.helpers.openDeviceTab(TangoWebapp.getDevice(), item._view_id);
                 }
             },

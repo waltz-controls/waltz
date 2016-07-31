@@ -55,6 +55,38 @@ MVC.Object.extend(TangoWebapp, {
             }).show();
         },
 
+        openSpectrumWindow: function(attr){
+            webix.ui({
+                view: "window",
+                move: true,
+                head: {template: 'Plot attribute ['+attr.name+']'},
+                width: 1024,
+                height: 480,
+                body: TangoWebapp.ui.newSpectrumView(attr),
+                on: {
+                    onHide:function(){
+                        this.close();
+                    }
+                }
+            }).show();
+        },
+
+        openImageWindow: function(attr){
+            webix.ui({
+                view: "window",
+                move: true,
+                head: {template: 'Image attribute ['+attr.name+']'},
+                width: 512,
+                height: 512,
+                body: TangoWebapp.ui.newImageView(attr),
+                on: {
+                    onHide:function(){
+                        this.close();
+                    }
+                }
+            }).show();
+        },
+
         iterate: function (collection, f) {
             for (var id = collection.getFirstId(), last = collection.getLastId(); id != last; id = collection.getNextId(id)) {
                 var item = collection.getItem(id);

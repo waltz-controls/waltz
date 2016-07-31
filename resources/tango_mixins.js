@@ -1,8 +1,10 @@
 MVC.Object.extend(TangoWebapp, {
     mixin: {
         TabActivator: {
+            _isActive: false,
             activate: function () {
                 this.show(true);
+                this._isActive = true;
             }
         },
 
