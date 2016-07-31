@@ -1,10 +1,14 @@
 webix.protoUI({
     _updateRate: 1000,
-    setUpdateRate:function(){
-        var top = this.getTopParentView();
+    _monitoredAttributes: {},
+    _intervalId: 0,
+    setUpdateRate:function(updateRate){
+        this._updateRate = updateRate;
 
-
-
+        if(this._intervalId != 0){
+            clearInterval(this._intervalId);
+            this._intervalId = setInterval(this.updateValues.bind(this), updateRate);
+        }
     },
     updateState: function () {
         var $$state = this.$$('state');
@@ -17,15 +21,17 @@ webix.protoUI({
         });
     },
     updateAttributes: function () {
-        var $$scalar = this.$$('scalar');
-        var $$tabs = this.$$('attributes-tabbar');
-        var $$cells = this.$$('attributes-cells');
+        var top = this.getTopParentView();;
+        var $$scalar = top.$$('scalar');
+        var $$tabs = top.$$('attributes-tabbar');
+        var $$cells = top.$$('attributes-cells');
         this._device.attributesInfo().then(function (attrsInfo) {
             attrsInfo.forEach(function (attrInfo) {
                 switch (attrInfo.data_format) {
                     case "SCALAR":
-                        $$scalar.add(attrInfo);
+                        var attrId = $$scalar.add(attrInfo);
 
+                        top._monitoredAttributes[attrInfo.name] = attrId;
                         //TODO save attr list item id for future updates
                         break;
                     case "SPECTRUM":
@@ -50,8 +56,14 @@ webix.protoUI({
             $$scalar.refresh();
         });
     },
-    updateAttributesValues: function () {
-        //TODO
+    updateValues: function () {
+        var attrs = this._monitoredAttributes;
+        for(var attr in attrs){
+            if(!attrs.hasOwnProperty(attr)) continue;
+            this._device.readAttribute(attr).then(function(attr, resp){
+                this.$$('scalar').updateItem(attrs[attr], resp);
+            }.bind(this, attr));
+        }
     },
     _getUI: function (device) {
         var top = this;
@@ -108,6 +120,7 @@ webix.protoUI({
                                     columns: [
                                         {id: "name", header: "Name", width: TangoWebapp.consts.NAME_COLUMN_WIDTH},
                                         {id: "value", header: "Value", width: 100},
+                                        {id: "quality", header: "Quality", width: 100},
                                         {id: "unit", header: "Unit", width: TangoWebapp.consts.NAME_COLUMN_WIDTH},
                                         {id: "settings", header: "", fillspace: true}
                                     ]
@@ -133,6 +146,10 @@ webix.protoUI({
         this.$ready.push(this.updateAttributes);
 
         this.$ready.push(function(){
+            this._intervalId = setInterval(this.updateValues.bind(this), this._updateRate);
+        });
+
+        this.$ready.push(function(){
             var top = this;
             webix.ui({
                 view:"popup",
@@ -156,7 +173,7 @@ webix.protoUI({
                             click: function(){
                                 var form = this.getFormView();
                                 if(form.validate()){
-                                    top._updateRate = form.getValues().updateRate;//TODO call event
+                                    top.setUpdateRate(form.getValues().updateRate);
                                     this.getTopParentView().hide();
                                 }
                             }
