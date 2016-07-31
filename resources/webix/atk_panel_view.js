@@ -1,11 +1,11 @@
 webix.protoUI({
     _updateRate: 1000,
-    _monitoredAttributes: {},
+    _monitoredScalarAttributes: {},
     _intervalId: 0,
-    setUpdateRate:function(updateRate){
+    setUpdateRate: function (updateRate) {
         this._updateRate = updateRate;
 
-        if(this._intervalId != 0){
+        if (this._intervalId != 0) {
             clearInterval(this._intervalId);
             this._intervalId = setInterval(this.updateValues.bind(this), updateRate);
         }
@@ -21,48 +21,58 @@ webix.protoUI({
         });
     },
     updateAttributes: function () {
-        var top = this.getTopParentView();;
+        var top = this.getTopParentView();
         var $$scalar = top.$$('scalar');
-        var $$tabs = top.$$('attributes-tabbar');
-        var $$cells = top.$$('attributes-cells');
+        var $$tabview = top.$$('attributes-tabview');
+        var attrTab;
         this._device.attributesInfo().then(function (attrsInfo) {
             attrsInfo.forEach(function (attrInfo) {
                 switch (attrInfo.data_format) {
                     case "SCALAR":
                         var attrId = $$scalar.add(attrInfo);
 
-                        top._monitoredAttributes[attrInfo.name] = attrId;
+                        top._monitoredScalarAttributes[attrInfo.name] = attrId;
                         //TODO save attr list item id for future updates
                         break;
                     case "SPECTRUM":
-                        //TODO add dedicated tab with plot
-                        $$tabs.addOption(attrInfo.name, attrInfo.name);
-                        $$cells.addView(TangoWebapp.ui.newSpectrumView({
-                            name: attrInfo.name,
-                            value: []
-                        }));
+                        attrTab = $$tabview.addView({
+                            header: attrInfo.label,
+                            body: TangoWebapp.ui.newSpectrumView({
+                                id: attrInfo.name,
+                                name: attrInfo.label,
+                                value: []
+                            })
+                        });
                         break;
                     case "IMAGE":
-                        //TODO add image tab
-                        $$tabs.addOption(attrInfo.name, attrInfo.name);
-                        $$cells.addView(TangoWebapp.ui.newImageView({
-                            name: attrInfo.name,
-                            value: []
-                        }));
+                        attrTab = $$tabview.addView({
+                            header: attrInfo.label,
+                            body: TangoWebapp.ui.newImageView({
+                                id: attrInfo.name,
+                                name: attrInfo.label,
+                                value: []
+                            })
+                        });
                         break;
                 }
             });
-        }.bind(this)).then(function () {
-            $$scalar.refresh();
-        });
+        }.bind(this)).then($$scalar.refresh);
     },
     updateValues: function () {
-        var attrs = this._monitoredAttributes;
-        for(var attr in attrs){
-            if(!attrs.hasOwnProperty(attr)) continue;
-            this._device.readAttribute(attr).then(function(attr, resp){
-                this.$$('scalar').updateItem(attrs[attr], resp);
-            }.bind(this, attr));
+        this.updateState();
+        var tabId = this.$$('attributes-tabview').getValue();
+        if (tabId === 'scalar') {
+            var attrs = this._monitoredScalarAttributes;
+            for (var attr in attrs) {
+                if (!attrs.hasOwnProperty(attr)) continue;
+                this._device.readAttribute(attr).then(function (attr, resp) {
+                    this.$$('scalar').updateItem(attrs[attr], resp);
+                }.bind(this, attr));
+            }
+        } else {
+            this._device.readAttribute(tabId).then(function (resp) {
+                $$(tabId).update(resp.value);
+            }.bind(this));
         }
     },
     _getUI: function (device) {
@@ -109,29 +119,24 @@ webix.protoUI({
                 },
                 {view: "resizer"},
                 {
+                    view: "tabview",
                     gravity: 4,
-                    rows: [
+                    animate: false,
+                    id: "attributes-tabview",
+                    cells: [
                         {
-                            id: "attributes-cells",
-                            cells: [
-                                {
-                                    view: "datatable",
-                                    id: "scalar",
-                                    columns: [
-                                        {id: "name", header: "Name", width: TangoWebapp.consts.NAME_COLUMN_WIDTH},
-                                        {id: "value", header: "Value", width: 100},
-                                        {id: "quality", header: "Quality", width: 100},
-                                        {id: "unit", header: "Unit", width: TangoWebapp.consts.NAME_COLUMN_WIDTH},
-                                        {id: "settings", header: "", fillspace: true}
-                                    ]
-
-                                }
-                            ]
-                        },
-                        {
-                            view: "tabbar", id: 'attributes-tabbar', value: 'listView', multiview: true, options: [
-                            {value: 'Scalar', id: 'listView'}
-                        ]
+                            header: "Scalar",
+                            body: {
+                                view: "datatable",
+                                id: "scalar",
+                                columns: [
+                                    {id: "name", header: "Name", width: TangoWebapp.consts.NAME_COLUMN_WIDTH},
+                                    {id: "value", header: "Value", width: 100},
+                                    {id: "quality", header: "Quality", width: 100},
+                                    {id: "unit", header: "Unit", width: TangoWebapp.consts.NAME_COLUMN_WIDTH},
+                                    {id: "settings", header: "", fillspace: true}
+                                ]
+                            }
                         }
                     ]
                 }
@@ -149,15 +154,15 @@ webix.protoUI({
             this._intervalId = setInterval(this.updateValues.bind(this), this._updateRate);
         });
 
-        this.$ready.push(function(){
+        this.$ready.push(function () {
             var top = this;
             webix.ui({
-                view:"popup",
-                id:"updateRatePopup",
-                body:{
-                    view:"form",
-                    id:"frmUpdateRate",
-                    elements:[
+                view: "popup",
+                id: "updateRatePopup",
+                body: {
+                    view: "form",
+                    id: "frmUpdateRate",
+                    elements: [
                         {
                             view: "text",
                             label: "Update rate:",
@@ -170,9 +175,9 @@ webix.protoUI({
                             view: "button",
                             type: "form",
                             value: "Set update rate",
-                            click: function(){
+                            click: function () {
                                 var form = this.getFormView();
-                                if(form.validate()){
+                                if (form.validate()) {
                                     top.setUpdateRate(form.getValues().updateRate);
                                     this.getTopParentView().hide();
                                 }
@@ -184,7 +189,11 @@ webix.protoUI({
         });
     },
     defaults: {
-        on: {}
+        on: {
+            onHide: function(){
+                clearInterval(this._intervalId);
+            }
+        }
     }
 }, webix.IdSpace, webix.EventSystem, TangoWebapp.mixin.DeviceSetter, TangoWebapp.mixin.TabActivator, webix.ui.layout);
 
