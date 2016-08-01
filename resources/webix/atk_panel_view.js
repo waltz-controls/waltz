@@ -5,7 +5,9 @@ webix.protoUI({
             var $$status = this.$$('status');
             this._device.state().then(function (state) {
                 //may happen on destructed view
-                $$state.setValues(state);
+                if(!$$state.destructed) {
+                    $$state.setValues(state, true);
+                }
                 $$status.setValue(state.status);
             });
         },

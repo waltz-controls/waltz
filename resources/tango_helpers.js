@@ -83,8 +83,8 @@ MVC.Object.extend(TangoWebapp, {
                 view: "window",
                 move: true,
                 head: {template: 'Image attribute ['+attr.name+']'},
-                width: 512,
-                height: 512,
+                width: 524,
+                height: 524,
                 body: TangoWebapp.ui.newImageView(attr),
                 on: {
                     onHide:function(){
