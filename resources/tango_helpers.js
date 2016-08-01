@@ -17,15 +17,22 @@ MVC.Object.extend(TangoWebapp, {
         },
 
         openAtkTab: function(device){
-            var atkId = "atk" + device.id;
+            var atkId = "atk/" + device.id;
+            var tabId;
             if (!$$(atkId)) {
-                $$("main-tabview").addView(
+                tabId = $$("main-tabview").addView(
                     {
                         header: "ATKPanel [" + device.name + "]",
                         close: true,
-                        body: TangoWebapp.ui.newAtkPanel(device)
+                        body: TangoWebapp.ui.newAtkPanel({
+                            device: device,
+                            id: atkId
+                        })
                     }
                 );
+                $$('main-tabview').getTabbar().attachEvent('onBeforeTabClose', function(id){
+                    if(tabId === id) $$(atkId).stop();
+                });
             }
             $$(atkId).show();
 
@@ -33,7 +40,7 @@ MVC.Object.extend(TangoWebapp, {
         },
 
         openDeviceTab: function (device, tabId) {
-            var devId = "dev" + device.id;
+            var devId = "dev/" + device.id;
             if (!$$(devId)) {
                 $$("main-tabview").addView(
                     TangoWebapp.ui.newDeviceView(
