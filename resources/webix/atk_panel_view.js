@@ -1,15 +1,5 @@
 webix.protoUI({
-    _updateRate: 1000,
-    _monitoredScalarAttributes: {},
-    _intervalId: 0,
-    setUpdateRate: function (updateRate) {
-        this._updateRate = updateRate;
-
-        if (this._intervalId != 0) {
-            clearInterval(this._intervalId);
-            this._intervalId = setInterval(this.updateValues.bind(this), updateRate);
-        }
-    },
+    _monitoredAttributes:{},//this is shared object across all components. In this case it is safe, as keys are unique ids
     updateState: function () {
         var $$state = this.$$('state');
         var $$status = this.$$('status');
@@ -24,53 +14,51 @@ webix.protoUI({
         var top = this.getTopParentView();
         var $$scalar = top.$$('scalar');
         var $$tabview = top.$$('attributes-tabview');
-        var attrTab;
+        var attrTabId;
         this._device.attributesInfo().then(function (attrsInfo) {
             attrsInfo.forEach(function (attrInfo) {
                 switch (attrInfo.data_format) {
                     case "SCALAR":
-                        var attrId = $$scalar.add(attrInfo);
-
-                        top._monitoredScalarAttributes[attrInfo.name] = attrId;
+                        $$scalar.add(attrInfo);
                         //TODO save attr list item id for future updates
                         break;
                     case "SPECTRUM":
-                        attrTab = $$tabview.addView({
+                        attrTabId = $$tabview.addView({
                             header: attrInfo.label,
                             body: TangoWebapp.ui.newSpectrumView({
-                                id: attrInfo.name,
                                 name: attrInfo.label,
                                 value: []
                             })
                         });
+                        this._monitoredAttributes[attrTabId] = attrInfo.name;
                         break;
                     case "IMAGE":
-                        attrTab = $$tabview.addView({
+                        attrTabId = $$tabview.addView({
                             header: attrInfo.label,
                             body: TangoWebapp.ui.newImageView({
-                                id: attrInfo.name,
                                 name: attrInfo.label,
                                 value: []
                             })
                         });
+                        this._monitoredAttributes[attrTabId] = attrInfo.name;
                         break;
                 }
-            });
-        }.bind(this)).then($$scalar.refresh);
+            }.bind(this));
+        }.bind(top)).then($$scalar.refresh);
     },
-    updateValues: function () {
+    run: function () {
         this.updateState();
+        var attr;
         var tabId = this.$$('attributes-tabview').getValue();
         if (tabId === 'scalar') {
-            var attrs = this._monitoredScalarAttributes;
-            for (var attr in attrs) {
-                if (!attrs.hasOwnProperty(attr)) continue;
-                this._device.readAttribute(attr).then(function (attr, resp) {
-                    this.$$('scalar').updateItem(attrs[attr], resp);
-                }.bind(this, attr));
-            }
+            TangoWebapp.helpers.iterate(this.$$('scalar'), function(id, attr){
+                this._device.readAttribute(attr.name).then(function (resp) {
+                    this.$$('scalar').updateItem(id, resp);
+                }.bind(this));
+            }.bind(this));
         } else {
-            this._device.readAttribute(tabId).then(function (resp) {
+            attr = this._monitoredAttributes[tabId];
+            this._device.readAttribute(attr).then(function (resp) {
                 $$(tabId).update(resp.value);
             }.bind(this));
         }
@@ -143,50 +131,46 @@ webix.protoUI({
             ]
         };
     },
+    _updateRatePopup: webix.ui({
+        view: "popup",
+        id: "updateRatePopup",
+        body: {
+            view: "form",
+            id: "frmUpdateRate",
+            elements: [
+                {
+                    view: "text",
+                    label: "Update rate:",
+                    labelWidth: 100,
+                    value: top._delay,
+                    name: "updateRate",
+                    validate: webix.rules.isNumber
+                },
+                {
+                    view: "button",
+                    type: "form",
+                    value: "Set update rate",
+                    click: function () {
+                        var form = this.getFormView();
+                        if (form.validate()) {
+                            top.changeDelay(form.getValues().updateRate);
+                            this.getTopParentView().hide();
+                        }
+                    }
+                }
+            ]
+        }
+    }),
     name: "ATKPanel",
     $init: function (config) {
+        this._updateRatePopup.hide();
+
         webix.extend(config, this._getUI(config.device));
 
         this.$ready.push(this.updateState);
         this.$ready.push(this.updateAttributes);
 
-        this.$ready.push(function(){
-            this._intervalId = setInterval(this.updateValues.bind(this), this._updateRate);
-        });
-
-        this.$ready.push(function () {
-            var top = this;
-            webix.ui({
-                view: "popup",
-                id: "updateRatePopup",
-                body: {
-                    view: "form",
-                    id: "frmUpdateRate",
-                    elements: [
-                        {
-                            view: "text",
-                            label: "Update rate:",
-                            labelWidth: 100,
-                            value: top._updateRate,
-                            name: "updateRate",
-                            validate: webix.rules.isNumber
-                        },
-                        {
-                            view: "button",
-                            type: "form",
-                            value: "Set update rate",
-                            click: function () {
-                                var form = this.getFormView();
-                                if (form.validate()) {
-                                    top.setUpdateRate(form.getValues().updateRate);
-                                    this.getTopParentView().hide();
-                                }
-                            }
-                        }
-                    ]
-                }
-            }).hide();
-        });
+        this.$ready.push(this.start);
     },
     defaults: {
         on: {
@@ -195,7 +179,9 @@ webix.protoUI({
             }
         }
     }
-}, webix.IdSpace, webix.EventSystem, TangoWebapp.mixin.DeviceSetter, TangoWebapp.mixin.TabActivator, webix.ui.layout);
+}, webix.IdSpace, webix.EventSystem,
+    TangoWebapp.mixin.DeviceSetter, TangoWebapp.mixin.TabActivator, TangoWebapp.mixin.Runnable,
+    webix.ui.layout);
 
 TangoWebapp.ui.newAtkPanel = function (device) {
     return {
