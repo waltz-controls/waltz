@@ -25,12 +25,13 @@ webix.protoUI({
             }
         };
 
-        this.getTopParentView()._admin.then(function (admin) {
-            return admin.executeCommand("DevPollStatus", this._device.name);
-        }.bind(this.getTopParentView())).then(function (resp) {
+        var top = this.getTopParentView();
+        top._device.promiseAdmin().then(function (admin) {
+            return admin.DevPollStatus(this._device.name);
+        }.bind(top)).then(function (resp) {
             f(resp)(this._commands,'command');
             f(resp)(this._attributes,'attribute');
-        }.bind(this.getTopParentView()));
+        }.bind(top));
     },
     apply:function(){
         var top = this.getTopParentView();
@@ -40,30 +41,31 @@ webix.protoUI({
         //TODO UpdObjPolling???
         TangoWebapp.helpers.iterate(top._commands, function(el, item){
             if(item.isPolled)
-                this._admin.then(function(admin){
-                    admin.executeCommand("AddObjPolling","["+item.period+"]["+device_name+",command,"+item.name+"]");
+                this._device.promiseAdmin().then(function(admin){
+                    admin.AddObjPolling("["+item.period+"]['"+device_name+"','command','"+item.name+"']");
                 });
         }.bind(top));
         TangoWebapp.helpers.iterate(top._attributes, function(el, item){
             if(item.isPolled)
-                this._admin.then(function(admin){
-                    admin.executeCommand("AddObjPolling","["+item.period+"]["+device_name+",attribute,"+item.name+"]");
+                this._device.promiseAdmin().then(function(admin){
+                    admin.AddObjPolling("["+item.period+"]['"+device_name+"','attribute','"+item.name+"']");
                 });
         }.bind(top));
     },
     reset: function(){
         var device_name = this._device.name;
+        var admin = this._device.promiseAdmin();
 
-        TangoWebapp.helpers.iterate(this._commands, function(el, item){
-                this._admin.then(function(admin){
-                    admin.executeCommand("RemObjPolling",[device_name,"command",item.name]);
+        function removePolling(type){
+            return function(el, item){
+                admin.then(function(admin){
+                    admin.RemObjPolling([device_name,type,item.name]);
                 });
-        }.bind(this));
-        TangoWebapp.helpers.iterate(this._attributes, function(el, item){
-                this._admin.then(function(admin){
-                    admin.executeCommand("RemObjPolling",[device_name,"attribute",item.name]);
-                });
-        }.bind(this));
+            }
+        }
+
+        TangoWebapp.helpers.iterate(this._commands, removePolling("command"));
+        TangoWebapp.helpers.iterate(this._attributes, removePolling("attribute"));
 
         webix.alert({
             title:"Confirm reset",
@@ -175,10 +177,6 @@ webix.protoUI({
 
         this._attributes = new webix.DataCollection();
         this._attributes.parse(config.device.attributes().then(this.map));
-
-        this._admin = config.device.info().then(function (info) {
-            return new Device("dserver/" + info.server);
-        });
 
         this.$ready.push(function () {
             this.$$commands = this.$$('commands');

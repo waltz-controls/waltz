@@ -22,6 +22,7 @@ Device = MVC.Model.extend("device",
          *
          * @constructor
          * @param name
+         * @param dbId -- database uid
          * @param api -- tango rest api
          */
         init: function(name, dbId, api){
@@ -30,7 +31,16 @@ Device = MVC.Model.extend("device",
         },
         /**
          *
-         * @return promise
+         * @returns {promise}
+         */
+        promiseAdmin:function(){
+            return this._admin ? this._admin : this.info().then(function(api, info){
+                return new DServer(info.server, api);
+            }.bind(this, this.api));
+        },
+        /**
+         *
+         * @return {promise}
          */
         info:function(){
             if(this._info == null){
@@ -47,6 +57,14 @@ Device = MVC.Model.extend("device",
                 this.update();
             }
             return this._commands;
+        },
+        /**
+         *
+         * @param name
+         * @return {promise}
+         */
+        commandInfo: function(name){
+            return this.api.devices(this.name).commands(name).get();
         },
         /**
          *

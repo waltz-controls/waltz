@@ -57,7 +57,7 @@ MVC.Object.extend(TangoWebapp, {
 
         openDevicePanel: function (device) {
             webix.ui({
-                view: 'Device Panel',
+                view: 'DevicePanel',
                 device: device
             }).show();
         },
