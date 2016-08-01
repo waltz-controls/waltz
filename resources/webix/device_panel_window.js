@@ -11,7 +11,7 @@ webix.protoUI({
                 {
                     id: 'frm',
                     view: 'form',
-                    //dataFeed: '...',
+                    complexData:true,
                     elements: [
                         {
                             view: 'text',
@@ -21,12 +21,12 @@ webix.protoUI({
                             cols: [
                                 {
                                     view: 'text',
-                                    name: 'in_type',
+                                    name: 'info.in_type',
                                     label: 'Argin type:'
                                 },
                                 {
                                     view: 'text',
-                                    name: 'out_type',
+                                    name: 'info.out_type',
                                     label: 'Argout type'
                                 }
                             ]
@@ -35,11 +35,11 @@ webix.protoUI({
                             cols: [
                                 {
                                     view: 'text',
-                                    name: 'in_type_desc'
+                                    name: 'info.in_type_desc'
                                 },
                                 {
                                     view: 'text',
-                                    name: 'out_type_desc'
+                                    name: 'info.out_type_desc'
                                 }
                             ]
                         },
@@ -88,7 +88,7 @@ webix.protoUI({
     executeCommand: function () {
         var o = this.$$('frm').getValues();
 
-        this._device.executeCommand(o.cmd_name, o.argin).then(this.getTopParentView().updateLog.bind(this, this._command ));
+        this._device.executeCommand(o.name, o.argin).then(this.getTopParentView().updateLog.bind(this, this._command ));
     },
     plotCommand:function(){
         var o = this.$$('frm').getValues();
@@ -121,7 +121,7 @@ webix.protoUI({
                 if (webix.debug_bind) webix.message("Requesting data for attr " + attr.name);
 
                 var self = this;
-                config.device.attributeInfo().then(function (resp) {
+                config.device.attributeInfo(attr.name).then(function (resp) {
                     self.getTopParentView()._dataRecord = new webix.DataRecord(resp);
                     self.elements['info'].setValue(self.getTopParentView()._attribute_info.render(resp))
                     self.elements['btnRead'].enable();
@@ -165,11 +165,7 @@ webix.protoUI({
             );
 
         } else if (o.data_format == "IMAGE") {
-            this._device.readAttribute(o.name).then(
-                function (resp) {
-                    TangoWebapp.helpers.openImageWindow(resp);
-                }
-            );
+            this._device.readAttribute(o.name).then(TangoWebapp.helpers.openImageWindow);
 
         } else {
             webix.assert_error("Unsupported data format: " + o.data_format);

@@ -1,11 +1,14 @@
 webix.protoUI({
-    src: "",
+    value: "",
     name: "Image",
     update:function(value){
-        this.setValues({src: value});
+        this.setValues({value: value});
+    },
+    $init: function(config){
+        this.$ready.push(this.setValues.bind(this, config));
     },
     defaults: {
-        template:"<img width='512px' height='512px' src='#src#' />"
+        template:"<img width='512px' height='512px' src='#value#' />"
     }
 },webix.IdSpace, webix.ui.template);
 

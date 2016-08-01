@@ -116,7 +116,7 @@ Device = MVC.Model.extend("device",
         executeCommand:function(cmd, argin){
             var command = this.api.devices(this.name).commands(cmd);
             if(argin && argin != "")
-                return command.exec('input',argin);
+                return command.exec(argin);
             else
                 return command.exec();
         },
