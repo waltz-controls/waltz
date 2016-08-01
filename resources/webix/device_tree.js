@@ -17,6 +17,9 @@ webix.protoUI({
                     case "Monitor device":
                         TangoWebapp.helpers.openAtkTab(TangoWebapp.getDevice());
                         break;
+                    case "Device info":
+                        TangoWebapp.helpers.openDeviceTab(TangoWebapp.getDevice(), "device_info");
+                        break;
                     case "Test device":
                         TangoWebapp.helpers.openDevicePanel(TangoWebapp.getDevice());
                         break;
@@ -36,6 +39,7 @@ webix.protoUI({
             //"Paste",
             "Delete",
             {$template: "Separator"},
+            "Device info",
             "Monitor device",
             "Test device",
             //"Define device alias",
