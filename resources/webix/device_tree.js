@@ -44,6 +44,7 @@ webix.protoUI({
             "Test device",
             //"Define device alias",
             "Restart device",
+            "Kill",
             //{$template: "Separator"},
             //"Go to Server node",
             //"Go to Admin device node",

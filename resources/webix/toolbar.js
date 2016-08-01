@@ -125,7 +125,7 @@ webix.protoUI({
     },
     _getUI: function () {
         var top = this;
-        var versionLabel = "ver." + TangoWebapp.version;
+        var versionLabel = "app.ver.: " + TangoWebapp.version + " / rest ver.: " + TangoWebapp.consts.REST_API_VERSION;
         return {
             cols: [
                 {
@@ -146,7 +146,7 @@ webix.protoUI({
                     click: top.wizard
                 },
                 {},
-                {view: "label", label: versionLabel, align: "right", width: 180},
+                {view: "label", label: versionLabel, align: "right", width: 260},
                 {
                     view: "button",
                     id: "btnRefresh",

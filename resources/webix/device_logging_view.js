@@ -35,8 +35,8 @@ webix.protoUI({
         top.$$('logging').clearAll();
 
         var dataPromise =
-            top._admin.then(function (admin) {
-                admin.executeCommand("GetLoggingLevel", top._device.name).then(function (resp) {
+            top._device.promiseAdmin().then(function (admin) {
+                admin.GetLoggingLevel(top._device.name).then(function (resp) {
                     return [{
                         name : top._labels["GetLoggingLevel"],
                         value: top._logging_level[resp.output.lvalue[0]]
@@ -79,10 +79,6 @@ webix.protoUI({
     name          : "DeviceLogging",
     $init         : function (config) {
         webix.extend(config, this._getUI());
-
-        this._admin = config.device.info().then(function (info) {
-            return new Device("dserver/" + info.server);
-        });
 
         this._db = TangoWebapp.getDatabase();
 
