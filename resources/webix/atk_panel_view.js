@@ -5,7 +5,7 @@ webix.protoUI({
             var $$status = this.$$('status');
             this._device.state().then(function (state) {
                 //may happen on destructed view
-                if(!$$state.destructed) {
+                if(!$$state.$destructed) {
                     $$state.setValues(state, true);
                 }
                 $$status.setValue(state.status);
@@ -54,9 +54,8 @@ webix.protoUI({
             if (tabId === 'scalar') {
                 TangoWebapp.helpers.iterate(this.$$('scalar'), function (id, attr) {
                     this._device.readAttribute(attr.name).then(function (resp) {
-                        this.$$('scalar').updateItem(id, resp);
-                        if (resp.quality !== 'VALID') this.$$('scalar').select(id, true);
-                    }.bind(this));
+                        this.updateItem(id, resp);
+                    }.bind(this.$$('scalar')));
                 }.bind(this));
             } else {
                 attr = this._monitoredAttributes[tabId];
@@ -142,13 +141,28 @@ webix.protoUI({
                                 body: {
                                     view: "datatable",
                                     id: "scalar",
+                                    scheme:{
+                                        $update:function(item){
+                                            if(item.quality === 'ALARM') item.$css = {"background-color": "red"};
+                                            if(item.quality === 'WARNING') item.$css = {"background-color": "orange"};
+                                        }
+                                    },
                                     columns: [
                                         {id: "label", header: "Name", width: TangoWebapp.consts.NAME_COLUMN_WIDTH},
                                         {id: "value", header: "Value", width: 100},
                                         {id: "quality", header: "Quality", width: 100, sort: "string"},
                                         {id: "unit", header: "Unit", width: TangoWebapp.consts.NAME_COLUMN_WIDTH},
-                                        {id: "settings", header: "", fillspace: true}
-                                    ]
+                                        {fillspace: true},
+                                        {id: "settings", header: "<icon class='btnSettings webix_icon fa-cog'></icon>", width: 40 }
+                                    ],
+                                    onClick:{
+                                        btnSettings:function(id, ev){
+                                            var top = this.getTopParentView();
+                                            var device = top._device;
+
+                                            TangoWebapp.helpers.openDeviceTab(device, 'device_attr_config');
+                                        }
+                                    }
                                 }
                             }
                         ]
