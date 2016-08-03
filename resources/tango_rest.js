@@ -127,10 +127,10 @@ TangoREST.prototype.get = function (what) {
  */
 TangoREST.prototype.put = function (what, data) {
     var url = this._resetUrl();
-    if (what) url += what;
+    if (what) url += what;//TODO if no what is provided data will be treated as what -> failure
     return webix.ajax().headers({
         "Content-type":"application/json"
-    }).put(url, data).then(this._success).fail(this._failure);
+    }).put(url, JSON.stringify(data)).then(this._success).fail(this._failure);
 };
 
 TangoREST.prototype.delete = function (what) {
