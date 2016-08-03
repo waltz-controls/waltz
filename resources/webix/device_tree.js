@@ -160,12 +160,12 @@ webix.protoUI({
                                         _device_id: deviceId,
                                         _view_id: 'device_pipe_config'
                                     },
-                                    {
-                                        value: 'Attribute properties',
-                                        _device_id: deviceId,
-                                        webix_kids: true,
-                                        _view_id: 'device_attr_properties'
-                                    },
+                                    //{
+                                    //    value: 'Attribute properties',
+                                    //    _device_id: deviceId,
+                                    //    webix_kids: true,
+                                    //    _view_id: 'device_attr_properties'
+                                    //},
                                     {
                                         value: 'Logging',
                                         _device_id: deviceId,

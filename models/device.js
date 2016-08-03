@@ -7,9 +7,14 @@ Device = MVC.Model.extend("device",
     },
     /*@Prototype */
     {
+        /**
+         * An unique id, usually it is dbId followed by this device's name, e.g. 123456/sys/tg_test/1
+         */
         id: null,
         api: null,
+        attributeInfoDataCollection: null,
         _db: null,
+        _attrIds: null,
         //properties reference to promise objects
         _admin:null,
         _info:null,
@@ -28,6 +33,9 @@ Device = MVC.Model.extend("device",
         init: function(name, dbId, api){
             this._super({name:name, id: dbId + '/' + name});
             this.api = api;
+
+            this.attributeInfoDataCollection = new webix.DataCollection();
+            this._attrIds = {};
         },
         /**
          *
@@ -80,7 +88,20 @@ Device = MVC.Model.extend("device",
          * @return promise
          */
         attributeInfo:function(attr){
-            return this.api.devices(this.name).attributes(attr).get('/info');
+            return this.api.devices(this.name).attributes(attr).get('/info').then(function(info){
+                if(this._attrIds.hasOwnProperty(info.name)){
+                    this.attributeInfoDataCollection.update(this._attrIds[info.name], info);
+                } else {
+                    this._attrIds[info.name] = this.attributeInfoDataCollection.add(info);
+                }
+                return info;
+            }.bind(this));
+        },
+        /**
+         * @return promise
+         */
+        attributeInfoEx:function(attr){
+            return this.api.devices(this.name).attributes(attr).get('/infoEx');
         },
         pipes:function(){
             var pipes = this.api.devices(this.name).get("/pipes");
@@ -125,6 +146,12 @@ Device = MVC.Model.extend("device",
         },
         writeAttribute:function(attr, argin){
             return this.api.devices(this.name).attributes(attr).put('?value=' + argin)
+        },
+        updateAttributeInfo: function(attr){
+            if(!this._attrIds.hasOwnProperty(attr)) debugger;
+            var id = this._attrIds[attr];
+            var info = this.attributeInfoDataCollection.getItem(id);
+            return this.api.devices(this.name).attributes(attr).put('/info?async=true', info)
         },
         attributesInfo:function(){
             var self = this;
