@@ -130,6 +130,7 @@ webix.protoUI({
                                 var dev_id = TangoWebapp.devices.add(device);
                                 webix.assert(dev_id == deviceId, "dev_id and deviceId must match");
                             }
+                            //TODO move to helpers
                             return {
                                 _view_id:'device_info',
                                 _device_id: deviceId,
