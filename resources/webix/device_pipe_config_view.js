@@ -8,6 +8,9 @@ TangoWebapp.ui.newDevicePipeConf = function () {
         id  : "device_pipe_config",
         rows: [
             {
+                height: 5
+            },
+            {
                 view : "tabview",
                 cells: [
                     {
