@@ -1,5 +1,5 @@
 webix.protoUI({
-    updateRoot:function(){
+    updateRoot: function () {
         var db = TangoWebapp.getDatabase();
         this.clearAll();
         this.add({id: 'root', value: db.url, _db: db, webix_kids: true});
@@ -7,13 +7,41 @@ webix.protoUI({
         this.refresh();
     },
     name: "DeviceTree",
-    _ctxMenu:webix.ui({
+    _ctxMenu: webix.ui({
         view: "contextmenu",
-        autoheight: true,
+        //autoheight: true,
+        data: [
+            //"Copy",
+            //"Paste",
+            "Delete",
+            {$template: "Separator"},
+            "Device info",
+            "Monitor device",
+            "Test device",
+            //"Define device alias",
+            {$template: "Separator"},
+            "Restart server",
+            "Kill server",
+            //{$template: "Separator"},
+            //"Go to Server node",
+            //"Go to Admin device node",
+            {$template: "Separator"},
+            "Log viewer"
+        ],
         on: {
             onItemClick: function (id) {
                 var item = this.getContext().obj.getItem(this.getContext().id);
-                switch(id){
+                switch (id) {
+                    case "Restart server":
+                        TangoWebapp.getDevice().promiseAdmin().then(function(admin){
+                            return admin.RestartServer();
+                        }).then(webix.message.bind(null,"Device server has been restarted!"));
+                        break;
+                    case "Kill server":
+                        TangoWebapp.getDevice().promiseAdmin().then(function(admin){
+                            return admin.Kill();
+                        }).then(webix.message.bind(null, "Device server has been killed!!!"));
+                        break;
                     case "Monitor device":
                         TangoWebapp.helpers.openAtkTab(TangoWebapp.getDevice());
                         break;
@@ -24,7 +52,7 @@ webix.protoUI({
                         TangoWebapp.helpers.openDevicePanel(TangoWebapp.getDevice());
                         break;
                     case "Delete":
-                        TangoWebapp.helpers.deleteDevice(TangoWebapp.getDevice()).then(function(){
+                        TangoWebapp.helpers.deleteDevice(TangoWebapp.getDevice()).then(function () {
                             this.getContext().obj.remove(this.getContext().id);
                         }.bind(this));
                         break;
@@ -33,33 +61,16 @@ webix.protoUI({
                 }
             }
         }
-        }),
-    _ctxMember: [
-            //"Copy",
-            //"Paste",
-            "Delete",
-            {$template: "Separator"},
-            "Device info",
-            "Monitor device",
-            "Test device",
-            //"Define device alias",
-            "Restart device",
-            "Kill",
-            //{$template: "Separator"},
-            //"Go to Server node",
-            //"Go to Admin device node",
-            {$template: "Separator"},
-            "Log viewer"
-        ],
+    }),
     defaults: {
         //activeTitle:true,
         type: 'lineTree',
-        select:true,
+        select: true,
         on: {
-            onItemDblClick:function(id, e, node){
+            onItemDblClick: function (id, e, node) {
                 webix.message("DblClick " + id);
                 var item = this.getItem(id);
-                if(item.$level == 4) {//member
+                if (item.$level == 4) {//member
                     TangoWebapp.helpers.openAtkTab(TangoWebapp.getDevice());
                 }
 
@@ -98,8 +109,7 @@ webix.protoUI({
                 var item = this.getItem(id);
                 if (item.$level == 4) {//member
                     TangoWebapp.devices.setCursor(item._device_id);
-                    this._ctxMenu.clearAll();
-                    this._ctxMenu.parse(this._ctxMember);
+                    this._ctxMenu.show();
                     return true;
                 } else {
                     return false;
@@ -125,14 +135,14 @@ webix.protoUI({
                             var name = self.getItem(item.$parent).value + "/" + item.value + "/" + el;
                             var deviceId = db.id + '/' + name; //used for model lookup
                             var device;
-                            if(!(device = Device.find_one(deviceId))) {
+                            if (!(device = Device.find_one(deviceId))) {
                                 device = new Device(name, db.id, db.api);
                                 var dev_id = TangoWebapp.devices.add(device);
                                 webix.assert(dev_id == deviceId, "dev_id and deviceId must match");
                             }
                             //TODO move to helpers
                             return {
-                                _view_id:'device_info',
+                                _view_id: 'device_info',
                                 _device_id: deviceId,
                                 value: el,
                                 data: [
@@ -186,7 +196,7 @@ webix.protoUI({
 }, webix.IdSpace, webix.EventSystem, webix.ui.tree);
 
 
-TangoWebapp.ui.newDeviceTree = function(){
+TangoWebapp.ui.newDeviceTree = function () {
     return {
         view: "DeviceTree",
         id: "device_tree"
