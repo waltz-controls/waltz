@@ -475,8 +475,8 @@ DServer = MVC.Model.extend('dserver',
          * @param {*} argin - argument for the command [optional]
          * @param {Object|Function} cbks: onSuccess - callback [required]; onFailure - panic callback [optional]
          */
-        Kill : function(argin, cbks){
-            var promise = this.api.devices(this.name).commands('Kill').exec.apply(this.api, argin);
+        Kill : function(cbks){
+            var promise = this.api.devices(this.name).commands('Kill').exec();
             if (cbks) {
                 var callbacks = this.Class._clean_callbacks(cbks);
                 if (callbacks.onFailure) promise.fail(callbacks.onFailure);
@@ -640,8 +640,8 @@ DServer = MVC.Model.extend('dserver',
          * @param {*} argin - argument for the command [optional]
          * @param {Object|Function} cbks: onSuccess - callback [required]; onFailure - panic callback [optional]
          */
-        RestartServer : function(argin, cbks){
-            var promise = this.api.devices(this.name).commands('RestartServer').exec.apply(this.api, argin);
+        RestartServer : function(cbks){
+            var promise = this.api.devices(this.name).commands('RestartServer').exec();
             if (cbks) {
                 var callbacks = this.Class._clean_callbacks(cbks);
                 if (callbacks.onFailure) promise.fail(callbacks.onFailure);
