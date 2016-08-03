@@ -95,7 +95,10 @@ MVC.Object.extend(TangoWebapp, {
         },
 
         iterate: function (collection, f) {
-            for (var id = collection.getFirstId(), last = collection.getLastId(); id != last; id = collection.getNextId(id)) {
+            var id = collection.getFirstId(),
+                last = collection.getLastId();
+            if(id === last) f(id, collection.getItem(id));
+            for (; id !== last; id = collection.getNextId(id)) {
                 var item = collection.getItem(id);
                 f(id, item);
             }
