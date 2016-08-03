@@ -110,7 +110,14 @@ webix.protoUI({
 
         TangoWebapp.consts.REST_API_URL = top.$$('txtTangoRestApiUrl').getValue();
 
-        TangoWebapp.helpers.createDatabase();
+        var dbExists = false;
+        TangoWebapp.helpers.iterate(TangoWebapp.databases, function(id, db){
+            dbExists |= db.url === TangoWebapp.consts.REST_API_URL;
+        });
+
+        if(!dbExists) {
+            TangoWebapp.helpers.createDatabase();
+        }
 
         $$('device_tree').updateRoot();
     },
