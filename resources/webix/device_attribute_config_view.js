@@ -17,7 +17,10 @@ webix.protoUI({
         var top = this;
         return {
             rows: [
-               {
+                {
+                    height: 5
+                },
+                {
                     view: "tabview",
                     cells: [
                         {
