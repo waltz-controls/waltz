@@ -130,9 +130,9 @@ Device = MVC.Model.extend("device",
         update:function(){
             var promise = this.Class.fetch(this);
             this._info = promise.then(function(dev){return dev.info;});
-            this._attributes = promise.then(function(dev){ return dev.attributes;});
-            this._commands = promise.then(function(dev){ return dev.commands;});
-            this._pipes = promise.then(function(dev){ return dev.pipes;});
+            this._attributes = this.api.devices(this.name).attributes().get();
+            this._commands = this.api.devices(this.name).commands().get();
+            this._pipes = this.api.devices(this.name).pipes().get();
         },
         executeCommand:function(cmd, argin){
             var command = this.api.devices(this.name).commands(cmd);

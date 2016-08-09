@@ -38,18 +38,20 @@ webix.protoUI({
 
         var device_name = top._device.name;
 
+        function addObjPolling(item, type){
+            return function(admin){
+                admin.AddObjPolling({lvalue:[item.period], svalue:[device_name,type,item.name]});
+            }
+        }
+
         //TODO UpdObjPolling???
         TangoWebapp.helpers.iterate(top._commands, function(el, item){
             if(item.isPolled)
-                this._device.promiseAdmin().then(function(admin){
-                    admin.AddObjPolling("["+item.period+"]['"+device_name+"','command','"+item.name+"']");
-                });
+                this._device.promiseAdmin().then(addObjPolling(item, 'command'));
         }.bind(top));
         TangoWebapp.helpers.iterate(top._attributes, function(el, item){
             if(item.isPolled)
-                this._device.promiseAdmin().then(function(admin){
-                    admin.AddObjPolling("["+item.period+"]['"+device_name+"','attribute','"+item.name+"']");
-                });
+                this._device.promiseAdmin().then(addObjPolling(item, 'attribute'));
         }.bind(top));
     },
     reset: function(){
