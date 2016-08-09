@@ -853,7 +853,8 @@ DataBase = MVC.Model.extend('DataBase',
          * TangoWebapp.consts must be defined before using this constructor
          */
         init: function(){
-            var url = TangoWebapp.consts.REST_API_URL + "/" + TangoWebapp.consts.REST_API_VERSION + "/" + TangoWebapp.consts.TANGO_HOST.replace(":", "/");
+            this.host = TangoWebapp.consts.TANGO_HOST.replace(":","/");
+            var url = TangoWebapp.consts.REST_API_URL + "/" + TangoWebapp.consts.REST_API_VERSION + "/hosts/" + this.host;
             this.url = url;
             this.api = new TangoREST(url);
             this.name = TangoWebapp.consts.DATABASE;

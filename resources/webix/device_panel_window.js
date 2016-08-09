@@ -376,13 +376,12 @@ webix.protoUI({
     $init: function (config) {
         webix.extend(config, this.getBody(config.device));
 
-        var device = this._device = config.device;
         this.$ready.push(function () {
-            this.getHead().setValues({name: device.name});
+            this.getHead().setValues({name: this._device.name});
         })
     },
     updateLog: function (out, val) {
-        var log = this.$$('tmpLog');
+        var log = this.getTopParentView().$$('tmpLog');
         log.setValue(log.getValue() + "\n" + out.render(val));//TODO append
     },
     defaults: {

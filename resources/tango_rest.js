@@ -4,6 +4,16 @@ function TangoREST(url) {
 }
 
 /**
+ *
+ * @returns {TangoREST}
+ */
+TangoREST.prototype.hosts = function(host){
+    this._url += '/hosts/';
+    this._url += host;
+    return this;
+};
+
+/**
  * @returns {TangoREST}
  */
 TangoREST.prototype.devices = function (name) {
@@ -24,7 +34,8 @@ TangoREST.prototype.properties = function () {
  * @returns {TangoREST}
  */
 TangoREST.prototype.pipes = function (name) {
-    this._url += '/pipes/' + name;
+    this._url += '/pipes/';
+    if(name) this._url += name;
     return this;
 };
 
@@ -36,7 +47,7 @@ TangoREST.prototype.pipes = function (name) {
 TangoREST.prototype.commands = function (name) {
     //TODO check devices branch
     this._url += '/commands/';
-    this._url += name;
+    if(name) this._url += name;
     return this;
 };
 
@@ -48,21 +59,15 @@ TangoREST.prototype.commands = function (name) {
 TangoREST.prototype.attributes = function(name){
     //TODO check devices branch
     this._url += '/attributes/';
-    this._url += name;
+    if(name) this._url += name;
     return this;
 };
 
 /**
  * @returns {Promise}
  */
-TangoREST.prototype.exec = function () {
-    //TODO check commands branch
-    if (arguments.length > 0) {
-        this._url += "?";
-        this._url += Array.from(arguments).map(function(arg){return "input="+arg}).join('&');
-    }
-
-    return this.put();
+TangoREST.prototype.exec = function (argin) {
+    return this.put("", argin);
 };
 
 /**
@@ -130,7 +135,7 @@ TangoREST.prototype.put = function (what, data) {
     if (what) url += what;//TODO if no what is provided data will be treated as what -> failure
     return webix.ajax().headers({
         "Content-type":"application/json"
-    }).put(url, JSON.stringify(data)).then(this._success).fail(this._failure);
+    }).put(url, (typeof data == 'object') ? JSON.stringify(data) : data).then(this._success).fail(this._failure);
 };
 
 TangoREST.prototype.delete = function (what) {
