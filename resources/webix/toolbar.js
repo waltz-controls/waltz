@@ -109,6 +109,7 @@ webix.protoUI({
         var top = this.getTopParentView();
 
         TangoWebapp.consts.REST_API_URL = top.$$('txtTangoRestApiUrl').getValue();
+        TangoWebapp.consts.TANGO_HOST = top.$$('txtTangoHost').getValue();
 
         var dbExists = false;
         TangoWebapp.helpers.iterate(TangoWebapp.databases, function(id, db){
@@ -141,6 +142,13 @@ webix.protoUI({
                     value: TangoWebapp.consts.REST_API_URL,
                     label: "TANGO_REST_URL:",
                     labelWidth: 150
+                },
+                {
+                    view: "text",
+                    id: "txtTangoHost",
+                    value: TangoWebapp.consts.TANGO_HOST,
+                    label: "TANGO_HOST:",
+                    labelWidth: 100
                 },
                 {view: "button", id: "btnRefresh", type: "iconButton", icon: "refresh", width: 36, click: top.refresh},
                 {
