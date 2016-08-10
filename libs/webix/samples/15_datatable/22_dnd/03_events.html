@@ -66,8 +66,8 @@
 			});
 
 			gridb.attachEvent("onBeforeDrop", function(context, ev){
-   				for (var i=0; i< context.source.length; i++){
-					context.from.copy(context.source[i],context.start,this,{newId:webix.uid()});
+				for (var i=0; i< context.source.length; i++){
+					context.from.copy(context.source[i],context.index,this,{newId:webix.uid()});
 				}
 				return false;
 

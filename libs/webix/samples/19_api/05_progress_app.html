@@ -43,7 +43,6 @@
     //adding ProgressBar functionality to layout
     webix.extend($$("app"), webix.ProgressBar);
 
-
     function show_progress_bar(delay){
         $$("app").disable();
         $$("app").showProgress({
@@ -61,12 +60,12 @@
         $$("app").disable();
         $$("app").showProgress({
             type:"icon",
-            delay:delay
+            delay:delay,
+            hide:true
         });
         setTimeout(function(){
             $$("myform").parse(small_film_set[2]);
             $$("app").enable();
-            $$("app").hideProgress();
         }, delay);
     }
 
