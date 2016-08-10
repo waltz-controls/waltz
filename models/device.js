@@ -12,16 +12,14 @@ Device = MVC.Model.extend("device",
          */
         id: null,
         api: null,
-        attributeInfoDataCollection: null,
+        attributesCollection: null,
+        attributeInfoCollection: null,
+        commandsCollection: null,
+        pipesCollection: null,
         _db: null,
         _attrIds: null,
         //properties reference to promise objects
         _admin:null,
-        _info:null,
-        _commands:null,
-        _attributes:null,
-        _pipes: null,
-        _properties:null,
         _attributesInfo: null,
         /**
          *
@@ -34,12 +32,12 @@ Device = MVC.Model.extend("device",
             this._super({name:name, id: dbId + '/' + name});
             this.api = api;
 
-            this.attributeInfoDataCollection = new webix.DataCollection();
+            this.attributeInfoCollection = new webix.DataCollection();
             this._attrIds = {};
         },
         /**
          *
-         * @returns {promise}
+         * @returns {Promise}
          */
         promiseAdmin:function(){
             return this._admin ? this._admin : this.info().then(function(api, info){
@@ -48,77 +46,74 @@ Device = MVC.Model.extend("device",
         },
         /**
          *
-         * @return {promise}
+         * @return {Promise}
          */
         info:function(){
-            if(this._info == null){
-                this.update();
-            }
-            return this._info;
+            return this.api.devices(this.name).get().then(function(dev){return dev.info;});
         },
         /**
          *
-         * @return promise
+         * @return {Promise}
          */
         commands:function(){
-            if(this._commands == null){
-                this.update();
-            }
-            return this._commands;
+            return this.api.devices(this.name).commands().get();
         },
         /**
          *
          * @param name
-         * @return {promise}
+         * @return {Promise}
          */
         commandInfo: function(name){
             return this.api.devices(this.name).commands(name).get();
         },
         /**
          *
-         * @return promise
+         * @return {Promise}
          */
         attributes:function(){
-            if(this._attributes == null){
-                this.update();
-            }
-            return this._attributes;
+            return this.api.devices(this.name).attributes().get();
         },
-        /**
-         * @return promise
-         */
-        attributeInfo:function(attr){
-            return this.api.devices(this.name).attributes(attr).get('/info').then(function(info){
+        _updateAttributeInfos:function(infos){
+            for(var i = 0 ; i<infos.length; ++i){
+                var info = infos[i];
                 if(this._attrIds.hasOwnProperty(info.name)){
-                    this.attributeInfoDataCollection.update(this._attrIds[info.name], info);
+                    this.attributeInfoCollection.updateItem(this._attrIds[info.name], info);
                 } else {
-                    this._attrIds[info.name] = this.attributeInfoDataCollection.add(info);
+                    this._attrIds[info.name] = this.attributeInfoCollection.add(info);
                 }
-                return info;
-            }.bind(this));
-        },
-        /**
-         * @return promise
-         */
-        attributeInfoEx:function(attr){
-            return this.api.devices(this.name).attributes(attr).get('/infoEx');
-        },
-        pipes:function(){
-            var pipes = this.api.devices(this.name).get("/pipes");
-            return pipes;
-            //TODO mTangoSDK #103
-            //if(this._pipes == null){
-            //    this.update();
-            //}
-            //return this._pipes;
+            }
+            return infos;
         },
         /**
          *
-         * @return promise
+         * @param attr -- attr name or undefined
+         * @return {Promise}
+         */
+        attributeInfo:function(attr){
+            var promise = this.api.devices(this.name).attributes(attr).get('/info');
+
+            return promise.then(function(info){ return [info];}).then(this._updateAttributeInfos.bind(this));
+        },
+        attributesInfo: function(){
+            return this.attributes().then(function(attrs){
+                return attrs.map(function(attr){ return attr.name;});
+            }).then(function(attrs){
+                return this.api.devices(this.name).attributes().get('/info?' + attrs.map(function(attr){ return "attr=" + attr;}).join('&'));
+            }.bind(this)).then(this._updateAttributeInfos.bind(this));
+        },
+        /**
+         *
+         * @returns {Promise}
+         */
+        pipes:function(){
+            return this.api.devices(this.name).pipes().get();
+        },
+        /**
+         *
+         * @return {Promise}
          */
         properties:function(){
-            var properties = this.api.devices(this.name).get("/properties");
-            return properties;
+            return this.api.devices(this.name).get("/properties");
         },
         /**
          *
@@ -126,13 +121,6 @@ Device = MVC.Model.extend("device",
          */
         state:function(){
             return this.api.devices(this.name).get("/state");
-        },
-        update:function(){
-            var promise = this.Class.fetch(this);
-            this._info = promise.then(function(dev){return dev.info;});
-            this._attributes = this.api.devices(this.name).attributes().get();
-            this._commands = this.api.devices(this.name).commands().get();
-            this._pipes = this.api.devices(this.name).pipes().get();
         },
         executeCommand:function(cmd, argin){
             var command = this.api.devices(this.name).commands(cmd);
@@ -150,18 +138,8 @@ Device = MVC.Model.extend("device",
         updateAttributeInfo: function(attr){
             if(!this._attrIds.hasOwnProperty(attr)) debugger;
             var id = this._attrIds[attr];
-            var info = this.attributeInfoDataCollection.getItem(id);
+            var info = this.attributeInfoCollection.getItem(id);
             return this.api.devices(this.name).attributes(attr).put('/info?async=true', info)
-        },
-        attributesInfo:function(){
-            var self = this;
-            if(this._attributesInfo) return this._attributesInfo;
-            else
-            return this._attributesInfo = this.attributes().then(function (attrs) {
-                return webix.promise.all(attrs.map(function (attr) {
-                    return self.attributeInfo(attr.name);
-                }));
-            });
         },
         updateProperties: function (props) {
             function toUrl(props) {

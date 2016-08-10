@@ -1,53 +1,42 @@
+webix.editors.events = webix.extend({
+    getValue:function(){
+        var value =  this.getInputNode(this.node).value;
+
+         debugger
+
+        return value;
+    },
+    setValue:function(value){
+        debugger;
+        this.getInputNode(this.node).value = value;
+    }
+
+},webix.editors.text);
+
 webix.protoUI({
     refresh:function(){
         var top = this.getTopParentView();
         var device = top._device;
 
-        var attributesInfo = device.attributesInfo();
-        var map_change = function (attr) {
-            return {
-                name      : attr.name,
-                abs_change: attr.events.ch_event.abs_change,
-                rel_change: attr.events.ch_event.rel_change
-            }
-        };
-        var map_archive = function (attr) {
-            return {
-                name           : attr.name,
-                arch_abs_change: attr.events.arch_event.abs_change,
-                arch_rel_change: attr.events.arch_event.rel_change,
-                arch_period    : attr.events.arch_event.period
-            }
-        };
-
-        var map_periodic = function (attr) {
-            return {
-                name  : attr.name,
-                period: attr.events.per_event.period
-            }
-        };
-
-        top.$$change.parse(attributesInfo.then(function (attrs) {
-                return attrs.map(map_change);
-            }
-        ));
-
-        top.$$archive.parse(attributesInfo.then(function (attrs) {
-                return attrs.map(map_archive)
-            }
-        ));
-
-        top.$$periodic.parse(attributesInfo.then(function (attrs) {
-                return attrs.map(map_periodic)
-            }
-        ));
+        device.attributesInfo();
     },
     apply:function(){
         var top = this.getTopParentView();
 
         var device = top._device;
 
+
+
         webix.assert(false, "Not yet implemented!")
+    },
+   _updateAttrEvents:function(event_type){
+        return function(editor, value){
+            debugger;
+            var top = this.getTopParentView();
+            var item = top._device.attributeInfoCollection.getItem(editor.row);
+            item.events[event_type][editor.column] = value;
+            top._device.attributeInfoCollection.updateItem(editor.row,item);
+        }
     },
     _getUI: function () {
         var top = this;
@@ -62,14 +51,30 @@ webix.protoUI({
                         {
                             header: "Change event",
                             body  : {
-                                id     : "change",
-                                view   : "datatable",
+                                id: "change",
+                                view: "datatable",
+                                editable: true,
                                 columns: [
                                     {id: 'name', header: "Attribute name", width: TangoWebapp.consts.NAME_COLUMN_WIDTH},
-                                    {id: 'abs_change', header: "Absolute"},
-                                    {id: 'rel_change', header: "Relative", fillspace: true}
-                                ]
-
+                                    {
+                                        id: 'abs_change',
+                                        header: "Absolute",
+                                        editor: "events",
+                                        width: TangoWebapp.consts.NAME_COLUMN_WIDTH,
+                                        template: function (attr) {
+                                            return attr.events.ch_event.abs_change;
+                                        }
+                                    },
+                                    {
+                                        id: 'rel_change', header: "Relative", fillspace: true, editor: "text",
+                                        template: function (attr) {
+                                            return attr.events.ch_event.rel_change;
+                                        }
+                                    }
+                                ],
+                                on: {
+                                    onEditorChange: top._updateAttrEvents('ch_event')
+                                }
                             }
                         },
                         {
@@ -77,12 +82,19 @@ webix.protoUI({
                             body  : {
                                 id     : "archive",
                                 view   : "datatable",
+                                editable   : true,
                                 columns: [
                                     {id: 'name', header: "Attribute name", width: TangoWebapp.consts.NAME_COLUMN_WIDTH},
-                                    {id: 'arch_abs_change', header: "Absolute"},
-                                    {id: 'arch_rel_change', header: "Relative"},
-                                    {id: 'arch_period', header: "Period (ms)", fillspace: true}
-                                ]
+                                    {id: 'arch_abs_change', header: "Absolute", editor: "text", width: TangoWebapp.consts.NAME_COLUMN_WIDTH,
+                                    template:function(attr){ return attr.events.arch_event.abs_change;}},
+                                    {id: 'arch_rel_change', header: "Relative", editor: "text", width: TangoWebapp.consts.NAME_COLUMN_WIDTH,
+                                        template:function(attr){ return attr.events.arch_event.rel_change;}},
+                                    {id: 'arch_period', header: "Period (ms)", fillspace: true, editor: "text",
+                                        template:function(attr){ return attr.events.arch_event.period;}}
+                                ],
+                                on:{
+                                    onEditorChange:top._updateAttrEvents('arch_event')
+                                }
                             }
                         },
                         {
@@ -90,10 +102,15 @@ webix.protoUI({
                             body  : {
                                 id     : "periodic",
                                 view   : "datatable",
+                                editable   : true,
                                 columns: [
                                     {id: 'name', header: "Attribute name", width: TangoWebapp.consts.NAME_COLUMN_WIDTH},
-                                    {id: 'period', header: "Period (ms)", fillspace: true}
-                                ]
+                                    {id: 'period', header: "Period (ms)", fillspace: true, editor: "text",
+                                        template:function(attr){ return attr.events.per_event.period;}}
+                                ],
+                                on:{
+                                    onEditorChange:top._updateAttrEvents('per_event')
+                                }
 
                             }
                         }
@@ -117,6 +134,10 @@ webix.protoUI({
             this.$$change = this.$$('change');
             this.$$archive = this.$$('archive');
             this.$$periodic = this.$$('periodic');
+
+            this.$$change.sync(this._device.attributeInfoCollection);
+            this.$$archive.sync(this._device.attributeInfoCollection);
+            this.$$periodic.sync(this._device.attributeInfoCollection);
 
             this.refresh();
         }.bind(this));

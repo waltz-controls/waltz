@@ -9,7 +9,7 @@ webix.protoUI({
     apply: function(){
         var top = this.getTopParentView();
 
-        TangoWebapp.helpers.iterate(top._device.attributeInfoDataCollection, function(id, info){
+        TangoWebapp.helpers.iterate(top._device.attributeInfoCollection, function(id, info){
             this.updateAttributeInfo(info.name);
         }.bind(top._device));
     },
@@ -124,12 +124,12 @@ webix.protoUI({
 
 
         this.$ready.push(function(){
-            this.$$('display').sync(this._device.attributeInfoDataCollection);
-            this.$$('unit').sync(this._device.attributeInfoDataCollection);
-            this.$$('range').sync(this._device.attributeInfoDataCollection);
-            this.$$('alarms').sync(this._device.attributeInfoDataCollection);
-            this.$$('description').sync(this._device.attributeInfoDataCollection);
-            this.$$('alias').sync(this._device.attributeInfoDataCollection);
+            this.$$('display').sync(this._device.attributeInfoCollection);
+            this.$$('unit').sync(this._device.attributeInfoCollection);
+            this.$$('range').sync(this._device.attributeInfoCollection);
+            this.$$('alarms').sync(this._device.attributeInfoCollection);
+            this.$$('description').sync(this._device.attributeInfoCollection);
+            this.$$('alias').sync(this._device.attributeInfoCollection);
         });
 
         this.$ready.push(this.refresh);
