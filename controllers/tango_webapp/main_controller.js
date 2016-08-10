@@ -15,6 +15,10 @@ TangoWebapp.MainController = MVC.Controller.extend('main', {
 
         TangoWebapp.helpers.createDatabase();
 
+        webix.attachEvent("onBeforeAjax", function(mode, url, data, request, headers){
+            request.withCredentials = true;
+        });
+
         //draw ui
         webix.ui({
             view: "Main",
