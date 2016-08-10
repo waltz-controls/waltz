@@ -3,7 +3,6 @@
 ini_set('max_execution_time', 120);
 $destination = realpath('./photos');
 
-
 if (isset($_FILES['upload'])){
     $file = $_FILES['upload'];
 
@@ -14,9 +13,11 @@ if (isset($_FILES['upload'])){
     //check that file name is valid
     if ($filename !== "" && !file_exists($filename)){
         move_uploaded_file($file["tmp_name"], $filename);
-        echo '{ "status": "server", "sname":"$sname"}';
+        $res = array("status" => "server", "sname" => $sname);
     } else {
-        echo '{ "status": "error" }';
+        $res = array("status" => "error");
     }
+
+    echo json_encode($res);
 }
 ?>

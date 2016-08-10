@@ -19,7 +19,8 @@
 		</div>
 		<script type="text/javascript" charset="utf-8">
 		function drag(ev){
-			ev.dataTransfer.setData("title",ev.target.innerHTML);
+			// the attribute must be called "text" in IE
+			ev.dataTransfer.setData("text",ev.target.innerHTML);
 		}
 		
 
@@ -46,7 +47,7 @@
 			webix.event(mygrid.$view, "drop", function(e){ 
 				var grid = $$(e);
 				var id = grid.locate(e);
-				grid.getItem(id).title = e.dataTransfer.getData("title");
+				grid.getItem(id).title = e.dataTransfer.getData("text");
 				grid.refresh(id);
 			});
 		});
