@@ -121,7 +121,7 @@ webix.protoUI({
                 if (webix.debug_bind) webix.message("Requesting data for attr " + attr.name);
 
                 var self = this;
-                config.device.attributeInfo(attr.name).then(function (resp) {
+                config.device.attributeInfoCollection(attr.name).then(function (resp) {
                     self.getTopParentView()._dataRecord = new webix.DataRecord(resp);
                     self.elements['info'].setValue(self.getTopParentView()._attribute_info.render(resp))
                     self.elements['btnRead'].enable();

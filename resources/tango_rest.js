@@ -58,8 +58,8 @@ TangoREST.prototype.commands = function (name) {
  */
 TangoREST.prototype.attributes = function(name){
     //TODO check devices branch
-    this._url += '/attributes/';
-    if(name) this._url += name;
+    this._url += '/attributes';
+    if(name) this._url += ("/" + name);
     return this;
 };
 
