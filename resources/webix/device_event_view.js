@@ -1,42 +1,61 @@
-webix.editors.events = webix.extend({
-    getValue:function(){
-        var value =  this.getInputNode(this.node).value;
-
-         debugger
-
-        return value;
-    },
-    setValue:function(value){
-        debugger;
-        this.getInputNode(this.node).value = value;
-    }
-
-},webix.editors.text);
-
 webix.protoUI({
+    _change:{},
+    _archive: {},
+    _periodic: {},
     refresh:function(){
         var top = this.getTopParentView();
         var device = top._device;
 
-        device.attributesInfo();
+        top.$$change.clearAll();
+        top.$$archive.clearAll();
+        top.$$periodic.clearAll();
+        device.attributesInfo()
+        .then(function(){
+            TangoWebapp.helpers.iterate(device.attributeInfoCollection, function(id, info){
+
+                this._change[id] = this.$$change.add({
+                    name: info.name,
+                    abs_change: info.events.ch_event.abs_change,
+                    rel_change: info.events.ch_event.rel_change
+                });
+
+                this._archive[id] = this.$$archive.add({
+                    masterId: id,
+                    name: info.name,
+                    abs_change: info.events.arch_event.abs_change,
+                    rel_change: info.events.arch_event.rel_change,
+                    period: info.events.arch_event.period
+                });
+
+                this._periodic[id] = this.$$periodic.add({
+                    masterId: id,
+                    name: info.name,
+                    period: info.events.per_event.period
+                });
+            }.bind(top));
+        });
+
     },
     apply:function(){
         var top = this.getTopParentView();
 
         var device = top._device;
 
+        TangoWebapp.helpers.iterate(device.attributeInfoCollection, function(id, info){
+            //change
+            info.events.ch_event.abs_change =  this.$$change.getItem(this._change[id]).abs_change;
+            info.events.ch_event.rel_change =  this.$$change.getItem(this._change[id]).rel_change;
+            //archive
+            info.events.arch_event.abs_change = this.$$archive.getItem(this._archive[id]).abs_change;
+            info.events.arch_event.rel_change = this.$$archive.getItem(this._archive[id]).rel_change;
+            info.events.arch_event.period = this.$$archive.getItem(this._archive[id]).period;
+            //periodic
+            info.events.per_event.period = this.$$periodic.getItem(this._periodic[id]).period;
 
+            device.attributeInfoCollection.updateItem(id, info);
 
-        webix.assert(false, "Not yet implemented!")
-    },
-   _updateAttrEvents:function(event_type){
-        return function(editor, value){
-            debugger;
-            var top = this.getTopParentView();
-            var item = top._device.attributeInfoCollection.getItem(editor.row);
-            item.events[event_type][editor.column] = value;
-            top._device.attributeInfoCollection.updateItem(editor.row,item);
-        }
+            device.updateAttributeInfo(info.name);
+        }.bind(top));
     },
     _getUI: function () {
         var top = this;
@@ -51,7 +70,7 @@ webix.protoUI({
                         {
                             header: "Change event",
                             body  : {
-                                id: "change",
+                                id: "ch_event",
                                 view: "datatable",
                                 editable: true,
                                 columns: [
@@ -59,59 +78,39 @@ webix.protoUI({
                                     {
                                         id: 'abs_change',
                                         header: "Absolute",
-                                        editor: "events",
-                                        width: TangoWebapp.consts.NAME_COLUMN_WIDTH,
-                                        template: function (attr) {
-                                            return attr.events.ch_event.abs_change;
-                                        }
+                                        editor: "text",
+                                        width: TangoWebapp.consts.NAME_COLUMN_WIDTH
                                     },
                                     {
-                                        id: 'rel_change', header: "Relative", fillspace: true, editor: "text",
-                                        template: function (attr) {
-                                            return attr.events.ch_event.rel_change;
-                                        }
+                                        id: 'rel_change', header: "Relative", fillspace: true, editor: "text"
                                     }
-                                ],
-                                on: {
-                                    onEditorChange: top._updateAttrEvents('ch_event')
-                                }
+                                ]
                             }
                         },
                         {
                             header: "Archive event",
                             body  : {
-                                id     : "archive",
+                                id     : "arch_event",
                                 view   : "datatable",
                                 editable   : true,
                                 columns: [
                                     {id: 'name', header: "Attribute name", width: TangoWebapp.consts.NAME_COLUMN_WIDTH},
-                                    {id: 'arch_abs_change', header: "Absolute", editor: "text", width: TangoWebapp.consts.NAME_COLUMN_WIDTH,
-                                    template:function(attr){ return attr.events.arch_event.abs_change;}},
-                                    {id: 'arch_rel_change', header: "Relative", editor: "text", width: TangoWebapp.consts.NAME_COLUMN_WIDTH,
-                                        template:function(attr){ return attr.events.arch_event.rel_change;}},
-                                    {id: 'arch_period', header: "Period (ms)", fillspace: true, editor: "text",
-                                        template:function(attr){ return attr.events.arch_event.period;}}
-                                ],
-                                on:{
-                                    onEditorChange:top._updateAttrEvents('arch_event')
-                                }
+                                    {id: 'abs_change', header: "Absolute", editor: "text", width: TangoWebapp.consts.NAME_COLUMN_WIDTH},
+                                    {id: 'rel_change', header: "Relative", editor: "text", width: TangoWebapp.consts.NAME_COLUMN_WIDTH},
+                                    {id: 'period', header: "Period (ms)", fillspace: true, editor: "text"}
+                                ]
                             }
                         },
                         {
                             header: "Periodic event",
                             body  : {
-                                id     : "periodic",
+                                id     : "per_event",
                                 view   : "datatable",
                                 editable   : true,
                                 columns: [
                                     {id: 'name', header: "Attribute name", width: TangoWebapp.consts.NAME_COLUMN_WIDTH},
-                                    {id: 'period', header: "Period (ms)", fillspace: true, editor: "text",
-                                        template:function(attr){ return attr.events.per_event.period;}}
-                                ],
-                                on:{
-                                    onEditorChange:top._updateAttrEvents('per_event')
-                                }
-
+                                    {id: 'period', header: "Period (ms)", fillspace: true, editor: "text"}
+                                ]
                             }
                         }
                     ]
@@ -131,13 +130,9 @@ webix.protoUI({
         webix.extend(config, this._getUI());
 
         this.$ready.push(function () {
-            this.$$change = this.$$('change');
-            this.$$archive = this.$$('archive');
-            this.$$periodic = this.$$('periodic');
-
-            this.$$change.sync(this._device.attributeInfoCollection);
-            this.$$archive.sync(this._device.attributeInfoCollection);
-            this.$$periodic.sync(this._device.attributeInfoCollection);
+            this.$$change = this.$$('ch_event');
+            this.$$archive = this.$$('arch_event');
+            this.$$periodic = this.$$('per_event');
 
             this.refresh();
         }.bind(this));
