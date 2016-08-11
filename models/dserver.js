@@ -611,7 +611,7 @@ DServer = MVC.Model.extend('dserver',
          * @param {Object|Function} cbks: onSuccess - callback [required]; onFailure - panic callback [optional]
          */
         RemObjPolling : function(argin, cbks){
-            var promise = this.api.devices(this.name).commands('RemObjPolling').exec.apply(this.api, argin);
+            var promise = this.api.devices(this.name).commands('RemObjPolling').exec(argin);
             if (cbks) {
                 var callbacks = this.Class._clean_callbacks(cbks);
                 if (callbacks.onFailure) promise.fail(callbacks.onFailure);
@@ -776,7 +776,7 @@ DServer = MVC.Model.extend('dserver',
          * @param {Object|Function} cbks: onSuccess - callback [required]; onFailure - panic callback [optional]
          */
         UpdObjPollingPeriod : function(argin, cbks){
-            var promise = this.api.devices(this.name).commands('UpdObjPollingPeriod').exec.apply(this.api, argin);
+            var promise = this.api.devices(this.name).commands('UpdObjPollingPeriod').exec(argin);
             if (cbks) {
                 var callbacks = this.Class._clean_callbacks(cbks);
                 if (callbacks.onFailure) promise.fail(callbacks.onFailure);

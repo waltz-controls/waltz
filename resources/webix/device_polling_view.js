@@ -5,6 +5,7 @@ webix.protoUI({
             return {
                 name    : lines[0].split(' = ')[1],
                 isPolled: true,
+                isNewPolled: false,
                 period  : lines[1].split(' = ')[1]
             };
         };
@@ -44,15 +45,34 @@ webix.protoUI({
             }
         }
 
-        //TODO UpdObjPolling???
-        TangoWebapp.helpers.iterate(top._commands, function(el, item){
-            if(item.isPolled)
-                this._device.promiseAdmin().then(addObjPolling(item, 'command'));
-        }.bind(top));
-        TangoWebapp.helpers.iterate(top._attributes, function(el, item){
-            if(item.isPolled)
-                this._device.promiseAdmin().then(addObjPolling(item, 'attribute'));
-        }.bind(top));
+        function updObjPolling(item, type){
+            return function(admin){
+                admin.UpdObjPollingPeriod({lvalue:[item.period], svalue:[device_name,type,item.name]});
+            }
+        }
+
+        function remObjPolling(item, type){
+            return function(admin){
+                admin.RemObjPolling([device_name,type,item.name]);
+            }
+        }
+
+
+        function setObjPolling(type){
+            return function(el, item){
+                if(item.isPolled)
+                    if(item.isNewPolled)
+                        this._device.promiseAdmin().then(addObjPolling(item, type));
+                    else
+                        this._device.promiseAdmin().then(updObjPolling(item, type));
+                else
+                    if(!item.isNewPolled)
+                        this._device.promiseAdmin().then(remObjPolling(item, type));
+            }
+        }
+
+        TangoWebapp.helpers.iterate(top._commands, setObjPolling('command').bind(top));
+        TangoWebapp.helpers.iterate(top._attributes, setObjPolling('attribute').bind(top));
     },
     reset: function(){
         var device_name = this._device.name;
@@ -167,6 +187,7 @@ webix.protoUI({
             return {
                 name    : el.name,
                 isPolled: false,
+                isNewPolled: true,
                 period  : ""
             }
         });
