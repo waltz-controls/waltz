@@ -1420,7 +1420,7 @@ DataBase = MVC.Model.extend('DataBase',
          * @param {Object|Function} cbks: onSuccess - callback [required]; onFailure - panic callback [optional]
          */
         DbGetDeviceProperty : function(argin, cbks){
-            var promise = this.api.devices(this.name).commands('DbGetDeviceProperty').exec('input', argin);
+            var promise = this.api.devices(this.name).commands('DbGetDeviceProperty').exec(argin);
             if(cbks) {
                 var callbacks = this.Class._clean_callbacks(cbks);
                 if (callbacks.onFailure) promise.fail(callbacks.onFailure);
