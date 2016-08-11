@@ -143,8 +143,8 @@ webix.protoUI({
                                     id: "scalar",
                                     scheme:{
                                         $update:function(item){
-                                            if(item.quality === 'ALARM') item.$css = {"background-color": "red"};
-                                            if(item.quality === 'WARNING') item.$css = {"background-color": "orange"};
+                                            if(item.quality === 'ATTR_ALARM' || item.quality === 'ATTR_INVALID') item.$css = {"background-color": "red"};
+                                            if(item.quality === 'ATTR_WARNING') item.$css = {"background-color": "orange"};
                                         }
                                     },
                                     columns: [

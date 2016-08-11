@@ -4,7 +4,21 @@ webix.protoUI({
 
         var device = top._device;
 
-        device.attributesInfo();
+        top.$$alarms.clearAll();
+        device.attributesInfo().then(function(){
+            TangoWebapp.helpers.iterate(device.attributeInfoCollection,function(id, info){
+                this.$$alarms.add({
+                    masterId: id,
+                    name: info.name,
+                    min_alarm: info.alarms.min_alarm,
+                    max_alarm: info.alarms.max_alarm,
+                    min_warning: info.alarms.min_warning,
+                    max_warning: info.alarms.max_warning,
+                    delta_t: info.alarms.delta_t,
+                    delta_val:  info.alarms.delta_val
+                });
+            }.bind(top));
+        });
     },
     apply: function(){
         var top = this.getTopParentView();
@@ -74,13 +88,27 @@ webix.protoUI({
                                 editable: true,
                                 columns: [
                                     {id:'name', header: "Attribute name", width: TangoWebapp.consts.NAME_COLUMN_WIDTH},
-                                    {id:'alarms.min_alarm', header: "Min alarm", editor: "text", template:function(obj){return obj.alarms.min_alarm;}},
-                                    {id:'alarms.max_alarm', header: "Max alarm", editor: "text", template:function(obj){return obj.alarms.max_alarm;}},
-                                    {id:'alarms.min_warning',header: "Min warning", editor: "text", template:function(obj){return obj.alarms.min_warning;}},
-                                    {id:'alarms.max_warning', header: "Max warning", editor: "text", template:function(obj){return obj.alarms.max_warning;}},
-                                    {id:'alarms.delta_t', header: "Delta t", editor: "text", template:function(obj){return obj.alarms.delta_t;}},
-                                    {id:'alarms.delta_val', header: "Delta val", editor: "text", template:function(obj){return obj.alarms.delta_val;}, fillspace: true}
-                                ]
+                                    {id:'min_alarm', header: "Min alarm", editor: "text"},
+                                    {id:'max_alarm', header: "Max alarm", editor: "text"},
+                                    {id:'min_warning',header: "Min warning", editor: "text"},
+                                    {id:'max_warning', header: "Max warning", editor: "text"},
+                                    {id:'delta_t', header: "Delta t", editor: "text"},
+                                    {id:'delta_val', header: "Delta val", editor: "text", fillspace: true}
+                                ],
+                                scheme:{
+                                    $update:function(obj){
+                                        var info = top._device.attributeInfoCollection.getItem(obj.masterId);
+
+                                        info.alarms.min_alarm = obj.min_alarm;
+                                        info.alarms.max_alarm = obj.max_alarm;
+                                        info.alarms.min_warning = obj.min_warning;
+                                        info.alarms.max_warning = obj.max_warning;
+                                        info.alarms.delta_t = obj.delta_t;
+                                        info.alarms.delta_val =  obj.delta_val;
+
+                                        top._device.attributeInfoCollection.updateItem(obj.masterId, info);
+                                    }
+                                }
                             }
                         },
                         {
@@ -127,12 +155,13 @@ webix.protoUI({
             this.$$('display').sync(this._device.attributeInfoCollection);
             this.$$('unit').sync(this._device.attributeInfoCollection);
             this.$$('range').sync(this._device.attributeInfoCollection);
-            this.$$('alarms').sync(this._device.attributeInfoCollection);
             this.$$('description').sync(this._device.attributeInfoCollection);
             this.$$('alias').sync(this._device.attributeInfoCollection);
-        });
 
-        this.$ready.push(this.refresh);
+            this.$$alarms = this.$$('alarms');
+
+            this.refresh();
+        });
     },
     name: "DeviceAttrConfig"
 }, webix.IdSpace, TangoWebapp.mixin.TabActivator, TangoWebapp.mixin.DeviceSetter, webix.ui.layout);
