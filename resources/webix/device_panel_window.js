@@ -328,12 +328,12 @@ webix.protoUI({
                                     view: "DevPanelPipes",
                                     device: device
                                 }
-                            },
-                            {
-                                header: "Admin",
-                                body: {
-                                    template: "Admin body"
-                                }
+                            //},
+                            //{
+                            //    header: "Admin",
+                            //    body: {
+                            //        template: "Admin body"
+                            //    }
                             }
                         ]
                     },
