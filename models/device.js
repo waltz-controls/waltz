@@ -133,7 +133,7 @@ Device = MVC.Model.extend("device",
             return this.api.devices(this.name).attributes(attr).get('/value');
         },
         writeAttribute:function(attr, argin){
-            return this.api.devices(this.name).attributes(attr).put('?value=' + argin)
+            return this.api.devices(this.name).attributes(attr).put('/value?v=' + argin)
         },
         updateAttributeInfo: function(attr){
             if(!this._attrIds.hasOwnProperty(attr)) debugger;

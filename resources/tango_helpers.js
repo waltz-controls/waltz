@@ -14,6 +14,7 @@ MVC.Object.extend(TangoWebapp, {
             var db = new DataBase();//takes values from TangoWebapp.consts
             var dbId = TangoWebapp.databases.add(db);
             TangoWebapp.databases.setCursor(db.id = dbId);
+            return db;
         },
 
         openAtkTab: function(device){

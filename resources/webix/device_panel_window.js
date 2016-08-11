@@ -111,119 +111,113 @@ webix.protoUI({
 }, webix.IdSpace, TangoWebapp.mixin.DeviceSetter, webix.ui.layout);
 
 webix.protoUI({
-    _dataRecord: null,
-    _attribute_info: new View({url: 'views/dev_panel_attribute_info.ejs'}),
+    _getUI: function(){
+        var _attribute_info = new View({url: 'views/dev_panel_attribute_info.ejs'});
+        var top = this;
+        return {
+            cols: [
+                {
+                    view: "list",
+                    id: 'attributes-list',
+                    select: true,
+                    template: "#name#"
+                },
+                {
+                    id: 'frm',
+                    view: 'form',
+
+                    //dataFeed: '...',
+                    elements: [
+                        {
+                            view: 'text',
+                            name: 'argin'
+                        },
+                        {
+                            view: "textarea",
+                            name: "info"
+                        },
+                        {
+                            cols: [{
+                                view: 'button',
+                                name: 'btnRead',
+                                value: 'Read',
+                                disabled: true,
+                                click: top.readAttribute.bind(top)
+                            },
+                                {
+                                    view: 'button',
+                                    name: 'btnWrite',
+                                    disabled: true,
+                                    value: 'Write',
+                                    click: top.writeAttribute.bind(top)
+                                },
+                                {
+                                    view: 'button',
+                                    name: 'btnPlot',
+                                    disabled: true,
+                                    value: 'Plot',
+                                    click: top.plotAttribute.bind(top)
+                                }]
+                        }
+                    ],
+                    on: {
+                        onBindApply: function(obj, dummy, master){
+                            if(!obj) return this.clear();
+
+                            this.elements['info'].setValue(_attribute_info.render(obj));
+                            this.elements['btnRead'].enable();
+                            if (obj.writable.contains("WRITE"))
+                                this.elements['btnWrite'].enable();
+                            else
+                                this.elements['btnWrite'].disable();
+                            if (obj.data_format == 'SPECTRUM' || obj.data_format == 'IMAGE') {
+                                this.elements['btnPlot'].enable();
+                            } else {
+                                this.elements['btnPlot'].disable();
+                            }
+                        }
+                    }
+                }
+            ]
+        };
+    },
     name: "DevPanelAttributes",
     $init: function (config) {
-        this.$ready.push(function () {
-            this.$$('frm').bind(this.$$('attributes-list'), '$data', function (attr, attrs) {
-                if (!attr) return this.clear();
-                if (webix.debug_bind) webix.message("Requesting data for attr " + attr.name);
+        webix.extend(config, this._getUI());
 
-                var self = this;
-                config.device.attributeInfoCollection(attr.name).then(function (resp) {
-                    self.getTopParentView()._dataRecord = new webix.DataRecord(resp);
-                    self.elements['info'].setValue(self.getTopParentView()._attribute_info.render(resp))
-                    self.elements['btnRead'].enable();
-                    if (resp.writable.contains("WRITE"))
-                        self.elements['btnWrite'].enable();
-                    else
-                        self.elements['btnWrite'].disable();
-                    if (resp.data_format == 'SPECTRUM' || resp.data_format == 'IMAGE') {
-                        self.elements['btnPlot'].enable();
-                    } else {
-                        self.elements['btnPlot'].disable();
-                    }
-                });
-            })
-        });
         this.$ready.push(function () {
-            this.$$('attributes-list').parse(this._device.attributes());
+            this.$$('attributes-list').sync(this._device.attributeInfoCollection);
+
+            this.$$('frm').bind(this.$$('attributes-list'));
         });
+        //force refresh
+        this.$ready.push(config.device.attributesInfo.bind(config.device));
     },
     _out: new View({url: 'views/dev_panel_attribute_out.ejs'}),
     readAttribute: function () {
-        var o = this._dataRecord.getValues();
-
-        this._device.readAttribute(o.name).then(this.getTopParentView().updateLog.bind(this.getTopParentView(), this._out));
+        var o = this.$$('attributes-list').getSelectedItem();
+        var main = this.getTopParentView();
+        this._device.readAttribute(o.name).then(main.updateLog.bind(main, this._out));
     },
     writeAttribute: function () {
         var argin = this.$$('frm').elements['argin'].getValue();
-        var o = this._dataRecord.getValues();
+        var o = this.$$('attributes-list').getSelectedItem();
 
-        var self = this;
-        this._device.writeAttribute(o.name, argin).then(this.getTopParentView().updateLog.bind(this.getTopParentView(), this._out));
+        var main = this.getTopParentView();
+        this._device.writeAttribute(o.name, argin).then(main.updateLog.bind(main, this._out));
     },
     plotAttribute: function () {
-        var o = this._dataRecord.getValues();
-        var device = this._device;
-        if (o.data_format == "SPECTRUM") {
-            this._device.readAttribute(o.name).then(
-                function (resp) {
-                    TangoWebapp.helpers.openSpectrumWindow(resp);
-                }
-            );
+        var o = this.$$('attributes-list').getSelectedItem();
 
+        if (o.data_format == "SPECTRUM") {
+            this._device.readAttribute(o.name).then(TangoWebapp.helpers.openSpectrumWindow);
         } else if (o.data_format == "IMAGE") {
             this._device.readAttribute(o.name).then(TangoWebapp.helpers.openImageWindow);
-
         } else {
             webix.assert_error("Unsupported data format: " + o.data_format);
         }
     },
     defaults: {
-        cols: [
-            {
-                view: "list",
-                id: 'attributes-list',
-                select: true,
-                template: "#name#"
-            },
-            {
-                id: 'frm',
-                view: 'form',
-                //dataFeed: '...',
-                elements: [
-                    {
-                        view: 'text',
-                        name: 'argin'
-                    },
-                    {
-                        view: "textarea",
-                        name: "info"
-                    },
-                    {
-                        cols: [{
-                            view: 'button',
-                            name: 'btnRead',
-                            value: 'Read',
-                            disabled: true,
-                            click: function () {
-                                this.getTopParentView().readAttribute();
-                            }
-                        },
-                            {
-                                view: 'button',
-                                name: 'btnWrite',
-                                disabled: true,
-                                value: 'Write',
-                                click: function () {
-                                    this.getTopParentView().writeAttribute();
-                                }
-                            },
-                            {
-                                view: 'button',
-                                name: 'btnPlot',
-                                disabled: true,
-                                value: 'Plot',
-                                click: function () {
-                                    this.getTopParentView().plotAttribute();
-                                }
-                            }]
-                    }
-                ]
-            }
-        ]
     }
 }, webix.IdSpace, TangoWebapp.mixin.DeviceSetter, webix.ui.layout);
 
