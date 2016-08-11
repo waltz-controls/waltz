@@ -98,6 +98,7 @@ MVC.Object.extend(TangoWebapp, {
         iterate: function (collection, f) {
             var id = collection.getFirstId(),
                 last = collection.getLastId();
+            if(!id || ! last) return;
             if(id === last) f(id, collection.getItem(id));
             for (; id !== last; id = collection.getNextId(id)) {
                 var item = collection.getItem(id);
@@ -144,11 +145,11 @@ MVC.Object.extend(TangoWebapp, {
         },
 
         serverWizard: function (data) {
-            data.devices.forEach(function (dev) {
-                TangoWebapp.getDatabase().DbAddDevice([data.server, dev, data.className]).then(function (resp) {
-                    webix.message(resp.input[1] + " has been added.");
+            webix.promise.all(data.devices.map(function(dev){
+                return TangoWebapp.getDatabase().DbAddDevice([data.server, dev, data.className]).then(function (resp) {
+                    webix.message(dev + " has been added.");
                 });
-            });
+            })).then($$('device_tree').updateRoot.bind($$('device_tree')));
         },
 
         deleteDevice: function (dev) {
