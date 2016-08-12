@@ -1,7 +1,7 @@
 include.application('TangoWebapp','0.1-SNAPSHOT');
 include.css(
     "highlight",
-    "webix/codebase/webix"
+    "webix/codebase/skins/air"
 );
 include.libs(
     "webix/codebase/webix_debug"

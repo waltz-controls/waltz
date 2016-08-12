@@ -91,9 +91,9 @@ webix.protoUI({
                 attrs.push(attr);
                 this._device.readAttributes(attrs).then(function (resp) {
                     resp.forEach(this.update(function(attr){
-                        if(!$$(tabId).$destructed)
-                            $$(tabId).update(attr.value);
-                    }));
+                        if(!this.$$(tabId).$destructed)
+                            this.$$(tabId).update(attr.value);
+                    }.bind(this)));
                 }.bind(this));
             }
         },
