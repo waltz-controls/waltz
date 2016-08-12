@@ -1,4 +1,14 @@
 webix.protoUI({
+    _last_state: "UNKNOWN",
+    name: "ATKPanelDeviceHeader",
+    setValues:function(values, force){
+        webix.html.removeCss(this.getNode(), this._last_state, true);
+        webix.html.addCss(this.getNode(), this._last_state = values.state, true);
+        webix.ui.template.prototype.setValues.call(this, values, force);
+    }
+}, webix.ui.template);
+
+webix.protoUI({
         _monitoredAttributes: {},//this is shared object across all components. In this case it is safe, as keys are unique ids
         updateState: function () {
             var $$state = this.$$('state');
@@ -72,7 +82,7 @@ webix.protoUI({
                         cols: [
                             {
                                 id: "state",
-                                view: "template",
+                                view: "ATKPanelDeviceHeader",
                                 template: "[#name#] -- #state#",
                                 type: "header",
                                 data: {
@@ -143,8 +153,9 @@ webix.protoUI({
                                     id: "scalar",
                                     scheme:{
                                         $update:function(item){
-                                            if(item.quality === 'ATTR_ALARM' || item.quality === 'ATTR_INVALID') item.$css = {"background-color": "red"};
-                                            if(item.quality === 'ATTR_WARNING') item.$css = {"background-color": "orange"};
+                                            if(item.quality === 'ATTR_ALARM' || item.quality === 'ATTR_INVALID') item.$css = {"background-color": "lightcoral"};
+                                            else if(item.quality === 'ATTR_WARNING') item.$css = {"background-color": "orange"};
+                                            else delete item.$css;
                                         }
                                     },
                                     columns: [
