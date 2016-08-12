@@ -35,12 +35,12 @@ webix.protoUI({
                     case "Restart server":
                         TangoWebapp.getDevice().promiseAdmin().then(function(admin){
                             return admin.RestartServer();
-                        }).then(webix.message.bind(null,"Device server has been restarted!"));
+                        }).then(TangoWebapp.helpers.log.bind(null,"Device server has been restarted!"));
                         break;
                     case "Kill server":
                         TangoWebapp.getDevice().promiseAdmin().then(function(admin){
                             return admin.Kill();
-                        }).then(webix.message.bind(null, "Device server has been killed!!!"));
+                        }).then(TangoWebapp.helpers.log.bind(null, "Device server has been killed!!!"));
                         break;
                     case "Monitor device":
                         TangoWebapp.helpers.openAtkTab(TangoWebapp.getDevice());
@@ -68,7 +68,7 @@ webix.protoUI({
         select: true,
         on: {
             onItemDblClick: function (id, e, node) {
-                webix.message("DblClick " + id);
+                TangoWebapp.helpers.log("DblClick " + id);
                 var item = this.getItem(id);
                 if (item.$level == 4) {//member
                     TangoWebapp.helpers.openAtkTab(TangoWebapp.getDevice());
@@ -84,7 +84,6 @@ webix.protoUI({
             },
             onDataRequest: function (id, cbk, url) {
                 var item = this.getItem(id);
-                if (item) webix.message("Getting children of " + item.value);
                 var promise;
                 if (id === 'root')//domain
                     promise = TangoWebapp.getDatabase().DbGetDeviceDomainList("*");
@@ -96,9 +95,7 @@ webix.protoUI({
                     return false;//ignore member
                 }
                 if (item) {
-                    webix.message("Getting children of " + item.value);
-
-
+                    TangoWebapp.debug("Loading children for " + item.value);
                 }
                 this.parse(promise.then(this.handleResponse(id, item)));
 

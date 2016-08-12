@@ -145,7 +145,7 @@ webix.protoUI({
                                         {
                                             view: "button",
                                             type: "iconButton",
-                                            icon: "cog",
+                                            icon: "cogs",
                                             width: 36,
                                             click: function(id, ev){
                                                 var top = this.getTopParentView();

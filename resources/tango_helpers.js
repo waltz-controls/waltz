@@ -5,6 +5,26 @@ MVC.Object.extend(TangoWebapp,{
 
     getDevice: function () {
         return TangoWebapp.devices.getItem(TangoWebapp.devices.getCursor());//TODO assert
+    } ,
+
+    log: function(msg){
+        console.log(msg);
+        var id = $$('main-log').add({ type: '', value: msg, timestamp: +new Date()});
+        $$('main-log').moveTop(id);
+    },
+
+    error: function(msg){
+        console.error(msg);
+        var id = $$('main-log').add({ type: 'ALARM' , value: msg, timestamp: +new Date()});
+        $$('main-log').moveTop(id);
+    },
+
+    debug: function(msg){
+        if(MVC.env() === 'development' || MVC.env() === 'test') {
+            console.log(msg);
+            var id = $$('main-log').add({type: 'ON', value: msg, timestamp: +new Date()});
+            $$('main-log').moveTop(id);
+        }
     }
 });
 
