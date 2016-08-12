@@ -19,7 +19,7 @@ webix.protoUI({
         minWidth:320,
         width:480,
         body: {
-            view: 'LogOutput',
+            view: 'Logger',
             id: 'main-log',
             ejs: 'views/main_log_item.ejs'
         }
