@@ -98,7 +98,7 @@ Device = MVC.Model.extend("device",
             return this.attributes().then(function(attrs){
                 return attrs.map(function(attr){ return attr.name;});
             }).then(function(attrs){
-                return this.api.devices(this.name).attributes().get('/info?' + attrs.map(function(attr){ return "attr=" + attr;}).join('&'));
+                return this.api.devices(this.name).attributes('info').get('?' + attrs.map(function(attr){ return "attr=" + attr;}).join('&'));
             }.bind(this)).then(this._updateAttributeInfos.bind(this));
         },
         /**
@@ -131,6 +131,9 @@ Device = MVC.Model.extend("device",
         },
         readAttribute:function(attr){
             return this.api.devices(this.name).attributes(attr).get('/value');
+        },
+        readAttributes:function(attrs){
+            return this.api.devices(this.name).attributes('value').get('?' + attrs.map(function(attr){ return "attr=" + attr}).join('&'));
         },
         writeAttribute:function(attr, argin){
             return this.api.devices(this.name).attributes(attr).put('/value?v=' + argin)

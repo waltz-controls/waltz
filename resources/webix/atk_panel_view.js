@@ -3,24 +3,13 @@ webix.protoUI({
     name: "ATKPanelDeviceHeader",
     setValues:function(values, force){
         webix.html.removeCss(this.getNode(), this._last_state, true);
-        webix.html.addCss(this.getNode(), this._last_state = values.state, true);
+        webix.html.addCss(this.getNode(), this._last_state = values.value, true);
         webix.ui.template.prototype.setValues.call(this, values, force);
     }
 }, webix.ui.template);
 
 webix.protoUI({
         _monitoredAttributes: {},//this is shared object across all components. In this case it is safe, as keys are unique ids
-        updateState: function () {
-            var $$state = this.$$('state');
-            var $$status = this.$$('status');
-            this._device.state().then(function (state) {
-                //may happen on destructed view
-                if(!$$state.$destructed) {
-                    $$state.setValues(state, true);
-                }
-                $$status.setValue(state.status);
-            });
-        },
         loadAttributes: function () {
             var top = this.getTopParentView();
             var $$scalar = top.$$('scalar');
@@ -30,7 +19,16 @@ webix.protoUI({
                 attrsInfo.forEach(function (attrInfo) {
                     switch (attrInfo.data_format) {
                         case "SCALAR":
-                            $$scalar.add(attrInfo);
+                            //skip State&Status as they handled differently
+                            if(attrInfo.name === 'State' || attrInfo.name === 'Status') return;
+                            $$scalar.add({
+                                id: attrInfo.name,
+                                label: attrInfo.label,
+                                value: "N/A",
+                                quality: "N/A",
+                                unit: attrInfo.unit,
+                                description: attrInfo.description
+                            });
                             //TODO save attr list item id for future updates
                             break;
                         case "SPECTRUM":
@@ -57,20 +55,45 @@ webix.protoUI({
                 }.bind(this));
             }.bind(top)).then($$scalar.refresh);
         },
+        update: function(what){
+            var $$state = this.$$('state');
+            var $$status = this.$$('status');
+            return function(attr){
+                //update state and status
+                if(attr.name === 'State' && !$$state.$destructed)
+                    $$state.setValues(attr, true);
+                else if(attr.name === 'Status'  && !$$status.$destructed)
+                    $$status.setValue(attr.value);
+                else
+                    what(attr);
+            }
+        },
         run: function () {
-            this.updateState();
-            var attr;
+            var attrs = ['State', 'Status'];
             var tabId = this.$$('attributes-tabview').getValue();
             if (tabId === 'scalar') {
-                TangoWebapp.helpers.iterate(this.$$('scalar'), function (id, attr) {
-                    this._device.readAttribute(attr.name).then(function (resp) {
-                        this.updateItem(id, resp);
-                    }.bind(this.$$('scalar')));
+                var pull = this.$$('scalar').data.pull;
+                for(var id in  pull){
+                    if(!pull.hasOwnProperty(id)) continue;
+                    attrs.push(id);
+                }
+
+                var $$scalar = this.$$('scalar');
+
+                this._device.readAttributes(attrs).then(function (resp) {
+                    resp.forEach(this.update(function(attr){
+                        if(!$$scalar.$destructed)
+                            $$scalar.updateItem(attr.name, attr);
+                    }));
                 }.bind(this));
             } else {
-                attr = this._monitoredAttributes[tabId];
-                this._device.readAttribute(attr).then(function (resp) {
-                    $$(tabId).update(resp.value);
+                var attr = this._monitoredAttributes[tabId];//TODO get selected tabId
+                attrs.push(attr);
+                this._device.readAttributes(attrs).then(function (resp) {
+                    resp.forEach(this.update(function(attr){
+                        if(!$$(tabId).$destructed)
+                            $$(tabId).update(attr.value);
+                    }));
                 }.bind(this));
             }
         },
@@ -83,11 +106,11 @@ webix.protoUI({
                             {
                                 id: "state",
                                 view: "ATKPanelDeviceHeader",
-                                template: "[#name#] -- #state#",
+                                template: "[#devname#] -- #value#",
                                 type: "header",
                                 data: {
-                                    name: device.name,
-                                    state: "UNKNOWN"
+                                    devname: device.name,
+                                    value: "UNKNOWN"
                                 }
                             },
                             {
@@ -163,7 +186,7 @@ webix.protoUI({
                                         {id: "value", header: "Value", width: 100},
                                         {id: "quality", header: "Quality", width: 100, sort: "string"},
                                         {id: "unit", header: "Unit", width: TangoWebapp.consts.NAME_COLUMN_WIDTH},
-                                        {fillspace: true},
+                                        {id: "description", header: "Description", fillspace: true},
                                         {id: "settings", header: "<icon class='btnSettings webix_icon fa-cog'></icon>", width: 40 }
                                     ],
                                     onClick:{
