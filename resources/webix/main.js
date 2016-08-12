@@ -1,39 +1,37 @@
 webix.protoUI({
-    name    : "Main",
+    name: "Main",
     defaults: {
         rows: [
             TangoWebapp.ui.newMainToolbar(),
             {
                 cols: [
                     {
-                        view : "tabview",
+                        view: "tabview",
                         width: 250,
                         cells: [
                             {
                                 header: "Devices",
-                                body  : TangoWebapp.ui.newDeviceTree()
+                                body: TangoWebapp.ui.newDeviceTree()
                             },
                             {
                                 header: "Servers",
-                                body  : TangoWebapp.ServerTreeConfig
+                                body: TangoWebapp.ServerTreeConfig
                             }
                         ]
                     },
                     {view: "resizer"},
                     {
-                        view : "tabview",
-                        id   : "main-tabview",
+                        view: "tabview",
+                        id: "main-tabview",
                         cells: [
                             {
                                 header: "Start page",
-                                body  : {
-                                    template: new View({url:'views/start_page.ejs'}).render()
+                                body: {
+                                    template: new View({url: 'views/start_page.ejs'}).render()
                                 }
                             }
                         ]
                     }
-
-
                 ]
             }
         ]

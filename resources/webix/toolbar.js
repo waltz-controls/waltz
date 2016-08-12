@@ -11,6 +11,17 @@ webix.protoUI({
 }, webix.ui.textarea);
 
 webix.protoUI({
+    _log_popup: webix.ui({
+        view: 'popup',
+        id:'log',
+        minHeight:640,
+        minWidth:480,
+        body: {
+            view: 'LogOutput',
+            id: 'main-log',
+            ejs: 'views/main_log_item.ejs'
+        }
+    }),
     _help_popup: webix.ui({
         view: "popup",
         zIndex: 1,
@@ -164,11 +175,20 @@ webix.protoUI({
                 {view: "label", label: versionLabel, align: "right", width: 260},
                 {
                     view: "button",
-                    id: "btnRefresh",
+                    id: "btnHelp",
                     type: "iconButton",
                     icon: "question",
                     width: 36,
                     click: top.help,
+                    align: "right"
+                },
+                {
+                    view: "button",
+                    id: "btnLog",
+                    type: "iconButton",
+                    icon: "bars",
+                    width: 36,
+                    popup: 'log',
                     align: "right"
                 }
             ]
