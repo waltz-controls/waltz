@@ -119,7 +119,7 @@ webix.protoUI({
                             {
                                 view: "form",
                                 id: "frmUpdateRate",
-                                width: 250,
+                                width: 320,
                                 elements: [{
                                     cols: [
                                         {
@@ -140,6 +140,18 @@ webix.protoUI({
                                                 if (form.validate()) {
                                                     top.changeDelay(form.getValues().updateRate);
                                                 }
+                                            }
+                                        },
+                                        {
+                                            view: "button",
+                                            type: "iconButton",
+                                            icon: "cog",
+                                            width: 36,
+                                            click: function(id, ev){
+                                                var top = this.getTopParentView();
+                                                var device = top._device;
+
+                                                TangoWebapp.helpers.openDeviceTab(device, 'device_attr_config');
                                             }
                                         }
                                     ]
@@ -186,17 +198,8 @@ webix.protoUI({
                                         {id: "value", header: "Value", width: 100},
                                         {id: "quality", header: "Quality", width: 100, sort: "string"},
                                         {id: "unit", header: "Unit", width: TangoWebapp.consts.NAME_COLUMN_WIDTH},
-                                        {id: "description", header: "Description", fillspace: true},
-                                        {id: "settings", header: "<icon class='btnSettings webix_icon fa-cog'></icon>", width: 40 }
-                                    ],
-                                    onClick:{
-                                        btnSettings:function(id, ev){
-                                            var top = this.getTopParentView();
-                                            var device = top._device;
-
-                                            TangoWebapp.helpers.openDeviceTab(device, 'device_attr_config');
-                                        }
-                                    }
+                                        {id: "description", header: "Description", fillspace: true}
+                                    ]
                                 }
                             }
                         ]
