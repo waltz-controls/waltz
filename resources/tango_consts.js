@@ -3,5 +3,6 @@ TangoWebapp.consts = {
     TANGO_HOST   : 'localhost:10000',
     REST_API_VERSION: 'rc3',
     NAME_COLUMN_WIDTH: 250,
-    DATABASE: 'sys/database/2'
+    DATABASE: 'sys/database/2',
+    LOG_DATE_FORMATTER: function(date){ return date;}
 };

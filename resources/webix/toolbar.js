@@ -14,8 +14,10 @@ webix.protoUI({
     _log_popup: webix.ui({
         view: 'popup',
         id:'log',
-        minHeight:640,
-        minWidth:480,
+        minHeight:320,
+        height:640,
+        minWidth:320,
+        width:480,
         body: {
             view: 'LogOutput',
             id: 'main-log',
@@ -186,7 +188,7 @@ webix.protoUI({
                     view: "button",
                     id: "btnLog",
                     type: "iconButton",
-                    icon: "bars",
+                    icon: "eye",
                     width: 36,
                     popup: 'log',
                     align: "right"

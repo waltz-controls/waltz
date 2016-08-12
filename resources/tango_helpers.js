@@ -9,20 +9,20 @@ MVC.Object.extend(TangoWebapp,{
 
     log: function(msg){
         console.log(msg);
-        var id = $$('main-log').add({ type: '', value: msg, timestamp: +new Date()});
+        var id = $$('main-log').add({ type: '', value: msg, timestamp: TangoWebapp.consts.LOG_DATE_FORMATTER(new Date())});
         $$('main-log').moveTop(id);
     },
 
     error: function(msg){
         console.error(msg);
-        var id = $$('main-log').add({ type: 'ALARM' , value: msg, timestamp: +new Date()});
+        var id = $$('main-log').add({ type: 'ALARM' , value: msg, timestamp: TangoWebapp.consts.LOG_DATE_FORMATTER(new Date())});
         $$('main-log').moveTop(id);
     },
 
     debug: function(msg){
         if(MVC.env() === 'development' || MVC.env() === 'test') {
             console.log(msg);
-            var id = $$('main-log').add({type: 'ON', value: msg, timestamp: +new Date()});
+            var id = $$('main-log').add({type: 'ON', value: msg, timestamp: TangoWebapp.consts.LOG_DATE_FORMATTER(new Date())});
             $$('main-log').moveTop(id);
         }
     }
