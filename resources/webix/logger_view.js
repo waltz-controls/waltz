@@ -21,9 +21,10 @@ webix.protoUI({
         this.moveTop(id);
     },
     defaults:{
+        scroll:true,
         autoheight: true,
         type:{
-            height: Infinity
+            height: 'auto'
         }
     }
 }, webix.IdSpace, webix.ui.list);
