@@ -15,7 +15,9 @@ webix.protoUI({
                             },
                             {
                                 header: "Servers",
-                                body: TangoWebapp.ServerTreeConfig
+                                body: {
+                                    template: "Not yet implemented!"
+                                }
                             }
                         ]
                     },
@@ -27,7 +29,15 @@ webix.protoUI({
                             {
                                 header: "Start page",
                                 body: {
-                                    template: new View({url: 'views/start_page.ejs'}).render()
+                                    view: "layout",
+                                    padding: 50,
+                                    css: {"background-image": "linear-gradient(rgb(255, 255, 255), rgb(229, 241, 255))"},
+                                    rows: [
+                                        {
+                                            css: {"text-align" : "center", "background-image": "linear-gradient(rgb(229, 241, 255), rgb(255, 255, 255))"},
+                                            template: '<img src="images/logo.png" style="display: inline-block;vertical-align: middle;" ondragstart="return false"/>'
+                                        }
+                                    ]
                                 }
                             }
                         ]

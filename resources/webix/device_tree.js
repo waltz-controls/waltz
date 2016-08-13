@@ -57,7 +57,7 @@ webix.protoUI({
                         }.bind(this));
                         break;
                     default:
-                        debugger;
+                        webix.assert_error('Not yet implemented!');
                 }
             }
         }
