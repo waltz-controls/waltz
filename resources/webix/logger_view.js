@@ -15,10 +15,15 @@ webix.protoUI({
         this._view = new View({url: config.ejs});
     },
     log: function(item){
+        if(item.type === 'error') item.$css = {"background-color" : "lightcoral"};
+        item.adjusted = true;
         var id = this.add(item);
         this.moveTop(id);
-        //TODO background-color
+    },
+    defaults:{
+        autoheight: true,
+        type:{
+            height: Infinity
+        }
     }
-
-
 }, webix.IdSpace, webix.ui.list);

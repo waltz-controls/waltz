@@ -9,7 +9,8 @@ include.functional_tests(
     'device_properties',
     'device_polling',
     'device_events',
-    'device_logging'
+    'device_logging',
+    'webix_ui'
 );
 
 webix.debug_bind = true;
