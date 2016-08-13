@@ -1,11 +1,11 @@
 webix.protoUI({
-    name:"textarea0",
-    $cssName:"textarea",
-    getValue:function(){
+    name: "textarea0",
+    $cssName: "textarea",
+    getValue: function () {
         var rv = webix.ui.textarea.prototype.getValue.call(this);
         return rv.split('\n');
     },
-    setValue:function(value){
+    setValue: function (value) {
         webix.ui.textarea.prototype.setValue.call(this, value.join('\n'));
     }
 }, webix.ui.textarea);
@@ -13,15 +13,20 @@ webix.protoUI({
 webix.protoUI({
     _log_popup: webix.ui({
         view: 'popup',
-        id:'log',
-        minHeight:320,
-        height:640,
-        minWidth:320,
-        width:480,
+        id: 'log',
+        minHeight: 320,
+        height: 640,
+        minWidth: 320,
+        width: 480,
         body: {
             view: 'Logger',
             id: 'main-log',
             ejs: 'views/main_log_item.ejs'
+        },
+        on: {
+            onHide: function () {
+                $$('main-toolbar').switchLogBtnIcon('');
+            }
         }
     }),
     _help_popup: webix.ui({
@@ -36,7 +41,8 @@ webix.protoUI({
             rows: [
                 {
                     margin: 5,
-                    template: new View({url: "views/help.ejs"}).render()}
+                    template: new View({url: "views/help.ejs"}).render()
+                }
             ]
         }
     }),
@@ -65,9 +71,9 @@ webix.protoUI({
                             labelWidth: 150,
                             labelPosition: "top",
                             placeholder: "server/instance, i.e. TangoTest/test",
-                            validate:function(value){
+                            validate: function (value) {
                                 return /^[\w]*\/[\w]*$/.test(value);
-                            }, invalidMessage:"Incorrect server/instance"
+                            }, invalidMessage: "Incorrect server/instance"
                         },
                         {
                             view: "text",
@@ -77,7 +83,7 @@ webix.protoUI({
                             labelPosition: "top",
                             placeholder: "MyClass",
                             validate: webix.rules.isNotEmpty,
-                            invalidMessage:"Can not be empty"
+                            invalidMessage: "Can not be empty"
                         },
                         {
                             view: "textarea0",
@@ -87,13 +93,13 @@ webix.protoUI({
                             labelWidth: 150,
                             labelPosition: "top",
                             placeholder: "instance/family/member, i.e. sys/tg_test/1",
-                            validate:function(value){
+                            validate: function (value) {
                                 var rv = false;
-                                do{
+                                do {
                                     rv = /[\w]*\/[\w]*\/[\w]*/.test(value.shift());
                                 } while (rv && value.length != 0);
                                 return rv;
-                            }, invalidMessage:"Incorrect devices"
+                            }, invalidMessage: "Incorrect devices"
                         }
                     ]
                 },
@@ -103,7 +109,7 @@ webix.protoUI({
                     {
                         view: "button", value: "Apply", width: 100, align: "center", click: function () {
                         var $$serverWizard = $$('frmServerWizard');
-                        if($$serverWizard.validate()) {
+                        if ($$serverWizard.validate()) {
                             TangoWebapp.helpers.serverWizard($$serverWizard.getValues());
                             this.getTopParentView().hide();
                         }
@@ -118,6 +124,18 @@ webix.protoUI({
             ]
         }
     }),
+    switchLogBtnIcon: function (type) {
+        var $$btnLog = this.$$("btnLog");
+        if (type === 'error') {
+            $$btnLog.config.icon = "bolt";
+            $$btnLog.refresh();
+            $$btnLog.$view.getElementsByTagName("button")[0].style.background = 'lightcoral';
+        } else {
+            $$btnLog.config.icon = "eye";
+            $$btnLog.refresh();
+            $$btnLog.$view.getElementsByTagName("button")[0].style.background = '';
+        }
+    },
     refresh: function () {
         var top = this.getTopParentView();
 
@@ -125,11 +143,11 @@ webix.protoUI({
         TangoWebapp.consts.TANGO_HOST = top.$$('txtTangoHost').getValue();
 
         var dbExists = false;
-        TangoWebapp.helpers.iterate(TangoWebapp.databases, function(id, db){
+        TangoWebapp.helpers.iterate(TangoWebapp.databases, function (id, db) {
             dbExists |= db.url === TangoWebapp.consts.REST_API_URL;
         });
 
-        if(!dbExists) {
+        if (!dbExists) {
             TangoWebapp.helpers.createDatabase();
         }
 
@@ -203,7 +221,7 @@ webix.protoUI({
     $init: function (config) {
         webix.extend(config, this._getUI());
     },
-    defaults:{
+    defaults: {
         height: 40
     }
 }, webix.IdSpace, webix.EventSystem, webix.ui.toolbar);
@@ -212,6 +230,6 @@ webix.protoUI({
 TangoWebapp.ui.newMainToolbar = function () {
     return {
         view: "MainToolbar",
-        id: "mainToolbar"
+        id: "main-toolbar"
     }
 };
