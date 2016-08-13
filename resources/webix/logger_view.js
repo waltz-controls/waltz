@@ -1,5 +1,6 @@
 webix.protoUI({
     _view: null,
+    _limit: 25,
     _getUI: function () {
         var top = this;
         return {
@@ -19,12 +20,14 @@ webix.protoUI({
         item.adjusted = true;
         var id = this.add(item);
         this.moveTop(id);
+        while(this.data.count() > this._limit){
+            this.remove(this.getLastId());
+        }
     },
     defaults:{
-        scroll:true,
         autoheight: true,
         type:{
-            height: 'auto'
+            height: Infinity
         }
     }
 }, webix.IdSpace, webix.ui.list);
