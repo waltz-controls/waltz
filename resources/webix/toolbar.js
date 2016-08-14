@@ -179,7 +179,7 @@ webix.protoUI({
                     id: "txtTangoHost",
                     value: TangoWebapp.consts.TANGO_HOST,
                     label: "TANGO_HOST:",
-                    labelWidth: 100
+                    labelWidth: 150
                 },
                 {view: "button", id: "btnRefresh", type: "iconButton", icon: "refresh", width: 36, click: top.refresh},
                 {

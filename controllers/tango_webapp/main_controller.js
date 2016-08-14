@@ -26,5 +26,19 @@ TangoWebapp.MainController = MVC.Controller.extend('main', {
             view: "Main",
             id  : "main"
         });
+
+        webix.ui({
+            container: "getting-started-carousel",
+            view:"carousel",
+            id:"carousel",
+            width:464,
+            height:275,
+            cols:[
+                { template:"<img src='images/log.png'/>" },
+                { template:"<img src='images/ctx.png'/>" },
+                { template:"<img src='images/edt.png'/>" },
+                { template:"<img src='images/sort.png'/>" }
+            ]
+        });
     }
 });
