@@ -194,7 +194,7 @@ webix.protoUI({
                                         }
                                     },
                                     columns: [
-                                        {id: "label", header: "Name", width: TangoWebapp.consts.NAME_COLUMN_WIDTH},
+                                        {id: "label", header: "Name", width: TangoWebapp.consts.NAME_COLUMN_WIDTH, sort: "string"},
                                         {id: "value", header: "Value", width: 100},
                                         {id: "quality", header: "Quality", width: 100, sort: "string"},
                                         {id: "unit", header: "Unit", width: TangoWebapp.consts.NAME_COLUMN_WIDTH},

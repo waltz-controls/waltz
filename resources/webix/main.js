@@ -30,12 +30,12 @@ webix.protoUI({
                                 header: "Start page",
                                 body: {
                                     view: "layout",
-                                    padding: 50,
+                                    padding: 100,
                                     css: {"background-image": "linear-gradient(rgb(255, 255, 255), rgb(229, 241, 255))"},
                                     rows: [
                                         {
-                                            css: {"text-align" : "center", "background-image": "linear-gradient(rgb(229, 241, 255), rgb(255, 255, 255))"},
-                                            template: '<img src="images/logo.png" style="display: inline-block;vertical-align: middle;" ondragstart="return false"/>'
+                                            //css: {"text-align" : "center", "background-image": "linear-gradient(rgb(229, 241, 255), rgb(255, 255, 255))"},
+                                            template: new View({url: 'views/start_page.ejs'}).render()
                                         }
                                     ]
                                 }

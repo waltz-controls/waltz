@@ -62,7 +62,7 @@ webix.protoUI({
         return {
             rows: [
                 {
-                    height: 5
+                    height: TangoWebapp.consts.TABS_DELIMITER_HEIGHT
                 },
                 {
                     view : "tabview",
