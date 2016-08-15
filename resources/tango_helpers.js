@@ -15,8 +15,8 @@ MVC.Object.extend(TangoWebapp,{
     error: function(msg){
         console.error(msg);
         var id = $$('main-log').log({ type: 'error' , value: msg, timestamp: TangoWebapp.consts.LOG_DATE_FORMATTER(new Date())});
-        //webix.message({type: 'error', text: msg});
         $$('main-toolbar').switchLogBtnIcon('error');
+        debugger
     },
 
     debug: function(msg){

@@ -107,9 +107,9 @@ TangoREST.prototype._failure = function (resp) {
             TangoWebapp.error(resp.errors[i].reason + ": " + resp.errors[i].description);
         }
     else { //general failure
-        webix.assert_error("General failure!");
+        TangoWebapp.error("General failure!");
     }
-    if(MVC.env() === 'development' || MVC.env() === 'test') webix.assert_error(resp.responseText);
+    if(MVC.env() === 'development' || MVC.env() === 'test') TangoWebapp.error(resp.responseText);
 };
 
 

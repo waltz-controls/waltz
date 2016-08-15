@@ -214,7 +214,7 @@ webix.protoUI({
         } else if (o.data_format == "IMAGE") {
             this._device.readAttribute(o.name).then(TangoWebapp.helpers.openImageWindow);
         } else {
-            webix.assert_error("Unsupported data format: " + o.data_format);
+            TangoWebapp.error("Unsupported data format: " + o.data_format);
         }
     },
     defaults: {

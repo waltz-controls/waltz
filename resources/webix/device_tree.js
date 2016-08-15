@@ -57,7 +57,7 @@ webix.protoUI({
                         }.bind(this));
                         break;
                     default:
-                        webix.assert_error('Not yet implemented!');
+                        TangoWebapp.error('Not yet implemented!');
                 }
             }
         }
@@ -135,7 +135,9 @@ webix.protoUI({
                             if (!(device = Device.find_one(deviceId))) {
                                 device = new Device(name, db.id, db.api);
                                 var dev_id = TangoWebapp.devices.add(device);
-                                webix.assert(dev_id == deviceId, "dev_id and deviceId must match");
+                                if(dev_id != deviceId){
+                                    TangoWebapp.error("dev_id["+dev_id+"] and deviceId["+deviceId+"] must match!");
+                                }
                             }
                             //TODO move to helpers
                             return {
