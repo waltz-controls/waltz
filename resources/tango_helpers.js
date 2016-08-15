@@ -9,6 +9,7 @@ MVC.Object.extend(TangoWebapp,{
 
     log: function(msg){
         console.log(msg);
+        webix.message(msg);
         $$('main-log').log({ type: '', value: msg, timestamp: TangoWebapp.consts.LOG_DATE_FORMATTER(new Date())});
     },
 
@@ -165,9 +166,7 @@ MVC.Object.extend(TangoWebapp, {
 
         serverWizard: function (data) {
             webix.promise.all(data.devices.map(function(dev){
-                return TangoWebapp.getDatabase().DbAddDevice([data.server, dev, data.className]).then(function (resp) {
-                    webix.message(dev + " has been added.");
-                });
+                return TangoWebapp.getDatabase().DbAddDevice([data.server, dev, data.className]).then(TangoWebapp.log.bind(null,dev + " has been added."));
             })).then($$('device_tree').updateRoot.bind($$('device_tree')));
         },
 
