@@ -1,2 +1,0 @@
-This folder contains 3rd party javascript libraries. Each library must have its minified version, i.e. jquery-1.7.1.js must have
-jquery-1.7.1.min.js. Minified versions are copied to build and used in production.

@@ -1,0 +1,61 @@
+apply plugin:'base'
+
+version = "0.1-SNAPSHOT"
+
+task prepareBuild << {
+    ["apps/tango_webapp","images","jmvc","libs/webix/codebase","stylesheets"].each{ el ->
+        print("Creating " + el)
+        println(file("${buildDir}/" + el).mkdirs() ? "OK" : "SKIPPED")
+    }
+
+    copy{
+        from "images"
+        into "${buildDir}/images"
+    }
+
+    copy {
+        from "jmvc/include.js"
+        into "${buildDir}/jmvc"
+    }
+
+    copy {
+        from "libs/webix/codebase/webix_debug.min.js"
+        into "${buildDir}/libs/webix/codebase"
+    }
+
+    copy {
+        from "stylesheets/"
+        into "${buildDir}/stylesheets"
+        exclude "**/debug/*"
+    }
+
+
+    copy {
+        from "WEB-INF"
+        into "${buildDir}/WEB-INF"
+    }
+
+    copy {
+        from "index.html"
+        into "${buildDir}"
+        filter { String line ->
+            "$line".replaceAll("development|test","production")
+        }
+    }
+}
+
+prepareBuild.onlyIf { !file("${buildDir}").exists() }
+
+task compress(type: Exec, dependsOn: 'prepareBuild') {
+    commandLine './jmvcc', 'apps/tango_webapp/compress.js'
+
+    doLast{
+        file('apps/tango_webapp/production.js').renameTo(file("${buildDir}/apps/tango_webapp/production.js"))
+        file('apps/tango_webapp/webix.js').renameTo(file("${buildDir}/apps/tango_webapp/webix.js"))
+    }
+}
+
+task prepareWar(type: Zip, dependsOn: 'compress') {
+    archiveName = "TangoWebapp.war"
+    from "${buildDir}"
+}
