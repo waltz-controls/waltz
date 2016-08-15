@@ -1,4 +1,4 @@
-include.application('TangoWebapp','0.1');
+include.application('TangoWebapp','0.2-SNAPSHOT');
 include.css(
     "highlight",
     "webix/codebase/skins/air"
