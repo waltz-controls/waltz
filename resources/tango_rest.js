@@ -107,9 +107,9 @@ TangoREST.prototype._failure = function (resp) {
             TangoWebapp.error(resp.errors[i].reason + ": " + resp.errors[i].description);
         }
     else { //general failure
-        TangoWebapp.error("General failure!");
+        console.error("Unexpected error");
+        debugger;
     }
-    if(MVC.env() === 'development' || MVC.env() === 'test') TangoWebapp.error(resp.responseText);
 };
 
 
