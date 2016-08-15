@@ -77,17 +77,28 @@ with(imports) {
         file["delete"]();
     };
 
-    MVCOptions.compress = function (input_path, output_path) {
+    MVCOptions.compress = function () {
+        if(arguments.length < 2) throw "At least two arguments are expected here: input, output";
+
         var Compiler = Java.type("org.bitbucket.ingvord.jmvc.Compiler");
         var Array = Java.type("java.lang.reflect.Array");
         var JString = Java.type("java.lang.String");
 
-        var args = Array.newInstance(JString.class, 4);
-        args[0] = new JString("--js");
-        args[1] = new JString(input_path);
-        args[2] = new JString("--js_output_file");
-        args[3] = new JString(output_path);
+        var size = arguments.length * 2;
 
+        var args = Array.newInstance(JString.class, size);
+
+        for(var i = 0, j = 0; i< (arguments.length - 1) ; ++i){
+            var argument = arguments[i];
+            args[j++] = new JString("--js");
+            args[j++] = new JString(argument);
+        }
+
+        args[j++] = new JString("--js_output_file");
+        args[j] = new JString(arguments[i]);
+
+        var Arrays = Java.type("java.util.Arrays");
+        print("Executing compiler with arguments: " + Arrays.toString(args));
         var compressor = new Compiler(args);
         compressor.start();
     };

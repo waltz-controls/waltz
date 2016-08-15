@@ -57,6 +57,7 @@ var self = window;
             window.document =  new DOMDocument();
             window.document.location = window.location;
             window.document.domain = window.location.domain;
+			window.document.implementation = window.DOMImplementation;
             window.document.__defineGetter__("cookie", function(){
                 var ret = [];
                 for(var cookie in cookies){
@@ -861,6 +862,4 @@ var self = window;
     DOMImplementation.prototype.hasFeature = function(){
         return true;
     }
-
-    window.document.implementation = window.DOMImplementation;
 })();

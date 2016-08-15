@@ -34,8 +34,8 @@ TangoWebapp.MainController = MVC.Controller.extend('main', {
             width:464,
             height:275,
             cols:[
-                { template:"<img src='images/sort.png'/>" },
                 { template:"<img src='images/ctx.png'/>" },
+                { template:"<img src='images/sort.png'/>" },
                 { template:"<img src='images/edt.png'/>" },
                 { template:"<img src='images/log.png'/>" }
             ]
