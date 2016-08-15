@@ -136,19 +136,19 @@ webix.protoUI({
                                     "period": webix.rules.isNumber
                                 }
                             }
-                        },
-                        {
-                            header: "Settings",
-                            body  : {
-                                id     : "settings",
-                                editable   : true,
-                                view   : "datatable",
-                                columns: [
-                                    {header: "Parameters name", editor: "text"},
-                                    {header: "Value", editor: "text"}
-                                ]
-
-                            }
+                        //},
+                        //{
+                        //    header: "Settings",
+                        //    body  : {
+                        //        id     : "settings",
+                        //        editable   : true,
+                        //        view   : "datatable",
+                        //        columns: [
+                        //            {header: "Parameters name", editor: "text"},
+                        //            {header: "Value", editor: "text"}
+                        //        ]
+                        //
+                        //    }
                         }
                     ]
                 },
