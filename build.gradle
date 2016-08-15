@@ -1,7 +1,5 @@
 apply plugin:'base'
 
-version = "0.1-SNAPSHOT"
-
 task prepareBuild << {
     ["apps/tango_webapp","images","jmvc","libs/webix/codebase","stylesheets"].each{ el ->
         print("Creating " + el)
@@ -58,4 +56,10 @@ task compress(type: Exec, dependsOn: 'prepareBuild') {
 task prepareWar(type: Zip, dependsOn: 'compress') {
     archiveName = "TangoWebapp.war"
     from "${buildDir}"
+    exclude "distributions"
+}
+
+task deploy(type: Exec, dependsOn: 'prepareWar') {
+    workingDir "${buildDir}/distributions"
+    commandLine 'curl', '-s', '-u', "ingvord:${bitbucketPassword}", '-X', 'POST', 'https://api.bitbucket.org/2.0/repositories/tango-controls-collaboration/feature-request-6-tango-webapp/downloads', '-F', "files=@TangoWebapp.war"
 }
