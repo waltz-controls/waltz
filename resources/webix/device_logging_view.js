@@ -30,8 +30,11 @@ webix.protoUI({
                             width: 100,
                             align: "left",
                             click: top.refresh
-                        },
-                        {view: "button", id: "btnApply", value: "Apply", width: 100, align: "left", click: webix.assert_error.bind(null, "Not yet implemented!")}]
+                        //},
+                        //{
+                        //    view: "button", id: "btnApply", value: "Apply", width: 100, align: "left", click: webix.assert_error.bind(null, "Not yet implemented!")
+                        }
+                    ]
                 }
 
             ]
