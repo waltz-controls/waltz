@@ -24,7 +24,8 @@ include(function(){ //runs after prior includes are loaded
     );
   include.views(
       "views/main_log_item",
-      "views/start_page", "views/device_info", "views/dev_panel_command_out", "views/dev_panel_attribute_info", "views/dev_panel_attribute_out", "views/dev_panel_pipe_out"
+      "views/start_page", "views/help",
+      "views/device_info", "views/dev_panel_command_out", "views/dev_panel_attribute_info", "views/dev_panel_attribute_out", "views/dev_panel_pipe_out"
     );
     include.resources(
         "tango_ui"
