@@ -19,9 +19,13 @@ webix.protoUI({
         minWidth: 320,
         width: 480,
         body: {
-            view: 'Logger',
-            id: 'main-log',
-            ejs: 'views/main_log_item.ejs'
+            rows: [
+                {
+                    view: 'Logger',
+                    id: 'main-log',
+                    ejs: 'views/main_log_item.ejs'
+                }
+            ]
         },
         on: {
             onHide: function () {
