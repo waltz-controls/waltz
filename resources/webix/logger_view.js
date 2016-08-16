@@ -1,6 +1,6 @@
 webix.protoUI({
     _view: null,
-    _limit: 25,
+    _limit: 125,
     _getUI: function () {
         var top = this;
         return {
@@ -25,7 +25,6 @@ webix.protoUI({
         }
     },
     defaults:{
-        autoheight: true,
         type:{
             height: Infinity
         }
