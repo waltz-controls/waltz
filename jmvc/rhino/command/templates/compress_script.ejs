@@ -1,0 +1,24 @@
+//js apps/<%= application_name %>/compress.js
+
+MVCOptions = {
+    onload: false,
+    show_files: true,
+    compress_callback: function(total){
+        var collected = MVCOptions.collect(total);
+        MVCOptions.save('apps/<%= application_name %>/collected.js', collected);
+        print("Compiler output start >>>>>>");
+        MVCOptions.compress('apps/<%= application_name %>/collected.js','apps/<%= application_name %>/production.js');
+        print("<<<<<< Compiler output end.");
+        MVCOptions.remove('apps/<%= application_name %>/collected.js');
+        print("Compressed to 'apps/<%= application_name %>/production.js'.");
+        load('jmvc/rhino/documentation/setup.js');
+        
+        var app = new MVC.Doc.Application(total, "<%= application_name %>");
+        app.generate();
+        print("Generated docs.");
+        quit();
+    },
+    env: "compress"
+}
+load('jmvc/rhino/compression/setup.js');
+window.location = 'apps/<%= application_name %>/index.html';

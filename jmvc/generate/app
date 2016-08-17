@@ -1,0 +1,33 @@
+if(!arguments[0]){
+	print("Usage: js jmvc/generate/app app_name")
+	print("app_name := under_scoped_name\n");
+	exit(127);
+}
+load('jmvc/generate/loader.js');
+
+var data = {
+    path_to_jmvc:'../../jmvc/include.js',
+    class_name:       MVC.String.classize(arguments[0]),
+    application_name: arguments[0]
+}
+
+var app = create_app(data.application_name);
+
+MVC.Object.extend(data, app);
+
+MVCOptions.create_folder("controllers/"+data.application_name);
+
+print("               apps/"+data.application_name);
+
+render_to("apps/"+data.application_name+"/compress.js", "jmvc/rhino/command/templates/compress_script.ejs", data);
+
+render_to("apps/"+data.application_name+"/index.html", "jmvc/rhino/command/templates/index_html.ejs", data);
+render_to("apps/"+data.application_name+"/run_unit.js", "jmvc/rhino/command/templates/unit_script.ejs", data);
+
+render_to("apps/"+data.application_name+"/test.js", "jmvc/rhino/command/templates/test.ejs", data);
+
+render_to("apps/"+data.application_name+".js", "jmvc/rhino/command/templates/application.ejs", data);
+
+render_to("controllers/"+data.application_name+"/main_controller.js", "jmvc/rhino/command/templates/main_controller.ejs", data);
+
+print("\nMake sure to add new files to your application and test file!\n");

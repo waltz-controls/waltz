@@ -1,0 +1,45 @@
+var tmp;
+with(new JavaImporter(java.nio.file, java.nio.file.attribute)){
+    tmp = Files.createTempDirectory(Paths.get($ENV.PWD),".update_", PosixFilePermissions.asFileAttribute(PosixFilePermissions.fromString("rw-rw-r--")))
+    tmp.toFile().deleteOnExit()
+    tmp = tmp.toAbsolutePath()
+}
+
+var rev = '1.5.9';
+if($ARG[0] === '-r') rev = $ARG[1];
+
+print("Getting https://bitbucket.org/Ingvord/javascriptmvc-1.5.x/downloads/javascriptmvc-${rev}.tgz")
+`wget -v https://bitbucket.org/Ingvord/javascriptmvc-1.5.x/downloads/javascriptmvc-${rev}.tgz -O ${tmp}/javascriptmvc-${rev}.tgz`
+
+print($OUT)
+if($EXIT != 0) {
+    print($ERR)
+    exit($EXIT);
+}
+
+`tar zxf ${tmp}/javascriptmvc-${rev}.tgz --directory ${tmp} `
+
+print($OUT)
+if($EXIT != 0) {
+    print($ERR)
+    exit($EXIT);
+}
+
+print("Sync remote with local jmvc versions")
+`rsync -vauH --delete ${tmp}/jmvc ${$ENV.PWD}`
+
+print($OUT)
+if($EXIT != 0) {
+    print($ERR)
+    exit($EXIT);
+}
+
+`rm -rf ${tmp}`
+
+print($OUT)
+if($EXIT != 0) {
+    print($ERR)
+    exit($EXIT);
+}
+
+print("\tJavaScriptMVC updated!");

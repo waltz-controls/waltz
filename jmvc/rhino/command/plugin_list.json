@@ -1,0 +1,6 @@
+{
+    "cordova"     : "https://bitbucket.org/api/1.0/repositories/ingvord/jmvc-plugins/src/default/jmvc/plugins/cordova",
+    "model/file"  : "https://bitbucket.org/api/1.0/repositories/ingvord/jmvc-plugins/src/default/jmvc/plugins/model/file",
+    "math"        : "https://bitbucket.org/api/1.0/repositories/ingvord/jmvc-plugins/src/default/jmvc/plugins/math",
+	"model/jsorm" : "https://bitbucket.org/api/1.0/repositories/ingvord/jmvc-plugins/src/default/jmvc/plugins/model/jsorm"
+}
