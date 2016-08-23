@@ -17,7 +17,8 @@ task prepareBuild << {
     }
 
     copy {
-        from "libs/webix/codebase/webix_debug.min.js"
+//        from "libs/webix/codebase/webix_debug.min.js"
+        from "libs/webix/codebase/webix_debug.js"
         into "${buildDir}/libs/webix/codebase"
     }
 
