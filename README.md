@@ -10,7 +10,7 @@ This project is an attempt to implement Tango Controls Roadmap [Feature Request 
 
 ## Getting started ##
 
-1. Download [TangoWebapp.war](https://bitbucket.org/tango-controls-collaboration/feature-request-6-tango-webapp/downloads/TangoWebapp.war) file.
+1. Download [TangoWebapp.war](https://github.com/Ingvord/tango-webapp/releases/download/0.1/TangoWebapp.war) file.
 2. Copy it into your webserver's web applications root folder, e.g. {CATALINA_HOME}/webapps
 3. Restart server
 4. Open browser and navigate to <your_host>/TangoWebapp
