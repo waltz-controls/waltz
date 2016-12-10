@@ -1,3 +1,5 @@
+[![logo](http://www.tango-controls.org/static/tango/img/logo_tangocontrols.png)](http://www.tango-controls.org)
+
 # README #
 
 This project is an attempt to implement Tango Controls Roadmap [Feature Request #6](http://www.tango-controls.org/community/roadmap/)
