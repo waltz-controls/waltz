@@ -1,9 +1,19 @@
 webix.protoUI({
     updateRoot: function () {
-        var db = TangoWebapp.getDatabase();
         this.clearAll();
-        this.add({id: 'root', value: db.url, _db: db, webix_kids: true});
-        this.loadBranch('root', null, null);
+
+        var rest_api_host = new RestApi({
+            url: TangoWebapp.consts.REST_API_URL,
+            host : TangoWebapp.consts.REST_API_HOST,
+            dbs: [TangoWebapp.getDatabase()]
+        });
+
+        var db = TangoWebapp.getDatabase();
+
+        this.add({id: 'root', value: rest_api_host.host, _value: rest_api_host, webix_kids: true});
+        this.add({id: db.id, value: db.host, _db: db, webix_kids: true},0,'root');
+
+        this.loadBranch(db.id, null, null);
         this.refresh();
     },
     name: "DeviceTree",
@@ -85,11 +95,14 @@ webix.protoUI({
             onDataRequest: function (id, cbk, url) {
                 var item = this.getItem(id);
                 var promise;
-                if (id === 'root')//domain
+                if (id === 'root') {
+                    promise = webix.promise.defer();
+                    promise.resolve(TangoWebapp.getDatabase());
+                } else if (item.$level == 2)//family
                     promise = TangoWebapp.getDatabase().DbGetDeviceDomainList("*");
-                else if (item.$level == 2)//family
+                else if (item.$level == 3)//family
                     promise = TangoWebapp.getDatabase().DbGetDeviceFamilyList(item.value + '/*');
-                else if (item.$level == 3)//member
+                else if (item.$level == 4)//member
                     promise = TangoWebapp.getDatabase().DbGetDeviceMemberList(this.getItem(item.$parent).value + '/' + item.value + '/*');
                 else {
                     return false;//ignore member
