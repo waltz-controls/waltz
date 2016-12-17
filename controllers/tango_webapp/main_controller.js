@@ -11,6 +11,7 @@ TangoWebapp.MainController = MVC.Controller.extend('main', {
      */
     load: function (params) {
         TangoWebapp.consts.LOG_DATE_FORMATTER = webix.Date.dateToStr("%c");
+        TangoWebapp.globals = new TangoGlobals();
 
         TangoWebapp.databases = new webix.DataCollection();
         TangoWebapp.devices = new webix.DataCollection();

@@ -1,15 +1,19 @@
-RestApi = MVC.Model.extend("rest_api",
+RestApiHost = MVC.Model.extend("rest_api_host",
     /*@Static */
     {
-        associations:{
-            has_many: ["DataBase"]
-        },
         attributes:{
-            host:"string",
-            url :"string",
-            dbs :"DataBases"
+            host :"string",
+            port :"number",
+            version: "string"
         }
     },
     /*@Prototype */
-    {}
+    {
+        toString: function () {
+            return [this.host,':', this.port,"; ver=", this.version].join('');
+        },
+        toUrl: function(){
+            return ['http://',this.host,':', this.port,'/tango/rest/', this.version ,'/'].join('');
+        }
+    }
 );

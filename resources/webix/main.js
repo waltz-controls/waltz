@@ -7,7 +7,7 @@ webix.protoUI({
                 cols: [
                     {
                         view: "tabview",
-                        width: 250,
+                        width: 300,
                         cells: [
                             {
                                 header: "Devices",

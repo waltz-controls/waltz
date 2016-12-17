@@ -181,7 +181,7 @@ webix.protoUI({
                 {
                     view: "text",
                     id: "txtTangoHost",
-                    value: TangoWebapp.consts.TANGO_HOST,
+                    value: TangoWebapp.globals.tango_host.toString(),
                     label: "TANGO_HOST:",
                     labelWidth: 150
                 },

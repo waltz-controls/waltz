@@ -2,16 +2,12 @@ webix.protoUI({
     updateRoot: function () {
         this.clearAll();
 
-        var rest_api_host = new RestApi({
-            url: TangoWebapp.consts.REST_API_URL,
-            host : TangoWebapp.consts.REST_API_HOST,
-            dbs: [TangoWebapp.getDatabase()]
-        });
+        var rest_api_host = TangoWebapp.globals.rest_api_host;
 
         var db = TangoWebapp.getDatabase();
 
-        this.add({id: 'root', value: rest_api_host.host, _value: rest_api_host, webix_kids: true});
-        this.add({id: db.id, value: db.host, _db: db, webix_kids: true},0,'root');
+        this.add({id: 'root', value: "REST API: " + rest_api_host, _value: rest_api_host, webix_kids: true});
+        this.add({id: db.id, value: "TANGO DB: " + db.host, _db: db, webix_kids: true},0,'root');
 
         this.loadBranch(db.id, null, null);
         this.refresh();

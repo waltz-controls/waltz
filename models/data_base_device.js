@@ -850,11 +850,11 @@ DataBase = MVC.Model.extend('DataBase',
          *
          * All instances of this model dedicated to a single device utilize single DeviceProxy.
          *
-         * TangoWebapp.consts must be defined before using this constructor
+         * TangoWebapp.consts and TangoWebapp.globals must be defined before using this constructor
          */
         init: function(){
-            this.host = TangoWebapp.consts.TANGO_HOST.replace(":","/");
-            var url = TangoWebapp.consts.REST_API_URL + "/" + TangoWebapp.consts.REST_API_VERSION + "/hosts/" + this.host;
+            this.host = TangoWebapp.globals.tango_host;
+            var url = TangoWebapp.globals.rest_api_host.toUrl() + "hosts/" + this.host.toUrl();
             this.url = url;
             this.api = new TangoREST(url);
             this.name = TangoWebapp.consts.DATABASE;

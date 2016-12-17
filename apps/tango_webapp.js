@@ -17,7 +17,7 @@ include.plugins(
 
 include(function(){ //runs after prior includes are loaded
   include.models(
-      "data_base","device","dserver","rest_api"
+      "data_base_device","device","dserver","rest_api","tango_host","globals"
     );
   include.controllers(
       "tango_webapp/main"
