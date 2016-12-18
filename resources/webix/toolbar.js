@@ -140,6 +140,14 @@ webix.protoUI({
             $$btnLog.$view.getElementsByTagName("button")[0].style.background = '';
         }
     },
+    addTangoHost: function(){
+        var top = this.getTopParentView();
+
+        var tango_host = top.$$('txtTangoHost').getValue();
+        //TODO validate
+        TangoWebapp.globals.tango_host = new TangoHost({host: tango_host.split(':')[0], port: parseInt(tango_host.split(':')[1])});
+        //TODO add to rest_api
+    },
     refresh: function () {
         var top = this.getTopParentView();
 
@@ -185,6 +193,7 @@ webix.protoUI({
                     label: "TANGO_HOST:",
                     labelWidth: 150
                 },
+                {view: "button", id: "btnAdd", type: "iconButton", icon: "plus", width: 36, click: top.addTangoHost},
                 {view: "button", id: "btnRefresh", type: "iconButton", icon: "refresh", width: 36, click: top.refresh},
                 {
                     view: "button",

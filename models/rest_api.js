@@ -4,11 +4,24 @@ RestApiHost = MVC.Model.extend("rest_api_host",
         attributes:{
             host :"string",
             port :"number",
-            version: "string"
+            version: "string",
+            databases: "Object"
         }
     },
     /*@Prototype */
     {
+        init: function(attrs){
+            attrs = attrs || {};
+            attrs.databases = new webix.DataCollection();
+            this._super(attrs);
+        },
+        getDb: function (){
+            return this.databases.getItem(this.databases.getCursor());
+        },
+        addDb: function(db){
+            var dbId = this.databases.add(db);
+            this.databases.setCursor(db.id = dbId);
+        },
         toString: function () {
             return [this.host,':', this.port,"; ver=", this.version].join('');
         },

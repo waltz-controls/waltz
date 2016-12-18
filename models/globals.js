@@ -6,8 +6,7 @@ TangoGlobals = MVC.Model.extend("tango_globals",
         },
         attributes: {
             rest_api_host: "RestApiHost",
-            tango_host: "TangoHost",
-            databases: "Object"
+            tango_host: "TangoHost"
         },
         default_attributes: {
             rest_api_host: {

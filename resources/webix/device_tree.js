@@ -7,7 +7,7 @@ webix.protoUI({
         var db = TangoWebapp.getDatabase();
 
         this.add({id: 'root', value: "REST API: " + rest_api_host, _value: rest_api_host, webix_kids: true});
-        this.add({id: db.id, value: "TANGO DB: " + db.host, _db: db, webix_kids: true},0,'root');
+        this.add({id: db.id, value: "TANGO DB: " + db.host, _db: db, webix_kids: true}, 0, 'root');
 
         this.loadBranch(db.id, null, null);
         this.refresh();
@@ -39,12 +39,12 @@ webix.protoUI({
                 var item = this.getContext().obj.getItem(this.getContext().id);
                 switch (id) {
                     case "Restart server":
-                        TangoWebapp.getDevice().promiseAdmin().then(function(admin){
+                        TangoWebapp.getDevice().promiseAdmin().then(function (admin) {
                             return admin.RestartServer();
-                        }).then(TangoWebapp.helpers.log.bind(null,"Device server has been restarted!"));
+                        }).then(TangoWebapp.helpers.log.bind(null, "Device server has been restarted!"));
                         break;
                     case "Kill server":
-                        TangoWebapp.getDevice().promiseAdmin().then(function(admin){
+                        TangoWebapp.getDevice().promiseAdmin().then(function (admin) {
                             return admin.Kill();
                         }).then(TangoWebapp.helpers.log.bind(null, "Device server has been killed!!!"));
                         break;
@@ -94,13 +94,16 @@ webix.protoUI({
                 if (id === 'root') {
                     promise = webix.promise.defer();
                     promise.resolve(TangoWebapp.getDatabase());
-                } else if (item.$level == 2)//family
+                } else if (item.$level == 2) {//domain
+                    alert("domain");
                     promise = TangoWebapp.getDatabase().DbGetDeviceDomainList("*");
-                else if (item.$level == 3)//family
+                } else if (item.$level == 3) {//family
+                    alert("family");
                     promise = TangoWebapp.getDatabase().DbGetDeviceFamilyList(item.value + '/*');
-                else if (item.$level == 4)//member
+                } else if (item.$level == 4) {//member
+                    alert("member");
                     promise = TangoWebapp.getDatabase().DbGetDeviceMemberList(this.getItem(item.$parent).value + '/' + item.value + '/*');
-                else {
+                } else {
                     return false;//ignore member
                 }
                 if (item) {
@@ -130,22 +133,37 @@ webix.protoUI({
     },
     handleResponse: function (parent_id, item) {
         var self = this;
-        return function (response) {
-            //create device node
-            return {
-                parent: parent_id,
-                data: response.output.map(
-                    function (el) {
-                        if (item && item.$level == 3) {
-                            var db = self.getItem('root')._db;
+
+        var handleDomainOrFamily = function (what) {
+            return function (response) {
+                TangoWebapp.debug("Loaded " + what + " " + item.value);
+                return {
+                    parent: parent_id,
+                    data: response.output.map(function (el) {
+                        TangoWebapp.debug("Adding child " + el);
+                        return {value: el, _db: self.getItem(parent_id)._db, webix_kids: true};
+                    })
+                };
+            }
+        };
+
+        var handleMember = function () {
+            return function (response) {
+                //create device node
+                return {
+                    parent: parent_id,
+                    data: response.output.map(
+                        function (el) {
+                            var db = self.getItem(item.$parent)._db;
                             var name = self.getItem(item.$parent).value + "/" + item.value + "/" + el;
                             var deviceId = db.id + '/' + name; //used for model lookup
                             var device;
+                            //TODO extract helper method getDevice
                             if (!(device = Device.find_one(deviceId))) {
                                 device = new Device(name, db.id, db.api);
                                 var dev_id = TangoWebapp.devices.add(device);
-                                if(dev_id != deviceId){
-                                    TangoWebapp.error("dev_id["+dev_id+"] and deviceId["+deviceId+"] must match!");
+                                if (dev_id != deviceId) {
+                                    TangoWebapp.error("dev_id[" + dev_id + "] and deviceId[" + deviceId + "] must match!");
                                 }
                             }
                             //TODO move to helpers
@@ -192,11 +210,31 @@ webix.protoUI({
                                     }
                                 ]
                             };
-                        } else {
-                            return {value: el, webix_kids: true};
-                        }
-                    })
+                        })
+                }
             }
+        };
+
+        switch (item.$level) {
+            case 0:
+                alert("root");
+                break;
+            case 1:
+                alert("DB");
+                break;
+            case 2:
+                return handleDomainOrFamily("domain");
+            case 3:
+                return handleDomainOrFamily("family");
+            case 4:
+                return handleMember();
+            case 5:
+                alert("leaf: " + item.value);
+                break;
+        }
+        return function (response) {
+            alert("Unexpected");
+            debugger;
         };
     },
     //url:TangoWebapp.rest_api_url + '/devices',
