@@ -1,8 +1,6 @@
 new Test.Functional('device_panel',{
    test_open: function() {
-      var db = TangoWebapp.helpers.createDatabase();
-
-      TangoWebapp.helpers.openDevicePanel(new Device('sys/tg_test/1',db.id, db.api));
+      TangoWebapp.helpers.openDevicePanel(new Device('sys/tg_test/1',"mock-db", new TangoREST('http://localhost:8080/tango/rest/rc3/hosts/localhost/10000')));
 
       this.assert(true);
    },

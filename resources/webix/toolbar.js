@@ -146,7 +146,12 @@ webix.protoUI({
         var tango_host = top.$$('txtTangoHost').getValue();
         //TODO validate
         TangoWebapp.globals.tango_host = new TangoHost({host: tango_host.split(':')[0], port: parseInt(tango_host.split(':')[1])});
-        //TODO add to rest_api
+
+        var db = new DataBase(TangoWebapp.globals.tango_host);
+
+        TangoWebapp.globals.rest_api_host.addDb(db);
+
+        $$('device_tree').updateRoot();
     },
     refresh: function () {
         var top = this.getTopParentView();

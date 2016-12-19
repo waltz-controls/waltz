@@ -18,7 +18,8 @@ RestApiHost = MVC.Model.extend("rest_api_host",
         getDb: function (){
             return this.databases.getItem(this.databases.getCursor());
         },
-        addDb: function(db){
+        addDb: function(tango_host){
+            var db = new DataBase(tango_host);
             var dbId = this.databases.add(db);
             this.databases.setCursor(db.id = dbId);
         },

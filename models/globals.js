@@ -15,7 +15,7 @@ TangoGlobals = MVC.Model.extend("tango_globals",
                 version: "rc3"
             },
             tango_host: {
-                host: "localhost",
+                host: "hzgxenvtest",
                 port: 10000
             }
         }

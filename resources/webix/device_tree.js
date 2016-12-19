@@ -4,12 +4,12 @@ webix.protoUI({
 
         var rest_api_host = TangoWebapp.globals.rest_api_host;
 
-        var db = TangoWebapp.getDatabase();
-
         this.add({id: 'root', value: "REST API: " + rest_api_host, _value: rest_api_host, webix_kids: true});
-        this.add({id: db.id, value: "TANGO DB: " + db.host, _db: db, webix_kids: true}, 0, 'root');
 
-        this.loadBranch(db.id, null, null);
+
+
+        this.loadBranch('root', null, null);
+
         this.refresh();
     },
     name: "DeviceTree",
@@ -220,8 +220,14 @@ webix.protoUI({
                 alert("root");
                 break;
             case 1:
-                alert("DB");
-                break;
+                return function(){
+                    var rest_api_host = TangoWebapp.globals.rest_api_host;
+                    var databases = [];
+                    TangoWebapp.helpers.iterate(rest_api_host.databases, function(dbId, db){
+                        databases.push({id: dbId, value: "TANGO DB: " + db.host, _db: db, webix_kids: true});
+                    }.bind(this));
+                    return {parent: 'root', data:databases}
+                };
             case 2:
                 return handleDomainOrFamily("domain");
             case 3:
