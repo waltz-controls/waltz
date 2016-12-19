@@ -145,29 +145,16 @@ webix.protoUI({
 
         var tango_host = top.$$('txtTangoHost').getValue();
         //TODO validate
+        var found = TangoHost.find_one(TangoHost.hashCode(tango_host));
+        if(found) return;
+
         TangoWebapp.globals.tango_host = new TangoHost({host: tango_host.split(':')[0], port: parseInt(tango_host.split(':')[1])});
 
-        var db = new DataBase(TangoWebapp.globals.tango_host);
-
-        TangoWebapp.globals.rest_api_host.addDb(db);
+        TangoWebapp.globals.rest_api_host.addDb(TangoWebapp.globals.tango_host);
 
         $$('device_tree').updateRoot();
     },
     refresh: function () {
-        var top = this.getTopParentView();
-
-        TangoWebapp.consts.REST_API_URL = top.$$('txtTangoRestApiUrl').getValue();
-        TangoWebapp.consts.TANGO_HOST = top.$$('txtTangoHost').getValue();
-
-        var dbExists = false;
-        TangoWebapp.helpers.iterate(TangoWebapp.databases, function (id, db) {
-            dbExists |= db.url === TangoWebapp.consts.REST_API_URL;
-        });
-
-        if (!dbExists) {
-            TangoWebapp.helpers.createDatabase();
-        }
-
         $$('device_tree').updateRoot();
     },
     wizard: function () {

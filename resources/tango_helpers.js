@@ -1,6 +1,6 @@
 MVC.Object.extend(TangoWebapp,{
     getDatabase: function(){
-        return TangoWebapp.databases.getItem(TangoWebapp.databases.getCursor())
+        return TangoWebapp.globals.rest_api_host.getDb();
     },
 
     getDevice: function () {
@@ -119,11 +119,11 @@ MVC.Object.extend(TangoWebapp, {
             var id = collection.getFirstId(),
                 last = collection.getLastId();
             if(!id || ! last) return;
-            if(id === last) f(id, collection.getItem(id));
             for (; id !== last; id = collection.getNextId(id)) {
                 var item = collection.getItem(id);
                 f(id, item);
             }
+            f(id, collection.getItem(last))
         },
 
         changeTangoHost: function () {

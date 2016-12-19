@@ -83,7 +83,7 @@ webix.protoUI({
             },
             onItemClick: function (id, e, node) {
                 var item = this.getItem(id);
-                if (item.$level == 4 || item.$level == 5) { //device, Properties, Event etc
+                if (item.$level == 5 || item.$level == 6) { //device, Properties, Event etc
                     TangoWebapp.devices.setCursor(item._device_id);//TODO does getItem automatically set cursor???
                     TangoWebapp.helpers.openDeviceTab(TangoWebapp.getDevice(), item._view_id);
                 }
@@ -95,14 +95,11 @@ webix.protoUI({
                     promise = webix.promise.defer();
                     promise.resolve(TangoWebapp.getDatabase());
                 } else if (item.$level == 2) {//domain
-                    alert("domain");
-                    promise = TangoWebapp.getDatabase().DbGetDeviceDomainList("*");
+                    promise = item._db.DbGetDeviceDomainList("*");
                 } else if (item.$level == 3) {//family
-                    alert("family");
-                    promise = TangoWebapp.getDatabase().DbGetDeviceFamilyList(item.value + '/*');
+                    promise = item._db.DbGetDeviceFamilyList(item.value + '/*');
                 } else if (item.$level == 4) {//member
-                    alert("member");
-                    promise = TangoWebapp.getDatabase().DbGetDeviceMemberList(this.getItem(item.$parent).value + '/' + item.value + '/*');
+                    promise = item._db.DbGetDeviceMemberList(this.getItem(item.$parent).value + '/' + item.value + '/*');
                 } else {
                     return false;//ignore member
                 }
@@ -116,7 +113,7 @@ webix.protoUI({
             },
             onBeforeContextMenu: function (id, e, node) {
                 var item = this.getItem(id);
-                if (item.$level == 4) {//member
+                if (item.$level == 5) {//member
                     TangoWebapp.devices.setCursor(item._device_id);
                     this._ctxMenu.show();
                     return true;
@@ -133,6 +130,17 @@ webix.protoUI({
     },
     handleResponse: function (parent_id, item) {
         var self = this;
+
+        var handleDb = function(){
+            return function(){
+                var rest_api_host = TangoWebapp.globals.rest_api_host;
+                var databases = [];
+                TangoWebapp.helpers.iterate(rest_api_host.databases, function(dbId, db){
+                    databases.push({id: dbId, value: "TANGO DB: " + db.host, _db: db, webix_kids: true});
+                }.bind(this));
+                return {parent: 'root', data:databases}
+            };
+        };
 
         var handleDomainOrFamily = function (what) {
             return function (response) {
@@ -220,14 +228,7 @@ webix.protoUI({
                 alert("root");
                 break;
             case 1:
-                return function(){
-                    var rest_api_host = TangoWebapp.globals.rest_api_host;
-                    var databases = [];
-                    TangoWebapp.helpers.iterate(rest_api_host.databases, function(dbId, db){
-                        databases.push({id: dbId, value: "TANGO DB: " + db.host, _db: db, webix_kids: true});
-                    }.bind(this));
-                    return {parent: 'root', data:databases}
-                };
+                return handleDb();
             case 2:
                 return handleDomainOrFamily("domain");
             case 3:

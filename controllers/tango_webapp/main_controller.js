@@ -13,8 +13,6 @@ TangoWebapp.MainController = MVC.Controller.extend('main', {
         TangoWebapp.consts.LOG_DATE_FORMATTER = webix.Date.dateToStr("%c");
         TangoWebapp.globals = new TangoGlobals();
 
-        //TODO move to rest_api
-        TangoWebapp.databases = new webix.DataCollection();
         TangoWebapp.devices = new webix.DataCollection();
 
         TangoWebapp.globals.rest_api_host.addDb(TangoWebapp.globals.tango_host);
