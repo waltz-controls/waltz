@@ -13,6 +13,18 @@ webix.protoUI({
         this.refresh();
     },
     name: "DeviceTree",
+    _ctxTangoHost: webix.ui({
+        view: 'contextmenu',
+        data: ['Remove'],
+        on:{
+            onItemClick: function(id){
+                var item = this.getContext().obj.getItem(this.getContext().id);
+                TangoWebapp.globals.rest_api_host.databases.remove(item._db.id);
+                //TODO update cursor
+                this.getContext().obj.updateRoot();
+            }
+        }
+    }),
     _ctxMenu: webix.ui({
         view: "contextmenu",
         //autoheight: true,
@@ -113,7 +125,10 @@ webix.protoUI({
             },
             onBeforeContextMenu: function (id, e, node) {
                 var item = this.getItem(id);
-                if (item.$level == 5) {//member
+                if (item.$level == 2){
+                    this._ctxTangoHost.show();
+                    return true;
+                } else if (item.$level == 5) {//member
                     TangoWebapp.devices.setCursor(item._device_id);
                     this._ctxMenu.show();
                     return true;
@@ -124,7 +139,9 @@ webix.protoUI({
         }
     },
     $init: function () {
+        //TODO fix -- when menu is shown both appear
         this._ctxMenu.attachTo(this);
+        this._ctxTangoHost.attachTo(this);
 
         this.$ready.push(this.updateRoot);
     },
@@ -136,7 +153,7 @@ webix.protoUI({
                 var rest_api_host = TangoWebapp.globals.rest_api_host;
                 var databases = [];
                 TangoWebapp.helpers.iterate(rest_api_host.databases, function(dbId, db){
-                    databases.push({id: dbId, value: "TANGO DB: " + db.host, _db: db, webix_kids: true});
+                    databases.push({id: dbId, value: "TANGO_HOST=" + db.host, _db: db, webix_kids: true});
                 }.bind(this));
                 return {parent: 'root', data:databases}
             };
