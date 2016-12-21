@@ -13,70 +13,14 @@ webix.protoUI({
         this.refresh();
     },
     name: "DeviceTree",
-    _ctxTangoHost: webix.ui({
-        view: 'contextmenu',
-        data: ['Remove'],
-        on:{
-            onItemClick: function(id){
-                var item = this.getContext().obj.getItem(this.getContext().id);
-                TangoWebapp.globals.rest_api_host.databases.remove(item._db.id);
-                //TODO update cursor
-                this.getContext().obj.updateRoot();
-            }
-        }
-    }),
     _ctxMenu: webix.ui({
         view: "contextmenu",
         //autoheight: true,
-        data: [
-            //"Copy",
-            //"Paste",
-            "Delete",
-            {$template: "Separator"},
-            "Device info",
-            "Monitor device",
-            "Test device",
-            //"Define device alias",
-            {$template: "Separator"},
-            "Restart server",
-            "Kill server",
-            //{$template: "Separator"},
-            //"Go to Server node",
-            //"Go to Admin device node",
-            {$template: "Separator"},
-            "Log viewer"
-        ],
+        data: [],//loaded dynamically, see onBeforeContext
         on: {
             onItemClick: function (id) {
                 var item = this.getContext().obj.getItem(this.getContext().id);
-                switch (id) {
-                    case "Restart server":
-                        TangoWebapp.getDevice().promiseAdmin().then(function (admin) {
-                            return admin.RestartServer();
-                        }).then(TangoWebapp.helpers.log.bind(null, "Device server has been restarted!"));
-                        break;
-                    case "Kill server":
-                        TangoWebapp.getDevice().promiseAdmin().then(function (admin) {
-                            return admin.Kill();
-                        }).then(TangoWebapp.helpers.log.bind(null, "Device server has been killed!!!"));
-                        break;
-                    case "Monitor device":
-                        TangoWebapp.helpers.openAtkTab(TangoWebapp.getDevice());
-                        break;
-                    case "Device info":
-                        TangoWebapp.helpers.openDeviceTab(TangoWebapp.getDevice(), "device_info");
-                        break;
-                    case "Test device":
-                        TangoWebapp.helpers.openDevicePanel(TangoWebapp.getDevice());
-                        break;
-                    case "Delete":
-                        TangoWebapp.helpers.deleteDevice(TangoWebapp.getDevice()).then(function () {
-                            this.getContext().obj.remove(this.getContext().id);
-                        }.bind(this));
-                        break;
-                    default:
-                        TangoWebapp.error('Not yet implemented!');
-                }
+                item.handleCtx(id);
             }
         }
     }),
@@ -125,11 +69,9 @@ webix.protoUI({
             },
             onBeforeContextMenu: function (id, e, node) {
                 var item = this.getItem(id);
-                if (item.$level == 2){
-                    this._ctxTangoHost.show();
-                    return true;
-                } else if (item.$level == 5) {//member
-                    TangoWebapp.devices.setCursor(item._device_id);
+                if (item.$level == 2 /*tango_host*/ || item.$level == 5 /*member*/) {
+                    this._ctxMenu.clearAll();
+                    this._ctxMenu.parse(item._ctx);
                     this._ctxMenu.show();
                     return true;
                 } else {
@@ -139,9 +81,7 @@ webix.protoUI({
         }
     },
     $init: function () {
-        //TODO fix -- when menu is shown both appear
         this._ctxMenu.attachTo(this);
-        this._ctxTangoHost.attachTo(this);
 
         this.$ready.push(this.updateRoot);
     },
@@ -153,7 +93,16 @@ webix.protoUI({
                 var rest_api_host = TangoWebapp.globals.rest_api_host;
                 var databases = [];
                 TangoWebapp.helpers.iterate(rest_api_host.databases, function(dbId, db){
-                    databases.push({id: dbId, value: "TANGO_HOST=" + db.host, _db: db, webix_kids: true});
+                    databases.push({id: dbId, value: "TANGO_HOST=" + db.host, _db: db, webix_kids: true,
+                        _ctx:["Remove"],
+                        handleCtx:function(id){
+                            debugger;
+                            //TODO extract rest_api_method: remove
+                            //TODO delete TangoHost instance
+                            TangoWebapp.globals.rest_api_host.databases.remove(this._db.id);
+                            //TODO update cursor
+                            $$('device_tree').updateRoot();
+                    }});
                 }.bind(this));
                 return {parent: 'root', data:databases}
             };
@@ -233,7 +182,56 @@ webix.protoUI({
                                         _device_id: deviceId,
                                         _view_id: 'device_logging'
                                     }
-                                ]
+                                ],
+                                _ctx:[
+                                    //"Copy",
+                                    //"Paste",
+                                    "Delete",
+                                    {$template: "Separator"},
+                                    "Device info",
+                                    "Monitor device",
+                                    "Test device",
+                                    //"Define device alias",
+                                    {$template: "Separator"},
+                                    "Restart server",
+                                    "Kill server",
+                                    //{$template: "Separator"},
+                                    //"Go to Server node",
+                                    //"Go to Admin device node",
+                                    {$template: "Separator"},
+                                    "Log viewer"
+                                ],
+                                handleCtx: function(id){
+                                    TangoWebapp.devices.setCursor(this._device_id);
+                                    switch (id) {
+                                        case "Restart server":
+                                            TangoWebapp.getDevice().promiseAdmin().then(function (admin) {
+                                                return admin.RestartServer();
+                                            }).then(TangoWebapp.helpers.log.bind(null, "Device server has been restarted!"));
+                                            break;
+                                        case "Kill server":
+                                            TangoWebapp.getDevice().promiseAdmin().then(function (admin) {
+                                                return admin.Kill();
+                                            }).then(TangoWebapp.helpers.log.bind(null, "Device server has been killed!!!"));
+                                            break;
+                                        case "Monitor device":
+                                            TangoWebapp.helpers.openAtkTab(TangoWebapp.getDevice());
+                                            break;
+                                        case "Device info":
+                                            TangoWebapp.helpers.openDeviceTab(TangoWebapp.getDevice(), "device_info");
+                                            break;
+                                        case "Test device":
+                                            TangoWebapp.helpers.openDevicePanel(TangoWebapp.getDevice());
+                                            break;
+                                        case "Delete":
+                                            TangoWebapp.helpers.deleteDevice(TangoWebapp.getDevice()).then(function () {
+                                                this.getContext().obj.remove(this.getContext().id);
+                                            }.bind(this));
+                                            break;
+                                        default:
+                                            TangoWebapp.error('Not yet implemented!');
+                                    }
+                                }
                             };
                         })
                 }
