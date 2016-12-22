@@ -17,12 +17,12 @@ MVC.Model.Cookie = MVC.Model.extend(
         var insts = this.find_class_data().instances;
         if(!params){  for(var id in insts){ return insts[id]} return null;  }
         if(params[this.id]){
-            return insts[params[this.id]];
+            return this.create_as_existing(insts[params[this.id]]);
         }
         for(var id in insts){
             var inst = insts[id];
             for(var attr in params){
-                if(params[attr] == inst[attr]) return inst;
+                if(params[attr] == inst[attr]) return this.create_as_existing(inst);
             }
         }
         return null;
@@ -34,7 +34,7 @@ MVC.Model.Cookie = MVC.Model.extend(
         var insts =  this.find_class_data().instances;
         var ret = [];
         for(var i in insts)
-            ret.push(insts[i]);
+            ret.push(this.create_as_existing(insts[i]));
         return ret;
     },
     find_class_data: function(){
@@ -108,7 +108,7 @@ MVC.Model.Cookie = MVC.Model.extend(
      * Destroys all instances in this cookie
      */
     destroy_all : function(){
-        this.destroy_cookie(this.className)
+        this.destroy_cookie(this.className);;
         return true;
     }
 },

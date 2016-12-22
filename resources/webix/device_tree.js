@@ -96,7 +96,6 @@ webix.protoUI({
                     databases.push({id: dbId, value: "TANGO_HOST=" + db.host, _db: db, webix_kids: true,
                         _ctx:["Remove"],
                         handleCtx:function(id){
-                            debugger;
                             //TODO extract rest_api_method: remove
                             //TODO delete TangoHost instance
                             TangoWebapp.globals.rest_api_host.databases.remove(this._db.id);
