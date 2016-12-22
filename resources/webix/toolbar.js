@@ -145,7 +145,7 @@ webix.protoUI({
 
         var tango_host = top.$$('txtTangoHost').getValue();
         //TODO validate
-        var found = TangoHost.find_one(TangoHost.hashCode(tango_host));
+        var found = TangoHost.find_one({id:TangoHost.hashCode(tango_host)});
         if(found) {
             TangoWebapp.globals.tango_host = found;
         } else {
@@ -153,6 +153,9 @@ webix.protoUI({
                 host: tango_host.split(':')[0],
                 port: parseInt(tango_host.split(':')[1])
             });
+
+            top.$$('txtTangoHost').define("suggest", TangoHost.find_all());
+            top.$$('txtTangoHost').refresh();
         }
 
         TangoWebapp.globals.rest_api_host.addDb(TangoWebapp.globals.tango_host);
@@ -225,9 +228,11 @@ webix.protoUI({
                 },
                 {
                     view: "text",
+                    name: "tango_host",
                     id: "txtTangoHost",
-                    value: TangoWebapp.globals.tango_host.toString(),
-                    width: 150
+                    placeholder: TangoWebapp.globals.tango_host.toString(),
+                    width: 150,
+                    suggest:TangoHost.find_all()
                 },
                 {view: "button", id: "btnAdd", type: "iconButton", icon: "plus", width: 36, click: top.addTangoHost},
                 {

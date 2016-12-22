@@ -6,7 +6,8 @@ RestApiHost = MVC.Model.extend("rest_api_host",
             port :"number",
             version: "string",
             databases: "Object"
-        }
+        },
+        default_attributes:{}
     },
     /*@Prototype */
     {

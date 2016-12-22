@@ -1,10 +1,14 @@
-TangoHost = MVC.Model.extend("tango_host",
+TangoHost = MVC.Model.Cookie.extend("tango_host",
     /*@Static */
     {
+        days: 30,
         attributes:{
             host:"string",
-            port :"number"
+            port :"number",
+            id: "number",
+            value: "string"
         },
+        default_attributes:{},
         hashCode : function(str) {
             var hash = 0, i, chr, len;
             if (str.length === 0) return hash;
@@ -20,11 +24,13 @@ TangoHost = MVC.Model.extend("tango_host",
     {
         init: function(attrs){
             this._super(attrs);
-            var id = this.Class.hashCode(this.toString());
+            this.value = this.host + ":" + this.port;
+            var id = this.Class.hashCode(this.value);
             this._setProperty("id", id);
+            this.Class.create(this.attributes());
         },
         toString: function(){
-            return this.host + ":" + this.port;
+            return this.value;
         },
         toUrl: function(){
             return this.host + "/" + this.port;

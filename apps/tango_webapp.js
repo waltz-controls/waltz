@@ -12,7 +12,7 @@ include.resources(
 include.engines(
 );
 include.plugins(
-    "controller","view","model"
+    "controller","view","model","model/cookie"
     );
 
 include(function(){ //runs after prior includes are loaded
