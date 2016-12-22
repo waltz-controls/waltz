@@ -10,13 +10,13 @@ TangoGlobals = MVC.Model.extend("tango_globals",
         },
         default_attributes: {
             rest_api_host: {
-                host: "localhost",
-                port: 8080,
-                version: "rc3"
+                host: TangoWebapp.consts.REST_API_HOST,
+                port: TangoWebapp.consts.REST_API_PORT,
+                version: TangoWebapp.consts.REST_API_VERSION
             },
             tango_host: {
-                host: "hzgxenvtest",
-                port: 10000
+                host: TangoWebapp.consts.TANGO_HOST,
+                port: TangoWebapp.consts.TANGO_PORT
             }
         }
     },

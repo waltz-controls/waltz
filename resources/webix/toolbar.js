@@ -146,15 +146,36 @@ webix.protoUI({
         var tango_host = top.$$('txtTangoHost').getValue();
         //TODO validate
         var found = TangoHost.find_one(TangoHost.hashCode(tango_host));
-        if(found) return;
-
-        TangoWebapp.globals.tango_host = new TangoHost({host: tango_host.split(':')[0], port: parseInt(tango_host.split(':')[1])});
+        if(found) {
+            TangoWebapp.globals.tango_host = found;
+        } else {
+            TangoWebapp.globals.tango_host = new TangoHost({
+                host: tango_host.split(':')[0],
+                port: parseInt(tango_host.split(':')[1])
+            });
+        }
 
         TangoWebapp.globals.rest_api_host.addDb(TangoWebapp.globals.tango_host);
 
         $$('device_tree').updateRoot();
     },
     refresh: function () {
+        var top = this.getTopParentView();
+
+        var host = top.$$('txtTangoRestApiHost').getValue();
+        var port = top.$$('txtTangoRestApiPort').getValue();
+        var version = top.$$('txtTangoRestApiVersion').getValue();
+
+        //TODO validate
+        TangoWebapp.globals.rest_api_host = new RestApiHost(
+            {
+                host: host,
+                port: parseInt(port),
+                version: version
+            }
+        );
+
+
         $$('device_tree').updateRoot();
     },
     wizard: function () {
@@ -168,25 +189,47 @@ webix.protoUI({
     },
     _getUI: function () {
         var top = this;
-        var versionLabel = "app.ver.: " + TangoWebapp.version + " / rest ver.: " + TangoWebapp.consts.REST_API_VERSION;
+        var versionLabel = "app.ver.: " + TangoWebapp.version;
         return {
             cols: [
                 {
+                    view: "label",
+                    label: "TANGO_REST:",
+                    width: 120
+                },
+                {
                     view: "text",
-                    id: "txtTangoRestApiUrl",
-                    value: TangoWebapp.consts.REST_API_URL,
-                    label: "TANGO_REST_URL:",
-                    labelWidth: 150
+                    id: "txtTangoRestApiHost",
+                    value: TangoWebapp.consts.REST_API_HOST,
+                    width: 100
+                },
+                {
+                    view: "text",
+                    id: "txtTangoRestApiPort",
+                    value: TangoWebapp.consts.REST_API_PORT,
+                    width: 80
+                },
+                {
+                    view: "text",
+                    id: "txtTangoRestApiVersion",
+                    value: TangoWebapp.consts.REST_API_VERSION,
+                    disabled: true, //TODO different versions support
+                    width: 50
+                },
+                {view: "button", id: "btnRefresh", type: "iconButton", icon: "refresh", width: 36, click: top.refresh},
+                {},
+                {
+                    view: "label",
+                    label: "TANGO_HOST =",
+                    width: 120
                 },
                 {
                     view: "text",
                     id: "txtTangoHost",
                     value: TangoWebapp.globals.tango_host.toString(),
-                    label: "TANGO_HOST:",
-                    labelWidth: 150
+                    width: 150
                 },
                 {view: "button", id: "btnAdd", type: "iconButton", icon: "plus", width: 36, click: top.addTangoHost},
-                {view: "button", id: "btnRefresh", type: "iconButton", icon: "refresh", width: 36, click: top.refresh},
                 {
                     view: "button",
                     id: "btnAddWizard",
