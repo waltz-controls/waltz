@@ -12,11 +12,12 @@ This project is an attempt to implement Tango Controls Roadmap [Feature Request 
 
 1. Download [TangoWebapp.war](https://github.com/Ingvord/tango-webapp/releases/download/0.1/TangoWebapp.war) file.
 2. Copy it into your webserver's web applications root folder, e.g. {CATALINA_HOME}/webapps
-3. Restart server
-4. Open browser and navigate to <your_host>/TangoWebapp
-5. Adjust TANGO_REST_URL (must point to a valid Tango REST server, e.g. `http://{host}:{port}/tango/rest`) and TANGO_HOST values in the left top corner of the app
-6. Press refresh button
-7. Explore your Tango devices...
+3. Define a tomcat user who has the role "mtango-rest".
+4. Restart server
+5. Open browser and navigate to <your_host>/TangoWebapp
+6. Adjust TANGO_REST_URL (must point to a valid Tango REST server, e.g. `http://{host}:{port}/tango/rest`) and TANGO_HOST values in the left top corner of the app
+7. Press refresh button
+8. Explore your Tango devices...
 
 ## Build ##
 
