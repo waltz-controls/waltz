@@ -145,7 +145,8 @@ webix.protoUI({
 
         var tango_host = top.$$('txtTangoHost').getValue();
         //TODO validate
-        var found = TangoHost.find_one({id:TangoHost.hashCode(tango_host)});
+        if(!tango_host.match("")) return;
+        var found = TangoHost.find_one({id:str_to_hash(tango_host)});
         if(found) {
             TangoWebapp.globals.tango_host = found;
         } else {
@@ -160,8 +161,14 @@ webix.protoUI({
 
         TangoWebapp.globals.rest_api_host.addDb(TangoWebapp.globals.tango_host);
 
+        //TODO send event
+        //update cookie
+        TangoGlobals.update(TangoWebapp.globals.id, TangoWebapp.globals.attributes());
+
         $$('device_tree').updateRoot();
     },
+    rest_hosts: [],
+    rest_ports: [],
     refresh: function () {
         var top = this.getTopParentView();
 
@@ -178,7 +185,23 @@ webix.protoUI({
             }
         );
 
+        //TODO send event
+        //update cookie
+        TangoGlobals.update(TangoWebapp.globals.id, TangoWebapp.globals.attributes());
 
+        //TODO send event
+        //update suggest
+        top.rest_hosts.push(host);
+        top.rest_ports.push(port);
+
+        top.$$('txtTangoRestApiHost').define("suggest", top.rest_hosts);
+        top.$$('txtTangoRestApiPort').define("suggest", top.rest_ports);
+        top.$$('txtTangoRestApiHost').refresh();
+        top.$$('txtTangoRestApiPort').refresh();
+
+
+        //TODO send event
+        //update device root
         $$('device_tree').updateRoot();
     },
     wizard: function () {
@@ -203,14 +226,16 @@ webix.protoUI({
                 {
                     view: "text",
                     id: "txtTangoRestApiHost",
-                    value: TangoWebapp.consts.REST_API_HOST,
-                    width: 100
+                    placeholder: TangoWebapp.consts.REST_API_HOST,
+                    width: 100,
+                    suggest: top.rest_hosts
                 },
                 {
                     view: "text",
                     id: "txtTangoRestApiPort",
-                    value: TangoWebapp.consts.REST_API_PORT,
-                    width: 80
+                    placeholder: TangoWebapp.consts.REST_API_PORT,
+                    width: 80,
+                    suggest: top.rest_ports
                 },
                 {
                     view: "text",
@@ -272,6 +297,14 @@ webix.protoUI({
     },
     name: "MainToolbar",
     $init: function (config) {
+        this.rest_hosts = RestApiHost.find_all().map(function(el){
+            return el.host;
+        });
+
+        this.rest_ports = RestApiHost.find_all().map(function(el){
+            return '' + el.port;
+        });
+
         webix.extend(config, this._getUI());
     },
     defaults: {

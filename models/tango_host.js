@@ -8,24 +8,14 @@ TangoHost = MVC.Model.Cookie.extend("tango_host",
             id: "number",
             value: "string"
         },
-        default_attributes:{},
-        hashCode : function(str) {
-            var hash = 0, i, chr, len;
-            if (str.length === 0) return hash;
-            for (i = 0, len = str.length; i < len; i++) {
-                chr   = str.charCodeAt(i);
-                hash  = ((hash << 5) - hash) + chr;
-                hash |= 0; // Convert to 32bit integer
-            }
-            return hash;
-        }
+        default_attributes:{}
     },
     /*@Prototype */
     {
         init: function(attrs){
             this._super(attrs);
             this.value = this.host + ":" + this.port;
-            var id = this.Class.hashCode(this.value);
+            var id = str_to_hash(this.value);
             this._setProperty("id", id);
             this.Class.create(this.attributes());
         },

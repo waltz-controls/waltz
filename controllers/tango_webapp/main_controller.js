@@ -11,7 +11,19 @@ TangoWebapp.MainController = MVC.Controller.extend('main', {
      */
     load: function (params) {
         TangoWebapp.consts.LOG_DATE_FORMATTER = webix.Date.dateToStr("%c");
-        TangoWebapp.globals = new TangoGlobals();
+
+        var storedGlobals = TangoGlobals.find_all();
+        //if we have stored globals use them, otherwise create new ones
+        if(storedGlobals[0])
+            TangoWebapp.globals = storedGlobals[0];
+        else {
+            var globals = new TangoGlobals();
+
+            //update cookie
+            TangoGlobals.update(globals.id, globals.attributes());
+
+            TangoWebapp.globals = globals;
+        }
 
         TangoWebapp.devices = new webix.DataCollection();
 

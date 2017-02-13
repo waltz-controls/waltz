@@ -1,6 +1,7 @@
-TangoGlobals = MVC.Model.extend("tango_globals",
+TangoGlobals = MVC.Model.Cookie.extend("tango_globals",
     /* @Static */
     {
+        days: 30,
         associations: {
             has: ["RestApiHost", "TangoHost"]
         },
@@ -21,5 +22,7 @@ TangoGlobals = MVC.Model.extend("tango_globals",
         }
     },
     /* @Prototype */
-    {}
+    {
+        id: 'settings'
+    }
 );

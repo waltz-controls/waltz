@@ -1,7 +1,8 @@
 include.unit_tests(
     'test_database',
     'test_device',
-    'tango_rest'
+    'tango_rest',
+    'cookie'
 );
 include.functional_tests(
     'atk_panel',

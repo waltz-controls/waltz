@@ -1,20 +1,28 @@
-RestApiHost = MVC.Model.extend("rest_api_host",
+RestApiHost = MVC.Model.Cookie.extend("rest_api_host",
     /*@Static */
     {
+        days: 30,
         attributes:{
+            id: "number",
             host :"string",
             port :"number",
-            version: "string",
-            databases: "Object"
+            version: "string"
         },
         default_attributes:{}
     },
     /*@Prototype */
     {
+        databases: "Object",
+        set_databases: function(v){
+            this.databases = v;
+        },
         init: function(attrs){
             attrs = attrs || {};
             attrs.databases = new webix.DataCollection();
             this._super(attrs);
+            var id = str_to_hash(this.toString());
+            this._setProperty("id", id);
+            this.Class.create(this.attributes());
         },
         getDb: function (){
             return this.databases.getItem(this.databases.getCursor());
