@@ -143,9 +143,10 @@ webix.protoUI({
     addTangoHost: function(){
         var top = this.getTopParentView();
 
+        if(!top.$$('txtTangoHost').validate()) return;
+
         var tango_host = top.$$('txtTangoHost').getValue();
-        //TODO validate
-        if(!tango_host.match("")) return;
+
         var found = TangoHost.find_one({id:str_to_hash(tango_host)});
         if(found) {
             TangoWebapp.globals.tango_host = found;
@@ -171,6 +172,9 @@ webix.protoUI({
     rest_ports: [],
     refresh: function () {
         var top = this.getTopParentView();
+
+        if(!top.$$('txtTangoRestApiHost').validate()) return;
+        if(!top.$$('txtTangoRestApiPort').validate()) return;
 
         var host = top.$$('txtTangoRestApiHost').getValue();
         var port = top.$$('txtTangoRestApiPort').getValue();
@@ -226,14 +230,19 @@ webix.protoUI({
                 {
                     view: "text",
                     id: "txtTangoRestApiHost",
+                    name: 'txtTangoRestApiHost',
                     placeholder: TangoWebapp.consts.REST_API_HOST,
+                    inputAlign:"right",
+                    required:true,
                     width: 100,
                     suggest: top.rest_hosts
                 },
                 {
                     view: "text",
                     id: "txtTangoRestApiPort",
+                    name: 'txtTangoRestApiPort',
                     placeholder: TangoWebapp.consts.REST_API_PORT,
+                    required:true,
                     width: 80,
                     suggest: top.rest_ports
                 },
@@ -256,6 +265,7 @@ webix.protoUI({
                     name: "tango_host",
                     id: "txtTangoHost",
                     placeholder: TangoWebapp.globals.tango_host.toString(),
+                    required:true,
                     width: 150,
                     suggest:TangoHost.find_all()
                 },
