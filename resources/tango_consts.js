@@ -1,7 +1,7 @@
 TangoWebapp.consts = {
     REST_API_HOST: 'localhost',
     REST_API_PORT: 8080,
-    REST_API_VERSION: 'rc3',
+    REST_API_VERSION: 'rc4',
     TANGO_HOST: 'hzgxenvtest',
     TANGO_PORT: 10000,
     NAME_COLUMN_WIDTH: 250,
