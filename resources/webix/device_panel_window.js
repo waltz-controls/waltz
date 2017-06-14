@@ -166,11 +166,11 @@ webix.protoUI({
 
                             this.elements['info'].setValue(_attribute_info.render(obj));
                             this.elements['btnRead'].enable();
-                            if (obj.writable.contains("WRITE"))
+                            if (obj.writable.includes("WRITE"))
                                 this.elements['btnWrite'].enable();
                             else
                                 this.elements['btnWrite'].disable();
-                            if (obj.data_format == 'SPECTRUM' || obj.data_format == 'IMAGE') {
+                            if (obj.data_format === 'SPECTRUM' || obj.data_format === 'IMAGE') {
                                 this.elements['btnPlot'].enable();
                             } else {
                                 this.elements['btnPlot'].disable();
