@@ -91,7 +91,7 @@ TangoREST.prototype._success = function (resp) {
     if (resp.text().length != 0) {
         var json = resp.json();
 
-        if (json.quality == 'FAILURE') {
+        if (json.quality === 'FAILURE') {
             throw json;
         }
 
@@ -108,7 +108,7 @@ TangoREST.prototype._failure = function (resp) {
         }
     else { //general failure
         console.error("Unexpected error");
-        debugger;
+        throw resp;
     }
 };
 

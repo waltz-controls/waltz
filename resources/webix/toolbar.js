@@ -140,15 +140,15 @@ webix.protoUI({
             $$btnLog.$view.getElementsByTagName("button")[0].style.background = '';
         }
     },
-    addTangoHost: function(){
+    addTangoHost: function () {
         var top = this.getTopParentView();
 
-        if(!top.$$('txtTangoHost').validate()) return;
+        if (!top.$$('txtTangoHost').validate()) return;
 
         var tango_host = top.$$('txtTangoHost').getValue();
 
-        var found = TangoHost.find_one({id:str_to_hash(tango_host)});
-        if(found) {
+        var found = TangoHost.find_one({id: str_to_hash(tango_host)});
+        if (found) {
             TangoWebapp.globals.tango_host = found;
         } else {
             TangoWebapp.globals.tango_host = new TangoHost({
@@ -173,8 +173,8 @@ webix.protoUI({
     refresh: function () {
         var top = this.getTopParentView();
 
-        if(!top.$$('txtTangoRestApiHost').validate()) return;
-        if(!top.$$('txtTangoRestApiPort').validate()) return;
+        if (!top.$$('txtTangoRestApiHost').validate()) return;
+        if (!top.$$('txtTangoRestApiPort').validate()) return;
 
         var host = top.$$('txtTangoRestApiHost').getValue();
         var port = top.$$('txtTangoRestApiPort').getValue();
@@ -219,7 +219,6 @@ webix.protoUI({
     },
     _getUI: function () {
         var top = this;
-        var versionLabel = "app.ver.: " + TangoWebapp.version;
         return {
             cols: [
                 {
@@ -232,8 +231,8 @@ webix.protoUI({
                     id: "txtTangoRestApiHost",
                     name: 'txtTangoRestApiHost',
                     placeholder: TangoWebapp.consts.REST_API_HOST,
-                    inputAlign:"right",
-                    required:true,
+                    inputAlign: "right",
+                    required: true,
                     width: 100,
                     suggest: top.rest_hosts
                 },
@@ -242,7 +241,7 @@ webix.protoUI({
                     id: "txtTangoRestApiPort",
                     name: 'txtTangoRestApiPort',
                     placeholder: TangoWebapp.consts.REST_API_PORT,
-                    required:true,
+                    required: true,
                     width: 80,
                     suggest: top.rest_ports
                 },
@@ -253,7 +252,15 @@ webix.protoUI({
                     disabled: true, //TODO different versions support
                     width: 50
                 },
-                {view: "button", id: "btnRefresh", type: "iconButton", icon: "refresh", width: 36, click: top.refresh},
+                {
+                    view: "button",
+                    id: "btnRefresh",
+                    type: "iconButton",
+                    icon: "refresh",
+                    width: 36,
+                    click: top.refresh,
+                    tooltip: "Refresh TANGO_REST_API root"
+                },
                 {},
                 {
                     view: "label",
@@ -265,11 +272,19 @@ webix.protoUI({
                     name: "tango_host",
                     id: "txtTangoHost",
                     placeholder: TangoWebapp.globals.tango_host.toString(),
-                    required:true,
+                    required: true,
                     width: 150,
-                    suggest:TangoHost.find_all()
+                    suggest: TangoHost.find_all()
                 },
-                {view: "button", id: "btnAdd", type: "iconButton", icon: "plus", width: 36, click: top.addTangoHost},
+                {
+                    view: "button",
+                    id: "btnAdd",
+                    type: "iconButton",
+                    icon: "plus",
+                    width: 36,
+                    click: top.addTangoHost,
+                    tooltip: "Add TANGO_HOST"
+                },
                 {
                     view: "button",
                     id: "btnAddWizard",
@@ -280,11 +295,11 @@ webix.protoUI({
                     click: top.wizard
                 },
                 {},
-                {view: "label", label: versionLabel, align: "right", width: 260},
                 {
                     view: "button",
                     id: "btnHelp",
                     type: "iconButton",
+                    tooltip: "Info",
                     icon: "question",
                     width: 36,
                     click: top.help,
@@ -294,9 +309,24 @@ webix.protoUI({
                     view: "button",
                     id: "btnLog",
                     type: "iconButton",
+                    tooltip: "Log console",
                     icon: "eye",
                     width: 36,
                     popup: 'log',
+                    align: "right"
+                },
+                {view: "label", label: "Logged in as: ", align: "right", width: 100},
+                {view: "text", id: "lblUsername", readonly: true, disabled: true, align: "right", width: 180},
+                {
+                    view: "button",
+                    id: "btnUser",
+                    type: "iconButton",
+                    tooltip: "Sign out...",
+                    icon: "sign-out",
+                    width: 36,
+                    click: function () {
+                        Credentials.destroy(top.$$("lblUsername").getValue());
+                    },
                     align: "right"
                 }
             ]
@@ -307,11 +337,11 @@ webix.protoUI({
     },
     name: "MainToolbar",
     $init: function (config) {
-        this.rest_hosts = RestApiHost.find_all().map(function(el){
+        this.rest_hosts = RestApiHost.find_all().map(function (el) {
             return el.host;
         });
 
-        this.rest_ports = RestApiHost.find_all().map(function(el){
+        this.rest_ports = RestApiHost.find_all().map(function (el) {
             return '' + el.port;
         });
 

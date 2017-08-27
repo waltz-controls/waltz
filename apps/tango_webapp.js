@@ -17,10 +17,10 @@ include.plugins(
 
 include(function(){ //runs after prior includes are loaded
   include.models(
-      "data_base_device","device","dserver","rest_api","tango_host","globals"
+      "data_base_device", "device", "dserver", "rest_api", "tango_host", "globals", "credentials"
     );
   include.controllers(
-      "tango_webapp/main"
+      "tango_webapp/main", "tango_webapp/login"
     );
   include.views(
       "views/main_log_item",
