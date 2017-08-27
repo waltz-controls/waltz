@@ -46,4 +46,4 @@ deploy - deploys generated .war file to the downloads page
 ## Implementation details ##
 
 * [JavaScriptMVC-1.5.x](https://bitbucket.org/Ingvord/javascriptmvc-1.5.x) is used for MVC implementation
-* [Webix-3.4](http://webix.com) is used for UI
+* [Webix](http://webix.com) is used for UI
