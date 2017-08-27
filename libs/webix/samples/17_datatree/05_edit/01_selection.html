@@ -12,11 +12,11 @@
 
         <div style='float:left'>
             <div class='sample comment' style='margin-left:20px;'>Select editor</div>
-		    <div id="testA" style='width:270px; height:260px;'></div>
+		    <div id="testA" style='width:350px; height:260px;'></div>
         </div>
         <div style='float:left'>
         <div class='sample comment' style='margin-left:20px;'>Select editor</div>
-            <div id="testB" style='width:270px; height:260px;'></div>
+            <div id="testB" style='width:350px; height:260px;'></div>
         </div>
 		
 
@@ -30,7 +30,7 @@
 			var tree1 = webix.ui({
 				container:"testA",
 				view:"edittree",
-				
+type:"lineTree",				
 				editable:true,
 				editor:"text",
 				editValue:"value",
@@ -41,6 +41,7 @@
             var tree2 = webix.ui({
                 container:"testB",
                 view:"edittree",
+type:"lineTree",
                 editable:true,
                 editor:"select",
                 editValue:"value",

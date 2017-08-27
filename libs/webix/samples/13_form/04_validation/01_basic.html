@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 	<head>
-		<link rel="stylesheet" href="../../../codebase/webix.css" type="text/css" media="screen" charset="utf-8">
+		<link rel="stylesheet" href="../../../codebase/webix.css" type="text/css"   charset="utf-8">
 		<script src="../../../codebase/webix.js" type="text/javascript" charset="utf-8"></script>
 		<style>
 			#areaA, #areaB{
@@ -20,8 +20,8 @@
 
 		<script type="text/javascript" charset="utf-8">
 		var form1 = [
-			{ view:"text", label:'Login', name:"login" },
-			{ view:"text", label:'Email', name:"email" },
+			{ view:"text", label:'Login', name:"user.login" },
+			{ view:"text", label:'Email', name:"user.email" },
 			{ view:"button", value: "Submit", click:function(){
 				var form = this.getParentView();
 				if (form.validate())
@@ -34,12 +34,12 @@
 
 		webix.ui({
 			container:"areaA",
-			view:"form", scroll:false, width:400, 
+			view:"form", scroll:false, width:400, complexData:true,
 
 			elements: form1,
 			rules:{
-				"email":webix.rules.isEmail,
-				"login":webix.rules.isNotEmpty
+				"user.email":webix.rules.isEmail,
+				"user.login":webix.rules.isNotEmpty
 			},
 			elementsConfig:{
 				labelPosition:"top"

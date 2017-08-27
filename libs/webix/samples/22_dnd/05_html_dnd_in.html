@@ -34,6 +34,7 @@
 
 				on:{
 					onBeforeDrop:function(context, e){
+						if(context.target.header) return false;
 						this.getItem(context.target).title = context.source.innerHTML;
 						this.refresh(context.target);
 						return false;

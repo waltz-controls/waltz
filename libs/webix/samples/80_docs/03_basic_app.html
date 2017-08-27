@@ -1,7 +1,7 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html>
 	<head>
-		<link rel="stylesheet" href="../../codebase/webix.css" type="text/css" media="screen" charset="utf-8">
+        <link rel="stylesheet" href="../../codebase/webix.css" type="text/css" charset="utf-8">
 		<script src="../../codebase/webix.js" type="text/javascript" charset="utf-8"></script>
 		<title>Creating Basic App. Step 3</title>
 	</head>
@@ -19,8 +19,8 @@ webix.ui({
         ]},
     	{ cols:[
         	{ view:"form", id:"myform", width: 200, elements:[
-                { view:"text", name:"title", placeholder:"Title"},
-                { view:"text", name:"year", placeholder:"Year"}
+                {view: "text", id: "title", name: "title", placeholder: "Title"},
+                {view: "text", id: "year", name: "year", placeholder: "Year"}
             ]},
 			{ view:"list", id:"mylist",
                 template:"#title# - #year#",

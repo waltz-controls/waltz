@@ -44,5 +44,40 @@ webix.i18n.locales["de-DE"] = {
 		pageFit:"Seite Ausmaß",
 		pageWidth:"Seite Breite",
 		pageHeight:"Seite Höhe"
+    },
+    aria:{
+    	calendar:"Kalender",
+		increaseValue:"Wert erhöhen",
+		decreaseValue:"Wert verringern",
+		navMonth:["Vorheriger Monat", "Nächsten Monat"],
+		navYear:["Vorheriges Jahr", "Nächstes Jahr"],
+		navDecade:["Zurück Jahrzehnt", "Als nächstes Jahrzehnt"],
+		dateFormat:"%j. %F %Y",
+		monthFormat:"%F %Y",
+		yearFormat:"%Y",
+		hourFormat:"Stunden: %H",
+		minuteFormat:"Minuten: %i",
+		removeItem:"Element entfernen",
+		pages:["Erste Seite", "Vorherige Seite", "Folgeseite", "Letzte Seite"],
+		page:"Seite",
+		headermenu:"Titelmenü",
+		openGroup:"Öffnen Spaltengruppe ",
+		closeGroup:"Schließen Spaltengruppe ",
+		closeTab:"Tab schließen",
+		showTabs:"Weitere Tabs",
+		resetTreeMap:"Zurück zur ursprünglichen Ansicht",
+		navTreeMap:"Aufleveln",
+		nextTab:"Weiter tab",
+		prevTab:"Zurück tab",
+		multitextSection:"Element hinzufügen",
+		multitextextraSection:"Element entfernen",
+		showChart:"Chart anzeigen",
+		hideChart:"Chart verstecken",
+		resizeChart:"Chart Größe ändern"
+    },
+    richtext:{
+        underline: "Unterstreichen",
+        bold: "Fettgedruckt",
+        italic: "Kursiv"
     }
 };

@@ -1,9 +1,9 @@
 <!DOCTYPE html>
 <html>
 	<head>
-		<link rel="stylesheet" href="../../codebase/webix.css" type="text/css" media="screen" charset="utf-8">
+		<link rel="stylesheet" href="../../codebase/webix.css" type="text/css"   charset="utf-8">
 		<script src="../../codebase/webix.js" type="text/javascript" charset="utf-8"></script>
-        <link rel="stylesheet" href="data/myform.css" type="text/css" media="screen" charset="utf-8">
+        <link rel="stylesheet" href="data/myform.css" type="text/css"   charset="utf-8">
 		<style>
 			#areaA {
 				margin: 50px;
@@ -28,10 +28,10 @@
 	<body>
 
 		<div id="areaA">
-            <div class="myform">
+            <form class="myform">
                 <div class="block">
-                    <div class="label"><label for="title">Book title</label></div><div><input type="text" name="title"  id="title" value="" placeholder="Title" /></div>
-                    <div class="label"><label for="author">Author</label></div><div><input type="text" name="author" id="author" value="" placeholder="Author" /></div>
+                    <div class="label"><label for="title">Book title</label></div><div><input type="text" name="title"  id="title" required value="" placeholder="Title" /></div>
+                    <div class="label"><label for="author">Author</label></div><div><input type="text" name="author" id="author" required value="" placeholder="Author" /></div>
                 </div>
                 <div class="block_right">
                     <label for="in_store">In store</label><input type="checkbox" name="in_store" id="in_store" checked />
@@ -73,16 +73,15 @@
                     <textarea name="annotation" id="annotation">some book annotation is here</textarea>
                 </div>
                 <div class="block">
-			        <input type="button" name="submit" value="Submit">
+			        <input type="submit" name="submit" value="Submit">
                 </div>
-            </div>
+            </form>
 		</div>
 
 		<div class="controls">
 			<input type="button" value="Set form" onclick="set_form();" />
 			<input type="button" value="Get form" onclick="get_form();" />
 			<input type="button" value="Clear form" onclick="clear_form();" />
-			<input type="button" value="Validate" onclick="validate();" />
 		</div>
 
 
@@ -90,13 +89,7 @@
 			webix.ui({
 				container: "areaA",
 				view:"htmlform", id:"formView",
-				content: "areaA",
-				rules:{
-					title: webix.rules.isNotEmpty,
-					sale: webix.rules.isNumber,
-					rank: webix.rules.isNumber
-				}
-
+				content: "areaA"
 			});
 
 			function set_form() {
@@ -126,10 +119,6 @@
 					$$('formView').focus();
 				else
 					$$('formView').focus(item);
-			}
-
-			function validate() {
-				$$('formView').validate();
 			}
 		</script>
 	</body>

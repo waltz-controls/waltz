@@ -1,16 +1,15 @@
 <!DOCTYPE html>
 <html>
 	<head>
-		<link rel="stylesheet" href="../../codebase/webix.css" type="text/css" media="screen" charset="utf-8">
+		<link rel="stylesheet" href="../../codebase/webix.css" type="text/css"   charset="utf-8">
 		<script src="../../codebase/webix.js" type="text/javascript" charset="utf-8"></script>
 		
-		<!-- You can get these files from https://github.com/webix-hub/components -->
 		<script type="text/javascript">
-			webix.require.disabled = true;
-			webix.codebase = "http://cdn.webix.com/components/tinymce/";
+			webix.codebase = "//cdn.webix.com/components/tinymce/";
 		</script>
-		<script src="http://cdn.webix.com/components/tinymce/tinymce.js"></script>
-		<script src="http://cdn.webix.com/components/tinymce/tinymce/tiny_mce.js"></script>
+
+		<!-- You can get this file from https://github.com/webix-hub/components -->
+		<script src="//cdn.webix.com/components/tinymce/tinymce.js"></script>
 
 		<title>TinyMCE text editor</title>
 	</head>
@@ -20,7 +19,7 @@
 				type:"space", rows:[
 					{ id:'editor', view:"tinymce-editor"},
 					{ template:"TinyMCE editor", type:"header" },
-					{ id:'editor2', config:{ theme:"advanced" }, view:"tinymce-editor"}
+					{ id:'editor2', config:{ theme:"modern" }, view:"tinymce-editor"}
 				]
 			});
 

@@ -33,7 +33,7 @@
 
 				on:{
 					onBeforeDragIn:function(context, ev){
-						if (!context.target) return false;	//block dnd on top level
+						if (!context.target || context.target.header) return false;	//block dnd on top level and for headers
 						//block dnd in leaf items
 						if (!this.getItem(context.target).$count) return false;
 					},

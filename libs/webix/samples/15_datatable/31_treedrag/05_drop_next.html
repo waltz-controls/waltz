@@ -6,6 +6,9 @@
 		<script src="../../../codebase/webix.js" type="text/javascript" charset="utf-8"></script>
 
 		<link rel="stylesheet" type="text/css" href="../common/samples.css">
+		<style>
+			html, body{ height:100% }
+		</style>
 	</head>
 	<body class='webix_full_screen'>
 		<div class='header_comment'>Drag from first to second tree</div>
@@ -33,6 +36,9 @@
 
 				on:{
 					onBeforeDrop:function(context){
+						//aceppt only dnd on data area
+						if(!context.target || !this.getItem(context.target)) return false; 
+						
 						if (this.getItem(context.target).$count && this.getItem(context.target).open){
 							//drop as first child
 							context.parent = context.target;

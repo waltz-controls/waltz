@@ -24,8 +24,8 @@ webix.i18n.locales["zh-CN"] = {
 		dayShort:["周日","周一","周二","周三","周四","周五","周六"],
 		hours: "小时",
 		minutes: "分钟",
-		done:"准备",
-		clear: "肃清",
+		done:"完成",
+		clear: "清除",
 		today: "今天"
     },
 
@@ -39,11 +39,45 @@ webix.i18n.locales["zh-CN"] = {
     },
     PDFviewer:{
 		of:"从",
-		automaticZoom:"自动变焦",
+		automaticZoom:"自动设置页面大小",
 		actualSize:"实际尺寸",
 		pageFit:"页面大小",
 		pageWidth:"页面宽度",
 		pageHeight:"页面高度"
+    },
+    aria:{
+		calendar:"日历",
+		increaseValue:"增加值",
+		decreaseValue:"减少值",
+		navMonth:["上个月", "下个月"],
+		navYear:["上年", "明年"],
+		navDecade:["过去十年", "下个十年"],
+		dateFormat:"%Y'年'%m'月'%j'日'",
+		monthFormat:"%Y'年'%m'月",
+		yearFormat:"%Y'年",
+		hourFormat:"小时: %G",
+		minuteFormat:"分钟: %i",
+		removeItem:"删除元素",
+		pages:["第一页", "上一页", "下一页", "最后一页"],
+		page:"页",
+		headermenu:"标题菜单",
+		openGroup:"打开栏目组",
+		closeGroup:"关闭栏目组",
+		closeTab:"关闭标签",
+		showTabs:"显示更多选项卡",
+		resetTreeMap:"回到原来的视图",
+		navTreeMap:"升级",
+		nextTab:"下一个标签",
+		prevTab:"前一个标签",
+		multitextSection:"加元",
+		multitextextraSection:"删除元素",
+		showChart:"显示图表",
+		hideChart:"隐藏图表",
+		resizeChart:"调整图"
+    },
+    richtext:{
+        underline: "强调",
+        bold: "粗體",
+        italic: "斜体"
     }
-
 };

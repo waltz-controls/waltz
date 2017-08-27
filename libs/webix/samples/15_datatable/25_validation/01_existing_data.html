@@ -43,8 +43,14 @@
 			});		
 		});
 
+		function addGrid(){
+			if(grid) {
+				grid.add({ rank:-1 })
+			}
+		}
+
 		</script>
 
-		<input type="button" value="Add row" onclick="grid.add({ rank:-1 })">
+		<input type="button" value="Add row" onclick="addGrid()">
 	</body>
 </html>

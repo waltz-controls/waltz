@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 	<head>
-		<link rel="stylesheet" href="../../../codebase/webix.css" type="text/css" media="screen" charset="utf-8">
+		<link rel="stylesheet" href="../../../codebase/webix.css" type="text/css"   charset="utf-8">
 		<script src="../../../codebase/webix.js" type="text/javascript" charset="utf-8"></script>
 		
 		<link rel="stylesheet" type="text/css" href="../../common/samples.css">
@@ -32,17 +32,17 @@
 		width: 700, 
 		view:"form", scroll:false,
 		container:"data_container1",
-		padding:100,
+		padding:120,
 		rows:[
 			{ view:"text", name:"c1", label:"Bottom", value:"Belarus", suggest:countries},
 			{ view:"text", name:"c2", label:"Top", value:"", suggest:{
 				data:countries, relative:"top" 
 			}},
 			{ view:"text", name:"c3", label:"Left", value:"", suggest:{
-				data:countries, relative:"left" 
+				data:countries, relative:"left", fitMaster:false, width:200
 			}},
 			{ view:"text", name:"c4", label:"Right", value:"", suggest:{
-				data:countries, relative:"right" 
+				data:countries, relative:"right", fitMaster:false, width:200
 			}},
 			{ view:"button", type:"form", value:"Submit data", click:function(){
 				webix.message(JSON.stringify( this.getParentView().getValues()));

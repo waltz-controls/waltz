@@ -33,7 +33,7 @@
 			{ label:"Height", type:"text", id:"height"},
             { label:"Password", type:"password", id:"pass"},
 			{ label:"Data loading", type:"label" },
-			{ label:"Data url", type:"text", id:"url", value:"http://webix.com/data"},
+			{ label:"Data url", type:"text", id:"url", value:"https://webix.com/data"},
             { label:"Type", type:"select", options:["json","xml","csv"], id:"type"},
             { label:"Position", type:"select", options:position_options, id:"position"},
             { label:"Date", type:"date", id:"date", format:webix.i18n.dateFormatStr},
@@ -54,7 +54,7 @@
     $$("sets").setValues({
         width:250,
         height:480,
-        url:"http://webix.com/data",
+        url:"https://webix.com/data",
         type:"json",
         position:2,
         date:new Date(),

@@ -50,6 +50,8 @@
 		});
 		
 		function update() {
+			if (!grid) return;
+			
 			var sel = grid.getSelectedId();
 			if (!sel) return;
 
@@ -60,6 +62,8 @@
 		}
 		
 		function add() {
+			if (!grid) return;
+
 			var data = {
 				title: "",
 				year: "1998",
@@ -71,6 +75,8 @@
 		}
 		
 		function remove_row() {
+			if (!grid) return;
+
 			var sel = grid.getSelectedId(true);
 			if (!sel) return;
 			for (var i = 0; i < sel.length; i++)

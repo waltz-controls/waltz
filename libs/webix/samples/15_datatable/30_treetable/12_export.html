@@ -9,15 +9,60 @@
 		<script src="../common/testdata.js" type="text/javascript" charset="utf-8"></script>
 	</head>
 	<body>
+		<style type="text/css">
+			.bline input{
+				width:150px;margin:5px 25px; float:left;
+			}
+			.bline{
+				clear:both;
+				height: 30px;
+			}
+		</style>
+
 		<div class='header_comment'>Export to PDF, Excel</div>
 		<div class='sample_comment'>Click on the button to start exporting data.</div>
-		<input type="button" value="Get as PDF" style='width:400px;margin:5px 25px;' onclick="webix.toPDF(grida);"><br/>
-		<input type="button" value="Get as Excel" style='width:400px;margin:5px 25px;' onclick="webix.toExcel(grida);"><br>
+		<div class='bline'>
+			<input type="button" value="get PDF" onclick="webix.toPDF(grida);">
+			<input type="button" value="get flat PDF" onclick="webix.toPDF(grida, options);">
+			<input type="button" value="get fill PDF" onclick="webix.toPDF(grida, options2);">
+		</div>
+		<div class='bline'>
+			<input type="button" value="get Excel" onclick="webix.toExcel(grida);">
+			<input type="button" value="get flat Excel" onclick="webix.toExcel(grida, options);">
+			<input type="button" value="get fill Excel" onclick="webix.toExcel(grida, options2);">
+		</div>
+		<div class='bline'>
+			<input type="button" value="get CSV" onclick="webix.toCSV(grida);">
+			<input type="button" value="get flat CSV" onclick="webix.toCSV(grida, options);">
+			<input type="button" value="get fill CSV" onclick="webix.toCSV(grida, options2);">
+		</div>
+		
 
 		<div id="testA"></div>
 	
 		
 		<script type="text/javascript" charset="utf-8">
+		var options = { 
+			flatTree:{
+				id:"value",
+				columns:[
+					{ header:"Title" },
+					{ header:"Section" },
+					{ header:"Subsection" },
+				]
+			}
+		};
+		var options2 = { 
+			flatTree:{
+				id:"value",
+				fill:true,
+				columns:[
+					{ header:"Title" },
+					{ header:"Section" },
+					{ header:"Subsection" },
+				]
+			}
+		};
 
 		var grida;
 		webix.ready(function(){

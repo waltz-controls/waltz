@@ -14,8 +14,8 @@
 
             <hr>
             <div style="margin-left: 20px">
-                <input type='button' value='Sort makes ASC' onclick='tree.sort(sortMakesAsc)'>
-                <input type='button' value='Sort makes DESC' onclick='tree.sort(sortMakesDesc)'>
+                <input type='button' value='Sort makers ASC' onclick='tree.sort(sortMakersAsc)'>
+                <input type='button' value='Sort makers DESC' onclick='tree.sort(sortMakersDesc)'>
             </div>
 
 
@@ -32,7 +32,7 @@
 				data: carsdata
 			});
 		});
-		function sortMakesAsc(a,b){
+		function sortMakersAsc(a,b){
         			if (a.$level == 2)
         			{
            				a = a.value;
@@ -43,7 +43,7 @@
             				return 0;
         			}
 			}
-		function sortMakesDesc(a,b){
+		function sortMakersDesc(a,b){
         			if (a.$level == 2)
         			{
            				a = a.value;
