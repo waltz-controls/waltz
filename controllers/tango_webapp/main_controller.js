@@ -29,9 +29,7 @@ TangoWebapp.MainController = MVC.Controller.extend('main', {
 
         TangoWebapp.globals.rest_api_host.addDb(TangoWebapp.globals.tango_host);
 
-        webix.attachEvent("onBeforeAjax", function(mode, url, data, request, headers){
-            request.withCredentials = true;
-        });
+
         TangoWebapp.debug("main");
         //draw ui
         webix.ui({
