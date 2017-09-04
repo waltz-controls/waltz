@@ -1,0 +1,9 @@
+language: java
+sudo: false
+script:
+  - gradle prepareWar
+jdk:
+  - openjdk8
+cache:
+  directories:
+    - '$HOME/.m2/repository'
