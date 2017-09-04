@@ -58,8 +58,6 @@ MORE_HELP
   exit 127
 fi
 
-echo `which jjs`
-
 SCRIPT_FILE=$1
 shift
 jjs -classpath .:jmvc/rhino/compiler.jar:jmvc/rhino/compiler-integration.jar -scripting $SCRIPT_FILE -- $*
