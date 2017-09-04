@@ -1,7 +1,8 @@
 language: java
 sudo: false
 script:
-  - which jjs
+  - pwd
+  - ./jmvcc apps/tango_webapp/compress.js
   - gradle prepareWar
 jdk:
   - openjdk8
