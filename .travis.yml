@@ -1,8 +1,7 @@
 language: java
 sudo: false
-before_srcipt:
-  - chmod 777 ./jmvcc
 script:
+  - chmod 777 ./jmvcc
   - gradle prepareWar
 jdk:
   - openjdk8
