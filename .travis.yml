@@ -1,8 +1,8 @@
 language: java
 sudo: false
+before_srcipt:
+  - chmod 777 ./jmvcc
 script:
-  - pwd
-  - ./jmvcc apps/tango_webapp/compress.js
   - gradle prepareWar
 jdk:
   - openjdk8
