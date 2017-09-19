@@ -7,7 +7,6 @@ webix.protoUI({
         this.add({id: 'root', value: "REST API: " + rest_api_host, _value: rest_api_host, webix_kids: true});
 
 
-
         this.loadBranch('root', null, null);
 
         this.refresh();
@@ -88,22 +87,24 @@ webix.protoUI({
     handleResponse: function (parent_id, item) {
         var self = this;
 
-        var handleDb = function(){
-            return function(){
+        var handleDb = function () {
+            return function () {
                 var rest_api_host = TangoWebapp.globals.rest_api_host;
                 var databases = [];
-                TangoWebapp.helpers.iterate(rest_api_host.databases, function(dbId, db){
-                    databases.push({id: dbId, value: "TANGO_HOST=" + db.host, _db: db, webix_kids: true,
-                        _ctx:["Remove"],
-                        handleCtx:function(id){
+                TangoWebapp.helpers.iterate(rest_api_host.databases, function (dbId, db) {
+                    databases.push({
+                        id: dbId, value: "TANGO_HOST=" + db.host, _db: db, webix_kids: true,
+                        _ctx: ["Remove"],
+                        handleCtx: function (id) {
                             //TODO extract rest_api_method: remove
                             //TODO delete TangoHost instance
                             TangoWebapp.globals.rest_api_host.databases.remove(this._db.id);
                             //TODO update cursor
                             $$('device_tree').updateRoot();
-                    }});
+                        }
+                    });
                 }.bind(this));
-                return {parent: 'root', data:databases}
+                return {parent: 'root', data: databases}
             };
         };
 
@@ -182,7 +183,7 @@ webix.protoUI({
                                         _view_id: 'device_logging'
                                     }
                                 ],
-                                _ctx:[
+                                _ctx: [
                                     //"Copy",
                                     //"Paste",
                                     "Delete",
@@ -200,7 +201,7 @@ webix.protoUI({
                                     {$template: "Separator"},
                                     "Log viewer"
                                 ],
-                                handleCtx: function(id){
+                                handleCtx: function (id) {
                                     TangoWebapp.devices.setCursor(this._device_id);
                                     switch (id) {
                                         case "Restart server":
@@ -265,7 +266,21 @@ webix.protoUI({
 
 TangoWebapp.ui.newDeviceTree = function () {
     return {
-        view: "DeviceTree",
-        id: "device_tree"
+        view: "layout",
+        rows: [
+            {
+                id: "device-tree-toolbar",
+                view: "toolbar",
+                cols:[
+                    { view:"button", type: "iconButton", id:"btnSettings", label: "Filter My Devices", icon: "filter",
+                        align:"left" } ,
+                    {}
+                ]
+            },
+            {
+                id: "device_tree",
+                view: "DeviceTree"
+            }
+        ]
     }
 };
