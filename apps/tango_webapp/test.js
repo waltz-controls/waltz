@@ -11,6 +11,7 @@ include.functional_tests(
     'device_polling',
     'device_events',
     'device_logging',
+    'device_tree',
     'webix_ui'
 );
 

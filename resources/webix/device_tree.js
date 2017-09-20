@@ -266,21 +266,66 @@ webix.protoUI({
 
 TangoWebapp.ui.newDeviceTree = function () {
     return {
-        view: "layout",
-        rows: [
+        view: "tabview",
+        width: 300,
+        cells: [
             {
-                id: "device-tree-toolbar",
-                view: "toolbar",
-                cols:[
-                    { view:"button", type: "iconButton", id:"btnSettings", label: "Filter My Devices", icon: "filter",
-                        align:"left" } ,
-                    {}
-                ]
+                header: "Devices Tree",
+                body: {
+                    rows: [
+                        {
+                            cols: [
+                                {
+                                    view: "text",
+                                    id: "txtFilter",
+                                    label: "Filter",
+                                    labelWidth: 60,
+                                    placeholder: "leave empty to withdrar",
+                                    value: ""
+                                },
+                                {
+                                    view: "button",
+                                    type: "iconButton",
+                                    id: "btnFilterApply",
+                                    icon: "filter",
+                                    align: "right",
+                                    width: 32,
+                                    click: function(){
+                                        $$("device_tree").filter("#value#", $$("txtFilter").getValue());
+                                    }
+                                }
+
+                            ]
+
+                        },
+                        {
+                            id: "device_tree",
+                            view: "DeviceTree"
+                        }
+                    ]
+                }
             },
             {
-                id: "device_tree",
-                view: "DeviceTree"
+                header: "My Devices",
+                body: {
+                    rows: [
+                        {
+                            view: "button",
+                            type: "iconButton",
+                            id: "btnSettings",
+                            label: "Apply filter",
+                            icon: "filter",
+                            align: "left"
+                        },
+                        {
+                            view: "textarea",
+                            id: "txtDevicesList",
+                            value: "*/*/*"
+                        }
+                    ]
+                }
             }
         ]
-    }
-};
+    };
+}
+;

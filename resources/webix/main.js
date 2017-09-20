@@ -5,22 +5,7 @@ webix.protoUI({
             TangoWebapp.ui.newMainToolbar(),
             {
                 cols: [
-                    {
-                        view: "tabview",
-                        width: 300,
-                        cells: [
-                            {
-                                header: "Devices",
-                                body: TangoWebapp.ui.newDeviceTree()
-                            },
-                            {
-                                header: "Servers",
-                                body: {
-                                    template: "Not yet implemented!"
-                                }
-                            }
-                        ]
-                    },
+                    TangoWebapp.ui.newDeviceTree(),
                     {view: "resizer"},
                     {
                         view: "tabview",
