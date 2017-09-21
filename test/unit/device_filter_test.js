@@ -13,13 +13,13 @@ new MVC.Test.Unit('device_filter', {
             value: ["*/*/*"]
         });
 
-        instance = new DeviceFilter({
+        var instance0 = new DeviceFilter({
             value: ["some/test/0"]
         });
 
-        this.assert_each(["some*"], instance.domain_filter);
-        this.assert_each(["some/test"], instance.family_filter);
-        this.assert_each(["some/test/0"], instance.member_filter);
+        this.assert_each(["some*"], instance0.domain_filter);
+        this.assert_each(["some/test"], instance0.family_filter);
+        this.assert_each(["some/test/0"], instance0.member_filter);
     },
     test_getFamilyFilters:function () {
         var instance = new DeviceFilter({
@@ -28,11 +28,11 @@ new MVC.Test.Unit('device_filter', {
 
         this.assert_each(["sys/tg_test*", "sys/tg_test*"], instance.getFamilyFilters("sys"));
 
-        instance = new DeviceFilter({
+        var instance0 = new DeviceFilter({
             value: ["sys/tg_test/0","sys/tg_test/1","*/*/*"]
         });
 
-        this.assert_each(["some/*"], instance.getFamilyFilters("some"));
+        this.assert_each(["some/*"], instance0.getFamilyFilters("some"));
     },
     test_getMemberFilters:function () {
         var instance = new DeviceFilter({
