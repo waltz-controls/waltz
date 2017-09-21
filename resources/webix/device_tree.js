@@ -1,7 +1,13 @@
 webix.protoUI({
+    //TODO move in $init
     devices_filter: new DeviceFilter({
         value: ["*/*/*"]
     }),
+    setDeviceFilter:function(filter){
+        this.devices_filter = filter;
+        //TODO bind
+        $$("txtDevicesList").setValue(filter.value.join('\n'));
+    },
     updateRoot: function () {
         this.clearAll();
 
@@ -44,7 +50,7 @@ webix.protoUI({
         select: true,
         on: {
             onItemDblClick: function (id, e, node) {
-                TangoWebapp.helpers.log("DblClick " + id);
+                console.log("DblClick " + id);
                 var item = this.getItem(id);
                 if (item.$level == 4) {//member
                     TangoWebapp.helpers.openAtkTab(TangoWebapp.getDevice());
@@ -310,17 +316,11 @@ TangoWebapp.ui.newDeviceTree = function () {
                                     label: "Filter",
                                     labelWidth: 40,
                                     placeholder: "leave empty to discard",
-                                    value: ""
-                                },
-                                {
-                                    view: "button",
-                                    type: "iconButton",
-                                    id: "btnFilterApply",
-                                    icon: "filter",
-                                    align: "right",
-                                    width: 32,
-                                    click: function () {
-                                        $$("device_tree").filter("#value#", $$("txtFilter").getValue());
+                                    value: "",
+                                    on: {
+                                        onTimedKeyPress: function(){
+                                            $$("device_tree").filter("#value#", this.getValue());
+                                        }
                                     }
                                 }
 
@@ -347,6 +347,7 @@ TangoWebapp.ui.newDeviceTree = function () {
                             align: "left",
                             click: function () {
                                 $$("device_tree").devices_filter = new DeviceFilter({
+                                    user: $$("main-toolbar").$$("lblUsername").getValue(),
                                     value: $$("txtDevicesList").getValue().split('\n')
                                 });
                                 $$("device_tree").updateRoot();

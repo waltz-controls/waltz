@@ -6,11 +6,15 @@
 DeviceFilter = MVC.Model.extend('device_filter',
     /* @Static */
     {
-
+        store_type: TangoWebappStorage,
+        id: "user",
         attributes: {
+            user: "string",
             value: 'string[]'
         },
-        default_attributes: {}
+        default_attributes: {
+            user: "default"
+        }
     },
     /* @Prototype */
     {
@@ -30,6 +34,10 @@ DeviceFilter = MVC.Model.extend('device_filter',
             this.member_filter =
                 this.value.map(function(it){
                     return it});
+
+            //have to do it here 'cauz localStorage supports only strings -> store has new instance instead of a ref
+            this.Class.store.create(this);
+            console.log(["Created new DeviceFilter[user=",this.user,", value=",this.value,"]"].join(''));
         },
         getFamilyFilters: function (domain) {
             return this.value.filter(function(it){

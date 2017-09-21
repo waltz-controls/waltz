@@ -1,4 +1,5 @@
 include.unit_tests(
+    'tango_webapp_storage',
     'device_filter',
     'test_database',
     'test_device',
