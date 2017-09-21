@@ -1,13 +1,28 @@
 webix.protoUI({
+    devices_filter: new DeviceFilter({
+        value: ["*/*/*"]
+    }),
     updateRoot: function () {
         this.clearAll();
 
+        var self = this;
         var rest_api_host = TangoWebapp.globals.rest_api_host;
+        var databases = [];
+        TangoWebapp.helpers.iterate(rest_api_host.databases, function (dbId, db) {
+            databases.push({
+                id: dbId, value: "TANGO_HOST=" + db.host, _db: db, webix_kids: true,
+                _ctx: ["Remove"],
+                handleCtx: function (id) {
+                    //TODO extract rest_api_method: remove
+                    //TODO delete TangoHost instance
+                    TangoWebapp.globals.rest_api_host.databases.remove(this._db.id);
+                    //TODO update cursor
+                    $$('device_tree').updateRoot();
+                }
+            });
+        }.bind(self));
 
-        this.add({id: 'root', value: "REST API: " + rest_api_host, _value: rest_api_host, webix_kids: true});
-
-
-        this.loadBranch('root', null, null);
+        this.parse([{id: 'root', value: "REST API: " + rest_api_host, _value: rest_api_host, data: databases}]);
 
         this.refresh();
     },
@@ -48,20 +63,28 @@ webix.protoUI({
                 var promise;
                 if (id === 'root') {
                     promise = webix.promise.defer();
-                    promise.resolve(TangoWebapp.getDatabase());
+                    promise.resolve([TangoWebapp.getDatabase()]);
                 } else if (item.$level == 2) {//domain
-                    promise = item._db.DbGetDeviceDomainList("*");
+                    promise = webix.promise.all(this.devices_filter.domain_filter.map(function (it) {
+                        return item._db.DbGetDeviceDomainList(it);
+                    }));
                 } else if (item.$level == 3) {//family
-                    promise = item._db.DbGetDeviceFamilyList(item.value + '/*');
+                    promise = webix.promise.all(this.devices_filter.getFamilyFilters(item.value).map(function (it) {
+                        return item._db.DbGetDeviceFamilyList(it);
+                    }));
                 } else if (item.$level == 4) {//member
-                    promise = item._db.DbGetDeviceMemberList(this.getItem(item.$parent).value + '/' + item.value + '/*');
+                    promise = webix.promise.all(this.devices_filter.getMemberFilters(this.getItem(item.$parent).value, item.value).map(function (it) {
+                        return item._db.DbGetDeviceMemberList(it);
+                    }));
                 } else {
                     return false;//ignore member
                 }
                 if (item) {
                     TangoWebapp.debug("Loading children for " + item.value);
                 }
-                this.parse(promise.then(this.handleResponse(id, item)));
+
+
+                promise.then(this.handleResponse(id, item));
 
 
                 return false;//cancel default behaviour
@@ -89,6 +112,7 @@ webix.protoUI({
 
         var handleDb = function () {
             return function () {
+                debugger
                 var rest_api_host = TangoWebapp.globals.rest_api_host;
                 var databases = [];
                 TangoWebapp.helpers.iterate(rest_api_host.databases, function (dbId, db) {
@@ -104,137 +128,142 @@ webix.protoUI({
                         }
                     });
                 }.bind(this));
-                return {parent: 'root', data: databases}
+                return [{parent: 'root', data: databases}];
             };
         };
 
         var handleDomainOrFamily = function (what) {
             return function (response) {
                 TangoWebapp.debug("Loaded " + what + " " + item.value);
-                return {
-                    parent: parent_id,
-                    data: response.output.map(function (el) {
-                        TangoWebapp.debug("Adding child " + el);
-                        return {value: el, _db: self.getItem(parent_id)._db, webix_kids: true};
-                    })
-                };
+                response.forEach(function(it){
+                    self.parse({
+                            parent: parent_id,
+                            data: it.output.map(function (el) {
+                                TangoWebapp.debug("Adding child " + el);
+                                return {value: el, _db: self.getItem(parent_id)._db, webix_kids: true};
+                            })
+                    });
+                });
             }
         };
 
         var handleMember = function () {
             return function (response) {
-                //create device node
-                return {
-                    parent: parent_id,
-                    data: response.output.map(
-                        function (el) {
-                            var db = self.getItem(item.$parent)._db;
-                            var name = self.getItem(item.$parent).value + "/" + item.value + "/" + el;
-                            var deviceId = db.id + '/' + name; //used for model lookup
-                            var device;
-                            //TODO extract helper method getDevice
-                            if (!(device = Device.find_one(deviceId))) {
-                                device = new Device(name, db.id, db.api);
-                                var dev_id = TangoWebapp.devices.add(device);
-                                if (dev_id != deviceId) {
-                                    TangoWebapp.error("dev_id[" + dev_id + "] and deviceId[" + deviceId + "] must match!");
-                                }
-                            }
-                            //TODO move to helpers
-                            return {
-                                _view_id: 'device_info',
-                                _device_id: deviceId,
-                                value: el,
-                                data: [
-                                    {
-                                        value: 'Properties',
-                                        _device_id: deviceId,
-                                        _view_id: 'device_properties'
-                                    },
-                                    {
-                                        value: 'Polling',
-                                        _device_id: deviceId,
-                                        _view_id: 'device_polling'
-                                    },
-                                    {
-                                        value: 'Event',
-                                        _device_id: deviceId,
-                                        _view_id: 'device_events'
-                                    },
-                                    {
-                                        value: 'Attribute config',
-                                        _device_id: deviceId,
-                                        _view_id: 'device_attr_config'
-                                    },
-                                    {
-                                        value: 'Pipe config',
-                                        _device_id: deviceId,
-                                        _view_id: 'device_pipe_config'
-                                    },
-                                    //{
-                                    //    value: 'Attribute properties',
-                                    //    _device_id: deviceId,
-                                    //    webix_kids: true,
-                                    //    _view_id: 'device_attr_properties'
-                                    //},
-                                    {
-                                        value: 'Logging',
-                                        _device_id: deviceId,
-                                        _view_id: 'device_logging'
+                response.forEach(function(it){
+                    self.parse(
+                        {
+                            parent: parent_id,
+                            data: it.output.map(
+                                function (el) {
+                                    var db = self.getItem(item.$parent)._db;
+                                    var name = self.getItem(item.$parent).value + "/" + item.value + "/" + el;
+                                    var deviceId = db.id + '/' + name; //used for model lookup
+                                    var device;
+                                    //TODO extract helper method getDevice
+                                    if (!(device = Device.find_one(deviceId))) {
+                                        device = new Device(name, db.id, db.api);
+                                        var dev_id = TangoWebapp.devices.add(device);
+                                        if (dev_id != deviceId) {
+                                            TangoWebapp.error("dev_id[" + dev_id + "] and deviceId[" + deviceId + "] must match!");
+                                        }
                                     }
-                                ],
-                                _ctx: [
-                                    //"Copy",
-                                    //"Paste",
-                                    "Delete",
-                                    {$template: "Separator"},
-                                    "Device info",
-                                    "Monitor device",
-                                    "Test device",
-                                    //"Define device alias",
-                                    {$template: "Separator"},
-                                    "Restart server",
-                                    "Kill server",
-                                    //{$template: "Separator"},
-                                    //"Go to Server node",
-                                    //"Go to Admin device node",
-                                    {$template: "Separator"},
-                                    "Log viewer"
-                                ],
-                                handleCtx: function (id) {
-                                    TangoWebapp.devices.setCursor(this._device_id);
-                                    switch (id) {
-                                        case "Restart server":
-                                            TangoWebapp.getDevice().promiseAdmin().then(function (admin) {
-                                                return admin.RestartServer();
-                                            }).then(TangoWebapp.helpers.log.bind(null, "Device server has been restarted!"));
-                                            break;
-                                        case "Kill server":
-                                            TangoWebapp.getDevice().promiseAdmin().then(function (admin) {
-                                                return admin.Kill();
-                                            }).then(TangoWebapp.helpers.log.bind(null, "Device server has been killed!!!"));
-                                            break;
-                                        case "Monitor device":
-                                            TangoWebapp.helpers.openAtkTab(TangoWebapp.getDevice());
-                                            break;
-                                        case "Device info":
-                                            TangoWebapp.helpers.openDeviceTab(TangoWebapp.getDevice(), "device_info");
-                                            break;
-                                        case "Test device":
-                                            TangoWebapp.helpers.openDevicePanel(TangoWebapp.getDevice());
-                                            break;
-                                        case "Delete":
-                                            TangoWebapp.helpers.deleteDevice(TangoWebapp.getDevice()).then(function () {
-                                                this.getContext().obj.remove(this.getContext().id);
-                                            }.bind(this));
-                                            break;
-                                        default:
-                                            TangoWebapp.error('Not yet implemented!');
-                                    }
-                                }
-                            };
-                        })
-                }
+                                    //TODO move to helpers
+                                    return {
+                                        _view_id: 'device_info',
+                                        _device_id: deviceId,
+                                        value: el,
+                                        data: [
+                                            {
+                                                value: 'Properties',
+                                                _device_id: deviceId,
+                                                _view_id: 'device_properties'
+                                            },
+                                            {
+                                                value: 'Polling',
+                                                _device_id: deviceId,
+                                                _view_id: 'device_polling'
+                                            },
+                                            {
+                                                value: 'Event',
+                                                _device_id: deviceId,
+                                                _view_id: 'device_events'
+                                            },
+                                            {
+                                                value: 'Attribute config',
+                                                _device_id: deviceId,
+                                                _view_id: 'device_attr_config'
+                                            },
+                                            {
+                                                value: 'Pipe config',
+                                                _device_id: deviceId,
+                                                _view_id: 'device_pipe_config'
+                                            },
+                                            //{
+                                            //    value: 'Attribute properties',
+                                            //    _device_id: deviceId,
+                                            //    webix_kids: true,
+                                            //    _view_id: 'device_attr_properties'
+                                            //},
+                                            {
+                                                value: 'Logging',
+                                                _device_id: deviceId,
+                                                _view_id: 'device_logging'
+                                            }
+                                        ],
+                                        _ctx: [
+                                            //"Copy",
+                                            //"Paste",
+                                            "Delete",
+                                            {$template: "Separator"},
+                                            "Device info",
+                                            "Monitor device",
+                                            "Test device",
+                                            //"Define device alias",
+                                            {$template: "Separator"},
+                                            "Restart server",
+                                            "Kill server",
+                                            //{$template: "Separator"},
+                                            //"Go to Server node",
+                                            //"Go to Admin device node",
+                                            {$template: "Separator"},
+                                            "Log viewer"
+                                        ],
+                                        handleCtx: function (id) {
+                                            TangoWebapp.devices.setCursor(this._device_id);
+                                            switch (id) {
+                                                case "Restart server":
+                                                    TangoWebapp.getDevice().promiseAdmin().then(function (admin) {
+                                                        return admin.RestartServer();
+                                                    }).then(TangoWebapp.helpers.log.bind(null, "Device server has been restarted!"));
+                                                    break;
+                                                case "Kill server":
+                                                    TangoWebapp.getDevice().promiseAdmin().then(function (admin) {
+                                                        return admin.Kill();
+                                                    }).then(TangoWebapp.helpers.log.bind(null, "Device server has been killed!!!"));
+                                                    break;
+                                                case "Monitor device":
+                                                    TangoWebapp.helpers.openAtkTab(TangoWebapp.getDevice());
+                                                    break;
+                                                case "Device info":
+                                                    TangoWebapp.helpers.openDeviceTab(TangoWebapp.getDevice(), "device_info");
+                                                    break;
+                                                case "Test device":
+                                                    TangoWebapp.helpers.openDevicePanel(TangoWebapp.getDevice());
+                                                    break;
+                                                case "Delete":
+                                                    TangoWebapp.helpers.deleteDevice(TangoWebapp.getDevice()).then(function () {
+                                                        this.getContext().obj.remove(this.getContext().id);
+                                                    }.bind(this));
+                                                    break;
+                                                default:
+                                                    TangoWebapp.error('Not yet implemented!');
+                                            }
+                                        }
+                                    };
+                                })
+                        }
+                    );
+                });
             }
         };
 
@@ -279,8 +308,8 @@ TangoWebapp.ui.newDeviceTree = function () {
                                     view: "text",
                                     id: "txtFilter",
                                     label: "Filter",
-                                    labelWidth: 60,
-                                    placeholder: "leave empty to withdrar",
+                                    labelWidth: 40,
+                                    placeholder: "leave empty to discard",
                                     value: ""
                                 },
                                 {
@@ -290,7 +319,7 @@ TangoWebapp.ui.newDeviceTree = function () {
                                     icon: "filter",
                                     align: "right",
                                     width: 32,
-                                    click: function(){
+                                    click: function () {
                                         $$("device_tree").filter("#value#", $$("txtFilter").getValue());
                                     }
                                 }
@@ -315,7 +344,13 @@ TangoWebapp.ui.newDeviceTree = function () {
                             id: "btnSettings",
                             label: "Apply filter",
                             icon: "filter",
-                            align: "left"
+                            align: "left",
+                            click: function () {
+                                $$("device_tree").devices_filter = new DeviceFilter({
+                                    value: $$("txtDevicesList").getValue().split('\n')
+                                });
+                                $$("device_tree").updateRoot();
+                            }
                         },
                         {
                             view: "textarea",

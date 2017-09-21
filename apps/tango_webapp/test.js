@@ -1,4 +1,5 @@
 include.unit_tests(
+    'device_filter',
     'test_database',
     'test_device',
     'tango_rest',
