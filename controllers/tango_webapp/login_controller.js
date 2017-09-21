@@ -6,7 +6,7 @@ TangoWebapp.LoginController = MVC.Controller.extend("login_controller", {
 
     "credentials.create.as_existing subscribe": function (data) {
         webix.attachEvent("onBeforeAjax", function (mode, url, params, x, headers) {
-            request.withCredentials = true;
+            x.withCredentials = true;
             headers["Authorization"] = "Basic " + btoa(data.data.toString());
         });
         $$("main-toolbar").$$("lblUsername").setValue(data.data.name);
