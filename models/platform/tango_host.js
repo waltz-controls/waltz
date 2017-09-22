@@ -52,6 +52,22 @@ TangoWebapp.TangoHost = TangoWebapp.DataCollectionWrapper.extend("tango_host",
                 OpenAjax.hub.publish("tango_webapp.device_loaded", {data: device});
                 return device;
             }.bind(this));
+        },
+        /**
+         *
+         * @ebent {OpenAjax} tango_webapp.database_loaded
+         * @return {Promise}
+         */
+        fetchDatabase: function () {
+            return this.fetchDevice(this.name).then(function (db) {
+                this.database = new TangoWebapp.TangoDatabase({
+                    id: db.id,
+                    device: db,
+                    info: this.info
+                });
+                OpenAjax.hub.publish("tango_webapp.database_loaded", {data: this.database});
+                return this.database;
+            }.bind(this));
         }
     }
 );
