@@ -17,15 +17,7 @@ TangoWebapp.TangoHost = TangoWebapp.DataCollectionWrapper.extend("tango_host",
     /*@Prototype */
     {
         rest: null,
-        /**
-         *
-         * @param attrs
-         * @constructor
-         */
-        init: function (attrs) {
-            this._super(attrs);
-            this.devices = new webix.DataCollection();
-        },
+        database: null,
         toString: function () {
             return this.id;
         },
@@ -35,6 +27,10 @@ TangoWebapp.TangoHost = TangoWebapp.DataCollectionWrapper.extend("tango_host",
         addDevice: function (device) {
             this.value.add(device);
             this.value.setCursor(device.id);
+        },
+        //TODO ??? name or id
+        getDevice: function (name) {
+            return this.value.getItem(this.id + "/" + name);
         },
         /**
          *
