@@ -1,0 +1,101 @@
+/**
+ * Model tango_rest_api
+ *
+ * @type {TangoRestApi}
+ */
+TangoWebapp.TangoRestApi = TangoWebapp.DataCollectionWrapper.extend('tango_rest_api',
+    /* @Static */
+    {
+        _api_version: 'rc4',
+        id: "url",
+        attributes: {
+            url: 'string'
+        },
+        default_attributes: {}
+    },
+    /* @Prototype */
+    {
+        req_ids: null,
+        /**
+         *
+         * @constructor
+         * @param params
+         */
+        init: function (params) {
+            if (!params.url) throw "Bad argument: url is expected here";
+            this._super(params);
+            this.req_ids = [];
+        },
+        /**
+         *
+         * @returns {TangoRestApiRequest}
+         */
+        request: function () {
+            var request = new TangoWebapp.TangoRestApiRequest({url: this.url + "/tango/rest/" + this.Class._api_version});
+            this.req_ids.push(request.id);//TODO or should we store actual ref here
+            return request;
+        },
+        /**
+         *
+         * @param id
+         * @returns {TangoHost}
+         */
+        getHost: function (id) {
+            return this.value.getItem(id);
+        },
+        /**
+         * sets cursor
+         *
+         * @param newHost
+         */
+        addHost: function (newHost) {
+            this.value.add(newHost);
+            this.value.setCursor(newHost.id);
+        },
+        /**
+         *
+         * @param {string} host - host
+         * @param {int} port - port
+         * @event {OpenAjax} tango_rest_api.host_loaded
+         * @event {OpenAjax} tango_rest_api.host_load_failed
+         * @return {Promise}
+         */
+        fetchHost: function (host, port) {
+            var request = this.request();
+            return request.hosts(host + "/" + port).get()
+                .then(function (resp) {
+                        var newHost = new TangoWebapp.TangoHost(MVC.Object.extend(resp, {
+                            id: host + ":" + port,
+                            rest: this
+                        })); //this emits an event
+                        this.addHost(newHost);
+                        OpenAjax.hub.publish("tango_webapp.host_loaded", {data: newHost});
+                        return newHost;
+                    }.bind(this)
+                );
+        },
+        /**
+         *
+         * @event {OpenAjax} tango_rest_api.fetch
+         * @event {OpenAjax} tango_rest_api.fetch_failed
+         * @return {Promise}
+         */
+        fetch: function () {
+            var request = this.request();
+            return request.get()
+                .then(function () {
+                        this.publish("fetch", {data: this});
+                        return true;
+                    }.bind(this)
+                ).fail(
+                    function () {
+                        this.publish("fetch_failed", {data: this});
+                        return false;
+                    }.bind(this)
+                );
+        }
+    }
+);
+
+if (window['TangoRestApi'] === undefined)
+    TangoRestApi = TangoWebapp.TangoRestApi;
