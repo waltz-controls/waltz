@@ -37,6 +37,7 @@ TangoWebapp.TangoHost = TangoWebapp.DataCollectionWrapper.extend("tango_host",
          * @event {OpenAjax} tango_webapp.device_loaded
          *
          * @param name
+         * @return {Promise}
          */
         fetchDevice: function (name) {
             return this.rest.request().hosts(this.toUrl()).devices(name).get().then(function (resp) {
