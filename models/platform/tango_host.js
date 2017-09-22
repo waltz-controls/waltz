@@ -35,6 +35,7 @@ TangoWebapp.TangoHost = TangoWebapp.DataCollectionWrapper.extend("tango_host",
         /**
          *
          * @event {OpenAjax} tango_webapp.device_loaded
+         *
          * @param name
          */
         fetchDevice: function (name) {
@@ -55,7 +56,7 @@ TangoWebapp.TangoHost = TangoWebapp.DataCollectionWrapper.extend("tango_host",
         },
         /**
          *
-         * @ebent {OpenAjax} tango_webapp.database_loaded
+         * @event {OpenAjax} tango_webapp.database_loaded
          * @return {Promise}
          */
         fetchDatabase: function () {

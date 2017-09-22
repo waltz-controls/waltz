@@ -56,8 +56,8 @@ TangoWebapp.TangoRestApi = TangoWebapp.DataCollectionWrapper.extend('tango_rest_
          *
          * @param {string} host - host
          * @param {int} port - port
-         * @event {OpenAjax} tango_rest_api.host_loaded
-         * @event {OpenAjax} tango_rest_api.host_load_failed
+         *
+         * @event {OpenAjax} tango_webapp.host_loaded
          * @return {Promise}
          */
         fetchHost: function (host, port) {
@@ -67,7 +67,7 @@ TangoWebapp.TangoRestApi = TangoWebapp.DataCollectionWrapper.extend('tango_rest_
                         var newHost = new TangoWebapp.TangoHost(MVC.Object.extend(resp, {
                             id: host + ":" + port,
                             rest: this
-                        })); //this emits an event
+                        }));
                         this.addHost(newHost);
                         OpenAjax.hub.publish("tango_webapp.host_loaded", {data: newHost});
                         return newHost;
