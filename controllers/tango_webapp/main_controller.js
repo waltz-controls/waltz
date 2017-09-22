@@ -55,5 +55,15 @@ TangoWebapp.MainController = MVC.Controller.extend('main', {
             view: "login",
             id: "login"
         }).show();
+    },
+    "tango_webapp.rest_failure subscribe": function (data) {
+        debugger
+        alert(data);
+        //TODO update loading status
+    },
+    "tango_webapp.rest_success subscribe": function (data) {
+        debugger
+        alert(data);
+        //TODO update loading status
     }
 });
