@@ -76,8 +76,8 @@ TangoWebapp.TangoRestApi = TangoWebapp.DataCollectionWrapper.extend('tango_rest_
         },
         /**
          *
-         * @event {OpenAjax} tango_rest_api.fetch
-         * @event {OpenAjax} tango_rest_api.fetch_failed
+         * @event {OpenAjax} tango_rest_api.is_alive
+         * @event {OpenAjax} tango_rest_api.is_not_alive
          * @return {Promise}
          */
         isAlive: function () {
