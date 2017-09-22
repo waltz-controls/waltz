@@ -80,16 +80,16 @@ TangoWebapp.TangoRestApi = TangoWebapp.DataCollectionWrapper.extend('tango_rest_
          * @event {OpenAjax} tango_rest_api.fetch_failed
          * @return {Promise}
          */
-        fetch: function () {
+        isAlive: function () {
             var request = this.request();
             return request.get()
                 .then(function () {
-                        this.publish("fetch", {data: this});
+                    this.publish("is_alive", {data: this});
                         return true;
                     }.bind(this)
                 ).fail(
                     function () {
-                        this.publish("fetch_failed", {data: this});
+                        this.publish("is_not_alive", {data: this});
                         return false;
                     }.bind(this)
                 );
