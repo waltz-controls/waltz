@@ -1,11 +1,13 @@
 include(function () { //runs after prior includes are loaded
     include.models(
-        "platform/data_collection_wrapper",
+        "platform/data_collection_wrapper", "platform/tango_webapp_storage",
         "platform/tango_rest_api_request", "platform/tango_host", "platform/tango_device", "platform/tango_database",
-        "platform/tango_rest_api"
+        "platform/tango_rest_api",
+        "platform/user_context"
     );
-    // include.controllers(
-    // );
+    include.controllers(
+        "platform/login", "platform/main"
+    );
     // include.views(
     // );
 
@@ -13,7 +15,8 @@ include(function () { //runs after prior includes are loaded
         include.unit_tests(
             "platform/tango_rest_api_request",
             "platform/tango_device", "platform/tango_database",
-            "platform/tango_rest_api"
+            "platform/tango_rest_api",
+            "platform/user_context"
         )
     }
 });

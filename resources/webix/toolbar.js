@@ -249,7 +249,7 @@ webix.protoUI({
                     icon: "sign-out",
                     width: 36,
                     click: function () {
-                        Credentials.destroy(top.$$("lblUsername").getValue());
+                        OpenAjax.hub.publish('tango_webapp.user_logout', {});
                     },
                     align: "right"
                 }

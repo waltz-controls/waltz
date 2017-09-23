@@ -41,9 +41,7 @@ webix.protoUI({
                                             var isValid = form.validate();
                                             if (!isValid) return;
 
-                                            Credentials.create_as_existing(form.getValues());
-
-                                            self.hide();
+                                            OpenAjax.hub.publish('tango_webapp.user_login', form.getValues());
                                         }
                                         },
                                         {

@@ -19,10 +19,10 @@ include("platform");
 
 include(function () { //runs after prior includes are loaded
     include.models(
-        "tango_webapp_storage", "data_base_device", "device", "dserver", "rest_api", "tango_host", "globals", "credentials", "device_filter"
+        "data_base_device", "device", "dserver", "rest_api", "tango_host", "globals", "credentials", "device_filter"
     );
     include.controllers(
-        "tango_webapp/main", "tango_webapp/login", "tango_webapp/device_tree"
+        "tango_webapp/main", "tango_webapp/device_tree"
     );
     include.views(
         "views/main_log_item",
