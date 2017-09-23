@@ -18,8 +18,8 @@ webix.protoUI({
                                 header: "Start page",
                                 body: {
                                     view: "layout",
-                                    padding: 100,
-                                    css: {"background-image": "linear-gradient(rgb(255, 255, 255), rgb(229, 241, 255))"},
+                                    padding: 10,
+                                    // css: {"background-color": "rgb(255, 255, 255)"},
                                     rows: [
                                         {
                                             //css: {"text-align" : "center", "background-image": "linear-gradient(rgb(229, 241, 255), rgb(255, 255, 255))"},

@@ -250,7 +250,7 @@ webix.protoUI({
                 {
                     view: "button",
                     id: "btnUser",
-                    type: "iconButton",
+                    type: "icon",
                     tooltip: "Sign out...",
                     icon: "sign-out",
                     width: 36,

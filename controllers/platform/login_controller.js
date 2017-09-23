@@ -6,8 +6,10 @@ TangoWebapp.LoginController = MVC.Controller.extend("login_controller", {
         webix.attachEvent("onBeforeAjax", function (mode, url, params, x, headers) {
             x.withCredentials = true;
             headers["Authorization"] = "Basic " + btoa(user_name + ":" + user_password);
-            TangoWebapp.debug("Attached Authorization header for " + user_name);
+
         });
+
+        TangoWebapp.debug("Attached Authorization header for " + user_name);
 
         $$("login").hide();
     },
