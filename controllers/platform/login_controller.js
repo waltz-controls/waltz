@@ -9,10 +9,6 @@ TangoWebapp.LoginController = MVC.Controller.extend("login_controller", {
             TangoWebapp.debug("Attached Authorization header for " + user_name);
         });
 
-        var userContext = TangoWebapp.UserContext.find_one(user_name);
-
-        $$("main-toolbar").$$("lblUsername").setValue(userContext.user);
-
         $$("login").hide();
     },
     "tango_webapp.user_logout subscribe": function () {

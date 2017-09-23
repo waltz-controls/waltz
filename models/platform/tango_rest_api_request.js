@@ -10,17 +10,23 @@ TangoWebapp.TangoRestApiRequest = MVC.Model.extend('tango_rest_api_request',
         attributes: {
             id: 'number',
             url: 'string',
-            //TODO set in terminal operations and reuse
-            result: 'object'
+            result: 'object',
+            failure: 'object'
         },
-        default_attributes: {}
+        default_attributes: {
+            result: null,
+            failure: null
+        }
     },
     /* @Prototype */
     {
+        //promise factory
+        promise: null,
         transport: null,
         init: function (params) {
             this._super(MVC.Object.extend(params, {id: this.Class._id++}));
             this.transport = webix.ajax;
+            this.promise = webix.promise;
         },
         /**
          *
@@ -34,11 +40,14 @@ TangoWebapp.TangoRestApiRequest = MVC.Model.extend('tango_rest_api_request',
                 json = resp.json();
 
                 if (json.quality === 'FAILURE') {
-                    OpenAjax.hub.publish("tango_webapp.rest_failure", {data: json});
+                    this.add_errors(json.errors);
+                    this.failure = json;
+                    OpenAjax.hub.publish("tango_webapp.rest_failure", {data: this});
                     throw json;
                 }
             }
-            OpenAjax.hub.publish("tango_webapp.rest_success", {data: json});
+            this.result = json;
+            OpenAjax.hub.publish("tango_webapp.rest_success", {data: this});
             return json;
         },
 
@@ -61,7 +70,9 @@ TangoWebapp.TangoRestApiRequest = MVC.Model.extend('tango_rest_api_request',
                     timestamp: +new Date()
                 }
             }
-            OpenAjax.hub.publish("tango_webapp.rest_failure", {data: json});
+            this.add_errors(json.errors);
+            this.failure = json;
+            OpenAjax.hub.publish("tango_webapp.rest_failure", {data: this});
             throw json;
             //TODO move to platform.ui.controller
             // if (resp.errors && resp.errors.length > 0) //tango rest specific
@@ -151,7 +162,8 @@ TangoWebapp.TangoRestApiRequest = MVC.Model.extend('tango_rest_api_request',
          * @returns {Promise}
          */
         get: function (what) {
-            //TODO save stack trace
+            if (this.result != null) return this.promise.resolve(this.result);
+            if (this.failure != null) return this.promise.reject(this.failure);
             if (what) this.url += what;
             return this.transport().get(this.url).then(this._success.bind(this)).fail(this._failure.bind(this));
         },
@@ -163,6 +175,8 @@ TangoWebapp.TangoRestApiRequest = MVC.Model.extend('tango_rest_api_request',
          * @returns {Promise}
          */
         put: function (what, data) {
+            if (this.result != null) return this.promise.resolve(this.result);
+            if (this.failure != null) return this.promise.reject(this.failure);
             if (what) this.url += what;//TODO if no what is provided data will be treated as what -> failure
             return this.transport().headers({
                 "Content-type": "application/json"
@@ -176,6 +190,8 @@ TangoWebapp.TangoRestApiRequest = MVC.Model.extend('tango_rest_api_request',
          * @returns {Promise}
          */
         "delete": function (what) {
+            if (this.result != null) return this.promise.resolve(this.result);
+            if (this.failure != null) return this.promise.reject(this.failure);
             if (what) this.url += what;
             return this.transport().del(this.url).then(this._success.bind(this)).fail(this._failure.bind(this));
         }

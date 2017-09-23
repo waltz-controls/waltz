@@ -22,6 +22,7 @@ TangoWebapp.UserContext = MVC.Model.extend('user_context',
             device_filters: ['*/*/*']
         },
         /**
+         * WARNING!!! Due to limitations of TangoWebapp storage this method always returns new instance
          *
          * @param id
          *
@@ -43,6 +44,17 @@ TangoWebapp.UserContext = MVC.Model.extend('user_context',
     /* @Prototype */
     {
         rest: null,
+        /**
+         *
+         * @param attrs
+         * @constructor
+         */
+        init: function (attrs) {
+            this._super(attrs);
+            var rest = TangoWebapp.TangoRestApi.find_one(this.rest_url);
+            if (rest == null) rest = new TangoWebapp.TangoRestApi({url: this.rest_url});
+            this.rest = rest;
+        },
         destroy: function () {
             this.Class.instance = null;
         }

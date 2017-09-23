@@ -13,6 +13,15 @@ new MVC.Test.Unit('tango_rest_api_request', {
     check_simple: function (resp) {
         this.assert_equal("basic", resp['x-auth-method']);
     },
+    test_multiple: function () {
+        var instance = new TangoRestApiRequest({url: "http://localhost:10001/tango/rest/rc4"});
+
+        instance.get().then(this.next_callback("check_multiple"));
+    },
+    check_multiple: function (resp) {
+        this.assert_equal("basic", resp['x-auth-method']);
+        TangoRestApiRequest.find_one(1).get().then(this.next_callback("check_simple"));
+    },
     test_failure_no_fail: function () {
         var instance = new TangoRestApiRequest({url: "http://localhost:10001/tango/rest/xxx"});//does not exists
 

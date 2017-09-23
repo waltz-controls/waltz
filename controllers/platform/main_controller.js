@@ -15,10 +15,13 @@ TangoWebapp.MainController = MVC.Controller.extend('main', {
             id: "login"
         }).show();
     },
-    "tango_webapp.user_context_loaded subscribe": function (data) {
-        //TODO create REST load hosts etc
-        var context = data.data;
-        context.rest = new TangoRestApi({url: context.rest_url});
+    "tango_webapp.user_login subscribe": function (data) {
+        debugger;
+        var user_name = data.name;
+        var context = TangoWebapp.UserContext.find_one(user_name);
+
+        //TODO move to toolbar controller
+        $$("main-toolbar").$$("lblUsername").setValue(context.user);
 
         context.rest.isAlive()
             .then(function () {
