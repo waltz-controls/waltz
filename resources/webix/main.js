@@ -39,22 +39,22 @@ webix.protoUI({
                     {},
                     {
                         view: "button",
-                        id: "btnHelp",
+                        id: "btnLog",
                         type: "icon",
-                        tooltip: "Info",
-                        icon: "question",
+                        tooltip: "Log console",
+                        icon: "commenting",
                         width: 36,
-                        click: top.help,
+                        popup: 'log',
                         align: "right"
                     },
                     {
                         view: "button",
-                        id: "btnLog",
+                        id: "btnHelp",
                         type: "icon",
-                        tooltip: "Log console",
-                        icon: "eye",
+                        tooltip: "Info",
+                        icon: "info",
                         width: 36,
-                        popup: 'log',
+                        click: top.help,
                         align: "right"
                     }
                 ],
