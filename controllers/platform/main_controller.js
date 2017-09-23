@@ -18,7 +18,7 @@ TangoWebapp.MainController = MVC.Controller.extend('main', {
     "tango_webapp.user_context_loaded subscribe": function (data) {
         debugger
         //TODO create REST load hosts etc
-        //TODO popup suggest
+
 
     },
     "tango_webapp.rest_failure subscribe": function (data) {
