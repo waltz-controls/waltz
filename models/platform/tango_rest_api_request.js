@@ -17,9 +17,10 @@ TangoWebapp.TangoRestApiRequest = MVC.Model.extend('tango_rest_api_request',
     },
     /* @Prototype */
     {
-        transport: webix.ajax,
+        transport: null,
         init: function (params) {
             this._super(MVC.Object.extend(params, {id: this.Class._id++}));
+            this.transport = webix.ajax;
         },
         /**
          *

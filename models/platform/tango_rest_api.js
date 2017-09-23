@@ -15,7 +15,7 @@ TangoWebapp.TangoRestApi = TangoWebapp.DataCollectionWrapper.extend('tango_rest_
     },
     /* @Prototype */
     {
-        promise: webix.promise,
+        promise: null,
         req_ids: null,
         /**
          *
@@ -26,6 +26,7 @@ TangoWebapp.TangoRestApi = TangoWebapp.DataCollectionWrapper.extend('tango_rest_
             if (!params.url) throw "Bad argument: url is expected here";
             this._super(params);
             this.req_ids = [];
+            this.promise = webix.promise;
         },
         /**
          *
