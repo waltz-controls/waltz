@@ -29,7 +29,7 @@ TangoWebapp.TangoRestApiRequest = MVC.Model.extend('tango_rest_api_request',
          */
         _success: function (resp) {
             var json = {};
-            if (resp.text().length != 0) {
+            if (resp.text().length > 0) {
                 json = resp.json();
 
                 if (json.quality === 'FAILURE') {
@@ -42,8 +42,26 @@ TangoWebapp.TangoRestApiRequest = MVC.Model.extend('tango_rest_api_request',
         },
 
         _failure: function (resp) {
-            OpenAjax.hub.publish("tango_webapp.rest_failure", {data: resp});
-            throw resp;
+            var json;
+            try {
+                json = JSON.parse(resp.responseText);
+            } catch (e) {
+                console.log(e);
+                json = {
+                    errors: [
+                        {
+                            reason: resp.status,
+                            description: resp.responseText,
+                            severity: 'ERR',
+                            origin: this.url
+                        }
+                    ],
+                    quality: 'FAILURE',
+                    timestamp: +new Date()
+                }
+            }
+            OpenAjax.hub.publish("tango_webapp.rest_failure", {data: json});
+            throw json;
             //TODO move to platform.ui.controller
             // if (resp.errors && resp.errors.length > 0) //tango rest specific
             //     for (var i = 0, size = resp.errors.length; i < size; ++i) {
@@ -115,6 +133,9 @@ TangoWebapp.TangoRestApiRequest = MVC.Model.extend('tango_rest_api_request',
         },
 
         /**
+         *
+         * @event {OpenAjax} tango_webapp.rest_success
+         * @event {OpenAjax} tango_webapp.rest_failure
          * @returns {Promise}
          */
         exec: function (argin) {

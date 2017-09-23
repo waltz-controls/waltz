@@ -40,20 +40,21 @@ TangoWebapp.TangoHost = TangoWebapp.DataCollectionWrapper.extend("tango_host",
          * @return {Promise}
          */
         fetchDevice: function (name) {
-            return this.rest.request().hosts(this.toUrl()).devices(name).get().then(function (resp) {
-                //jmvc fails to set "attributes" due to already existing function in the model
-                var attrs = resp.attributes;
-                delete resp.attributes;
-
-                var device = new TangoWebapp.TangoDevice(MVC.Object.extend(resp, {
-                    attrs: attrs,
-                    id: this.id + "/" + name,
-                    host: this
-                }));
-                this.addDevice(device);
-                OpenAjax.hub.publish("tango_webapp.device_loaded", {data: device});
-                return device;
-            }.bind(this));
+            return this.fetchDatabase()
+                .then(function (db) {
+                    return db.getDeviceInfo(name);
+                })
+                .then(function (info) {
+                    var device = new TangoWebapp.TangoDevice({
+                        info: info,
+                        id: this.id + "/" + name,
+                        name: name,
+                        host: this
+                    });
+                    this.addDevice(device);
+                    OpenAjax.hub.publish("tango_webapp.device_loaded", {data: device});
+                    return device;
+                }.bind(this));
         },
         /**
          *
@@ -61,15 +62,28 @@ TangoWebapp.TangoHost = TangoWebapp.DataCollectionWrapper.extend("tango_host",
          * @return {Promise}
          */
         fetchDatabase: function () {
-            return this.fetchDevice(this.name).then(function (db) {
-                this.database = new TangoWebapp.TangoDatabase({
-                    id: db.id,
-                    device: db,
-                    info: this.info
-                });
-                OpenAjax.hub.publish("tango_webapp.database_loaded", {data: this.database});
-                return this.database;
-            }.bind(this));
+            return this.rest.request().hosts(this.toUrl()).devices(this.name).get()
+                .then(function (resp) {
+                        //jmvc fails to set "attributes" due to already existing function in the model
+                        delete resp.attributes;
+
+                        var device = new TangoWebapp.TangoDevice(MVC.Object.extend(resp, {
+                            id: this.id + "/" + this.name,
+                            host: this
+                        }));
+                        this.addDevice(device);
+                        OpenAjax.hub.publish("tango_webapp.device_loaded", {data: device});
+                        return device;
+                    }.bind(this)
+                ).then(function (device) {
+                    this.database = new TangoWebapp.TangoDatabase({
+                        id: device.id,
+                        device: device,
+                        info: this.info
+                    });
+                    OpenAjax.hub.publish("tango_webapp.database_loaded", {data: this.database});
+                    return this.database;
+                }.bind(this));
         }
     }
 );

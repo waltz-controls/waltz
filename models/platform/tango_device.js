@@ -37,6 +37,15 @@ TangoWebapp.TangoDevice = TangoWebapp.DataCollectionWrapper.extend('tango_device
         },
         fetchAdmin: function () {
 
+        },
+        /**
+         *
+         * @param cmd
+         * @param arg
+         * @return {Promise}
+         */
+        executeCommand: function (cmd, arg) {
+            return this.host.rest.request().hosts(this.host.toUrl()).devices(this.name).commands(cmd).exec(arg);
         }
     }
 );

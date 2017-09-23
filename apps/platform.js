@@ -12,7 +12,7 @@ include(function () { //runs after prior includes are loaded
     if (include.get_env().match(/test/)) {
         include.unit_tests(
             "platform/tango_rest_api_request",
-            "platform/tango_device",
+            "platform/tango_device", "platform/tango_database",
             "platform/tango_rest_api"
         )
     }

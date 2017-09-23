@@ -15,6 +15,7 @@ TangoWebapp.TangoRestApi = TangoWebapp.DataCollectionWrapper.extend('tango_rest_
     },
     /* @Prototype */
     {
+        promise: webix.promise,
         req_ids: null,
         /**
          *

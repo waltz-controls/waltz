@@ -29,6 +29,6 @@ new MVC.Test.Unit('tango_rest_api_request', {
         this.assert(false, "normal then should not be called here");
     },
     check_failure: function (resp) {
-        this.assert(true);
+        this.assert_equal(500, resp.errors[0].reason);
     }
 });
