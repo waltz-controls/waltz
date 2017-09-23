@@ -63,8 +63,7 @@ TangoWebapp.TangoRestApi = TangoWebapp.DataCollectionWrapper.extend('tango_rest_
          * @return {Promise}
          */
         fetchHost: function (host, port) {
-            var request = this.request();
-            return request.hosts(host + "/" + port).get()
+            return this.request().hosts(host + "/" + port).get()
                 .then(function (resp) {
                         var newHost = new TangoWebapp.TangoHost(MVC.Object.extend(resp, {
                             id: host + ":" + port,

@@ -16,9 +16,19 @@ TangoWebapp.MainController = MVC.Controller.extend('main', {
         }).show();
     },
     "tango_webapp.user_context_loaded subscribe": function (data) {
-        debugger
         //TODO create REST load hosts etc
+        var context = data.data;
+        context.rest = new TangoRestApi({url: context.rest_url});
 
+        context.rest.isAlive()
+            .then(function () {
+                context.tango_hosts.forEach(function (it) {
+                    context.rest.fetchHost.apply(context.rest, it.split(':'));
+                })
+            })
+            .fail(function () {
+                //TODO error window
+            })
 
     },
     "tango_webapp.rest_failure subscribe": function (data) {
