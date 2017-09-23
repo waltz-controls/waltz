@@ -1,11 +1,14 @@
 webix.protoUI({
     name: "Main",
     defaults: {
+        type: "space",
         rows: [
             TangoWebapp.ui.newMainToolbar(),
             {
                 cols: [
                     TangoWebapp.ui.newDeviceTree(),
+                    {view: "resizer"},
+                    {type: "space", width: 10},
                     {view: "resizer"},
                     {
                         view: "tabview",
@@ -37,7 +40,7 @@ webix.protoUI({
                     {
                         view: "button",
                         id: "btnHelp",
-                        type: "iconButton",
+                        type: "icon",
                         tooltip: "Info",
                         icon: "question",
                         width: 36,
@@ -47,7 +50,7 @@ webix.protoUI({
                     {
                         view: "button",
                         id: "btnLog",
-                        type: "iconButton",
+                        type: "icon",
                         tooltip: "Log console",
                         icon: "eye",
                         width: 36,

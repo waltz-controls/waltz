@@ -167,6 +167,12 @@ webix.protoUI({
         return {
             cols: [
                 {
+                    view: "template",
+                    type: "header",
+                    borderless: true,
+                    template: '<span style="width: 240px"><img style="max-width: 100%; max-height: 100%" src="images/logo_tangocontrols.png"></span>'
+                },
+                {
                     view: "label",
                     label: "TANGO_REST:",
                     width: 120
