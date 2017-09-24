@@ -13,8 +13,7 @@ TangoWebapp.ui = {
         //windows
         "webix/device_panel_window",
         "webix/device_view",
-        "webix/login",
-        "webix/main"
+        "webix/login"
     ]
 };
 

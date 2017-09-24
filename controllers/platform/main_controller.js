@@ -30,12 +30,20 @@ TangoWebapp.MainController = MVC.Controller.extend('main', {
             id: "login"
         }).show();
 
-        TangoWebapp.debug("main");
         //draw ui
         webix.ui({
-            view: "Main",
-            id: "main"
+            view: 'layout',
+            id: 'main',
+            type: 'space',
+            rows: [
+                TangoWebapp.ui.newMainToolbar(),
+                {
+                    id: "content"
+                },
+                TangoWebapp.BottomToolbar.getUI()
+            ]
         });
+        TangoWebapp.debug("platform/main");
     },
     "tango_webapp.user_login subscribe": function (data) {
         debugger;
