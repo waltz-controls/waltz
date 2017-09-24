@@ -62,7 +62,7 @@ TangoWebapp.TangoRestApiRequest = MVC.Model.extend('tango_rest_api_request',
                     errors: [
                         {
                             reason: resp.status,
-                            description: resp.responseText,
+                            description: resp.responseText ? resp.responseText : "Unspecified error",
                             severity: 'ERR',
                             origin: this.url
                         }

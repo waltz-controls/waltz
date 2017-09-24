@@ -1,3 +1,6 @@
+//define new namespace
+TangoWebapp.platform = {};
+
 include(function () { //runs after prior includes are loaded
     include.models(
         "platform/data_collection_wrapper", "platform/tango_webapp_storage",
@@ -7,7 +10,7 @@ include(function () { //runs after prior includes are loaded
     );
     include.controllers(
         "platform/login", "platform/main",
-        "platform/ui/bottom_toolbar"
+        "platform/ui/top_toolbar", "platform/ui/bottom_toolbar"
     );
     // include.views(
     // );

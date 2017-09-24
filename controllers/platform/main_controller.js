@@ -3,7 +3,14 @@
  *
  * @type {TangoWebapp.MainController}
  */
-TangoWebapp.MainController = MVC.Controller.extend('main', {
+TangoWebapp.platform.MainController = MVC.Controller.extend('main', {
+
+    changeTangoRestApiUrl: function (newRestApiUrl) {
+        var tangoRestApi = new TangoWebapp.TangoRestApi({url: newRestApiUrl});
+        UserContext.current.set_rest(tangoRestApi);
+        UserContext.current.update();
+    }
+}, {
     /**
      * This is the main entry point of the application. This function is invoked after jmvc has been completely initialized.
      *
@@ -25,7 +32,7 @@ TangoWebapp.MainController = MVC.Controller.extend('main', {
             TangoWebapp.globals = globals;
         }
 
-        webix.ui(TangoWebapp.LoginController.getUI()).show();
+        webix.ui(TangoWebapp.platform.LoginController.getUI()).show();
 
         //draw ui
         webix.ui({
@@ -33,22 +40,18 @@ TangoWebapp.MainController = MVC.Controller.extend('main', {
             id: 'main',
             type: 'space',
             rows: [
-                TangoWebapp.ui.newMainToolbar(),
+                TangoWebapp.platform.TopToolbarController.getUI(),
                 {
                     id: "content"
                 },
-                TangoWebapp.BottomToolbar.getUI()
+                TangoWebapp.platform.BottomToolbar.getUI()
             ]
         });
+        webix.ui.fullScreen();
         TangoWebapp.debug("platform/main");
     },
     "tango_webapp.user_login subscribe": function (data) {
-        debugger;
-        var user_name = data.name;
-        var context = TangoWebapp.UserContext.find_one(user_name);
-
-        //TODO move to toolbar controller
-        $$("main-toolbar").$$("lblUsername").setValue(context.user);
+        var context = TangoWebapp.UserContext.current;
 
         context.rest.isAlive()
             .then(function () {

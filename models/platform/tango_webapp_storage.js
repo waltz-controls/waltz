@@ -31,7 +31,7 @@ TangoWebappStorage = MVC.Class.extend(
         create: function (obj) {
             var id = obj[obj.Class.id];
             var data = JSON.parse(localStorage.getItem(this.key));
-            data[id] = obj;
+            data[id] = obj.attributes();
             localStorage.setItem(this.key, JSON.stringify(data));
         },
         /**

@@ -1,4 +1,8 @@
-TangoWebapp.BottomToolbar = MVC.Controller.extend("bottom_toolbar_controller", {
+/**
+ *
+ * @type {BottomToolbar}
+ */
+TangoWebapp.platform.BottomToolbar = MVC.Controller.extend("bottom_toolbar_controller", {
     getUI: function () {
         webix.protoUI({
                 name: "bottom_toolbar",
@@ -40,7 +44,7 @@ TangoWebapp.BottomToolbar = MVC.Controller.extend("bottom_toolbar_controller", {
                             type: "header",
                             id: "rest-url",
                             template: "#type# #url# #msg#",
-                            defaultData: {type: "", url: "", msg: ""}
+                            data: {type: "", url: "", msg: ""}
                         },
                         {},
                         {

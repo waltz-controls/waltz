@@ -347,7 +347,7 @@ TangoWebapp.ui.newDeviceTree = function () {
                             align: "left",
                             click: function () {
                                 $$("device_tree").devices_filter = new DeviceFilter({
-                                    user: $$("main-toolbar").$$("lblUsername").getValue(),
+                                    user: $$("top-toolbar").$$("lblUsername").getValue(),
                                     value: $$("txtDevicesList").getValue().split('\n')
                                 });
                                 $$("device_tree").updateRoot();

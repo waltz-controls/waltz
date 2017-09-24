@@ -1,4 +1,4 @@
-TangoWebapp.LoginController = MVC.Controller.extend("login_controller", {
+TangoWebapp.platform.LoginController = MVC.Controller.extend("login_controller", {
     getUI: function () {
         return {
             id: 'login',
@@ -8,7 +8,7 @@ TangoWebapp.LoginController = MVC.Controller.extend("login_controller", {
             headHeight: 252,
             head: {
                 template: function () {
-                    return "<img src='images/logo.png'/>";
+                    return "<div style='height:232px; padding-top: 10px; padding-bottom: 10px;'><img style='max-width: 100%; max-height: 100%;' src='images/platform/tango_in_color.png'/></div>";
                 }
             },
             body: {
@@ -40,6 +40,8 @@ TangoWebapp.LoginController = MVC.Controller.extend("login_controller", {
                                             var form = this.getFormView();
                                             var isValid = form.validate();
                                             if (!isValid) return;
+                                            debugger
+                                            TangoWebapp.UserContext.find_one(form.elements.name.getValue());
 
                                             OpenAjax.hub.publish('tango_webapp.user_login', form.getValues());
                                         }
@@ -78,7 +80,7 @@ TangoWebapp.LoginController = MVC.Controller.extend("login_controller", {
         $$("login").hide();
     },
     "tango_webapp.user_logout subscribe": function () {
-        TangoWebapp.UserContext.instance.destroy();
+        TangoWebapp.UserContext.current.destroy();
 
         $$("login").show();
     }
