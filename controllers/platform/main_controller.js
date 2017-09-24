@@ -25,10 +25,7 @@ TangoWebapp.MainController = MVC.Controller.extend('main', {
             TangoWebapp.globals = globals;
         }
 
-        webix.ui({
-            view: "login",
-            id: "login"
-        }).show();
+        webix.ui(TangoWebapp.LoginController.getUI()).show();
 
         //draw ui
         webix.ui({
