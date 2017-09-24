@@ -71,18 +71,10 @@ TangoWebapp.BottomToolbar = MVC.Controller.extend("bottom_toolbar_controller", {
     }
 }, {
     "tango_webapp.rest_send subscribe": function (data) {
-        $$('bottom-toolbar').$$('rest-url').parse({
-            type: data.data.type,
-            url: data.data.url,
-            msg: "PENDING"
-        });
+        $$('bottom-toolbar').$$('rest-url').parse(this._toMsg(data.data, "PENDING"));
     },
     "tango_webapp.rest_failure subscribe": function (data) {
-        $$('bottom-toolbar').$$('rest-url').parse({
-            type: data.data.type,
-            url: data.data.url,
-            msg: "FAILED"
-        });
+        $$('bottom-toolbar').$$('rest-url').parse(this._toMsg(data.data, "FAILED"));
 
         var id = $$('main-log').log({
             type: 'error',
@@ -92,10 +84,13 @@ TangoWebapp.BottomToolbar = MVC.Controller.extend("bottom_toolbar_controller", {
         $$('bottom-toolbar').switchLogBtnIcon('error');
     },
     "tango_webapp.rest_success subscribe": function (data) {
-        $$('bottom-toolbar').$$('rest-url').parse({
-            type: data.data.type,
-            url: data.data.url,
-            msg: "DONE"
-        });
+        $$('bottom-toolbar').$$('rest-url').parse(this._toMsg(data.data, "DONE"));
+    },
+    _toMsg: function (req, msg) {
+        return {
+            type: req.type,
+            url: req.url,
+            msg: msg
+        };
     }
 });
