@@ -6,7 +6,8 @@ include(function () { //runs after prior includes are loaded
         "platform/user_context"
     );
     include.controllers(
-        "platform/login", "platform/main"
+        "platform/login", "platform/main",
+        "platform/ui/bottom_toolbar"
     );
     // include.views(
     // );

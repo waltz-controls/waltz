@@ -27,7 +27,7 @@ MVC.Object.extend(TangoWebapp,{
     error: function(msg){
         console.error(msg);
         var id = $$('main-log').log({ type: 'error' , value: msg, timestamp: TangoWebapp.consts.LOG_DATE_FORMATTER(new Date())});
-        $$('main-toolbar').switchLogBtnIcon('error');
+        $$('bottom-toolbar').switchLogBtnIcon('error');
         debugger
     },
 

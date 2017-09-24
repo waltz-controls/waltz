@@ -10,6 +10,7 @@ TangoWebapp.TangoRestApiRequest = MVC.Model.extend('tango_rest_api_request',
         attributes: {
             id: 'number',
             url: 'string',
+            type: 'string',
             result: 'object',
             failure: 'object'
         },
@@ -165,6 +166,8 @@ TangoWebapp.TangoRestApiRequest = MVC.Model.extend('tango_rest_api_request',
             if (this.result != null) return this.promise.resolve(this.result);
             if (this.failure != null) return this.promise.reject(this.failure);
             if (what) this.url += what;
+            this.type = "GET";
+            OpenAjax.hub.publish("tango_webapp.rest_send", {data: this});
             return this.transport().get(this.url).then(this._success.bind(this)).fail(this._failure.bind(this));
         },
 
@@ -178,6 +181,8 @@ TangoWebapp.TangoRestApiRequest = MVC.Model.extend('tango_rest_api_request',
             if (this.result != null) return this.promise.resolve(this.result);
             if (this.failure != null) return this.promise.reject(this.failure);
             if (what) this.url += what;//TODO if no what is provided data will be treated as what -> failure
+            this.type = "PUT";
+            OpenAjax.hub.publish("tango_webapp.rest_send", {data: this});
             return this.transport().headers({
                 "Content-type": "application/json"
             }).put(this.url, (typeof data == 'object') ? JSON.stringify(data) : data).then(this._success.bind(this)).fail(this._failure.bind(this));
@@ -193,6 +198,8 @@ TangoWebapp.TangoRestApiRequest = MVC.Model.extend('tango_rest_api_request',
             if (this.result != null) return this.promise.resolve(this.result);
             if (this.failure != null) return this.promise.reject(this.failure);
             if (what) this.url += what;
+            this.type = "DELETE";
+            OpenAjax.hub.publish("tango_webapp.rest_send", {data: this});
             return this.transport().del(this.url).then(this._success.bind(this)).fail(this._failure.bind(this));
         }
     }

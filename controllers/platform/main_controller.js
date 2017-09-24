@@ -10,10 +10,32 @@ TangoWebapp.MainController = MVC.Controller.extend('main', {
      * @param {Object} params
      */
     load: function (params) {
+        TangoWebapp.consts.LOG_DATE_FORMATTER = webix.Date.dateToStr("%c");
+
+        var storedGlobals = TangoGlobals.find_all();
+        //if we have stored globals use them, otherwise create new ones
+        if (storedGlobals[0])
+            TangoWebapp.globals = storedGlobals[0];
+        else {
+            var globals = new TangoGlobals();
+
+            //update cookie
+            TangoGlobals.update(globals.id, globals.attributes());
+
+            TangoWebapp.globals = globals;
+        }
+
         webix.ui({
             view: "login",
             id: "login"
         }).show();
+
+        TangoWebapp.debug("main");
+        //draw ui
+        webix.ui({
+            view: "Main",
+            id: "main"
+        });
     },
     "tango_webapp.user_login subscribe": function (data) {
         debugger;
@@ -33,13 +55,5 @@ TangoWebapp.MainController = MVC.Controller.extend('main', {
                 //TODO error window
             })
 
-    },
-    "tango_webapp.rest_failure subscribe": function (data) {
-        debugger
-        //TODO update loading status
-    },
-    "tango_webapp.rest_success subscribe": function (data) {
-        debugger
-        //TODO update loading status
     }
 });

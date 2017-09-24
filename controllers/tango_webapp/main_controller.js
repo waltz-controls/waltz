@@ -10,44 +10,53 @@ TangoWebapp.MainController = MVC.Controller.extend('main', {
      * @param {Object} params
      */
     load: function (params) {
-        TangoWebapp.consts.LOG_DATE_FORMATTER = webix.Date.dateToStr("%c");
 
-        var storedGlobals = TangoGlobals.find_all();
-        //if we have stored globals use them, otherwise create new ones
-        if(storedGlobals[0])
-            TangoWebapp.globals = storedGlobals[0];
-        else {
-            var globals = new TangoGlobals();
-
-            //update cookie
-            TangoGlobals.update(globals.id, globals.attributes());
-
-            TangoWebapp.globals = globals;
-        }
 
         TangoWebapp.devices = new webix.DataCollection();
 
         TangoWebapp.globals.rest_api_host.addDb(TangoWebapp.globals.tango_host);
 
 
-        TangoWebapp.debug("main");
-        //draw ui
         webix.ui({
-            view: "Main",
-            id  : "main"
-        });
+            cols: [
+                TangoWebapp.ui.newDeviceTree(),
+                {view: "resizer"},
+                {type: "space", width: 10},
+                {view: "resizer"},
+                {
+                    view: "tabview",
+                    id: "main-tabview",
+                    cells: [
+                        {
+                            header: "Start page",
+                            body: {
+                                view: "layout",
+                                padding: 10,
+                                // css: {"background-color": "rgb(255, 255, 255)"},
+                                rows: [
+                                    {
+                                        //css: {"text-align" : "center", "background-image": "linear-gradient(rgb(229, 241, 255), rgb(255, 255, 255))"},
+                                        template: new View({url: 'views/start_page.ejs'}).render()
+                                    }
+                                ]
+                            }
+                        }
+                    ]
+                }
+            ]
+        }, $$('content'));
 
         webix.ui({
             container: "getting-started-carousel",
-            view:"carousel",
-            id:"carousel",
-            width:464,
-            height:275,
-            cols:[
-                { template:"<img src='images/ctx.png'/>" },
-                { template:"<img src='images/sort.png'/>" },
-                { template:"<img src='images/edt.png'/>" },
-                { template:"<img src='images/log.png'/>" }
+            view: "carousel",
+            id: "carousel",
+            width: 464,
+            height: 275,
+            cols: [
+                {template: "<img src='images/ctx.png'/>"},
+                {template: "<img src='images/sort.png'/>"},
+                {template: "<img src='images/edt.png'/>"},
+                {template: "<img src='images/log.png'/>"}
             ]
         });
     }
