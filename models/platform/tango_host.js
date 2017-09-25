@@ -10,7 +10,8 @@ TangoWebapp.TangoHost = TangoWebapp.DataCollectionWrapper.extend("tango_host",
             port: "number",
             name: "string",
             id: "string", //host:port
-            info: "string[]"
+            info: "string[]",
+            isAlive: 'boolean'
         },
         default_attributes: {}
     },
@@ -88,5 +89,6 @@ TangoWebapp.TangoHost = TangoWebapp.DataCollectionWrapper.extend("tango_host",
     }
 );
 
+//TODO move to separate file: compatibility
 if (window['TangoHost'] === undefined)
     TangoHost = TangoWebapp.TangoHost;

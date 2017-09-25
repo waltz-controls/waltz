@@ -15,12 +15,44 @@
                         template: "Tango hosts"
                     },
                     {
-                        template: "input"
-                    },
-                    {
                         gravity: 6,
                         id: 'tango_hosts',
-                        view: 'list'
+                        view: 'list',
+                        template: "#id#"
+                    },
+                    {
+                        view: 'form',
+                        height: 80,
+                        elements: [
+                            {
+                                cols: [
+                                    {
+                                        view: 'text',
+                                        name: 'new_tango_host',
+                                        placeholder: 'localhost:10000',
+                                        invalidMessage: "Value does not match pattern: host:port",
+                                        validate: function (value) {
+                                            return /\w+:\d+/.test(value);
+                                        },
+                                        suggest: [] //TODO
+                                    },
+                                    {
+                                        view: 'button',
+                                        type: 'icon',
+                                        icon: 'plus',
+                                        height: 40,
+                                        width: 40,
+                                        click: function () {
+                                            var form = this.getFormView();
+                                            var isValid = form.validate();
+                                            if (!isValid) return;
+
+                                            UserContext.current.add_tango_host(form.elements.new_tango_host.getValue());
+                                        }
+                                    }
+                                ]
+                            }
+                        ]
                     }
                 ]
             };
@@ -28,14 +60,18 @@
         $init: function (config) {
             webix.extend(config, this._ui());
         },
-        on: {
-            "tango_webapp.context.new_tango_host subscribe": function (data) {
-                debugger
-            }
-        },
         defaults: {
             minWidth: 320,
-            minHeight: 640
+            minHeight: 480,
+            on: {
+                "tango_webapp.platform_context.add_tango_host subscribe": function (event) {
+                    $$('dashboard').$$('tango_hosts').data.sync(event.data.tango_hosts);
+                },
+                "tango_webapp.user_logout subscribe": function () {
+                    $$('dashboard').$$('tango_hosts').clearAll();
+                    $$('dashboard').$$('tango_hosts').refresh();
+                }
+            }
         }
     }, TangoWebapp.mixin.OpenAjaxListener, webix.ui.layout);
 
@@ -110,8 +146,7 @@
             this.$ready.push(function () {
                 this.$$('tango_host_info').bind(this.$$('tango_hosts'))
             }.bind(this));
-        },
-        on: {}
-    }, TangoWebapp.mixin.OpenAjaxListener, webix.IdSpace, webix.ui.layout);
+        }
+    }, webix.IdSpace, webix.ui.layout);
 })();
 

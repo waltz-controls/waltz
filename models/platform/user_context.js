@@ -93,6 +93,22 @@ TangoWebapp.platform.UserContext = MVC.Model.extend('user_context',
         update_attributes: function (attrs) {
             this._super(attrs);
             OpenAjax.hub.publish("tango_webapp.user_context.update", {data: this});
+        },
+        /**
+         *
+         * @param {string} tango_host
+         *
+         * @event {OpenAjax} tango_webapp.user_context.add_tango_host
+         */
+        add_tango_host: function (tango_host) {
+            var new_tango_hosts = this.tango_hosts.concat(tango_host);
+            this.update_attributes({
+                tango_hosts: new_tango_hosts
+            });
+            OpenAjax.hub.publish("tango_webapp.user_context.add_tango_host", {
+                context: this,
+                data: tango_host
+            })
         }
     }
 );
