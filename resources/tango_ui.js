@@ -1,5 +1,5 @@
 TangoWebapp.ui = {
-    _webix_files: [
+    _webix_files0: [
         //
         "webix/logger_view", "webix/device_tree", "webix/server_tree", "webix/toolbar",
         //dataviews
@@ -22,4 +22,4 @@ else
     if(MVC.env() === 'production') {
         include.add( include.add_defaults('../apps/tango_webapp/webix')); //this file is created during compression
     }else
-        include.apply(include, TangoWebapp.ui._webix_files);
+        include.apply(include, TangoWebapp.ui._webix_files0);

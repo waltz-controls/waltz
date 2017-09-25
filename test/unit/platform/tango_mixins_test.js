@@ -2,7 +2,7 @@ new MVC.Test.Unit('tango_mixins', {
     test_open_ajax_listener: function () {
         webix.protoUI({
             name: "open_ajax_listener_test"
-        }, TangoWebapp.platform.webix.OpenAjaxListener, webix.ui.text);
+        }, TangoWebapp.mixin.OpenAjaxListener, webix.ui.text);
 
         var self = this;
         var instance = webix.ui({

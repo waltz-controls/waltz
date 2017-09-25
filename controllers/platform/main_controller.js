@@ -17,6 +17,8 @@ TangoWebapp.platform.MainController = MVC.Controller.extend('main', {
      * @param {Object} params
      */
     load: function (params) {
+        webix.html.remove(document.getElementById('ajax-loader'));
+
         TangoWebapp.consts.LOG_DATE_FORMATTER = webix.Date.dateToStr("%c");
 
         var storedGlobals = TangoGlobals.find_all();
@@ -48,6 +50,7 @@ TangoWebapp.platform.MainController = MVC.Controller.extend('main', {
             ]
         });
         webix.ui.fullScreen();
+
         TangoWebapp.debug("platform/main");
     },
     "tango_webapp.user_login subscribe": function (data) {

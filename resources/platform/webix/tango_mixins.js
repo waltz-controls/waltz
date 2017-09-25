@@ -1,4 +1,4 @@
-TangoWebapp.platform.webix = {
+MVC.Object.extend(TangoWebapp.mixin, {
     OpenAjaxListener: {
         _listener_controller: null,
         _listener_instance: null,
@@ -7,4 +7,4 @@ TangoWebapp.platform.webix = {
             this._listener_instance = new this._listener_controller();
         }
     }
-};
+});
