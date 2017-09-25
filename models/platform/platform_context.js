@@ -64,7 +64,10 @@ TangoWebapp.platform.PlatformContext = MVC.Model.extend('platform_context',
         add_tango_host: function (tango_host) {
             //TODO protect from not unique id
             this.tango_hosts.add(tango_host);
-            OpenAjax.hub.publish("tango_webapp.platform_context.add_tango_host", {data: this});
+            OpenAjax.hub.publish("tango_webapp.platform_context.add_tango_host", {
+                new_tango_host: tango_host,
+                data: this
+            });
         },
         /**
          * Destroys this instance
@@ -77,3 +80,5 @@ TangoWebapp.platform.PlatformContext = MVC.Model.extend('platform_context',
 
     }
 );
+
+PlatformContext = TangoWebapp.platform.PlatformContext;

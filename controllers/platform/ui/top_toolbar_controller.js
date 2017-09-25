@@ -46,6 +46,10 @@ TangoWebapp.platform.TopToolbarController = MVC.Controller.extend('top_toolbar_c
                             click: function () {
                                 var newRestUrl = $$('top-toolbar').$$('txtTangoRestApiHost').getValue();
 
+                                UserContext.current.update_attributes({
+                                    rest_url: newRestUrl
+                                });
+
                                 TangoWebapp.platform.MainController.changeTangoRestApiUrl(newRestUrl);
                             },
                             tooltip: "Refresh Tango rest api URL"

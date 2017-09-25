@@ -96,3 +96,5 @@ TangoWebapp.platform.UserContext = MVC.Model.extend('user_context',
         }
     }
 );
+
+UserContext = TangoWebapp.platform.UserContext;

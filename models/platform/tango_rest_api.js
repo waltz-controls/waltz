@@ -3,7 +3,7 @@
  *
  * @type {TangoRestApi}
  */
-TangoWebapp.TangoRestApi = TangoWebapp.DataCollectionWrapper.extend('tango_rest_api',
+TangoWebapp.TangoRestApi = MVC.Model.extend('tango_rest_api',
     /* @Static */
     {
         _api_version: 'rc4',
@@ -39,23 +39,6 @@ TangoWebapp.TangoRestApi = TangoWebapp.DataCollectionWrapper.extend('tango_rest_
         },
         /**
          *
-         * @param id
-         * @returns {TangoHost}
-         */
-        getHost: function (id) {
-            return this.value.getItem(id);
-        },
-        /**
-         * sets cursor
-         *
-         * @param newHost
-         */
-        addHost: function (newHost) {
-            this.value.add(newHost);
-            this.value.setCursor(newHost.id);
-        },
-        /**
-         *
          * @param {string} host - host
          * @param {int} port - port
          *
@@ -69,7 +52,6 @@ TangoWebapp.TangoRestApi = TangoWebapp.DataCollectionWrapper.extend('tango_rest_
                             id: host + ":" + port,
                             rest: this
                         }));
-                        this.addHost(newHost);
                         OpenAjax.hub.publish("tango_webapp.host_loaded", {data: newHost});
                         return newHost;
                     }.bind(this)
@@ -86,12 +68,12 @@ TangoWebapp.TangoRestApi = TangoWebapp.DataCollectionWrapper.extend('tango_rest_
             return request.get()
                 .then(function () {
                     this.publish("is_alive", {data: this});
-                        return true;
+                    return this;
                     }.bind(this)
                 ).fail(
                     function () {
                         this.publish("is_not_alive", {data: this});
-                        return false;
+                        throw this;
                     }.bind(this)
                 );
         }
