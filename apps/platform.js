@@ -20,7 +20,10 @@ include(function () { //runs after prior includes are loaded
             "platform/tango_rest_api_request",
             "platform/tango_device", "platform/tango_database",
             "platform/tango_rest_api",
-            "platform/user_context"
+            "platform/user_context",
+            "platform/tango_mixins"
         )
     }
 });
+
+include.resources("platform/webix/tango_mixins");

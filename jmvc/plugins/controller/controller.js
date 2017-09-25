@@ -128,7 +128,7 @@ MVC.Controller = MVC.Class.extend(
         if(this._should_attach_actions)
             this._create_actions();
 
-        this._path =  include.get_path().match(/(.*?)controllers/)[1]+"controllers";
+        this._path = include.get_path();
         this.action_name = 'init';
     },
     _should_attach_actions : true,
