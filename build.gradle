@@ -50,6 +50,7 @@ task compress(type: Exec, dependsOn: 'prepareBuild') {
 
     doLast{
         file('apps/tango_webapp/production.js').renameTo(file("${buildDir}/apps/tango_webapp/production.js"))
+        file('apps/tango_webapp/webix0.js').renameTo(file("${buildDir}/apps/tango_webapp/webix0.js"))
         file('apps/tango_webapp/webix.js').renameTo(file("${buildDir}/apps/tango_webapp/webix.js"))
     }
 }

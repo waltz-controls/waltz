@@ -15,11 +15,11 @@ MVCOptions = {
         MVCOptions.compress.apply(null,
             TangoWebapp.ui._webix_files0.map(function (webix_file) {
                 return 'resources/' + webix_file + '.js';
-            }).concat(['apps/tango_webapp/webix.js']));
+            }).concat(['apps/tango_webapp/webix0.js']));
 
         MVCOptions.compress.apply(null,
             TangoWebapp.ui._webix_files.map(function (webix_file) {
-                return 'resources/tango_web_app/' + webix_file + '.js';
+                return 'resources/tango_webapp/' + webix_file + '.js';
             }).concat(['apps/tango_webapp/webix.js']));
 
         //load('jmvc/rhino/documentation/setup.js');
