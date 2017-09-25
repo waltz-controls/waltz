@@ -18,22 +18,27 @@ TangoWebapp.MainController = MVC.Controller.extend('main', {
 
 
         webix.ui({
+            multi: true,
             cols: [
-                TangoWebapp.ui.newDeviceTree(),
-                {view: "resizer"},
-                {type: "space", width: 10},
-                {view: "resizer"},
                 {
-                    view: "tabview",
-                    id: "main-tabview",
-                    cells: [
-                        {
-                            header: "<span class='webix_icon fa-dashboard'></span> My Dashboard",
-                            body: {
-                                view: "dashboard"
+                    header: "Devices Tree",
+                    body: TangoWebapp.ui.newDeviceTree()
+                },
+                {
+                    borderless: true,
+                    body: {
+                        type: 'space',
+                        view: "tabview",
+                        id: "main-tabview",
+                        cells: [
+                            {
+                                header: "<span class='webix_icon fa-dashboard'></span> My Dashboard",
+                                body: {
+                                    view: "dashboard"
+                                }
                             }
-                        }
-                    ]
+                        ]
+                    }
                 }
             ]
         }, $$('content'));
