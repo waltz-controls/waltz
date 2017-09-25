@@ -43,7 +43,7 @@ TangoWebapp.platform.BottomToolbar = MVC.Controller.extend("bottom_toolbar_contr
                             borderless: true,
                             type: "header",
                             id: "rest-url",
-                            template: "#type# #url# #msg#",
+                            template: "<span style='color: #606060;'>#type# #url# #msg#</span>",
                             data: {type: "", url: "", msg: ""}
                         },
                         {},
@@ -60,8 +60,9 @@ TangoWebapp.platform.BottomToolbar = MVC.Controller.extend("bottom_toolbar_contr
                         {
                             type: "header",
                             width: 36,
+                            tooltip: 'Report an issue...',
                             borderless: true,
-                            template: "<a target='_blank' href='http://github.com/tango-controls/tango-webapp'><span class='webix_icon fa-github'></span></a>"
+                            template: "<a target='_blank' href='http://github.com/tango-controls/tango-webapp'><span class='webix_icon fa-github' style='color: #606060;'></span></a>"
                         }
                     ]
                 }
@@ -75,6 +76,7 @@ TangoWebapp.platform.BottomToolbar = MVC.Controller.extend("bottom_toolbar_contr
     }
 }, {
     "tango_webapp.rest_send subscribe": function (data) {
+        //TODO bind rest-url to log data
         $$('bottom-toolbar').$$('rest-url').parse(this._toMsg(data.data, "PENDING"));
     },
     "tango_webapp.rest_failure subscribe": function (data) {

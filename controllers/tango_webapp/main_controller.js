@@ -21,7 +21,7 @@ TangoWebapp.MainController = MVC.Controller.extend('main', {
             multi: true,
             cols: [
                 {
-                    header: "Devices Tree",
+                    header: "<span class='webix_icon fa-sitemap'></span> Devices Tree",
                     body: TangoWebapp.ui.newDeviceTree()
                 },
                 {
@@ -32,7 +32,7 @@ TangoWebapp.MainController = MVC.Controller.extend('main', {
                         id: "main-tabview",
                         cells: [
                             {
-                                header: "<span class='webix_icon fa-dashboard'></span> My Dashboard",
+                                header: "<span class='webix_icon fa-dashboard'></span> Dashboard",
                                 body: {
                                     id: 'dashboard',
                                     view: "dashboard"

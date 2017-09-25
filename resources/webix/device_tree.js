@@ -313,8 +313,8 @@ TangoWebapp.ui.newDeviceTree = function () {
                                 {
                                     view: "text",
                                     id: "txtFilter",
-                                    label: "Filter",
-                                    labelWidth: 40,
+                                    label: "<span class='webix_icon fa-filter' style='padding-left: 10px;'></span>",
+                                    labelWidth: 32,
                                     placeholder: "leave empty to discard",
                                     value: "",
                                     on: {

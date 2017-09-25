@@ -1,7 +1,7 @@
 (function () {
     var getting_started = {
-        minWidth: 320,
-        minHeight: 320,
+        minWidth: 240,
+        minHeight: 240,
         template: new View({url: 'views/getting_started.ejs'}).render()
     };
 
@@ -39,9 +39,8 @@
                                     {
                                         view: 'button',
                                         type: 'icon',
-                                        icon: 'plus',
-                                        height: 40,
-                                        width: 40,
+                                        icon: 'plus-square-o',
+                                        width: 32,
                                         click: function () {
                                             var form = this.getFormView();
                                             var isValid = form.validate();
@@ -88,10 +87,12 @@
                         rows: [
                             {},
                             getting_started,
-                            {},
                             {
-                                minWidth: 320,
-                                minHeight: 320,
+                                height: 5
+                            },
+                            {
+                                minWidth: 240,
+                                minHeight: 240,
                                 template: "Device filters"
                             },
                             {}
@@ -114,7 +115,7 @@
                             {},
                             {
                                 minWidth: 320,
-                                minHeight: 640,
+                                minHeight: 480,
                                 id: 'tango_host_info',
                                 datatype: 'jsarray',
                                 template: "???",
@@ -129,7 +130,7 @@
                             {},
                             {
                                 minWidth: 320,
-                                minHeight: 640,
+                                minHeight: 480,
                                 template: "Device Info"
                             },
                             {}
