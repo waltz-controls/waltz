@@ -5,10 +5,18 @@
  */
 TangoWebapp.platform.MainController = MVC.Controller.extend('main', {
 
+    /**
+     *
+     * @param newRestApiUrl
+     *
+     * @inner
+     */
     changeTangoRestApiUrl: function (newRestApiUrl) {
         var tangoRestApi = new TangoWebapp.TangoRestApi({url: newRestApiUrl});
-        UserContext.current.set_rest(tangoRestApi);
-        UserContext.current.update();
+        TangoWebapp.platform.PlatformContext.current.set_rest(tangoRestApi);
+        TangoWebapp.platform.UserContext.current.update_attributes({
+            rest_url: newRestApiUrl
+        });
     }
 }, {
     /**
@@ -54,12 +62,14 @@ TangoWebapp.platform.MainController = MVC.Controller.extend('main', {
         TangoWebapp.debug("platform/main");
     },
     "tango_webapp.user_login subscribe": function (data) {
-        var context = TangoWebapp.UserContext.current;
+        var context = data.data;
 
-        context.rest.isAlive()
+        var rest = new TangoWebapp.TangoRestApi({url: context.rest_url});
+
+        rest.isAlive()
             .then(function () {
                 context.tango_hosts.forEach(function (it) {
-                    context.rest.fetchHost.apply(context.rest, it.split(':'));
+                    // context.rest.fetchHost.apply(context.rest, it.split(':'));
                 })
             })
             .fail(function () {

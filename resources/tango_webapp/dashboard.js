@@ -18,13 +18,9 @@
                         template: "input"
                     },
                     {
-                        id: 'hosts',
                         gravity: 6,
-                        view: 'accordion',
-                        cols: [
-                            {header: "col 1", body: "content 1"},
-                            {header: "col 2", body: "content 2"}
-                        ]
+                        id: 'tango_hosts',
+                        view: 'list'
                     }
                 ]
             };
@@ -41,7 +37,7 @@
             minWidth: 320,
             minHeight: 640
         }
-    }, TangoWebapp.mixin.OpenAjaxListener, webix.IdSpace, webix.ui.layout);
+    }, TangoWebapp.mixin.OpenAjaxListener, webix.ui.layout);
 
 
     webix.protoUI({
@@ -83,6 +79,21 @@
                             {
                                 minWidth: 320,
                                 minHeight: 640,
+                                id: 'tango_host_info',
+                                datatype: 'jsarray',
+                                template: "???",
+                                data: new Array(14)
+                            },
+                            {}
+                        ]
+                    },
+                    {},
+                    {
+                        rows: [
+                            {},
+                            {
+                                minWidth: 320,
+                                minHeight: 640,
                                 template: "Device Info"
                             },
                             {}
@@ -96,6 +107,9 @@
         },
         $init: function (config) {
             webix.extend(config, this._ui());
+            this.$ready.push(function () {
+                this.$$('tango_host_info').bind(this.$$('tango_hosts'))
+            }.bind(this));
         },
         on: {}
     }, TangoWebapp.mixin.OpenAjaxListener, webix.IdSpace, webix.ui.layout);

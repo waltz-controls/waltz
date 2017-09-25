@@ -1,6 +1,8 @@
 /**
  * Model user_context
  *
+ * Contains associated with this user data e.g. rest_url, tango_hosts, device filters
+ *
  * @type {UserContext}
  */
 TangoWebapp.UserContext = MVC.Model.extend('user_context',
@@ -14,7 +16,7 @@ TangoWebapp.UserContext = MVC.Model.extend('user_context',
             user: 'string',
             rest_url: 'string',
             tango_hosts: 'string[]',
-            device_filters: 'string[]'
+            device_filters: 'string[]' //TODO move to application layer?
         },
         default_attributes: {
             rest_url: 'http://localhost:10001',
@@ -39,22 +41,20 @@ TangoWebapp.UserContext = MVC.Model.extend('user_context',
             this.current = result;
             OpenAjax.hub.publish("tango_webapp.user_context_loaded", {data: result});
             return result;
+        },
+        /**
+         *
+         * @param id
+         * @param attrs
+         *
+         * @override model.js#update
+         */
+        update: function (id, attrs) {
+            this.store.update(id, attrs);
         }
     },
     /* @Prototype */
     {
-        rest: null,
-        /**
-         *
-         * @param {TangoRestApi} v - newRestApi
-         *
-         * @event {OpenAjax} tango_webapp.rest_api_changed
-         */
-        set_rest: function (v) {
-            this.rest_url = v.url;
-            this.rest = v;
-            OpenAjax.hub.publish("tango_webapp.user_context.rest_api_changed", {data: v});
-        },
         /**
          *
          * @param attrs
@@ -65,20 +65,7 @@ TangoWebapp.UserContext = MVC.Model.extend('user_context',
             //we have to override stored instance because this._super writes it with default values
             //this happens because WebappStorage has to create new instance everytime it is being updated
             //therefore wrong values are being persisted
-            this.Class.store.create(this);
-            //TODO deal with this side effect
-            var rest = TangoWebapp.TangoRestApi.find_one(this.rest_url);
-            if (rest == null) rest = new TangoWebapp.TangoRestApi({url: this.rest_url});
-            this.rest = rest;
-        },
-        /**
-         * Updates this instance (stores attributes in localStorage)
-         *
-         * @event {OpenAjax} tango_webapp.user_context.update
-         */
-        update: function () {
-            this.Class.store.create(this);
-            OpenAjax.hub.publish("tango_webapp.user_context.update", {data: this});
+            this.Class.store.update(this[this.Class.id], this.attributes());
         },
         /**
          * Stores this instance in localStorage
@@ -88,9 +75,19 @@ TangoWebapp.UserContext = MVC.Model.extend('user_context',
          * @event {OpenAjax} tango_webapp.user_context.destroy
          */
         destroy: function () {
-            this.Class.store.create(this);
+            this.Class.store.update(this[this.Class.id], this.attributes());
             this.Class.current = null;
             OpenAjax.hub.publish("tango_webapp.user_context.destroy", {data: this});
+        },
+        /**
+         *
+         * @param attrs
+         *
+         * @event {OpenAjax} tango_webapp.user_context.update
+         */
+        update_attributes: function (attrs) {
+            this._super(attrs);
+            OpenAjax.hub.publish("tango_webapp.user_context.update", {data: this});
         }
     }
 );

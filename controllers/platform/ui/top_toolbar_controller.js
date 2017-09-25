@@ -89,7 +89,7 @@ TangoWebapp.platform.TopToolbarController = MVC.Controller.extend('top_toolbar_c
     /* @Prototype */
     {
         "tango_webapp.user_login subscribe": function (data) {
-            var context = TangoWebapp.UserContext.current;
+            var context = data.data;
 
             $$("top-toolbar").$$("btnUsername").define('tooltip', context.user);
             $$("top-toolbar").$$("btnUsername").define('label', context.user);

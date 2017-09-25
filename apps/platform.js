@@ -6,7 +6,7 @@ include(function () { //runs after prior includes are loaded
         "platform/data_collection_wrapper", "platform/tango_webapp_storage",
         "platform/tango_rest_api_request", "platform/tango_host", "platform/tango_device", "platform/tango_database",
         "platform/tango_rest_api",
-        "platform/user_context"
+        "platform/user_context", "platform/platform_context"
     );
     include.controllers(
         "platform/login", "platform/main",

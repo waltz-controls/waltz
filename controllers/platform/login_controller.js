@@ -40,10 +40,13 @@ TangoWebapp.platform.LoginController = MVC.Controller.extend("login_controller",
                                             var form = this.getFormView();
                                             var isValid = form.validate();
                                             if (!isValid) return;
-                                            debugger
-                                            TangoWebapp.UserContext.find_one(form.elements.name.getValue());
+                                            var user_context = TangoWebapp.UserContext.find_one(form.elements.name.getValue());
 
-                                            OpenAjax.hub.publish('tango_webapp.user_login', form.getValues());
+                                            OpenAjax.hub.publish('tango_webapp.user_login', {
+                                                name: form.elements.name.getValue(),
+                                                password: form.elements.password.getValue(),
+                                                data: user_context
+                                            });
                                         }
                                         },
                                         {
