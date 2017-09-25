@@ -25,6 +25,8 @@ TangoWebapp.platform.MainController = MVC.Controller.extend('main', {
      * @param {Object} params
      */
     load: function (params) {
+        new TangoWebapp.platform.PlatformContext();
+
         webix.html.remove(document.getElementById('ajax-loader'));
 
         TangoWebapp.consts.LOG_DATE_FORMATTER = webix.Date.dateToStr("%c");

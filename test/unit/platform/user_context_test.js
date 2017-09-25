@@ -1,3 +1,6 @@
+if (window['UserContext'] === undefined)
+    UserContext = TangoWebapp.platform.UserContext;
+
 new MVC.Test.Unit('user_context', {
     test_create: function () {
         var instance = UserContext.find_one("test");

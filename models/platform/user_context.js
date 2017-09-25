@@ -5,7 +5,7 @@
  *
  * @type {UserContext}
  */
-TangoWebapp.UserContext = MVC.Model.extend('user_context',
+TangoWebapp.platform.UserContext = MVC.Model.extend('user_context',
     /* @Static */
     {
         //global instance
@@ -34,7 +34,7 @@ TangoWebapp.UserContext = MVC.Model.extend('user_context',
         find_one: function (id) {
             var result = this._super(id);
             if (result == null) {
-                result = new TangoWebapp.UserContext({
+                result = new this({
                     user: id
                 });
             }
@@ -58,6 +58,9 @@ TangoWebapp.UserContext = MVC.Model.extend('user_context',
         /**
          *
          * @param attrs
+         *
+         * @event {OpenAjax} tango_webapp.user_context.init
+         *
          * @constructor
          */
         init: function (attrs) {
@@ -66,6 +69,8 @@ TangoWebapp.UserContext = MVC.Model.extend('user_context',
             //this happens because WebappStorage has to create new instance everytime it is being updated
             //therefore wrong values are being persisted
             this.Class.store.update(this[this.Class.id], this.attributes());
+            this.Class.current = this;
+            OpenAjax.hub.publish("tango_webapp.user_context.init", {data: this});
         },
         /**
          * Stores this instance in localStorage
@@ -91,6 +96,3 @@ TangoWebapp.UserContext = MVC.Model.extend('user_context',
         }
     }
 );
-
-if (window['UserContext'] === undefined)
-    UserContext = TangoWebapp.UserContext;
