@@ -110,12 +110,14 @@ TangoWebapp.platform.UserContext = MVC.Model.extend('user_context',
             })
         },
         /**
+         * Does nothing if tango_host is already deleted
          *
          * @param tango_host
          *
          * @event {OpenAjax} user_context.delete_tango_host
          */
         delete_tango_host: function (tango_host) {
+            if (!this.tango_hosts.hasOwnProperty(tango_host)) return;
             delete this.tango_hosts[tango_host];
             this.save();
             this.publish("delete_tango_host", {
