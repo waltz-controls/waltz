@@ -4,6 +4,8 @@
 [![codebeat badge](https://codebeat.co/badges/23388ba2-feda-479d-a8c8-abf68eb7b01a)](https://codebeat.co/projects/github-com-tango-controls-tango-webapp-master)
 [![Build Status](https://travis-ci.org/tango-controls/tango-webapp.svg?branch=master)](https://travis-ci.org/tango-controls/tango-webapp)
 
+[![Docs](https://img.shields.io/badge/Generated-Docs-green.svg)](https://tango-controls.github.io/tango-webapp/)
+
 This project is an attempt to implement Tango Controls Roadmap [Feature Request #6](http://www.tango-controls.org/community/roadmap/)
 
 ## Live demo
