@@ -6,6 +6,53 @@
     };
 
     webix.protoUI({
+        name: 'dashboard_device_filters',
+        _ui: function () {
+            return {
+                rows: [
+                    {
+                        type: 'header',
+                        height: 30,
+                        template: "<span class='webix_icon fa-filter'></span><span class='webix_strong'> Device filters</span>"
+                    },
+                    {
+                        view: "textarea",
+                        id: "value",
+                        value: ""
+                    },
+                    {
+                        view: "button",
+                        type: "iconButton",
+                        id: "btnSettings",
+                        label: "Apply filters",
+                        icon: "filter",
+                        align: "left",
+                        click: function () {
+                            //TODO validate
+                            $$("device_tree").devices_filter = new DeviceFilter({
+                                user: PlatformContext.user_context.user,
+                                value: this.$$("txtDevicesList").getValue().split('\n')
+                            });
+                            $$("device_tree").updateRoot();
+                        }
+                    }
+                ]
+            };
+        },
+        $init: function (config) {
+            webix.extend(config, this._ui());
+
+            this.$ready.push(function () {
+                this.$$('value').setValue(PlatformContext.user_context.device_filters.join('\n'))
+            }.bind(this));
+        },
+        defaults: {
+            minWidth: 240,
+            minHeight: 240
+        }
+    }, webix.IdSpace, webix.ui.layout);
+
+    webix.protoUI({
         name: 'dashboard_tango_hosts',
         _ui: function () {
             return {
@@ -130,7 +177,7 @@
 
 
     webix.protoUI({
-        name: 'tango_host_info',
+        name: 'dashboard_tango_host_info',
         _ui: function () {
             return {
                 rows: [
@@ -178,6 +225,49 @@
     }, TangoWebapp.mixin.OpenAjaxListener, webix.IdSpace, webix.ui.layout);
 
     webix.protoUI({
+        name: 'dashboard_device_info',
+        _ui: function () {
+            return {
+                rows: [
+                    {
+                        type: 'header',
+                        height: 40,
+                        template: "<span class='webix_icon fa-microchip'></span><span class='webix_strong'> TANGO device info</span>"
+                    },
+                    {
+                        autoheight: true,
+                        id: "tango-device-info-value",
+                        template: function (obj, $view) {
+                            if (obj.Class === undefined) return "Please choose TANGO device in the tree to view the info";
+                            return new View({url: 'views/device_info.ejs'}).render(obj.info);
+                        }
+                    }
+                ]
+            };
+        },
+        $init: function (config) {
+            webix.extend(config, this._ui());
+
+            this.$ready.push(function () {
+                this.$$('tango-device-info-value').bind(PlatformContext.devices);
+            }.bind(this));
+        },
+        defaults: {
+            minWidth: 320,
+            maxHeight: 480,
+            on: {
+                "platform_context.init subscribe": function (event) {
+                    event.controller.$$('tango-device-info-value')
+                        .bind(event.data.devices)
+                },
+                "platform_context.destroy subscribe": function (event) {
+                    event.controller.$$('tango-device-info-value').unbind()
+                }
+            }
+        }
+    }, TangoWebapp.mixin.OpenAjaxListener, webix.IdSpace, webix.ui.layout);
+
+    webix.protoUI({
         name: "dashboard",
         _ui: function () {
             return {
@@ -193,9 +283,8 @@
                                 height: 5
                             },
                             {
-                                minWidth: 240,
-                                minHeight: 240,
-                                template: "Device filters"
+                                id: 'dashboard-device-filters',
+                                view: "dashboard_device_filters"
                             },
                             {}
                         ]
@@ -216,7 +305,7 @@
                         rows: [
                             {},
                             {
-                                view: 'tango_host_info',
+                                view: 'dashboard_tango_host_info',
                                 id: 'tango-host-info'
 
                             },
@@ -228,9 +317,8 @@
                         rows: [
                             {},
                             {
-                                minWidth: 320,
-                                minHeight: 480,
-                                template: "Device Info"
+                                view: 'dashboard_device_info',
+                                id: "tango-device-info"
                             },
                             {}
                         ]

@@ -3,7 +3,7 @@ webix.protoUI({
     devices_filter: new DeviceFilter({
         value: ["*/*/*"]
     }),
-    setDeviceFilter:function(filter){
+    setDeviceFilter: function (filter) {
         this.devices_filter = filter;
         //TODO bind
         $$("txtDevicesList").setValue(filter.value.join('\n'));
@@ -60,6 +60,8 @@ webix.protoUI({
             onItemClick: function (id, e, node) {
                 var item = this.getItem(id);
                 if (item.$level == 5 || item.$level == 6) { //device, Properties, Event etc
+                    debugger
+                    // PlatformContext.devices.setCursor()
                     TangoWebapp.devices.setCursor(item._device_id);//TODO does getItem automatically set cursor???
                     TangoWebapp.helpers.openDeviceTab(TangoWebapp.getDevice(), item._view_id);
                 }
@@ -141,13 +143,13 @@ webix.protoUI({
         var handleDomainOrFamily = function (what) {
             return function (response) {
                 TangoWebapp.debug("Loaded " + what + " " + item.value);
-                response.forEach(function(it){
+                response.forEach(function (it) {
                     self.parse({
-                            parent: parent_id,
-                            data: it.output.map(function (el) {
-                                TangoWebapp.debug("Adding child " + el);
-                                return {value: el, _db: self.getItem(parent_id)._db, webix_kids: true};
-                            })
+                        parent: parent_id,
+                        data: it.output.map(function (el) {
+                            TangoWebapp.debug("Adding child " + el);
+                            return {value: el, _db: self.getItem(parent_id)._db, webix_kids: true};
+                        })
                     });
                 });
             }
@@ -155,7 +157,7 @@ webix.protoUI({
 
         var handleMember = function () {
             return function (response) {
-                response.forEach(function(it){
+                response.forEach(function (it) {
                     self.parse(
                         {
                             parent: parent_id,
@@ -301,65 +303,24 @@ webix.protoUI({
 
 TangoWebapp.ui.newDeviceTree = function () {
     return {
-        view: "tabview",
         width: 300,
-        cells: [
+        rows: [
             {
-                header: "Devices Tree",
-                body: {
-                    rows: [
-                        {
-                            cols: [
-                                {
-                                    view: "text",
-                                    id: "txtFilter",
-                                    label: "<span class='webix_icon fa-filter' style='padding-left: 10px;'></span>",
-                                    labelWidth: 32,
-                                    placeholder: "leave empty to discard",
-                                    value: "",
-                                    on: {
-                                        onTimedKeyPress: function(){
-                                            $$("device_tree").filter("#value#", this.getValue());
-                                        }
-                                    }
-                                }
-
-                            ]
-
-                        },
-                        {
-                            id: "device_tree",
-                            view: "DeviceTree"
-                        }
-                    ]
+                view: "text",
+                id: "txtFilter",
+                label: "<span class='webix_icon fa-filter' style='padding-left: 10px;'></span>",
+                labelWidth: 32,
+                placeholder: "leave empty to discard",
+                value: "",
+                on: {
+                    onTimedKeyPress: function () {
+                        $$("device_tree").filter("#value#", this.getValue());
+                    }
                 }
             },
             {
-                header: "My Devices",
-                body: {
-                    rows: [
-                        {
-                            view: "button",
-                            type: "iconButton",
-                            id: "btnSettings",
-                            label: "Apply filter",
-                            icon: "filter",
-                            align: "left",
-                            click: function () {
-                                $$("device_tree").devices_filter = new DeviceFilter({
-                                    user: $$("top-toolbar").$$("lblUsername").getValue(),
-                                    value: $$("txtDevicesList").getValue().split('\n')
-                                });
-                                $$("device_tree").updateRoot();
-                            }
-                        },
-                        {
-                            view: "textarea",
-                            id: "txtDevicesList",
-                            value: "*/*/*"
-                        }
-                    ]
-                }
+                id: "device_tree",
+                view: "DeviceTree"
             }
         ]
     };
