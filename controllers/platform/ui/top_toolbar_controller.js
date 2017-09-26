@@ -46,11 +46,8 @@ TangoWebapp.platform.TopToolbarController = MVC.Controller.extend('top_toolbar_c
                             click: function () {
                                 var newRestUrl = $$('top-toolbar').$$('txtTangoRestApiHost').getValue();
 
-                                UserContext.current.update_attributes({
-                                    rest_url: newRestUrl
-                                });
-
-                                TangoWebapp.platform.MainController.changeTangoRestApiUrl(newRestUrl);
+                                var tangoRestApi = new TangoRestApi({url: newRestUrl});
+                                PlatformContext.set_rest(tangoRestApi);
                             },
                             tooltip: "Refresh Tango rest api URL"
                         },
@@ -92,14 +89,14 @@ TangoWebapp.platform.TopToolbarController = MVC.Controller.extend('top_toolbar_c
     },
     /* @Prototype */
     {
-        "tango_webapp.user_login subscribe": function (data) {
-            var context = data.data;
+        "platform_context.init subscribe": function (event) {
+            var context = event.data;
 
-            $$("top-toolbar").$$("btnUsername").define('tooltip', context.user);
-            $$("top-toolbar").$$("btnUsername").define('label', context.user);
+            $$("top-toolbar").$$("btnUsername").define('tooltip', context.user_context.user);
+            $$("top-toolbar").$$("btnUsername").define('label', context.user_context.user);
             $$("top-toolbar").$$("btnUsername").refresh();
 
-            $$("top-toolbar").$$('txtTangoRestApiHost').setValue(context.rest_url);
+            $$("top-toolbar").$$('txtTangoRestApiHost').setValue(context.rest.url);
         }
     }
 );

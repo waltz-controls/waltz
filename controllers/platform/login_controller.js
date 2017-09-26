@@ -40,13 +40,8 @@ TangoWebapp.platform.LoginController = MVC.Controller.extend("login_controller",
                                             var form = this.getFormView();
                                             var isValid = form.validate();
                                             if (!isValid) return;
-                                            var user_context = TangoWebapp.platform.UserContext.find_one(form.elements.name.getValue());
 
-                                            OpenAjax.hub.publish('tango_webapp.user_login', {
-                                                name: form.elements.name.getValue(),
-                                                password: form.elements.password.getValue(),
-                                                data: user_context
-                                            });
+                                            OpenAjax.hub.publish('tango_webapp.user_login', form.getValues());
                                         }
                                         },
                                         {
@@ -83,8 +78,6 @@ TangoWebapp.platform.LoginController = MVC.Controller.extend("login_controller",
         $$("login").hide();
     },
     "tango_webapp.user_logout subscribe": function () {
-        TangoWebapp.platform.UserContext.current.destroy();
-
         $$("login").show();
     }
 });

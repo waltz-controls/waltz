@@ -8,38 +8,36 @@
 TangoWebapp.platform.UserContext = MVC.Model.extend('user_context',
     /* @Static */
     {
-        //global instance
-        current: null,
         store_type: TangoWebappStorage,
         id: "user",
         attributes: {
             user: 'string',
             rest_url: 'string',
-            tango_hosts: 'string[]',
+            tango_hosts: '{}',
             device_filters: 'string[]' //TODO move to application layer?
         },
         default_attributes: {
-            rest_url: 'http://localhost:10001',
-            tango_hosts: ['localhost:10000'],
-            device_filters: ['*/*/*']
+            rest_url: 'http://localhost:10001'
         },
         /**
          * WARNING!!! Due to limitations of TangoWebapp storage this method always returns new instance
          *
          * @param id
          *
-         * @event {OpenAjax} tango_webapp.user_context_loaded
-         * @returns {UserContext} loaded or newly created with default values
+         * @event {OpenAjax} user_context.init
+         * @returns {UserContext} found or newly created with default values
          */
         find_one: function (id) {
             var result = this._super(id);
             if (result == null) {
                 result = new this({
-                    user: id
+                    user: id,
+                    tango_hosts: {
+                        'localhost:10000': ''
+                    },
+                    device_filters: ['*/*/*']
                 });
             }
-            this.current = result;
-            OpenAjax.hub.publish("tango_webapp.user_context_loaded", {data: result});
             return result;
         },
         /**
@@ -59,7 +57,7 @@ TangoWebapp.platform.UserContext = MVC.Model.extend('user_context',
          *
          * @param attrs
          *
-         * @event {OpenAjax} tango_webapp.user_context.init
+         * @event {OpenAjax} user_context.init
          *
          * @constructor
          */
@@ -68,49 +66,60 @@ TangoWebapp.platform.UserContext = MVC.Model.extend('user_context',
             //we have to override stored instance because this._super writes it with default values
             //this happens because WebappStorage has to create new instance everytime it is being updated
             //therefore wrong values are being persisted
-            this.Class.store.update(this[this.Class.id], this.attributes());
-            this.Class.current = this;
-            OpenAjax.hub.publish("tango_webapp.user_context.init", {data: this});
+            this.save();
+            //global instance
+            UserContext = this;
+            this.publish("init", {data: this});
         },
         /**
          * Stores this instance in localStorage
          *
          * Sets this.Class.current to null
          *
-         * @event {OpenAjax} tango_webapp.user_context.destroy
+         * @event {OpenAjax} user_context.destroy
          */
         destroy: function () {
-            this.Class.store.update(this[this.Class.id], this.attributes());
-            this.Class.current = null;
-            OpenAjax.hub.publish("tango_webapp.user_context.destroy", {data: this});
+            this.save();
+            UserContext = null;
+            this.publish("destroy", {data: this});
         },
         /**
          *
          * @param attrs
          *
-         * @event {OpenAjax} tango_webapp.user_context.update
+         * @event {OpenAjax} user_context.update
          */
         update_attributes: function (attrs) {
             this._super(attrs);
-            OpenAjax.hub.publish("tango_webapp.user_context.update", {data: this});
+            this.publish("update", {data: this});
         },
         /**
          *
          * @param {string} tango_host
          *
-         * @event {OpenAjax} tango_webapp.user_context.add_tango_host
+         * @event {OpenAjax} user_context.add_tango_host
          */
         add_tango_host: function (tango_host) {
-            var new_tango_hosts = this.tango_hosts.concat(tango_host);
-            this.update_attributes({
-                tango_hosts: new_tango_hosts
-            });
-            OpenAjax.hub.publish("tango_webapp.user_context.add_tango_host", {
+            this.tango_hosts[tango_host] = "";
+            this.save();
+            this.publish("add_tango_host", {
+                context: this,
+                data: tango_host
+            })
+        },
+        /**
+         *
+         * @param tango_host
+         *
+         * @event {OpenAjax} user_context.delete_tango_host
+         */
+        delete_tango_host: function (tango_host) {
+            delete this.tango_hosts[tango_host];
+            this.save();
+            this.publish("delete_tango_host", {
                 context: this,
                 data: tango_host
             })
         }
     }
 );
-
-UserContext = TangoWebapp.platform.UserContext;
