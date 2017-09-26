@@ -92,6 +92,20 @@
             minWidth: 320,
             maxHeight: 480,
             on: {
+                "user_context.init subscribe": function (event) {
+                    var data = [];
+                    var context = event.data;
+
+                    for (var tango_host in context.tango_hosts) {
+                        if (!context.tango_hosts.hasOwnProperty(tango_host)) continue;
+
+                        data.push({
+                            id: tango_host
+                        });
+                    }
+
+                    $$('dashboard').$$('tango_hosts').parse(data);
+                },
                 "user_context.add_tango_host subscribe": function (event) {
                     $$('dashboard').$$('tango_hosts').add({
                         id: event.data
@@ -150,7 +164,16 @@
         },
         defaults: {
             minWidth: 320,
-            maxHeight: 480
+            maxHeight: 480,
+            on: {
+                "platform_context.init subscribe": function (event) {
+                    event.controller.$$('tango-host-info-value')
+                        .bind(event.data.tango_hosts)
+                },
+                "platform_context.destroy subscribe": function (event) {
+                    event.controller.$$('tango-host-info-value').unbind()
+                }
+            }
         }
     }, TangoWebapp.mixin.OpenAjaxListener, webix.IdSpace, webix.ui.layout);
 
