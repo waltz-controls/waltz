@@ -12,17 +12,18 @@
                 rows: [
                     {
                         type: 'header',
-                        template: "<span class='webix_strong'>Tango hosts</span>",
+                        template: "<span class='webix_icon fa-server'></span><span class='webix_strong'> TANGO hosts</span>",
                         height: 40
                     },
                     {
                         view: 'form',
-                        height: 80,
+                        height: 60,
                         elements: [
                             {
                                 cols: [
                                     {
                                         view: 'text',
+                                        id: "new-tango-host",
                                         name: 'new_tango_host',
                                         placeholder: 'localhost:10000',
                                         invalidMessage: "Value does not match pattern: host:port",
@@ -71,32 +72,39 @@
         },
         $init: function (config) {
             webix.extend(config, this._ui());
+
+            this.$ready.push(function () {
+                var data = [];
+                var context = PlatformContext.user_context;
+
+                for (var tango_host in context.tango_hosts) {
+                    if (!context.tango_hosts.hasOwnProperty(tango_host)) continue;
+
+                    data.push({
+                        id: tango_host
+                    });
+                }
+
+                $$('dashboard').$$('tango_hosts').parse(data);
+            });
         },
         defaults: {
             minWidth: 320,
             maxHeight: 480,
             on: {
-                "user_context.init subscribe": function (event) {
-                    var data = [];
-                    var context = event.data;
-
-                    for (var tango_host in context.tango_hosts) {
-                        if (!context.tango_hosts.hasOwnProperty(tango_host)) continue;
-
-                        data.push({
-                            id: tango_host
-                        });
-                    }
-
-                    $$('dashboard').$$('tango_hosts').parse(data);
-                },
                 "user_context.add_tango_host subscribe": function (event) {
                     $$('dashboard').$$('tango_hosts').add({
                         id: event.data
                     });
+                    var rest = PlatformContext.rest;
+                    rest.fetchHost(event.data).then(function (tango_host) {
+                        TangoWebappHelpers.log(tango_host.id + " has been added.");
+                    })
                 },
                 "user_context.delete_tango_host subscribe": function (event) {
                     $$('dashboard').$$('tango_hosts').remove(event.data);
+
+                    //TODO do we need to remove tango_host from context here?
                 },
                 "user_context.destroy subscribe": function () {
                     $$('dashboard').$$('tango_hosts').clearAll();
@@ -106,6 +114,39 @@
         }
     }, TangoWebapp.mixin.OpenAjaxListener, webix.ui.layout);
 
+
+    webix.protoUI({
+        name: 'tango_host_info',
+        _ui: function () {
+            return {
+                rows: [
+                    {
+                        type: 'header',
+                        height: 40,
+                        template: "<span class='webix_icon fa-database'></span><span class='webix_strong'> TANGO host info</span>"
+                    },
+                    {
+                        template: '???'
+                    }
+                ]
+            }
+        },
+        $init: function (config) {
+            webix.extend(config, this._ui());
+        },
+        defaults: {
+            minWidth: 320,
+            maxHeight: 480,
+            datatype: 'jsarray',
+
+            data: new Array(14),
+            on: {
+                "platform_context.init subscribe": function (event) {
+                    $$('dashboard').$$('tango_host_info').bind(event.data.tango_hosts)
+                }
+            }
+        }
+    }, TangoWebapp.mixin.OpenAjaxListener, webix.IdSpace, webix.ui.layout);
 
     webix.protoUI({
         name: "dashboard",
@@ -146,12 +187,9 @@
                         rows: [
                             {},
                             {
-                                minWidth: 320,
-                                minHeight: 480,
-                                id: 'tango_host_info',
-                                datatype: 'jsarray',
-                                template: "???",
-                                data: new Array(14)
+                                view: 'tango_host_info',
+                                id: 'tango-host-info'
+
                             },
                             {}
                         ]
@@ -176,9 +214,6 @@
         },
         $init: function (config) {
             webix.extend(config, this._ui());
-            this.$ready.push(function () {
-                this.$$('tango_host_info').bind(this.$$('tango_hosts'))
-            }.bind(this));
         }
     }, webix.IdSpace, webix.ui.layout);
 })();

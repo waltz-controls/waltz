@@ -41,6 +41,10 @@ TangoWebapp.platform.PlatformContext = MVC.Model.extend('platform_context',
                 rest_url: v.url
             });
 
+            TangoWebappHelpers.iterate(this.tango_hosts, function (it) {
+                it.rest = rest;
+            });
+
             this.publish("set_rest", {data: this});
         },
         //TODO jmvc attributes clashes with tango attributes
@@ -53,40 +57,30 @@ TangoWebapp.platform.PlatformContext = MVC.Model.extend('platform_context',
          * @event {OpenAjax} platform_context.init
          */
         init: function (attrs) {
-            this._super(attrs);
             this.tango_hosts = new webix.DataCollection();
             this.devices = new webix.DataCollection();
 
+            this._super(attrs);//calls set_rest
+
             PlatformContext = this;
-            this.publish("init", {data: this});
-        },
-        /**
-         *
-         * @param {TangoDevice} device
-         *
-         * @event {OpenAjax} platform_context.add_device
-         */
-        add_device: function (device) {
-            //TODO protect from not unique id
-            this.devices.add(device);
-            this.publish("add_device", {
-                new_device: device,
-                data: this
-            });
-        },
-        /**
-         *
-         * @param {TangoHost} tango_host
-         *
-         * @evemt {OpenAjax} platform_context.add_tango_host
-         */
-        add_tango_host: function (tango_host) {
-            //TODO protect from not unique id
-            this.tango_hosts.add(tango_host);
-            this.publish("add_tango_host", {
-                new_tango_host: tango_host,
-                data: this
-            });
+
+            var user_context = this.user_context;
+            var rest = this.rest;
+
+            var tango_hosts = [];
+            for (var tango_host in user_context.tango_hosts) {
+                if (!user_context.tango_hosts.hasOwnProperty(tango_host)) continue;
+
+                tango_hosts.push(tango_host);
+            }
+
+            rest.promise.all(tango_hosts.map(function (it) {
+                return rest.fetchHost.apply(rest, it.split(':'))
+            })).then(function (resp) {
+                this.tango_hosts.parse(resp);
+
+                this.publish("init", {data: this});
+            }.bind(this));
         },
         /**
          * Destroys this instance

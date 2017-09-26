@@ -45,24 +45,24 @@ TangoWebapp.TangoRestApi = MVC.Model.extend('tango_rest_api',
          * @event {OpenAjax} tango_webapp.rest_api.fetch_host
          * @return {Promise}
          */
-        fetchHost: function (host, port) {
-            return this.request().hosts(host + "/" + port).get()
+        fetchHost: function (host) {
+            return this.request().hosts(host.replace(':', '/')).get()
                 .then(function (resp) {
                         var newHost = new TangoWebapp.TangoHost(MVC.Object.extend(resp, {
-                            id: host + ":" + port,
+                            id: host,
                             rest: this,
                             isAlive: true
                         }));
-                    OpenAjax.hub.publish("tango_webapp.rest_api.fetch_host", {data: newHost});
+                    OpenAjax.hub.publish("tango_webapp.tango_host_loaded", {data: newHost});
                         return newHost;
                     }.bind(this)
                 ).fail(function () {
                     var newHost = new TangoWebapp.TangoHost({
-                        id: host + ":" + port,
+                        id: host,
                         rest: this,
                         isAlive: false
                     });
-                    OpenAjax.hub.publish("tango_webapp.rest_api.fetch_host", {data: newHost});
+                    OpenAjax.hub.publish("tango_webapp.tango_host_loaded", {data: newHost});
                     return newHost;
                 }.bind(this));
         },

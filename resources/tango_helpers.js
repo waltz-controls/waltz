@@ -126,17 +126,6 @@ MVC.Object.extend(TangoWebapp, {
             }).show();
         },
 
-        iterate: function (collection, f) {
-            var id = collection.getFirstId(),
-                last = collection.getLastId();
-            if(!id || ! last) return;
-            for (; id !== last; id = collection.getNextId(id)) {
-                var item = collection.getItem(id);
-                f(id, item);
-            }
-            f(id, collection.getItem(last))
-        },
-
         changeTangoHost: function () {
             var popup;
 

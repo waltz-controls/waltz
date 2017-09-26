@@ -26,4 +26,7 @@ include(function () { //runs after prior includes are loaded
     }
 });
 
-include.resources("platform/webix/tango_mixins");
+include.resources(
+    "platform/webix/tango_mixins",
+    "platform/helpers"
+);

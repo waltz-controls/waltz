@@ -2,7 +2,7 @@
  *
  * @type {TangoHost}
  */
-TangoWebapp.TangoHost = TangoWebapp.DataCollectionWrapper.extend("tango_host",
+TangoWebapp.TangoHost = MVC.Model.extend("tango_host",
     /*@Static */
     {
         attributes: {
@@ -25,20 +25,12 @@ TangoWebapp.TangoHost = TangoWebapp.DataCollectionWrapper.extend("tango_host",
         toUrl: function () {
             return this.host + "/" + this.port;
         },
-        addDevice: function (device) {
-            this.value.add(device);
-            this.value.setCursor(device.id);
-        },
-        //TODO ??? name or id
-        getDevice: function (name) {
-            return this.value.getItem(this.id + "/" + name);
-        },
         /**
          *
          * @event {OpenAjax} tango_webapp.device_loaded
          *
          * @param name
-         * @return {Promise}
+         * @return {Promise} device
          */
         fetchDevice: function (name) {
             return this.fetchDatabase()
@@ -60,7 +52,7 @@ TangoWebapp.TangoHost = TangoWebapp.DataCollectionWrapper.extend("tango_host",
         /**
          *
          * @event {OpenAjax} tango_webapp.database_loaded
-         * @return {Promise}
+         * @return {Promise} database
          */
         fetchDatabase: function () {
             return this.rest.request().hosts(this.toUrl()).devices(this.name).get()
@@ -70,9 +62,9 @@ TangoWebapp.TangoHost = TangoWebapp.DataCollectionWrapper.extend("tango_host",
 
                         var device = new TangoWebapp.TangoDevice(MVC.Object.extend(resp, {
                             id: this.id + "/" + this.name,
+                            name: this.name,
                             host: this
                         }));
-                        this.addDevice(device);
                         OpenAjax.hub.publish("tango_webapp.device_loaded", {data: device});
                         return device;
                     }.bind(this)

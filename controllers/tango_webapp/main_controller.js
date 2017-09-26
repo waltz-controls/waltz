@@ -9,40 +9,42 @@ TangoWebapp.MainController = MVC.Controller.extend('main', {
      *
      * @param {Object} params
      */
-    load: function (params) {
-
-
+    "platform_context.init subscribe": function (event) {
         TangoWebapp.devices = new webix.DataCollection();
 
         TangoWebapp.globals.rest_api_host.addDb(TangoWebapp.globals.tango_host);
 
-
-        webix.ui({
-            multi: true,
-            cols: [
-                {
-                    header: "<span class='webix_icon fa-sitemap'></span> Devices Tree",
-                    body: TangoWebapp.ui.newDeviceTree()
-                },
-                {
-                    borderless: true,
-                    body: {
-                        type: 'space',
-                        view: "tabview",
-                        id: "main-tabview",
-                        cells: [
-                            {
-                                header: "<span class='webix_icon fa-dashboard'></span> Dashboard",
-                                body: {
-                                    id: 'dashboard',
-                                    view: "dashboard"
+        if ($$('tango-webapp') === undefined) {
+            webix.ui({
+                id: 'tango-webapp',
+                multi: true,
+                cols: [
+                    {
+                        header: "<span class='webix_icon fa-sitemap'></span> Devices Tree",
+                        body: TangoWebapp.ui.newDeviceTree()
+                    },
+                    {
+                        borderless: true,
+                        body: {
+                            type: 'space',
+                            view: "tabview",
+                            id: "main-tabview",
+                            cells: [
+                                {
+                                    header: "<span class='webix_icon fa-dashboard'></span> Dashboard",
+                                    body: {
+                                        id: 'dashboard',
+                                        view: "dashboard"
+                                    }
                                 }
-                            }
-                        ]
+                            ]
+                        }
                     }
-                }
-            ]
-        }, $$('content'));
+                ]
+            }, $$('content'));
+
+            webix.html.remove(document.getElementById('ajax-loader'));
+        }
 
         webix.ui.fullScreen();
     }

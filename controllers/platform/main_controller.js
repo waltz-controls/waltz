@@ -11,7 +11,7 @@ TangoWebapp.platform.MainController = MVC.Controller.extend('main', {
      * @param {Object} params
      */
     load: function (params) {
-        webix.html.remove(document.getElementById('ajax-loader'));
+
 
         TangoWebapp.consts.LOG_DATE_FORMATTER = webix.Date.dateToStr("%c");
 
@@ -48,7 +48,6 @@ TangoWebapp.platform.MainController = MVC.Controller.extend('main', {
         TangoWebapp.debug("platform/main");
     },
     "tango_webapp.user_login subscribe": function (data) {
-        debugger
         var user_context = TangoWebapp.platform.UserContext.find_one(data.name);
 
         var rest = new TangoWebapp.TangoRestApi({url: user_context.rest_url});
@@ -66,18 +65,14 @@ TangoWebapp.platform.MainController = MVC.Controller.extend('main', {
         var rest = event.data.rest;
 
         rest.isAlive()
-            .then(function (rest) {
-                var tangoHosts = context.user_context.tango_hosts;
-                for (var it in tangoHosts) {
-                    if (!tangoHosts.hasOwnProperty(it)) continue;
-                    rest.fetchHost.apply(rest, it.split(':'))
-                        .then(function (host) {
-                            PlatformContext.add_tango_host(host);
-                        });
-                }
-            })
             .fail(function () {
                 alert("TANGO REST API host is not alive!!! Please change it in the top toolbar!")
             })
+    },
+    "tango_webapp.device_loaded subscribe": function (event) {
+        PlatformContext.devices.add(event.data);
+    },
+    "tango_webapp.tango_host_loaded subscribe": function (event) {
+        PlatformContext.tango_hosts.add(event.data);
     }
 });

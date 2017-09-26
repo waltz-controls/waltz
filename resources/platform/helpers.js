@@ -1,0 +1,53 @@
+MVC.Object.extend(TangoWebapp.helpers, {
+    iterate: function (collection, f) {
+        var id = collection.getFirstId(),
+            last = collection.getLastId();
+        if (!id || !last) return;
+        for (; id !== last; id = collection.getNextId(id)) {
+            var item = collection.getItem(id);
+            f(id, item);
+        }
+        f(id, collection.getItem(last))
+    },
+    /**
+     *
+     * @param msg
+     */
+    log: function (msg) {
+        console.log(msg);
+        webix.message(msg);
+        $$('main-log').log({type: '', value: msg, timestamp: TangoWebapp.consts.LOG_DATE_FORMATTER(new Date())});
+    },
+
+    /**
+     *
+     * @param msg
+     */
+    error: function (msg) {
+        console.error(msg);
+        var id = $$('main-log').log({
+            type: 'error',
+            value: msg,
+            timestamp: TangoWebapp.consts.LOG_DATE_FORMATTER(new Date())
+        });
+        $$('bottom-toolbar').switchLogBtnIcon('error');
+        debugger
+    },
+
+    /**
+     *
+     * @param msg
+     */
+    debug: function (msg) {
+        if (MVC.env() === 'development' || MVC.env() === 'test') {
+            console.log(msg);
+            var id = $$('main-log').log({
+                type: '',
+                value: msg,
+                timestamp: TangoWebapp.consts.LOG_DATE_FORMATTER(new Date())
+            });
+        }
+    }
+});
+
+TangoWebappHelpers = TangoWebapp.helpers;
