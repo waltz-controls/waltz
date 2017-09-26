@@ -12,24 +12,8 @@
                 rows: [
                     {
                         type: 'header',
-                        template: "Tango hosts"
-                    },
-                    {
-                        gravity: 6,
-                        id: 'tango_hosts',
-                        view: 'list',
-                        select: true,
-                        template: "<span class='webix_icon fa-minus-square-o remove_tango_host'></span> #id#",
-                        on: {
-                            onItemClick: function (id) {
-                                PlatformContext.tango_hosts.setCursor(id);
-                            }
-                        },
-                        onClick: {
-                            remove_tango_host: function (event, id) {
-                                UserContext.delete_tango_host(id);
-                            }
-                        }
+                        template: "<span class='webix_strong'>Tango hosts</span>",
+                        height: 40
                     },
                     {
                         view: 'form',
@@ -63,6 +47,24 @@
                                 ]
                             }
                         ]
+                    },
+                    {
+                        gravity: 6,
+                        id: 'tango_hosts',
+                        view: 'list',
+                        autoheight: true,
+                        select: true,
+                        template: "<span class='webix_icon fa-minus-square-o remove_tango_host'></span> #id#",
+                        on: {
+                            onItemClick: function (id) {
+                                PlatformContext.tango_hosts.setCursor(id);
+                            }
+                        },
+                        onClick: {
+                            remove_tango_host: function (event, id) {
+                                UserContext.delete_tango_host(id);
+                            }
+                        }
                     }
                 ]
             };
@@ -72,7 +74,7 @@
         },
         defaults: {
             minWidth: 320,
-            minHeight: 480,
+            maxHeight: 480,
             on: {
                 "user_context.init subscribe": function (event) {
                     var data = [];
