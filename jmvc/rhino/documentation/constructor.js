@@ -84,6 +84,7 @@ MVC.Doc.Constructor = MVC.Doc.Pair.extend('constructor',
     code_setup: MVC.Doc.Function.prototype.code_setup,
     toFile : function(summary){
         print("Rendering constructor for "+this.name+"...")
+        if (typeof this.name == 'undefined') return;
         this.summary = summary
         var res = this.Class._file_view.render(this)
         MVCOptions.save('docs/classes/'+this.name+".html", res)

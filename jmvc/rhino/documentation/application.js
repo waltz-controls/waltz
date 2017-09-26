@@ -207,6 +207,7 @@ MVC.Doc.Application.prototype =
         
         //break previous and self
         var previous = this.all_sorted[i-1].name;
+        if (!previous) return me;
         var t = me.split(/\./)
         var p = previous.split(/\./);
         var left_res = [], right_res = []
@@ -224,7 +225,7 @@ MVC.Doc.Application.prototype =
      * @param {String} summary the left hand side.
      */
     summary_page : function(summary){
-        MVC.Doc.render_to('docs/'+this.name+".html","jmvc/rhino/documentation/templates/summary.ejs" , this)
+        MVC.Doc.render_to("docs/index.html", "jmvc/rhino/documentation/templates/summary.ejs", this)
 
     },
     
