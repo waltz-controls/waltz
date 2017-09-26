@@ -126,25 +126,31 @@
                         template: "<span class='webix_icon fa-database'></span><span class='webix_strong'> TANGO host info</span>"
                     },
                     {
-                        template: '???'
+                        autoheight: true,
+                        id: "tango-host-info-value",
+                        template: function (obj, $view) {
+                            if (obj.Class === undefined) return "Please choose TANGO host in the list to view the info";
+                            if (obj.isAlive)
+                                return "<span class='webix_strong'>" + obj.id + "</span>  is alive!" +
+                                    "<hr/><div style='display: block'>" + obj.info.join('<br/>') + "</div>";
+                            else
+                                return "<span class='webix_icon fa-frown-o'></span><span class='webix_strong'>" + obj.id + "</span>  is not alive!";
+                        }
                     }
                 ]
             }
         },
         $init: function (config) {
             webix.extend(config, this._ui());
+
+            this.$ready.push(function () {
+                this.$$('tango-host-info-value')
+                    .bind(PlatformContext.tango_hosts)
+            }.bind(this));
         },
         defaults: {
             minWidth: 320,
-            maxHeight: 480,
-            datatype: 'jsarray',
-
-            data: new Array(14),
-            on: {
-                "platform_context.init subscribe": function (event) {
-                    $$('dashboard').$$('tango_host_info').bind(event.data.tango_hosts)
-                }
-            }
+            maxHeight: 480
         }
     }, TangoWebapp.mixin.OpenAjaxListener, webix.IdSpace, webix.ui.layout);
 

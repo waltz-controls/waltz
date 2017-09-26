@@ -75,7 +75,7 @@ TangoWebapp.platform.PlatformContext = MVC.Model.extend('platform_context',
             }
 
             rest.promise.all(tango_hosts.map(function (it) {
-                return rest.fetchHost.apply(rest, it.split(':'))
+                return rest.fetchHost(it)
             })).then(function (resp) {
                 this.tango_hosts.parse(resp);
 
