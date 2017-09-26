@@ -18,7 +18,18 @@
                         gravity: 6,
                         id: 'tango_hosts',
                         view: 'list',
-                        template: "#id#"
+                        select: true,
+                        template: "<span class='webix_icon fa-minus-square-o remove_tango_host'></span> #id#",
+                        on: {
+                            onItemClick: function (id) {
+                                PlatformContext.tango_hosts.setCursor(id);
+                            }
+                        },
+                        onClick: {
+                            remove_tango_host: function (event, id) {
+                                UserContext.delete_tango_host(id);
+                            }
+                        }
                     },
                     {
                         view: 'form',
@@ -46,7 +57,7 @@
                                             var isValid = form.validate();
                                             if (!isValid) return;
 
-                                            UserContext.current.add_tango_host(form.elements.new_tango_host.getValue());
+                                            UserContext.add_tango_host(form.elements.new_tango_host.getValue());
                                         }
                                     }
                                 ]
@@ -63,10 +74,29 @@
             minWidth: 320,
             minHeight: 480,
             on: {
-                "tango_webapp.platform_context.add_tango_host subscribe": function (event) {
-                    $$('dashboard').$$('tango_hosts').data.sync(event.data.tango_hosts);
+                "user_context.init subscribe": function (event) {
+                    var data = [];
+                    var context = event.data;
+
+                    for (var tango_host in context.tango_hosts) {
+                        if (!context.tango_hosts.hasOwnProperty(tango_host)) continue;
+
+                        data.push({
+                            id: tango_host
+                        });
+                    }
+
+                    $$('dashboard').$$('tango_hosts').parse(data);
                 },
-                "tango_webapp.user_logout subscribe": function () {
+                "user_context.add_tango_host subscribe": function (event) {
+                    $$('dashboard').$$('tango_hosts').add({
+                        id: event.data
+                    });
+                },
+                "user_context.delete_tango_host subscribe": function (event) {
+                    $$('dashboard').$$('tango_hosts').remove(event.data);
+                },
+                "user_context.destroy subscribe": function () {
                     $$('dashboard').$$('tango_hosts').clearAll();
                     $$('dashboard').$$('tango_hosts').refresh();
                 }

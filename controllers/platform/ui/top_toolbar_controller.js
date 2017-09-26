@@ -89,14 +89,14 @@ TangoWebapp.platform.TopToolbarController = MVC.Controller.extend('top_toolbar_c
     },
     /* @Prototype */
     {
-        "platform_context.init subscribe": function (event) {
+        "user_context.init subscribe": function (event) {
             var context = event.data;
 
-            $$("top-toolbar").$$("btnUsername").define('tooltip', context.user_context.user);
-            $$("top-toolbar").$$("btnUsername").define('label', context.user_context.user);
+            $$("top-toolbar").$$("btnUsername").define('tooltip', context.user);
+            $$("top-toolbar").$$("btnUsername").define('label', context.user);
             $$("top-toolbar").$$("btnUsername").refresh();
 
-            $$("top-toolbar").$$('txtTangoRestApiHost').setValue(context.rest.url);
+            $$("top-toolbar").$$('txtTangoRestApiHost').setValue(context.rest_url);
         }
     }
 );
