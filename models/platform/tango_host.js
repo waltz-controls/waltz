@@ -65,10 +65,19 @@ TangoWebapp.TangoHost = MVC.Model.extend("tango_host",
                             name: this.name,
                             host: this
                         }));
-                        OpenAjax.hub.publish("tango_webapp.device_loaded", {data: device});
+
+                    this.isAlive = true;
+                    this.errors = [];
+
                         return device;
                     }.bind(this)
+                ).fail(function (resp) {
+                        this.isAlive = false;
+                        this.add_errors(resp.errors);
+                        throw resp;
+                    }.bind(this)
                 ).then(function (device) {
+                    OpenAjax.hub.publish("tango_webapp.device_loaded", {data: device});//TODO use PlatformContext directly?
                     this.database = new TangoWebapp.TangoDatabase({
                         id: device.id,
                         device: device,

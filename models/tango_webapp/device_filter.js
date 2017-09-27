@@ -2,6 +2,7 @@
  * Model device_filter
  *
  * @type {DeviceFilter}
+ * @class
  */
 DeviceFilter = MVC.Model.extend('device_filter',
     /* @Static */

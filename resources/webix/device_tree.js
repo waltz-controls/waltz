@@ -324,5 +324,4 @@ TangoWebapp.ui.newDeviceTree = function () {
             }
         ]
     };
-}
-;
+};

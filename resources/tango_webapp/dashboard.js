@@ -1,11 +1,22 @@
+//isolate this component
 (function () {
     var getting_started = {
         minWidth: 240,
         minHeight: 240,
-        template: new View({url: 'views/getting_started.ejs'}).render()
+        rows: [
+            {
+                type: 'header',
+                height: 30,
+                template: "<span class='webix_strong'>Getting started</span>"
+            },
+            {
+                template: new View({url: 'views/getting_started.ejs'}).render()
+            }
+        ]
     };
 
-    webix.protoUI({
+    //defining such variables helps navigating this component in IDE
+    var dashboard_device_filters = webix.protoUI({
         name: 'dashboard_device_filters',
         _ui: function () {
             return {
@@ -24,14 +35,15 @@
                         view: "button",
                         type: "iconButton",
                         id: "btnSettings",
-                        label: "Apply filters",
+                        label: "Apply filters to Devices tree",
                         icon: "filter",
                         align: "left",
                         click: function () {
                             //TODO validate
+                            var value = this.getTopParentView().$$("value").getValue().split('\n');
                             $$("device_tree").devices_filter = new DeviceFilter({
                                 user: PlatformContext.user_context.user,
-                                value: this.$$("txtDevicesList").getValue().split('\n')
+                                value: value
                             });
                             $$("device_tree").updateRoot();
                         }
@@ -52,7 +64,7 @@
         }
     }, webix.IdSpace, webix.ui.layout);
 
-    webix.protoUI({
+    var dashboard_tango_hosts = webix.protoUI({
         name: 'dashboard_tango_hosts',
         _ui: function () {
             return {
@@ -105,6 +117,7 @@
                         template: "<span class='webix_icon fa-minus-square-o remove_tango_host'></span> #id#",
                         on: {
                             onItemClick: function (id) {
+                                var tango_host = PlatformContext.tango_hosts.getItem(id);
                                 PlatformContext.tango_hosts.setCursor(id);
                             }
                         },
@@ -159,8 +172,10 @@
                     });
                     var rest = PlatformContext.rest;
                     rest.fetchHost(event.data).then(function (tango_host) {
-                        TangoWebappHelpers.log(tango_host.id + " has been added.");
-                    })
+                        return tango_host.fetchDatabase();
+                    }).then(function (db) {
+                        TangoWebappHelpers.log(db.device.host.id + " has been added.");
+                    });
                 },
                 "user_context.delete_tango_host subscribe": function (event) {
                     $$('dashboard').$$('tango_hosts').remove(event.data);
@@ -176,7 +191,7 @@
     }, TangoWebapp.mixin.OpenAjaxListener, webix.ui.layout);
 
 
-    webix.protoUI({
+    var dashboard_tango_host_info = webix.protoUI({
         name: 'dashboard_tango_host_info',
         _ui: function () {
             return {
@@ -224,7 +239,7 @@
         }
     }, TangoWebapp.mixin.OpenAjaxListener, webix.IdSpace, webix.ui.layout);
 
-    webix.protoUI({
+    var dashboard_device_info = webix.protoUI({
         name: 'dashboard_device_info',
         _ui: function () {
             return {
@@ -267,7 +282,7 @@
         }
     }, TangoWebapp.mixin.OpenAjaxListener, webix.IdSpace, webix.ui.layout);
 
-    webix.protoUI({
+    var dashboard = webix.protoUI({
         name: "dashboard",
         _ui: function () {
             return {

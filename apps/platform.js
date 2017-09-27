@@ -1,4 +1,7 @@
-//define new namespace
+/**
+ *
+ * @namespace
+ */
 TangoWebapp.platform = {};
 
 include(function () { //runs after prior includes are loaded
@@ -21,7 +24,8 @@ include(function () { //runs after prior includes are loaded
             "platform/tango_device", "platform/tango_database",
             "platform/tango_rest_api",
             "platform/user_context",
-            "platform/tango_mixins"
+            "platform/tango_mixins",
+            "platform/tango_webapp_storage"
         )
     }
 });
