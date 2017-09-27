@@ -45,6 +45,9 @@
                                 user: PlatformContext.user_context.user,
                                 value: value
                             });
+                            PlatformContext.user_context.update_attributes({
+                                device_filters: value
+                            });
                             $$("device_tree").updateRoot();
                         }
                     }
@@ -60,9 +63,14 @@
         },
         defaults: {
             minWidth: 240,
-            minHeight: 240
+            minHeight: 240,
+            on: {
+                "user_context.init subscribe": function (event) {
+                    event.controller.$$('value').setValue(event.data.device_filters.join('\n'))
+                }
+            }
         }
-    }, webix.IdSpace, webix.ui.layout);
+    }, TangoWebapp.mixin.OpenAjaxListener, webix.IdSpace, webix.ui.layout);
 
     var dashboard_tango_hosts = webix.protoUI({
         name: 'dashboard_tango_hosts',
