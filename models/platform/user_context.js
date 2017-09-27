@@ -124,6 +124,12 @@ TangoWebapp.platform.UserContext = MVC.Model.extend('user_context',
                 context: this,
                 data: tango_host
             })
+        },
+        toDeviceFilter: function () {
+            return new DeviceFilter({
+                user: this.user,
+                value: this.device_filters
+            });
         }
     }
 );

@@ -44,7 +44,6 @@ TangoWebapp.TangoHost = MVC.Model.extend("tango_host",
                         name: name,
                         host: this
                     });
-                    this.addDevice(device);
                     OpenAjax.hub.publish("tango_webapp.device_loaded", {data: device});
                     return device;
                 }.bind(this));

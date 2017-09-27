@@ -41,14 +41,10 @@
                         click: function () {
                             //TODO validate
                             var value = this.getTopParentView().$$("value").getValue().split('\n');
-                            $$("device_tree").devices_filter = new DeviceFilter({
-                                user: PlatformContext.user_context.user,
-                                value: value
-                            });
                             PlatformContext.user_context.update_attributes({
                                 device_filters: value
                             });
-                            $$("device_tree").updateRoot();
+                            $$("devices-tree").updateRoot();
                         }
                     }
                 ]

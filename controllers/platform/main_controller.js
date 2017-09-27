@@ -74,10 +74,21 @@ TangoWebapp.platform.MainController = MVC.Controller.extend('main', {
                 alert("Tango REST API host is not alive!!! Please change it in the top toolbar!")
             })
     },
+    /**
+     * Refreshes device in the context
+     *
+     * @param event
+     */
     "tango_webapp.device_loaded subscribe": function (event) {
+        if (PlatformContext.devices.exists(event.data.id)) {
+            PlatformContext.devices.remove(event.data.id);
+        }
         PlatformContext.devices.add(event.data);
     },
     "tango_webapp.tango_host_loaded subscribe": function (event) {
         PlatformContext.tango_hosts.add(event.data);
+    },
+    "user_context.delete_tango_host subscribe": function (event) {
+        PlatformContext.tango_hosts.remove(event.data);
     }
 });

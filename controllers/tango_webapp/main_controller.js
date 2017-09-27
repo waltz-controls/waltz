@@ -1,5 +1,5 @@
 /**
- * Main controller
+ * Main controller of the TangoWebapp applcation. It is responsible for creating main application UI after platform context has been initialized
  *
  * @type {TangoWebapp.MainController}
  */
@@ -21,7 +21,10 @@ TangoWebapp.MainController = MVC.Controller.extend('main', {
                 cols: [
                     {
                         header: "<span class='webix_icon fa-sitemap'></span> Devices Tree",
-                        body: TangoWebapp.ui.newDeviceTree()
+                        body: {
+                            context: event.data,
+                            view: 'devices_tree'
+                        }
                     },
                     {
                         borderless: true,

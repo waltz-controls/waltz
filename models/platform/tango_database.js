@@ -39,6 +39,27 @@ TangoWebapp.TangoDatabase = MVC.Model.extend('tango_database',
                     device_class: resp.output.svalue[7]
                 };
             });
+        },
+        /**
+         *
+         * @param wildcard
+         */
+        getDeviceDomainList: function (wildcard) {
+            return this.device.executeCommand("DbGetDeviceDomainList", wildcard);
+        },
+        /**
+         *
+         * @param wildcard
+         */
+        getDeviceFamilyList: function (wildcard) {
+            return this.device.executeCommand("DbGetDeviceFamilyList", wildcard);
+        },
+        /**
+         *
+         * @param wildcard
+         */
+        getDeviceMemberList: function (wildcard) {
+            return this.device.executeCommand("DbGetDeviceMemberList", wildcard);
         }
         //TODO commands
     }

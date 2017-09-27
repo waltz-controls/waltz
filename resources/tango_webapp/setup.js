@@ -1,6 +1,7 @@
 MVC.Object.extend(TangoWebapp.ui, {
     _webix_files: [
-        "dashboard"
+        "dashboard",
+        "devices_tree"
     ]
 });
 
