@@ -1,24 +1,5 @@
 /** @module DevicesTree*/
 (function () {
-    // if (id === 'root') {
-    //     promise = webix.promise.defer();
-    //     promise.resolve([TangoWebapp.getDatabase()]);
-    // } else if (item.$level == 2) {//domain
-    //     promise = webix.promise.all(this.devices_filter.domain_filter.map(function (it) {
-    //         return item._db.DbGetDeviceDomainList(it);
-    //     }));
-    // } else if (item.$level == 3) {//family
-    //     promise = webix.promise.all(this.devices_filter.getFamilyFilters(item.value).map(function (it) {
-    //         return item._db.DbGetDeviceFamilyList(it);
-    //     }));
-    // } else if (item.$level == 4) {//member
-    //     promise = webix.promise.all(this.devices_filter.getMemberFilters(this.getItem(item.$parent).value, item.value).map(function (it) {
-    //         return item._db.DbGetDeviceMemberList(it);
-    //     }));
-    // } else {
-    //     return false;//ignore member
-    // }
-
     var tree = webix.protoUI({
         devices_filter: null,
         name: 'devices_tree_tree',
@@ -194,7 +175,7 @@
                 },
                 "user_context.add_tango_host subscribe": function (event) {
                     event.controller.parse({
-                        parent_id: 'root',
+                        parent: 'root',
                         data: [{
                             id: event.data,
                             value: event.data,
@@ -211,9 +192,6 @@
                 },
                 "platform_context.set_rest subscribe": function (event) {
                     event.controller.updateRoot(event.data);
-                },
-                "platform_context.destroy subscribe": function () {
-                    event.controller.clearAll();
                 }
             }
         }

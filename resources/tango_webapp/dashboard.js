@@ -121,7 +121,6 @@
                         template: "<span class='webix_icon fa-minus-square-o remove_tango_host'></span> #id#",
                         on: {
                             onItemClick: function (id) {
-                                var tango_host = PlatformContext.tango_hosts.getItem(id);
                                 PlatformContext.tango_hosts.setCursor(id);
                             }
                         },
