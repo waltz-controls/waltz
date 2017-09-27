@@ -51,6 +51,7 @@ DeviceFilter = MVC.Model.extend('device_filter',
         },
         getMemberFilters:function(domain, family){
             return this.value.filter(function(it){
+                //TODO use regex here
                 return (it.split('/')[0] == domain || it.split('/')[0] === "*")
                     && (it.split('/')[1] == family || it.split('/')[1] === "*");
             }).map(function(it){
