@@ -65,8 +65,13 @@ TangoWebapp.platform.MainController = MVC.Controller.extend('main', {
         var rest = event.data.rest;
 
         rest.isAlive()
-            .fail(function () {
-                alert("TANGO REST API host is not alive!!! Please change it in the top toolbar!")
+            .then(function (rest) {
+                TangoWebappHelpers.log("Tango REST API host has been set to " + rest.url);
+            })
+            .fail(function (rest) {
+                TangoWebappHelpers.error("Tango REST API host has been set to " + rest.url);
+                //TODO replace with full screen error message
+                alert("Tango REST API host is not alive!!! Please change it in the top toolbar!")
             })
     },
     "tango_webapp.device_loaded subscribe": function (event) {

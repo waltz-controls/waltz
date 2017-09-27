@@ -5,9 +5,9 @@ MVC.Object.extend(TangoWebapp.helpers, {
         if (!id || !last) return;
         for (; id !== last; id = collection.getNextId(id)) {
             var item = collection.getItem(id);
-            f(id, item);
+            f(item, id);
         }
-        f(id, collection.getItem(last))
+        f(collection.getItem(last), id)
     },
     /**
      *

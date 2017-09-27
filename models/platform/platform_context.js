@@ -42,7 +42,7 @@ TangoWebapp.platform.PlatformContext = MVC.Model.extend('platform_context',
             });
 
             TangoWebappHelpers.iterate(this.tango_hosts, function (it) {
-                it.rest = rest;
+                it.rest = v;
             });
 
             this.publish("set_rest", {data: this});
