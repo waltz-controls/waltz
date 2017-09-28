@@ -5,6 +5,11 @@
 TangoWebapp.platform = {};
 
 include(function () { //runs after prior includes are loaded
+    include.resources(
+        "platform/webix/tango_mixins",
+        "platform/helpers"
+    );
+
     include.models(
         "platform/data_collection_wrapper", "platform/tango_webapp_storage",
         "platform/tango_rest_api_request", "platform/tango_host", "platform/tango_device", "platform/tango_database",
@@ -19,6 +24,8 @@ include(function () { //runs after prior includes are loaded
     // );
 
     if (include.get_env().match(/test/)) {
+        include('../test/setup');
+
         include.unit_tests(
             "platform/tango_rest_api_request",
             "platform/tango_device", "platform/tango_database",
@@ -29,8 +36,3 @@ include(function () { //runs after prior includes are loaded
         )
     }
 });
-
-include.resources(
-    "platform/webix/tango_mixins",
-    "platform/helpers"
-);

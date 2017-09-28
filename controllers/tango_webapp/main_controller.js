@@ -10,7 +10,7 @@ TangoWebapp.MainController = MVC.Controller.extend('main', {
      * @param {Object} event - event.data contains fully properly initialized PlatformContext model
      * @see PlatformContext
      */
-    "platform_context.init subscribe": function (event) {
+    "platform_context.create subscribe": function (event) {
         TangoWebapp.devices = new webix.DataCollection();
 
         TangoWebapp.globals.rest_api_host.addDb(TangoWebapp.globals.tango_host);

@@ -11,10 +11,37 @@ TangoWebapp.platform.PlatformContext = MVC.Model.extend('platform_context',
         },
         default_attributes: {
             id: 'singleton'
+        },
+        /**
+         *
+         * @param {Object} attrs - must have rest:TangoRestApi and user_context:UserContext
+         */
+        create: function (attrs) {
+            PlatformContext = this.create_as_existing(attrs);
+
+            var user_context = PlatformContext.user_context;
+
+            var tango_hosts = [];
+            for (var tango_host in user_context.tango_hosts) {
+                if (!user_context.tango_hosts.hasOwnProperty(tango_host)) continue;
+
+                tango_hosts.push(tango_host);
+            }
+
+
+            var rest = PlatformContext.rest;
+            rest.promise.all(tango_hosts.map(function (it) {
+                return rest.fetchHost(it)
+            })).then(function (resp) {
+                PlatformContext.tango_hosts.parse(resp);
+
+                this.publish("create", {data: this});
+            }.bind(this));
         }
     },
     /* @Prototype */
     {
+        //TODO association
         user_context: null,
         rest: null,
         tango_hosts: null,
@@ -53,34 +80,12 @@ TangoWebapp.platform.PlatformContext = MVC.Model.extend('platform_context',
          *
          * @param attrs
          * @constructor
-         *
-         * @event {OpenAjax} platform_context.init
          */
         init: function (attrs) {
             this.tango_hosts = new webix.DataCollection();
             this.devices = new webix.DataCollection();
 
             this._super(attrs);//calls set_rest
-
-            PlatformContext = this;
-
-            var user_context = this.user_context;
-            var rest = this.rest;
-
-            var tango_hosts = [];
-            for (var tango_host in user_context.tango_hosts) {
-                if (!user_context.tango_hosts.hasOwnProperty(tango_host)) continue;
-
-                tango_hosts.push(tango_host);
-            }
-
-            rest.promise.all(tango_hosts.map(function (it) {
-                return rest.fetchHost(it)
-            })).then(function (resp) {
-                this.tango_hosts.parse(resp);
-
-                this.publish("init", {data: this});
-            }.bind(this));
         },
         /**
          * Destroys this instance

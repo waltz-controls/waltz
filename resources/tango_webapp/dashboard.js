@@ -173,7 +173,7 @@
             minWidth: 240,
             minHeight: 240,
             on: {
-                "user_context.init subscribe": function (event) {
+                "user_context.create subscribe": function (event) {
                     event.controller.$$('value').setValue(event.data.device_filters.join('\n'))
                 }
             }
@@ -267,7 +267,7 @@
             minWidth: 320,
             maxHeight: 480,
             on: {
-                "user_context.init subscribe": function (event) {
+                "user_context.create subscribe": function (event) {
                     var data = [];
                     var context = event.data;
 
@@ -344,7 +344,7 @@
             minWidth: 320,
             maxHeight: 480,
             on: {
-                "platform_context.init subscribe": function (event) {
+                "platform_context.create subscribe": function (event) {
                     event.controller.$$('tango-host-info-value')
                         .bind(event.data.tango_hosts)
                 },
@@ -387,7 +387,7 @@
             minWidth: 320,
             maxHeight: 480,
             on: {
-                "platform_context.init subscribe": function (event) {
+                "platform_context.create subscribe": function (event) {
                     event.controller.$$('tango-device-info-value')
                         .bind(event.data.devices)
                 },

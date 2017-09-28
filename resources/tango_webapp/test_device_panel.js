@@ -6,10 +6,16 @@
             return {
                 rows: [
                     {
-                        type: 'header',
+                        type: 'clean',
+                        id: 'device',
                         height: 30,
-                        template: '<span class="webix_strong">#name#</span>',
-                        data: {name: 'Device has not been selected'}
+                        //TODO align center
+                        template: 'Device[<span class="webix_strong">#name#</span>]',
+                        on: {
+                            onBindRequest: function () {
+                                this.getTopParentView().enable()
+                            }
+                        }
                     },
                     {
                         template: 'body'
@@ -18,8 +24,15 @@
             };
         },
         $init: function (config) {
-            webix.extend(config, this._ui())
-        }
+            webix.extend(config, this._ui());
 
+            this.$ready.push(function () {
+                this.disable();
+                this.$$('device').bind(config.context.devices);
+            }.bind(this));
+        },
+        defaults: {
+            on: {}
+        }
     }, webix.IdSpace, webix.ui.layout)
 })();

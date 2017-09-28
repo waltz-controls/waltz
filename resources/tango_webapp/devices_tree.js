@@ -174,7 +174,7 @@
 
                     return false;//block further execution
                 },
-                "user_context.init subscribe": function (event) {
+                "user_context.create subscribe": function (event) {
                     var user_context = event.data;
                     event.controller.devices_filter = new DeviceFilter({
                         user: user_context.user,
@@ -195,7 +195,7 @@
                 "user_context.delete_tango_host subscribe": function (event) {
                     event.controller.remove(event.data);
                 },
-                "platform_context.init subscribe": function (event) {
+                "platform_context.create subscribe": function (event) {
                     event.controller.updateRoot(event.data);
                 },
                 "platform_context.set_rest subscribe": function (event) {

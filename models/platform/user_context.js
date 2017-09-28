@@ -24,7 +24,7 @@ TangoWebapp.platform.UserContext = MVC.Model.extend('user_context',
          *
          * @param id
          *
-         * @event {OpenAjax} user_context.init
+         * @event {OpenAjax} user_context.create
          * @returns {UserContext} found or newly created with default values
          */
         find_one: function (id) {
@@ -38,6 +38,8 @@ TangoWebapp.platform.UserContext = MVC.Model.extend('user_context',
                     device_filters: ['*/*/*']
                 });
             }
+            UserContext = result;
+            this.publish('create', {data: result});
             return result;
         },
         /**
@@ -57,8 +59,6 @@ TangoWebapp.platform.UserContext = MVC.Model.extend('user_context',
          *
          * @param attrs
          *
-         * @event {OpenAjax} user_context.init
-         *
          * @constructor
          */
         init: function (attrs) {
@@ -68,8 +68,6 @@ TangoWebapp.platform.UserContext = MVC.Model.extend('user_context',
             //therefore wrong values are being persisted
             this.save();
             //global instance
-            UserContext = this;
-            this.publish("init", {data: this});
         },
         /**
          * Stores this instance in localStorage
