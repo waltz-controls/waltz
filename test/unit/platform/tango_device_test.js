@@ -57,8 +57,8 @@ new MVC.Test.Unit('tango_device', {
         this.assert_equal("TangoProxyException", resp.errors[0].reason);
     },
     test_fetch_database: function () {
-        var api = new TangoRestApi({url: 'http://localhost:10001'});
-        api.fetchHost("localhost", 10000)
+        var api = new TangoRestApi({url: TestValues.rest_url});
+        api.fetchHost(TestValues.tango_host)
             .then(function (host) {
                 return host.fetchDatabase();
             })
@@ -67,5 +67,23 @@ new MVC.Test.Unit('tango_device', {
     check_fetch1: function (db) {
         this.assert_equal("localhost:10000/sys/database/2", db.id);
         this.assert_equal("sys/database/2", db.device.name);
+    },
+    test_fetch_commands: function () {
+        var api = new TangoRestApi({url: TestValues.rest_url});
+        api.fetchHost(TestValues.tango_host)
+            .then(function (host) {
+                return host.fetchDevice(TestValues.test_device);
+            })
+            .then(function (device) {
+                return device.fetchCommands();
+            })
+            .then(this.next_callback('check_fetch_commands'));
+    },
+    check_fetch_commands: function (commands) {
+        this.assert(commands.length);
+        var cmd0 = commands[0];
+        this.assert(cmd0.Class);
+        this.assert_equal(TestValues.tango_host + "/" + TestValues.test_device + "/CrashFromDevelopperThread", cmd0.id);
+        this.assert_equal('CrashFromDevelopperThread', cmd0.name)
     }
 });

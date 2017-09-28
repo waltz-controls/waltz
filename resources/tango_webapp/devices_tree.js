@@ -98,9 +98,17 @@
                             break;
                         case 5://member
                             tango_host_id = this._get_host_id(item);
-                            PlatformContext.tango_hosts.setCursor(tango_host_id);
-                            tango_host = PlatformContext.tango_hosts.getItem(tango_host_id);
                             device_name = this._get_device_name(item);
+
+                            PlatformContext.tango_hosts.setCursor(tango_host_id);
+
+                            var device_id = tango_host_id + "/" + device_name;
+                            if (PlatformContext.devices.exists(device_id)) {
+                                PlatformContext.devices.setCursor(device_id);
+                                return;
+                            }
+
+                            tango_host = PlatformContext.tango_hosts.getItem(tango_host_id);
                             tango_host.fetchDevice(device_name).then(function (device) {
                                 PlatformContext.devices.setCursor(device.id);
                             });

@@ -11,10 +11,6 @@ TangoWebapp.MainController = MVC.Controller.extend('main', {
      * @see PlatformContext
      */
     "platform_context.create subscribe": function (event) {
-        TangoWebapp.devices = new webix.DataCollection();
-
-        TangoWebapp.globals.rest_api_host.addDb(TangoWebapp.globals.tango_host);
-
         if ($$('tango-webapp') === undefined) {
             webix.ui({
                 id: 'tango-webapp',

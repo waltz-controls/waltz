@@ -4,7 +4,7 @@
  * @type {TangoRestApi}
  */
 TangoWebapp.TangoRestApi = MVC.Model.extend('tango_rest_api',
-    /* @Static */
+    /** @Static */
     {
         _api_version: 'rc4',
         id: "url",
@@ -13,7 +13,7 @@ TangoWebapp.TangoRestApi = MVC.Model.extend('tango_rest_api',
         },
         default_attributes: {}
     },
-    /* @Prototype */
+    /** @Prototype */
     {
         promise: null,
         req_ids: null,

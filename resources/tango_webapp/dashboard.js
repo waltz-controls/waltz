@@ -58,6 +58,7 @@
                                 placeholder: 'select in Tango hosts',
                                 validate: webix.rules.isNotEmpty,
                                 invalidMessage: "Tango host must be set"
+
                             },
                             {
                                 view: "text",
@@ -370,7 +371,11 @@
                         id: "tango-device-info-value",
                         template: function (obj, $view) {
                             if (obj.Class === undefined) return "Please choose TANGO device in the tree to view the info";
-                            return new View({url: 'views/device_info.ejs'}).render(obj.info);
+                            try {
+                                return new View({url: 'views/device_info.ejs'}).render(obj.info);
+                            } catch (e) {
+                                return "Failed to parse device info: " + e;
+                            }
                         }
                     }
                 ]

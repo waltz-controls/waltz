@@ -3,6 +3,7 @@ new Test.Functional('test_device_panel', {
         webix.ui({
             view: 'window',
             id: 'device-panel-test-window',
+            height: 480,
             body: {
                 view: 'test_device_panel',
                 id: 'device-panel-test',
@@ -21,7 +22,20 @@ new Test.Functional('test_device_panel', {
     },
     bind_request: function (device) {
         PlatformContext.devices.setCursor(device.id);
-        this.assert($$('device-panel-test').isEnabled())
+        this.assert($$('device-panel-test').isEnabled());
+        // this.assert_equal(30,$$('device-panel-test').$$('commands').$$('list').count());
+    },
+    test_bind_other: function () {
+        PlatformContext.rest.fetchHost(TestValues.tango_host)
+            .then(function (host) {
+                return host.fetchDevice('sys/database/2');
+            })
+            .then(this.next_callback('bind_other'))
+    },
+    bind_other: function (device) {
+        PlatformContext.devices.setCursor(device.id);
+        this.assert($$('device-panel-test').isEnabled());
+        // this.assert_equal(100,$$('device-panel-test').$$('commands').$$('list').count());
     },
     test_plot_open: function () {
         webix.ui({view: 'Plot', name: 'test', data: [1, 2, 3, 2, 5, 6, 1, 2, 8, 9, 3, 4, 5, 6]}).show();

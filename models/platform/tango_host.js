@@ -3,7 +3,7 @@
  * @type {TangoHost}
  */
 TangoWebapp.TangoHost = MVC.Model.extend("tango_host",
-    /*@Static */
+    /** @Static */
     {
         attributes: {
             host: "string",
@@ -13,9 +13,16 @@ TangoWebapp.TangoHost = MVC.Model.extend("tango_host",
             info: "string[]",
             is_alive: 'boolean'
         },
-        default_attributes: {}
+        default_attributes: {
+            id: 'not selected',
+            host: 'unknown',
+            port: 0,
+            name: 'unknown',
+            info: [],
+            is_alive: false
+        }
     },
-    /*@Prototype */
+    /** @Prototype */
     {
         rest: null,
         database: null,

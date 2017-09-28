@@ -4,7 +4,7 @@
  * @type {TangoDevice}
  */
 TangoWebapp.TangoDevice = TangoWebapp.DataCollectionWrapper.extend('tango_device',
-    /* @Static */
+    /** @Static */
     {
         attributes: {
             id: 'string', //host_id/name
@@ -14,23 +14,73 @@ TangoWebapp.TangoDevice = TangoWebapp.DataCollectionWrapper.extend('tango_device
             commands: '[]',
             pipes: '[]'
         },
-        default_attributes: {}
+        default_attributes: {
+            id: 'unknown', //host_id/name
+            name: 'not selected',
+            info: {}
+        }
     },
-    /* @Prototype */
+    /** @Prototype */
     {
-        admin: null,
-        host: null,
         set_admin: function (v) {
             this.admin = v;
         },
         set_host: function (v) {
             this.host = v;
         },
+        /**
+         *
+         * @param v
+         */
+        set_attrs: function (v) {
+            this.attrs = v;
+        },
+        /**
+         *
+         * @param v
+         */
+        set_commands: function (v) {
+            this.commands = v;
+        },
+        /**
+         *
+         * @param v
+         */
+        set_pipes: function (v) {
+            this.pipes = v;
+        },
+        /**
+         *
+         * @param attrs
+         */
+        init: function (attrs) {
+            //we can not just set these properties here i.e. this.attrs = ...
+            //in this case the property will be shared across all instances
+            this._super(MVC.Object.extend(attrs, {
+                attrs: new webix.DataCollection(),
+                commands: new webix.DataCollection(),
+                pipes: new webix.DataCollection()
+            }));
+        },
         fetchAttributes: function () {
 
         },
+        /**
+         *
+         * @returns {Promise}
+         */
         fetchCommands: function () {
-
+            return this.host.rest.request().hosts(this.host.toUrl()).devices(this.name).commands().get().then(function (resp) {
+                var commands = TangoCommand.create_many_as_existing(
+                    resp.map(function (it) {
+                        return MVC.Object.extend(it, {
+                            id: this.id + "/" + it.name
+                        })
+                    }.bind(this)));
+                //TODO not unique id
+                this.commands.parse(commands);
+                return commands;
+            }.bind(this));
         },
         fetchPipes: function () {
 

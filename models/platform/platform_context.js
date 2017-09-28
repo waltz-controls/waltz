@@ -17,6 +17,7 @@ TangoWebapp.platform.PlatformContext = MVC.Model.extend('platform_context',
          * @param {Object} attrs - must have rest:TangoRestApi and user_context:UserContext
          */
         create: function (attrs) {
+            //TODO make this return value
             PlatformContext = this.create_as_existing(attrs);
 
             var user_context = PlatformContext.user_context;
@@ -82,8 +83,16 @@ TangoWebapp.platform.PlatformContext = MVC.Model.extend('platform_context',
          * @constructor
          */
         init: function (attrs) {
-            this.tango_hosts = new webix.DataCollection();
-            this.devices = new webix.DataCollection();
+            this.tango_hosts = new webix.DataCollection({
+                defaultData: TangoHost.default_attributes
+            });
+            this.devices = new webix.DataCollection({
+                defaultData: webix.extend(TangoDevice.default_attributes, {
+                    attrs: new webix.DataCollection(),
+                    commands: new webix.DataCollection(),
+                    pipes: new webix.DataCollection()
+                })
+            });
 
             this._super(attrs);//calls set_rest
         },
