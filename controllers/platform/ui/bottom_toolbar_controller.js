@@ -93,6 +93,9 @@ TangoWebapp.platform.BottomToolbar = MVC.Controller.extend("bottom_toolbar_contr
     "tango_webapp.rest_success subscribe": function (data) {
         $$('bottom-toolbar').$$('rest-url').parse(this._toMsg(data.data, "DONE"));
     },
+    "tango_webapp.user_logout subscribe": function (event) {
+        $$('main-log').clearAll();
+    },
     _toMsg: function (req, msg) {
         return {
             type: req.type,
