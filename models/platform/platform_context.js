@@ -35,7 +35,7 @@ TangoWebapp.platform.PlatformContext = MVC.Model.extend('platform_context',
             })).then(function (resp) {
                 PlatformContext.tango_hosts.parse(resp);
 
-                this.publish("create", {data: this});
+                this.publish("create", {data: PlatformContext});
             }.bind(this));
         }
     },

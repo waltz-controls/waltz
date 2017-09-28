@@ -13,13 +13,14 @@ new Test.Functional('test_device_panel', {
         this.assert_not($$('device-panel-test').isEnabled());
     },
     test_bind_request: function () {
-        PlatformContext.rest.fetchHost('hzgxenvtest:10000')
+        PlatformContext.rest.fetchHost(TestValues.tango_host)
             .then(function (host) {
-                return host.fetchDevice('sys/tg_test/1');
+                return host.fetchDevice(TestValues.test_device);
             })
             .then(this.next_callback('bind_request'))
     },
     bind_request: function (device) {
+        PlatformContext.devices.setCursor(device.id);
         this.assert($$('device-panel-test').isEnabled())
     },
     test_plot_open: function () {

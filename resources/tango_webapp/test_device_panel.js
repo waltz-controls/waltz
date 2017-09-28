@@ -10,7 +10,18 @@
                         id: 'device',
                         height: 30,
                         //TODO align center
-                        template: 'Device[<span class="webix_strong">#name#</span>]'
+                        template: 'Device[<span class="webix_strong">#name#</span>]',
+                        on: {
+                            onBindApply: function () {
+                                this.setValues({
+                                    name: 'unknown'
+                                })
+                            },
+                            onBindRequest: function () {
+                                if (this.data.Class === undefined) return;
+                                this.getTopParentView().enable();
+                            }
+                        }
                     },
                     {
                         template: 'body'
