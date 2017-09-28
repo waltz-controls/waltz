@@ -7,7 +7,8 @@ TangoWebapp.MainController = MVC.Controller.extend('main', {
     /**
      * This is the main entry point of the application. This function is invoked after jmvc has been completely initialized.
      *
-     * @param {Object} params
+     * @param {Object} event - event.data contains fully properly initialized PlatformContext model
+     * @see PlatformContext
      */
     "platform_context.init subscribe": function (event) {
         TangoWebapp.devices = new webix.DataCollection();
@@ -28,6 +29,7 @@ TangoWebapp.MainController = MVC.Controller.extend('main', {
                     },
                     {
                         borderless: true,
+                        context: event.data,
                         body: {
                             type: 'space',
                             view: "tabview",
@@ -41,6 +43,14 @@ TangoWebapp.MainController = MVC.Controller.extend('main', {
                                     }
                                 }
                             ]
+                        }
+                    },
+                    {
+                        header: "<span class='webix_icon fa-microchip'></span> Device Test Panel",
+                        collapsed: true,
+                        body: {
+                            context: event.data,
+                            view: 'test_device_panel'
                         }
                     }
                 ]
