@@ -20,7 +20,7 @@
                 data.data.push({
                     id: it.id,
                     value: it.id,
-                    webix_kids: true
+                    webix_kids: it.is_alive
                 });
             });
 
@@ -121,16 +121,23 @@
                     switch (item.$level) {
                         case 2://tango_host
                             filter.domain_filter.map(function (it) {
-                                return tango_host.fetchDatabase().then(function (db) {
-                                    return db.getDeviceDomainList(it)
-                                }).then(function (resp) {
-                                    self.parse({
-                                        parent: id,
-                                        data: resp.output.map(function (el) {
-                                            return {value: el, webix_kids: true};
-                                        })
+                                return tango_host.fetchDatabase()
+                                    .fail(function () {
+                                        self.parse({
+                                            parent: id,
+                                            data: []
+                                        });
+                                    })
+                                    .then(function (db) {
+                                        return db.getDeviceDomainList(it)
+                                    }).then(function (resp) {
+                                        self.parse({
+                                            parent: id,
+                                            data: resp.output.map(function (el) {
+                                                return {value: el, webix_kids: true};
+                                            })
+                                        });
                                     });
-                                });
                             });
                             return false;
                         case 3://domain

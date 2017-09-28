@@ -208,8 +208,9 @@
                         autoheight: true,
                         id: "tango-host-info-value",
                         template: function (obj, $view) {
+                            //TODO see if we can use overlay here
                             if (obj.Class === undefined) return "Please choose TANGO host in the list to view the info";
-                            if (obj.isAlive)
+                            if (obj.is_alive)
                                 return "<span class='webix_strong'>" + obj.id + "</span>  is alive!" +
                                     "<hr/><div style='display: block'>" + obj.info.join('<br/>') + "</div>";
                             else

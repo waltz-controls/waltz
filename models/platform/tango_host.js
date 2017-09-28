@@ -11,7 +11,7 @@ TangoWebapp.TangoHost = MVC.Model.extend("tango_host",
             name: "string",
             id: "string", //host:port
             info: "string[]",
-            isAlive: 'boolean'
+            is_alive: 'boolean'
         },
         default_attributes: {}
     },
@@ -65,13 +65,13 @@ TangoWebapp.TangoHost = MVC.Model.extend("tango_host",
                             host: this
                         }));
 
-                    this.isAlive = true;
+                    this.is_alive = true;
                     this.errors = [];
 
                         return device;
                     }.bind(this)
                 ).fail(function (resp) {
-                        this.isAlive = false;
+                    this.is_alive = false;
                         this.add_errors(resp.errors);
                         throw resp;
                     }.bind(this)
