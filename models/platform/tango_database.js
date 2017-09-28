@@ -42,6 +42,13 @@ TangoWebapp.TangoDatabase = MVC.Model.extend('tango_database',
         },
         /**
          *
+         * @param svalue
+         */
+        addDevice: function (svalue) {
+            return this.device.executeCommand("DbAddDevice", svalue);
+        },
+        /**
+         *
          * @param wildcard
          */
         getDeviceDomainList: function (wildcard) {

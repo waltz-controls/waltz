@@ -52,6 +52,7 @@ TangoWebapp.platform.BottomToolbar = MVC.Controller.extend("bottom_toolbar_contr
                             id: "btnLog",
                             type: "icon",
                             tooltip: "Log console",
+                            //TODO add label
                             icon: "commenting",
                             width: 36,
                             popup: 'log',

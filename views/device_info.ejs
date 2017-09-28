@@ -3,14 +3,14 @@
 - Device Info ----------------------------------------
 </p>
 <ul>
-    <li>Name: <%= name%>
-    <li>Admin: <%= admin%>
-    <li>Class name: <%= device_class%>
-    <li>Host name: <%= host%>
-    <li>Version: <%= idl%>
-    <li>Server PID: <%= pid%>
-    <li>Exported: <%= exported%>
-    <li>Started at: <%= started_at%>
-    <li>Stopped at: <%= stopped_at%>
+    <li>Name: <%= name !== undefined ? name : 'Unknown'%>
+    <li>Admin: <%= admin !== undefined ? admin : 'Unknown'%>
+    <li>Class name: <%= device_class !== undefined ? device_class : 'Unknown'%>
+    <li>Host name: <%= host !== undefined ? host : 'Unknown'%>
+    <li>Version: <%= idl !== undefined ? idl : 'Unknown'%>
+    <li>Server PID: <%= pid !== undefined ? pid : 'Unknown'%>
+    <li>Exported: <%= exported !== undefined ? exported : 'Unknown'%>
+    <li>Started at: <%= started_at !== undefined ? started_at : 'Unknown'%>
+    <li>Stopped at: <%= stopped_at !== undefined ? stopped_at : 'Unknown'%>
 </ul>
 </div>

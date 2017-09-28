@@ -23,7 +23,8 @@ MVC.Object.extend(TangoWebapp.helpers, {
      *
      * @param msg
      */
-    error: function (msg) {
+    //TODO process reason
+    error: function (msg, reason) {
         console.error(msg);
         var id = $$('main-log').log({
             type: 'error',

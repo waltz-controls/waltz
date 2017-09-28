@@ -20,6 +20,7 @@
                 data.data.push({
                     id: it.id,
                     value: it.id,
+                    //TODO bind host node data to context.devices
                     webix_kids: it.is_alive
                 });
             });

@@ -15,6 +15,118 @@
         ]
     };
 
+    var server_wizard = webix.protoUI({
+        name: 'server_wizard',
+        /**
+         *
+         * @param {Object} data
+         *
+         * @private
+         */
+        _create_devices: function (data) {
+            webix.promise.all(
+                data.values.devices.map(function (it) {
+                    return data.host.fetchDatabase()
+                        .then(function (db) {
+                            return db.addDevice([data.values.server, it, data.values.className])
+                        })
+                        .then(TangoWebappHelpers.log.bind(null, "Device " + it + " has been added"))
+                        .fail(TangoWebappHelpers.error.bind(null, "Failed to add device " + it));
+                })
+            ).then($$('devices-tree').updateRoot.bind($$('devices-tree'), PlatformContext));
+        },
+        _ui: function () {
+            return {
+                rows: [
+                    {
+                        type: 'header',
+                        height: 30,
+                        template: "<span class='webix_icon fa-magic'></span><span class='webix_strong'> Tango Server Wizard</span>"
+                    },
+                    {
+                        view: 'form',
+                        id: 'form',
+                        elements: [
+                            {
+                                view: 'text',
+                                readonly: true,
+                                disabled: true,
+                                name: 'tango_host',
+                                label: "Tango host:",
+                                labelWidth: 150,
+                                labelPosition: "top",
+                                placeholder: 'select in Tango hosts',
+                                validate: webix.rules.isNotEmpty,
+                                invalidMessage: "Tango host must be set"
+                            },
+                            {
+                                view: "text",
+                                name: "server",
+                                label: "ServerName/Instance:",
+                                labelWidth: 150,
+                                labelPosition: "top",
+                                placeholder: "server/instance, i.e. TangoTest/test",
+                                validate: function (value) {
+                                    return /^[\w]*\/[\w]*$/.test(value);
+                                }, invalidMessage: "Incorrect server/instance"
+                            },
+                            {
+                                view: "text",
+                                name: "className",
+                                label: "Class name:",
+                                labelWidth: 150,
+                                labelPosition: "top",
+                                placeholder: "device class, i.e. MyClass",
+                                validate: webix.rules.isNotEmpty,
+                                invalidMessage: "Can not be empty"
+                            },
+                            {
+                                view: "textarea0",
+                                name: "devices",
+                                label: "Devices:",
+                                height: 120,
+                                labelWidth: 150,
+                                labelPosition: "top",
+                                placeholder: "instance/family/member, i.e. sys/tg_test/1",
+                                validate: function (value) {
+                                    var rv = false;
+                                    do {
+                                        rv = /[\w]*\/[\w]*\/[\w]*/.test(value.shift());
+                                    } while (rv && value.length != 0);
+                                    return rv;
+                                }, invalidMessage: "Incorrect devices"
+                            },
+                            {
+                                view: 'button',
+                                type: 'form',
+                                value: 'Create new Tango devices...',
+                                click: function () {
+                                    var form = this.getFormView();
+                                    var isValid = form.validate();
+                                    if (!isValid) return;
+
+
+                                    this.getTopParentView()._create_devices({
+                                        host: form.elements.tango_host.data.value,
+                                        values: form.getValues()
+                                    });
+                                }
+                            }
+                        ]
+                    }
+                ]
+            };
+        },
+        $init: function (config) {
+            webix.extend(config, this._ui());
+
+            this.$ready.push(function () {
+                this.$$('form').elements.tango_host.bind(PlatformContext.tango_hosts);
+            }.bind(this));
+        },
+        defaults: {}
+    }, webix.IdSpace, webix.ui.layout);
+
     //defining such variables helps navigating this component in IDE
     var dashboard_device_filters = webix.protoUI({
         name: 'dashboard_device_filters',
@@ -286,6 +398,7 @@
         }
     }, TangoWebapp.mixin.OpenAjaxListener, webix.IdSpace, webix.ui.layout);
 
+    //TODO remove dashboard- from ids
     var dashboard = webix.protoUI({
         name: "dashboard",
         _ui: function () {
@@ -315,6 +428,11 @@
                             {
                                 view: 'dashboard_tango_hosts',
                                 id: 'dashboard-tango-hosts'
+                            },
+                            {},
+                            {
+                                view: 'server_wizard',
+                                id: 'dashboard-server-wizard'
                             },
                             {}
                         ]
