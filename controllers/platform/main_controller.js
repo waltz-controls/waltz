@@ -36,6 +36,7 @@ TangoWebapp.platform.MainController = MVC.Controller.extend('main', {
     },
     "tango_webapp.user_login subscribe": function (data) {
         var user_context = TangoWebapp.platform.UserContext.find_one(data.name);
+        TangoWebappHelpers.debug(user_context.toString());
 
         var rest = new TangoWebapp.TangoRestApi({url: user_context.rest_url});
 

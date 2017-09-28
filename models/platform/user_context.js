@@ -128,6 +128,20 @@ TangoWebapp.platform.UserContext = MVC.Model.extend('user_context',
                 user: this.user,
                 value: this.device_filters
             });
+        },
+        toString: function () {
+            var tango_hosts = [];
+
+            for (var tango_host in this.tango_hosts) {
+                if (!this.tango_hosts.hasOwnProperty(tango_host)) continue;
+                tango_hosts.push(tango_host);
+            }
+
+            return ["UserContext[",
+                "user=", this.user,
+                ";tango_hosts=", this.rest_url,
+                ";tango_hosts=", tango_hosts.join(),
+                ";device_filters=", this.device_filters.join(), "]"].join('\n');
         }
     }
 );
