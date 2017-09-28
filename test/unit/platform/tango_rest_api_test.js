@@ -21,7 +21,7 @@ var test = new MVC.Test.Unit('tango_rest_api', {
     test_load_host: function () {
         var one = new TangoRestApi({url: 'http://localhost:10001'});
 
-        one.fetchHost("localhost", "10000").then(this.next_callback("check_load_host"))
+        one.fetchHost("localhost:10000").then(this.next_callback("check_load_host"))
     },
     check_load_host: function (resp) {
         this.assert_equal("sys/database/2", resp.name)

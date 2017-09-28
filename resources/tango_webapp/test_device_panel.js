@@ -10,12 +10,7 @@
                         id: 'device',
                         height: 30,
                         //TODO align center
-                        template: 'Device[<span class="webix_strong">#name#</span>]',
-                        on: {
-                            onBindRequest: function () {
-                                this.getTopParentView().enable()
-                            }
-                        }
+                        template: 'Device[<span class="webix_strong">#name#</span>]'
                     },
                     {
                         template: 'body'
