@@ -1,5 +1,33 @@
 /** @module DevicesTree*/
 (function () {
+    /**
+     *
+     * @type {{}}
+     */
+    var tree_context_menu = {
+        view: "contextmenu",
+        //autoheight: true,
+        data: [
+            {id: 'open', value: 'Open'},
+            {id: 'view', value: 'Monitor'},
+            {$template: 'Separator'},
+            {id: 'delete', value: 'Delete'}
+        ],
+        on: {
+            onItemClick: function (id) {
+                var tree = this.getContext().obj;
+                var item = tree.getItem(this.getContext().id);
+                var hostId = tree._get_host_id(item);
+                var name = tree._get_device_name(item);
+                var device_id = hostId + "/" + name;
+                OpenAjax.hub.publish("tango_webapp.device_" + id, {data: {id: device_id, host_id: hostId, name: name}});
+            }
+        }
+    };
+
+    /**
+     * @type {webix.protoUI}
+     */
     var tree = webix.protoUI({
         devices_filter: null,
         name: 'devices_tree_tree',
@@ -21,7 +49,8 @@
                     id: it.id,
                     value: it.id,
                     //TODO bind host node data to context.devices
-                    webix_kids: it.is_alive
+                    webix_kids: it.is_alive,
+                    $css: 'tango_host'
                 });
             });
 
@@ -76,15 +105,20 @@
             webix.extend(config, {
                 data: [data]
             });
+
+            webix.ui(tree_context_menu).attachTo(this);
         },
         defaults: {
             type: 'lineTree',
             select: true,
             on: {
-                onItemClick: function (id, e, node) {
-                    debugger
+                onBeforeContextMenu: function (id, e, node) {
                     var item = this.getItem(id);
-
+                    return item.$level == 5;//member
+                },
+                onItemClick: function (id, e, node) {
+                    var item = this.getItem(id);
+                    if (!item) return false;//TODO or true
 
                     var tango_host_id;
                     var tango_host;
@@ -112,7 +146,6 @@
                     }
                 },
                 onDataRequest: function (id, cbk, url) {
-                    debugger
                     var item = this.getItem(id);
 
                     var tango_host_id = this._get_host_id(item);
@@ -137,7 +170,7 @@
                                         self.parse({
                                             parent: id,
                                             data: resp.output.map(function (el) {
-                                                return {value: el, webix_kids: true};
+                                                return {value: el, webix_kids: true, $css: 'domain'};
                                             })
                                         });
                                     });
@@ -152,7 +185,7 @@
                                         self.parse({
                                             parent: id,
                                             data: resp.output.map(function (el) {
-                                                return {value: el, webix_kids: true};
+                                                return {value: el, webix_kids: true, $css: 'family'};
                                             })
                                         })
                                     })
@@ -167,7 +200,10 @@
                                         self.parse({
                                             parent: id,
                                             data: resp.output.map(function (el) {
-                                                return {value: el};
+                                                return {
+                                                    $css: 'member',
+                                                    value: el
+                                                };
                                             })
                                         })
                                     })
@@ -189,6 +225,7 @@
                         data: [{
                             id: event.data,
                             value: event.data,
+                            $css: 'tango_host',
                             webix_kids: true
                         }
                         ]

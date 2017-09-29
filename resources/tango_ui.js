@@ -9,10 +9,7 @@ TangoWebapp.ui = {
         //plot
         "webix/spectrum_plot","webix/image_plot",
         //atk
-        "webix/atk_panel_view",
-        //windows
-        "webix/device_panel_window",
-        "webix/device_view"
+        "webix/atk_panel_view"
     ]
 };
 

@@ -1,6 +1,6 @@
 webix.protoUI({
     _device : null,
-    name    : "DeviceView",
+    name: "device_view",
     $init   : function (config) {
         this._device = config.device;
 
@@ -16,14 +16,9 @@ TangoWebapp.ui.newDeviceView = function (config) {
         header: "Device [" + config.device.name + "]",
         close : true,
         body  : {
-            view : "DeviceView",
+            view: "device_view",
             id   : config.id,
             cells: [
-                {
-                    header: "Info",
-                    body  : TangoWebapp.ui.newDeviceInfo(config.device)
-
-                },
                 {
                     header: "Properties",
                     body  : TangoWebapp.ui.newDeviceProperties(config.device)

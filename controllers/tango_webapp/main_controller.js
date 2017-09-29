@@ -56,5 +56,29 @@ TangoWebapp.MainController = MVC.Controller.extend('main', {
         }
 
         webix.ui.fullScreen();
+    },
+    "tango_webapp.device_open subscribe": function (event) {
+        var promise;
+        var id = event.data.id;
+        if (PlatformContext.devices.exists(id))
+            promise = webix.promise.resolve(PlatformContext.devices.getItem(id));
+        else
+            promise = PlatformContext.tango_hosts.getItem(event.data.host_id).fetchDevice(event.data.name);
+
+        promise.then(function (device) {
+            var device_view_id = "view/" + device.id;
+            if (!$$(device_view_id)) {
+                $$("main-tabview").addView(
+                    TangoWebapp.ui.newDeviceView(
+                        {
+                            device: device,
+                            id: device_view_id
+                        })
+                );
+            }
+            $$(device_view_id).show();
+
+            $$(device_view_id).$$('device_properties').activate();
+        }).fail(TangoWebappHelpers.error);
     }
 });
