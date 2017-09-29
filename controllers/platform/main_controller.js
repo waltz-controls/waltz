@@ -69,9 +69,10 @@ TangoWebapp.platform.MainController = MVC.Controller.extend('main', {
      */
     "tango_webapp.device_loaded subscribe": function (event) {
         if (PlatformContext.devices.exists(event.data.id)) {
-            PlatformContext.devices.remove(event.data.id);
+            PlatformContext.devices.updateItem(event.data.id, event.data);
+        } else {
+            PlatformContext.devices.add(event.data);
         }
-        PlatformContext.devices.add(event.data);
     },
     "tango_webapp.tango_host_loaded subscribe": function (event) {
         PlatformContext.tango_hosts.add(event.data);
