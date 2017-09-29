@@ -21,11 +21,11 @@ TangoWebapp.ui.newDeviceView = function (config) {
             cells: [
                 {
                     header: "Properties",
-                    body  : TangoWebapp.ui.newDeviceProperties(config.device)
+                    body: TangoWebapp.ui.newDevicePropertiesView(config.device)
                 },
                 {
                     header: "Polling",
-                    body: TangoWebapp.ui.newDevicePolling(config.device)
+                    body: TangoWebapp.ui.newDevicePollingView(config.device)
                 },
                 {
                     header: "Events",

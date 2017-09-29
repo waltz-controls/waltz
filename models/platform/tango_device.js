@@ -118,7 +118,15 @@ TangoWebapp.TangoDevice = TangoWebapp.DataCollectionWrapper.extend('tango_device
             }.bind(this));
         },
         fetchAdmin: function () {
-
+            return this.host.fetchDevice('dserver/' + this.info.admin)
+                .then(function (device) {
+                    var admin = new TangoAdminDevice({
+                        id: device.id,
+                        device: device
+                    });
+                    this.set_admin(admin);
+                    return admin;
+                }.bind(this))
         },
         /**
          *

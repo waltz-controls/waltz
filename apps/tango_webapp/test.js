@@ -7,10 +7,11 @@ include.unit_tests(
 );
 include.functional_tests(
     'tango_webapp/device_panel',
-    'tango_webapp/device_properties'
+    'tango_webapp/device_properties',
+    'tango_webapp/device_polling'
     // 'atk_panel',
 
-    // 'device_polling',
+
     // 'device_events',
     // 'device_logging',
     // 'device_tree',
