@@ -15,6 +15,7 @@ TangoWebapp.TangoDevice = TangoWebapp.DataCollectionWrapper.extend('tango_device
             pipes: '[]'
         },
         default_attributes: {
+            //TODO use not selected as default id or similar - important is that it must be the same as in TangoHost
             id: 'unknown', //host_id/name
             name: 'not selected',
             info: {}

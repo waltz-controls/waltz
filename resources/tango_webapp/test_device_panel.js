@@ -345,7 +345,15 @@
         },
         defaults: {
             disabled: true,
-            on: {}
+            on: {
+                "platform_context.create subscribe": function (event) {
+                    event.controller.$$('device').bind(event.data.devices);
+                },
+                "platform_context.destroy subscribe": function (event) {
+                    //TODO clean values
+                    event.controller.disable();
+                }
+            }
         }
-    }, webix.IdSpace, webix.ui.layout)
+    }, TangoWebapp.mixin.OpenAjaxListener, webix.IdSpace, webix.ui.layout)
 })();
