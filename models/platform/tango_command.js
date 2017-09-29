@@ -8,7 +8,7 @@ TangoCommand = MVC.Model.extend('tango_command',
     {
 
         attributes: {
-            id: 'string',//device_id/name
+            id: 'string',//host_id/device_id/name
             name: 'string',
             info: 'object'
             //TODO history

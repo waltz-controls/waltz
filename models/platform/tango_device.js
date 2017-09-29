@@ -62,8 +62,20 @@ TangoWebapp.TangoDevice = TangoWebapp.DataCollectionWrapper.extend('tango_device
                 pipes: new webix.DataCollection()
             }));
         },
-        fetchAttributes: function () {
-
+        /**
+         * @returns {Promise}
+         */
+        fetchAttrs: function () {
+            return this.host.rest.request().hosts(this.host.toUrl()).devices(this.name).attributes().get().then(function (resp) {
+                var attributes = TangoAttribute.create_many_as_existing(
+                    resp.map(function (it) {
+                        return MVC.Object.extend(it, {
+                            id: this.id + "/" + it.name
+                        })
+                    }.bind(this)));
+                this.attrs.parse(attributes);
+                return attributes;
+            }.bind(this));
         },
         /**
          *
@@ -77,13 +89,24 @@ TangoWebapp.TangoDevice = TangoWebapp.DataCollectionWrapper.extend('tango_device
                             id: this.id + "/" + it.name
                         })
                     }.bind(this)));
-                //TODO not unique id
                 this.commands.parse(commands);
                 return commands;
             }.bind(this));
         },
+        /**
+         * @returns {Promise}
+         */
         fetchPipes: function () {
-
+            return this.host.rest.request().hosts(this.host.toUrl()).devices(this.name).pipes().get().then(function (resp) {
+                var pipes = TangoPipe.create_many_as_existing(
+                    resp.map(function (it) {
+                        return MVC.Object.extend(it, {
+                            id: this.id + "/" + it.name
+                        })
+                    }.bind(this)));
+                this.pipes.parse(pipes);
+                return pipes;
+            }.bind(this));
         },
         fetchAdmin: function () {
 
