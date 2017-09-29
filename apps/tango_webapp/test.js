@@ -10,11 +10,10 @@ include.functional_tests(
     'tango_webapp/device_properties',
     'tango_webapp/device_polling',
     'tango_webapp/device_events',
-    'tango_webapp/device_attr_config'
+    'tango_webapp/device_attr_config',
+    'tango_webapp/device_logging'
     // 'atk_panel',
 
-
-    // 'device_logging',
     // 'device_tree',
     // 'webix_ui'
 );

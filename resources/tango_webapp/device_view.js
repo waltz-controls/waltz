@@ -45,7 +45,7 @@ TangoWebapp.ui.newDeviceView = function (config) {
                 //},
                 {
                     header: "Logging",
-                    body  : TangoWebapp.ui.newDeviceLogging(config.device)
+                    body: TangoWebapp.ui.newDeviceLoggingView(config.device)
                 }
             ]
         }
