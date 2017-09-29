@@ -29,7 +29,7 @@ TangoWebapp.ui.newDeviceView = function (config) {
                 },
                 {
                     header: "Events",
-                    body  : TangoWebapp.ui.newDeviceEvents(config.device)
+                    body: TangoWebapp.ui.newDeviceEventsView(config.device)
                 },
                 {
                     header: "Attributes config",

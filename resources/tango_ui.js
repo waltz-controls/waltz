@@ -3,7 +3,6 @@ TangoWebapp.ui = {
         //
         "webix/logger_view", "webix/device_tree", "webix/server_tree", "webix/toolbar",
         //dataviews
-        "webix/device_event_view",
         "webix/device_attribute_config_view", "webix/device_logging_view", "webix/device_pipe_config_view", "webix/device_attribute_properties_view",
         //"webix/device_tab_view",
         //plot
