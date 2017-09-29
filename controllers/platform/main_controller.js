@@ -75,8 +75,11 @@ TangoWebapp.platform.MainController = MVC.Controller.extend('main', {
         }
     },
     "tango_webapp.tango_host_loaded subscribe": function (event) {
-        //TODO update
-        PlatformContext.tango_hosts.add(event.data);
+        if (PlatformContext.tango_hosts.exists(event.data.id)) {
+            PlatformContext.tango_hosts.updateItem(event.data.id, event.data);
+        } else {
+            PlatformContext.tango_hosts.add(event.data);
+        }
     },
     "user_context.delete_tango_host subscribe": function (event) {
         PlatformContext.tango_hosts.remove(event.data);
