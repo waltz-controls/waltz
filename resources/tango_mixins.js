@@ -1,21 +1,5 @@
 MVC.Object.extend(TangoWebapp, {
     mixin: {
-        TabActivator: {
-            _isActive: false,
-            activate: function () {
-                this.show(true);
-                this._isActive = true;
-            }
-        },
-
-        DeviceSetter: {
-            device_setter: function (device) {
-                if(!device) TangoWebapp.error("device can not be undefined");
-                this._device = device;
-                return device;
-            }
-        },
-
         /**
          * Performs action defined in run function only if this component is visible
          */

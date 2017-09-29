@@ -3,7 +3,7 @@ MVC.Object.extend(TangoWebapp.ui, {
         "dashboard",
         "devices_tree",
         "test_device_panel",
-        "device_view"
+        "device_view", "device_properties_view"
     ]
 });
 

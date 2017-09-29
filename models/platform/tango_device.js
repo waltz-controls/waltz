@@ -47,6 +47,13 @@ TangoWebapp.TangoDevice = TangoWebapp.DataCollectionWrapper.extend('tango_device
          *
          * @param v
          */
+        set_properties: function (v) {
+            this.properties = v;
+        },
+        /**
+         *
+         * @param v
+         */
         set_pipes: function (v) {
             this.pipes = v;
         },
@@ -60,7 +67,8 @@ TangoWebapp.TangoDevice = TangoWebapp.DataCollectionWrapper.extend('tango_device
             this._super(MVC.Object.extend(attrs, {
                 attrs: new webix.DataCollection(),
                 commands: new webix.DataCollection(),
-                pipes: new webix.DataCollection()
+                pipes: new webix.DataCollection(),
+                properties: new webix.DataCollection()
             }));
         },
         /**
@@ -111,6 +119,22 @@ TangoWebapp.TangoDevice = TangoWebapp.DataCollectionWrapper.extend('tango_device
         },
         fetchAdmin: function () {
 
+        },
+        /**
+         *
+         * @returns {Promise}
+         */
+        fetchProperties: function () {
+            return this.host.rest.request().hosts(this.host.toUrl()).devices(this.name).properties().get().then(function (resp) {
+                var properties = TangoDeviceProperty.create_many_as_existing(
+                    resp.map(function (it) {
+                        return MVC.Object.extend(it, {
+                            id: this.id + "/" + it.name
+                        })
+                    }.bind(this)));
+                this.properties.parse(properties);
+                return properties;
+            }.bind(this));
         },
         /**
          *
