@@ -33,7 +33,7 @@ TangoWebapp.ui.newDeviceView = function (config) {
                 },
                 {
                     header: "Attributes config",
-                    body  : TangoWebapp.ui.newDeviceAttrConfig(config.device)
+                    body: TangoWebapp.ui.newDeviceAttrConfigView(config.device)
                 },
                 //{
                 //    header: "Pipes config",
