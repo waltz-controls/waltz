@@ -67,6 +67,14 @@ TangoWebapp.TangoDatabase = MVC.Model.extend('tango_database',
          */
         getDeviceMemberList: function (wildcard) {
             return this.device.executeCommand("DbGetDeviceMemberList", wildcard);
+        },
+        /**
+         *
+         * @param device
+         * @return {*|webix.promise}
+         */
+        deleteDevice: function (device) {
+            return this.device.executeCommand("DbDeleteDevice", device);
         }
         //TODO commands
     }

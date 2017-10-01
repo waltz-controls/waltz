@@ -98,15 +98,25 @@ TangoWebapp.MainController = MVC.Controller.extend('main', {
             if (!$$(device_view_id)) {
                 $$("main-tabview").addView(
                     TangoWebapp.ui.newDeviceMonitorView({
-                            device: device,
-                            id: device_view_id
-                        })
+                        device: device,
+                        id: device_view_id
+                    })
                 );
             }
             $$(device_view_id).show();
 
             $$(device_view_id).activate();
         }).fail(TangoWebappHelpers.error);
-    }
+    },
+    "tango_webapp.device_delete subscribe": function (event) {
+        var promise = this._promise_device(event.data);
 
+        promise.then(function (device) {
+            return device.host.fetchDatabase();
+        }).then(function (db) {
+            return db.deleteDevice(event.data.name);
+        }).then(function () {
+            $$('devices-tree').updateRoot();
+        }).fail(TangoWebappHelpers.error);
+    }
 });
