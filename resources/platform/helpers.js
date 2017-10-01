@@ -31,9 +31,10 @@ MVC.Object.extend(TangoWebapp.helpers, {
             value: msg,
             timestamp: TangoWebapp.consts.LOG_DATE_FORMATTER(new Date())
         });
-        webix.error({type: 'error', text: 'msg'});
+        webix.message({type: 'error', text: msg});
         $$('bottom-toolbar').switchLogBtnIcon('error');
         debugger
+        throw msg;
     },
 
     /**

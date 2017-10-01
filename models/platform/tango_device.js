@@ -76,15 +76,34 @@ TangoWebapp.TangoDevice = TangoWebapp.DataCollectionWrapper.extend('tango_device
          */
         fetchAttrs: function () {
             return this.host.rest.request().hosts(this.host.toUrl()).devices(this.name).attributes().get().then(function (resp) {
-                var attributes = TangoAttribute.create_many_as_existing(
+                return TangoAttribute.create_many_as_existing(
                     resp.map(function (it) {
                         return MVC.Object.extend(it, {
-                            id: this.id + "/" + it.name
+                            id: this.id + "/" + it.name,
+                            device_id: this.id
                         })
                     }.bind(this)));
+            }.bind(this)).then(function (attributes) {
+                var attr_names = attributes.map(function (it) {
+                    return it.name;
+                });
+
+                var promise_info = this.host.rest.request().hosts(this.host.toUrl()).devices(this.name).attributes('info')
+                    .get('?' + attr_names.map(function (it) {
+                            return "attr=" + it;
+                        }).join('&'));
+
+                return promise_info.then(function (infos) {
+                    for (var i = 0; i < infos.length; ++i)
+                        attributes[i].set_attributes({
+                            info: infos[i]
+                        })
+                    return attributes;
+                });
+            }.bind(this)).then(function (attributes) {
                 this.attrs.parse(attributes);
                 return attributes;
-            }.bind(this));
+            }.bind(this)).fail(TangoWebappHelpers.error);
         },
         /**
          *

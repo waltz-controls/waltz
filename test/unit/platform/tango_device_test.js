@@ -85,5 +85,21 @@ new MVC.Test.Unit('tango_device', {
         this.assert(cmd0.Class);
         this.assert_equal(TestValues.tango_host + "/" + TestValues.test_device + "/CrashFromDevelopperThread", cmd0.id);
         this.assert_equal('CrashFromDevelopperThread', cmd0.name)
+    },
+    test_fetch_attrs: function () {
+        var api = new TangoRestApi({url: TestValues.rest_url});
+        api.fetchHost(TestValues.tango_host)
+            .then(function (host) {
+                return host.fetchDevice(TestValues.test_device);
+            })
+            .then(function (device) {
+                return device.fetchAttrs();
+            })
+            .then(this.next_callback('check_fetch_attrs'));
+    },
+    check_fetch_attrs: function (attrs) {
+        var ampli = attrs[0];
+        this.assert_equal("ampli", ampli.name);
+        this.assert_equal(ampli.name, ampli.info.name);
     }
 });

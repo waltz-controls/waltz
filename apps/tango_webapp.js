@@ -23,7 +23,7 @@ include(function () { //runs after prior includes are loaded
         "tango_webapp/device_filter"
     );
     include.controllers(
-        "tango_webapp/main", "tango_webapp/device_tree"
+        "tango_webapp/main"
     );
     include.views(
         "views/main_log_item",

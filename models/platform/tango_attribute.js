@@ -9,7 +9,8 @@ TangoAttribute = MVC.Model.extend('tango_attribute',
 
         attributes: {
             id: 'string',//host_id/device_id/name
-            name: 'string'
+            name: 'string',
+            device_id: 'string'
             //TODO value
         },
         default_attributes: {}
