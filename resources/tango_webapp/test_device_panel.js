@@ -398,7 +398,7 @@
         complexData: true,
         template: 'Device[<span class="webix_strong">#name#</span>] exported = #info.exported#',
         on: {
-            onBindRequest: function () {
+            onBindApply: function () {
                 var top = this.getTopParentView();
                 var device = this.data;
                 if (!device.id || device.id == 'unknown' || !device.info.exported) {
@@ -420,6 +420,12 @@
      */
     var test_device_panel = webix.protoUI({
         name: 'test_device_panel',
+        clearAll: function () {
+            //TODO
+            this.$$('commands').clearAll();
+            this.$$('attrs').clearAll();
+            this.$$('pipes').clearAll();
+        },
         _ui: function (context) {
             return {
                 rows: [
@@ -476,8 +482,7 @@
                     event.controller.$$('device').bind(event.data.devices);
                 },
                 "platform_context.destroy subscribe": function (event) {
-                    //TODO clean values
-                    event.controller.disable();
+                    event.controller.$$('device').unbind();
                 }
             }
         }

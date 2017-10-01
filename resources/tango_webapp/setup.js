@@ -1,5 +1,6 @@
 MVC.Object.extend(TangoWebapp.ui, {
     _webix_files: [
+        "logger_view",
         "dashboard",
         "devices_tree",
         "spectrum_plot", "image_plot", "test_device_panel",

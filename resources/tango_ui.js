@@ -1,10 +1,8 @@
 TangoWebapp.ui = {
     _webix_files0: [
         //
-        "webix/logger_view", "webix/toolbar",
+        "webix/toolbar"
         //"webix/device_tab_view",
-        //plot
-        "webix/spectrum_plot", "webix/image_plot"
     ]
 };
 
