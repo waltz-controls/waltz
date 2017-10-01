@@ -16,7 +16,14 @@ TangoWebapp.platform.TopToolbarController = MVC.Controller.extend('top_toolbar_c
                             view: "template",
                             type: "header",
                             borderless: true,
+                            width: 100,
                             template: "<a target='_blank' href='http://tango-controls.org'><span style='width: 240px'><img style='max-width: 100%; max-height: 100%' src='images/platform/logo_tangocontrols.png'></span></a>"
+                        },
+                        {
+                            view: "template",
+                            type: "header",
+                            borderless: true,
+                            template: "<a target='_blank' href='http://www.hzg.de'><span style='width: 240px'><img style='max-width: 100%; max-height: 100%' src='images/platform/hzg_rgb_mitzusatz_in_e_300dpi.png'></span></a>"
                         },
                         {
                             gravity: 4
