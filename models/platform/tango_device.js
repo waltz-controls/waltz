@@ -107,6 +107,17 @@ TangoWebapp.TangoDevice = TangoWebapp.DataCollectionWrapper.extend('tango_device
         },
         /**
          *
+         * @param attrs
+         * @returns {Promise}
+         */
+        fetchAttrValues: function (attrs) {
+            return this.host.rest.request().hosts(this.host.toUrl()).devices(this.name).attributes('value')
+                .get('?' + attrs.map(function (attr) {
+                        return "attr=" + attr
+                    }).join('&')).fail(TangoWebappHelpers.error);
+        },
+        /**
+         *
          * @returns {Promise}
          */
         fetchCommands: function () {

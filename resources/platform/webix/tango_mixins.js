@@ -1,7 +1,13 @@
-MVC.Object.extend(TangoWebapp.mixin, {
+/**
+ *
+ * @namespace
+ */
+TangoWebapp.mixin = {
     /**
      *
      * Requires `on` property to be defined
+     *
+     * @type {webix.mixin}
      */
     OpenAjaxListener: {
         _listener_controller: null,
@@ -11,7 +17,10 @@ MVC.Object.extend(TangoWebapp.mixin, {
             this._listener_instance = new this._listener_controller();
         }
     },
-
+    /**
+     *
+     * @type {webix.mixin}
+     */
     TabActivator: {
         _is_active: false,
         activate: function () {
@@ -19,12 +28,38 @@ MVC.Object.extend(TangoWebapp.mixin, {
             this._is_active = true;
         }
     },
-
+    /**
+     *
+     * @type {webix.mixin}
+     */
     DeviceSetter: {
         device_setter: function (device) {
             if (!device) TangoWebapp.error("device can not be undefined");
             this._device = device;
             return device;
         }
+    },
+    /**
+     * Performs action defined in run function only if this component is visible
+     *
+     * @type {webix.mixin}
+     */
+    Runnable: {
+        _delay: 1000,
+        _intervalId: 0,
+        start: function () {
+            this._intervalId = setInterval(function () {
+                if (!this.$destructed && this.isVisible())
+                    this.run();
+            }.bind(this), this._delay);
+        },
+        changeDelay: function (delay) {
+            this._delay = delay;
+            this.stop();
+            this.start();
+        },
+        stop: function () {
+            clearInterval(this._intervalId);
+        }
     }
-});
+};

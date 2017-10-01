@@ -7,7 +7,7 @@ include.libs(
     //"webix/codebase/webix_debug"
 );
 include.resources(
-    "tango_consts", "tango_mixins", "tango_rest", "tango_helpers"
+    "tango_consts", "tango_rest", "tango_helpers"
 );
 include.engines(
 );

@@ -23,8 +23,10 @@
                 var $$scalar = top.$$('scalar');
                 var $$tabview = top.$$('attributes-tabview');
                 var attrTabId;
-                this._device.attributesInfo().then(function (attrsInfo) {
-                    attrsInfo.forEach(function (attrInfo) {
+                this._device.fetchAttrs().then(function (attrs) {
+                    attrs.map(function (it) {
+                        return it.info;
+                    }).forEach(function (attrInfo) {
                         switch (attrInfo.data_format) {
                             case "SCALAR":
                                 //skip State&Status as they handled differently
@@ -88,7 +90,7 @@
 
                     var $$scalar = this.$$('scalar');
 
-                    this._device.readAttributes(attrs).then(function (resp) {
+                    this._device.fetchAttrValues(attrs).then(function (resp) {
                         resp.forEach(this.update(function (attr) {
                             if (!$$scalar.$destructed)
                                 $$scalar.updateItem(attr.name, attr);
@@ -97,7 +99,7 @@
                 } else {
                     var attr = this._monitoredAttributes[tabId];//TODO get selected tabId
                     attrs.push(attr);
-                    this._device.readAttributes(attrs).then(function (resp) {
+                    this._device.fetchAttrValues(attrs).then(function (resp) {
                         resp.forEach(this.update(function (attr) {
                             if (!this.$$(tabId).$destructed)
                                 this.$$(tabId).update(attr.value);
