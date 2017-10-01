@@ -43,6 +43,7 @@ TangoWebapp.MainController = MVC.Controller.extend('main', {
                     },
                     {
                         header: "<span class='webix_icon fa-microchip'></span> Device Test Panel",
+                        width: 300,
                         collapsed: true,
                         body: {
                             context: event.data,
@@ -64,7 +65,10 @@ TangoWebapp.MainController = MVC.Controller.extend('main', {
             promise = webix.promise.resolve(PlatformContext.devices.getItem(id));
         else
             promise = PlatformContext.tango_hosts.getItem(data.host_id).fetchDevice(data.name);
-        return promise;
+        return promise.then(function (device) {
+            PlatformContext.devices.setCursor(device.id);
+            return device;
+        });
     },
     "tango_webapp.device_open subscribe": function (event) {
         var promise = this._promise_device(event.data);
@@ -92,8 +96,7 @@ TangoWebapp.MainController = MVC.Controller.extend('main', {
             var device_view_id = "monitor/" + device.id;
             if (!$$(device_view_id)) {
                 $$("main-tabview").addView(
-                    TangoWebapp.ui.newDeviceMonitorView(
-                        {
+                    TangoWebapp.ui.newDeviceMonitorView({
                             device: device,
                             id: device_view_id
                         })
@@ -101,7 +104,7 @@ TangoWebapp.MainController = MVC.Controller.extend('main', {
             }
             $$(device_view_id).show();
 
-            $$(device_view_id).$$('device_properties').activate();
+            $$(device_view_id).activate();
         }).fail(TangoWebappHelpers.error);
     }
 

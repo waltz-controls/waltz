@@ -236,9 +236,13 @@
 
     TangoWebapp.ui.newDeviceMonitorView = function (config) {
         return {
-            view: "device_monitor",
-            id: config.id,
-            device: config.device
+            header: "<span class='webix_icon fa-eye'></span>[" + config.device.name + "]",
+            close: true,
+            body: {
+                view: "device_monitor",
+                id: config.id,
+                device: config.device
+            }
         }
     };
 })();
