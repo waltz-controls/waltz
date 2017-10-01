@@ -126,19 +126,77 @@
         }
     }, synchronizer, webix.ProgressBar, webix.IdSpace, webix.ui.form);
 
+    var openSpectrumWindow = function (attr) {
+        webix.ui({
+            view: "window",
+            move: true,
+            head: {template: 'Plot attribute [' + attr.name + ']'},
+            width: 1024,
+            height: 480,
+            body: TangoWebapp.ui.newSpectrumView(attr),
+            on: {
+                onHide: function () {
+                    this.close();
+                }
+            }
+        }).show();
+    };
+
+    var openImageWindow = function (attr) {
+        webix.ui({
+            view: "window",
+            move: true,
+            head: {template: 'Image attribute [' + attr.name + ']'},
+            width: 524,
+            height: 524,
+            body: TangoWebapp.ui.newImageView(attr),
+            on: {
+                onHide: function () {
+                    this.close();
+                }
+            }
+        }).show();
+    };
+
     /**
      * @type {webix.protoUI}
      */
     var test_device_attributes = webix.protoUI({
         name: 'device_panel_attributes',
         _read: function () {
-            debugger
+            var attribute = this.$$('list').getSelectedItem();
+
+            attribute.read()
+                .then(function (resp) {
+                    this.getTopParentView().$$('output').setValue(new View({url: 'views/dev_panel_attribute_out.ejs'}).render(resp))
+                }.bind(this))
+                .fail(TangoWebappHelpers.error);
         },
         _write: function () {
-            debugger
+            var attribute = this.$$('list').getSelectedItem();
+
+            var v = this.elements.w_value.getValue();
+
+            attribute.write(v)
+                .then(function (resp) {
+                    this.getTopParentView().$$('output').setValue(new View({url: 'views/dev_panel_attribute_out.ejs'}).render(resp))
+                }.bind(this))
+                .fail(TangoWebappHelpers.error);
         },
         _plot: function () {
-            debugger
+            var attribute = this.$$('list').getSelectedItem();
+
+            if (attribute.info.data_format === "SPECTRUM") {
+                attribute.read()
+                    .then(openSpectrumWindow)
+                    .fail(TangoWebappHelpers.error);
+            } else if (attribute.info.data_format === "IMAGE") {
+                attribute.read()
+                    .then(openImageWindow)
+                    .fail(TangoWebappHelpers.error);
+            } else {
+                TangoWebappHelpers.error("Unsupported data format: " + attribute.info.data_format);
+            }
         },
         _ui: function () {
             return {
@@ -159,7 +217,7 @@
                     },
                     {
                         view: 'text',
-                        name: 'argin'
+                        name: 'w_value'
                     },
                     {
                         view: "textarea",
@@ -203,24 +261,7 @@
                                 }
                             }]
                     }
-                ],
-                on: {
-                    onBindApply: function (obj, dummy, master) {
-                        if (!obj) return this.clear();
-
-                        //TODO fetch from server
-                        this.elements['info'].setValue(_attribute_info.render(obj));
-                        if (obj.writable.includes("WRITE"))
-                            this.elements['btnWrite'].enable();
-                        else
-                            this.elements['btnWrite'].disable();
-                        if (obj.data_format === 'SPECTRUM' || obj.data_format === 'IMAGE') {
-                            this.elements['btnPlot'].enable();
-                        } else {
-                            this.elements['btnPlot'].disable();
-                        }
-                    }
-                }
+                ]
             }
         },
         $init: function (config) {
@@ -229,6 +270,30 @@
             this.$ready.push(function () {
                 this.bind(this.$$('list'))
             }.bind(this));
+        },
+        defaults: {
+            on: {
+                onBindApply: function (obj, dummy, master) {
+                    if (!obj) return this.clear();
+
+                    var info;
+                    try {
+                        info = new View({url: 'views/dev_panel_attribute_info.ejs'}).render(obj.info);
+                    } catch (e) {
+                        info = "Failed to parse attribute.info: " + e;
+                    }
+                    this.elements.info.setValue(info);
+                    if (obj.info.writable.includes("WRITE"))
+                        this.elements['btnWrite'].enable();
+                    else
+                        this.elements['btnWrite'].disable();
+                    if (obj.info.data_format === 'SPECTRUM' || obj.info.data_format === 'IMAGE') {
+                        this.elements['btnPlot'].enable();
+                    } else {
+                        this.elements['btnPlot'].disable();
+                    }
+                }
+            }
         }
     }, synchronizer, webix.ProgressBar, webix.IdSpace, webix.ui.form);
 

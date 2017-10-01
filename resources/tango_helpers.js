@@ -94,38 +94,6 @@ MVC.Object.extend(TangoWebapp, {
             }).show();
         },
 
-        openSpectrumWindow: function(attr){
-            webix.ui({
-                view: "window",
-                move: true,
-                head: {template: 'Plot attribute ['+attr.name+']'},
-                width: 1024,
-                height: 480,
-                body: TangoWebapp.ui.newSpectrumView(attr),
-                on: {
-                    onHide:function(){
-                        this.close();
-                    }
-                }
-            }).show();
-        },
-
-        openImageWindow: function(attr){
-            webix.ui({
-                view: "window",
-                move: true,
-                head: {template: 'Image attribute ['+attr.name+']'},
-                width: 524,
-                height: 524,
-                body: TangoWebapp.ui.newImageView(attr),
-                on: {
-                    onHide:function(){
-                        this.close();
-                    }
-                }
-            }).show();
-        },
-
         changeTangoHost: function () {
             var popup;
 
