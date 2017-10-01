@@ -1,13 +1,18 @@
 (function () {
-    webix.protoUI({
+    /**
+     * @type {webix.protoUI}
+     */
+    var attr_config_view = webix.protoUI({
         refresh: function () {
             var top = this.getTopParentView();
 
             var device = top._device;
 
             top.$$alarms.clearAll();
-            device.attributesInfo().then(function () {
-                TangoWebapp.helpers.iterate(device.attributeInfoCollection, function (id, info) {
+            device.fetchAttrs().then(function (attrs) {
+                attrs.forEach(function (attr) {
+                    var id = attr.id;
+                    var info = attr.info;
                     this.$$alarms.add({
                         masterId: id,
                         name: info.name,
@@ -17,16 +22,19 @@
                         max_warning: info.alarms.max_warning,
                         delta_t: info.alarms.delta_t,
                         delta_val: info.alarms.delta_val
-                    });
+                    })
                 }.bind(top));
-            });
+            }).then(TangoWebappHelpers.log.bind(null, "Attribute configuration has been refreshed"))
+                .fail(TangoWebappHelpers.error);
         },
         apply: function () {
             var top = this.getTopParentView();
 
-            TangoWebapp.helpers.iterate(top._device.attributeInfoCollection, function (id, info) {
-                this.updateAttributeInfo(info.name);
-            }.bind(top._device));
+            TangoWebappHelpers.iterate(top._device.attrs, function (attr) {
+                attr.putInfo()
+                    .then(TangoWebappHelpers.log.bind(null, "Attribute configuration has been applied"))
+                    .fail(TangoWebappHelpers.error);
+            });
         },
         _ui: function () {
             var top = this;
@@ -94,7 +102,19 @@
                                         },
                                         {id: 'min_value', header: "Min value", editor: "text"},
                                         {id: 'max_value', header: "Max value", editor: "text", fillspace: true}
-                                    ]
+                                    ],
+                                    scheme: {
+                                        $update: function (obj) {
+                                            var attr = top._device.attrs.getItem(obj.masterId);
+                                            var info = attr.info;
+
+                                            info.min_value = obj.info.min_value;
+                                            info.max_value = obj.info.min_value;
+
+                                            attr.set_attributes({info: info});
+                                            top._device.attrs.updateItem(obj.masterId, attr);
+                                        }
+                                    }
 
                                 }
                             },
@@ -119,7 +139,8 @@
                                     ],
                                     scheme: {
                                         $update: function (obj) {
-                                            var info = top._device.attributeInfoCollection.getItem(obj.masterId);
+                                            var attr = top._device.attrs.getItem(obj.masterId);
+                                            var info = attr.info;
 
                                             info.alarms.min_alarm = obj.min_alarm;
                                             info.alarms.max_alarm = obj.max_alarm;
@@ -128,7 +149,8 @@
                                             info.alarms.delta_t = obj.delta_t;
                                             info.alarms.delta_val = obj.delta_val;
 
-                                            top._device.attributeInfoCollection.updateItem(obj.masterId, info);
+                                            attr.set_attributes({info: info});
+                                            top._device.attrs.updateItem(obj.masterId, attr);
                                         }
                                     }
                                 }
@@ -196,16 +218,16 @@
 
 
             this.$ready.push(function () {
-                //TODO
-                // this.$$('display').sync(this._device.attributeInfoCollection);
-                // this.$$('unit').sync(this._device.attributeInfoCollection);
-                // this.$$('range').sync(this._device.attributeInfoCollection);
-                // this.$$('description').sync(this._device.attributeInfoCollection);
-                // this.$$('alias').sync(this._device.attributeInfoCollection);
+                //TODO scheme
+                this.$$('display').sync(this._device.attrs);
+                this.$$('unit').sync(this._device.attrs);
+                this.$$('range').sync(this._device.attrs);
+                this.$$('description').sync(this._device.attrs);
+                this.$$('alias').sync(this._device.attrs);
 
                 this.$$alarms = this.$$('alarms');
 
-                // this.refresh();
+                this.refresh();
             });
         },
         name: "device_attr_config"
