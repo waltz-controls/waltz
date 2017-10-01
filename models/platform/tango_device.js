@@ -147,6 +147,9 @@ TangoWebapp.TangoDevice = TangoWebapp.DataCollectionWrapper.extend('tango_device
                 return pipes;
             }.bind(this));
         },
+        /**
+         * @returns {webix.promise}
+         */
         fetchAdmin: function () {
             return this.host.fetchDevice('dserver/' + this.info.admin)
                 .then(function (device) {

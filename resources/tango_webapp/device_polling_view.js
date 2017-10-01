@@ -45,37 +45,43 @@
 
             function addObjPolling(item, type) {
                 return function (admin) {
-                    admin.AddObjPolling({lvalue: [item.period], svalue: [device_name, type, item.name]});
+                    admin.addObjPolling({
+                        lvalue: [item.period],
+                        svalue: [device_name, type, item.name]
+                    }).fail(TangoWebappHelpers.error);
                 }
             }
 
             function updObjPolling(item, type) {
                 return function (admin) {
-                    admin.UpdObjPollingPeriod({lvalue: [item.period], svalue: [device_name, type, item.name]});
+                    admin.updObjPollingPeriod({
+                        lvalue: [item.period],
+                        svalue: [device_name, type, item.name]
+                    }).fail(TangoWebappHelpers.error);
                 }
             }
 
             function remObjPolling(item, type) {
                 return function (admin) {
-                    admin.RemObjPolling([device_name, type, item.name]);
+                    admin.remObjPolling([device_name, type, item.name]).fail(TangoWebappHelpers.error);
                 }
             }
 
 
             function setObjPolling(type) {
-                return function (el, item) {
+                return function (item) {
                     if (item.isPolled)
                         if (item.isNewPolled)
-                            this._device.promiseAdmin().then(addObjPolling(item, type));
+                            this._device.fetchAdmin().then(addObjPolling(item, type));
                         else
-                            this._device.promiseAdmin().then(updObjPolling(item, type));
+                            this._device.fetchAdmin().then(updObjPolling(item, type));
                     else if (!item.isNewPolled)
-                        this._device.promiseAdmin().then(remObjPolling(item, type));
+                        this._device.fetchAdmin().then(remObjPolling(item, type));
                 }
             }
 
-            TangoWebapp.helpers.iterate(top._commands, setObjPolling('command').bind(top));
-            TangoWebapp.helpers.iterate(top._attributes, setObjPolling('attribute').bind(top));
+            TangoWebappHelpers.iterate(top._commands, setObjPolling('command').bind(top));
+            TangoWebappHelpers.iterate(top._attributes, setObjPolling('attribute').bind(top));
         },
         reset: function () {
             var device_name = this._device.name;
@@ -84,18 +90,18 @@
             function removePolling(type) {
                 return function (el, item) {
                     admin.then(function (admin) {
-                        admin.RemObjPolling([device_name, type, item.name]);
+                        admin.remObjPolling([device_name, type, item.name]).fail(TangoWebappHelpers.error);
                     });
                 }
             }
 
-            TangoWebapp.helpers.iterate(this._commands, removePolling("command"));
-            TangoWebapp.helpers.iterate(this._attributes, removePolling("attribute"));
+            TangoWebappHelpers.iterate(this._commands, removePolling("command"));
+            TangoWebappHelpers.iterate(this._attributes, removePolling("attribute"));
 
             webix.alert({
                 title: "Confirm reset",
                 type: "alert-warning",
-                text: "Done. Restart " + device_name + "!"
+                text: "Done. Please restart " + device_name + "!"
             });
         },
         _ui: function () {
