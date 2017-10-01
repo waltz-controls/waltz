@@ -197,6 +197,35 @@ TangoWebapp.TangoDevice = TangoWebapp.DataCollectionWrapper.extend('tango_device
         },
         /**
          *
+         * @param {prop:[]} props
+         * @returns {webix.promise}
+         */
+        putProperties: function (props) {
+            function toUrl(props) {
+                var result = [];
+                for (var p in props) {
+                    if (!props.hasOwnProperty(p)) continue;
+
+                    var values = props[p];
+                    result.push.apply(result, values.map(function (el) {
+                        return p + "=" + el;
+                    }));
+                }
+                return result.join('&');
+            }
+
+            return this.toTangoRestApiRequest().properties().put('?' + toUrl(props));
+        },
+        /**
+         *
+         * @param name
+         * @returns {*|webix.promise}
+         */
+        deleteProperty: function (name) {
+            return this.toTangoRestApiRequest().properties().delete('/' + name);
+        },
+        /**
+         *
          */
         toTangoRestApiRequest: function () {
             return this.host.rest.request().hosts(this.host.toUrl()).devices(this.name);

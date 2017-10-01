@@ -17,7 +17,7 @@
                 data[row.name] = (row.values.split) ? row.values.split(',') : row.values;
             });
 
-            this.getTopParentView()._device.updateProperties(data);
+            this.getTopParentView()._device.putProperties(data).fail(TangoWebappHelpers.error);
         },
         addNewProperty: function () {
             var form = this.getTopParentView().$$('frmNewProperty');
