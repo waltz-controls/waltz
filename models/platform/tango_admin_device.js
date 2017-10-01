@@ -40,6 +40,22 @@ TangoAdminDevice = MVC.Model.extend('tango_admin_device',
         },
         /**
          *
+         * @param {[]} args
+         * @returns {*|webix.promise}
+         */
+        getLoggingLevel: function (args) {
+            return this.device.executeCommand("GetLoggingLevel", args)
+        },
+        /**
+         *
+         * @param {string} arg - device name
+         * @returns {*|webix.promise}
+         */
+        getLoggingTarget: function (arg) {
+            return this.device.executeCommand("GetLoggingTarget", arg);
+        },
+        /**
+         *
          * @param device
          * @returns {Promise}
          */

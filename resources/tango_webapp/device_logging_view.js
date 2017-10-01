@@ -45,29 +45,31 @@
             var top = this.getTopParentView();
             top.$$('logging').clearAll();
 
-            var db = top._db;
+            var db = top._device.host.fetchDatabase();
             var device = top._device;
-            var admin = top._device.promiseAdmin();
+            var admin = top._device.fetchAdmin();
             var dataPromise =
                 webix.promise.all([
-                    db.DbGetDeviceProperty([device.name, "logging_level", "logging_target", "logging_rft"]).then(function (resp) {
-                        return [
-                            {
-                                name: top._labels[resp.output[2]],
-                                value: resp.output[4]
-                            },
-                            {
-                                name: top._labels[resp.output[5]],
-                                value: resp.output[4]
-                            },
-                            {
-                                name: top._labels[resp.output[8]],
-                                value: resp.output[10]
-                            }
-                        ];
+                    db.then(function (db) {
+                        return db.getDeviceProperty([device.name, "logging_level", "logging_target", "logging_rft"]).then(function (resp) {
+                            return [
+                                {
+                                    name: top._labels[resp.output[2]],
+                                    value: resp.output[4]
+                                },
+                                {
+                                    name: top._labels[resp.output[5]],
+                                    value: resp.output[4]
+                                },
+                                {
+                                    name: top._labels[resp.output[8]],
+                                    value: resp.output[10]
+                                }
+                            ];
+                        })
                     }),
                     admin.then(function (admin) {
-                        return admin.GetLoggingLevel([top._device.name]);
+                        return admin.getLoggingLevel([top._device.name]);
                     }).then(function (resp) {
                         return {
                             name: top._labels["GetLoggingLevel"],
@@ -75,7 +77,7 @@
                         };
                     }),
                     admin.then(function (admin) {
-                        return admin.GetLoggingTarget([top._device.name]);
+                        return admin.getLoggingTarget(top._device.name);
                     }).then(function (resp) {
                         return {
                             name: top._labels["GetLoggingTarget"],
@@ -94,12 +96,9 @@
         $init: function (config) {
             webix.extend(config, this._ui());
 
-            //TODO
-            // this._db = TangoWebapp.getDatabase();
-
             this.$ready.push(function () {
                 //request logging levels from admin device
-                // this.refresh();
+                this.refresh();
             });
         }
     }, webix.IdSpace, TangoWebapp.mixin.TabActivator, TangoWebapp.mixin.DeviceSetter, webix.ui.layout);

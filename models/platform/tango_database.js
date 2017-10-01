@@ -70,6 +70,14 @@ TangoWebapp.TangoDatabase = MVC.Model.extend('tango_database',
         },
         /**
          *
+         * @param {[]} args
+         * @returns {*|webix.promise}
+         */
+        getDeviceProperty: function (args) {
+            return this.device.executeCommand("DbGetDeviceProperty", args)
+        },
+        /**
+         *
          * @param device
          * @return {*|webix.promise}
          */
