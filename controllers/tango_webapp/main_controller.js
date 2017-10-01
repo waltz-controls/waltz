@@ -47,7 +47,8 @@ TangoWebapp.MainController = MVC.Controller.extend('main', {
                         collapsed: true,
                         body: {
                             context: event.data,
-                            view: 'test_device_panel'
+                            view: 'test_device_panel',
+                            id: 'test-device-panel'
                         }
                     }
                 ]

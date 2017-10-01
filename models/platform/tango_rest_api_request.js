@@ -149,7 +149,7 @@ TangoWebapp.TangoRestApiRequest = MVC.Model.extend('tango_rest_api_request',
          *
          * @event {OpenAjax} tango_webapp.rest_success
          * @event {OpenAjax} tango_webapp.rest_failure
-         * @returns {Promise}
+         * @returns {webix.promise}
          */
         exec: function (argin) {
             return this.put("", argin);
@@ -160,7 +160,7 @@ TangoWebapp.TangoRestApiRequest = MVC.Model.extend('tango_rest_api_request',
          *
          * @event {OpenAjax} tango_webapp.rest_success
          * @event {OpenAjax} tango_webapp.rest_failure
-         * @returns {Promise}
+         * @returns {webix.promise}
          */
         get: function (what) {
             if (this.result != null) return this.promise.resolve(this.result);
@@ -175,7 +175,7 @@ TangoWebapp.TangoRestApiRequest = MVC.Model.extend('tango_rest_api_request',
          *
          * @event {OpenAjax} tango_webapp.rest_success
          * @event {OpenAjax} tango_webapp.rest_failure
-         * @returns {Promise}
+         * @returns {webix.promise}
          */
         put: function (what, data) {
             if (this.result != null) return this.promise.resolve(this.result);
@@ -192,7 +192,7 @@ TangoWebapp.TangoRestApiRequest = MVC.Model.extend('tango_rest_api_request',
          *
          * @event {OpenAjax} tango_webapp.rest_success
          * @event {OpenAjax} tango_webapp.rest_failure
-         * @returns {Promise}
+         * @returns {webix.promise}
          */
         "delete": function (what) {
             if (this.result != null) return this.promise.resolve(this.result);

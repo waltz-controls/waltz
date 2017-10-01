@@ -1,9 +1,7 @@
 /** @module TestDevicePanel */
 (function () {
     /**
-     *
-     *
-     * @type {{_what: string, synchronize: function, $init: function}}
+     * @type {webix.ui.config}
      */
     var synchronizer = {
         _what: null,
@@ -19,6 +17,7 @@
                 }.bind(this))
             }
             this.$$('list').data.sync(device[this._what]);
+            this.elements.name.setValue('');//drop currently selected item
         },
         $init: function (config) {
             this._what = config.id;
@@ -26,14 +25,24 @@
         }
     };
 
+    /**
+     * @type {webix.protoUI}
+     */
     var test_device_commands = webix.protoUI({
         name: 'device_panel_commands',
         _execute_command: function () {
-            debugger
+            var command = this.$$('list').getSelectedItem();
+            var argin = this.elements.argin.getValue();
+            command.execute(argin)
+                .then(function (resp) {
+                    if (!resp.output) resp.output = "";
+                    this.getTopParentView().$$('output').setValue(new View({url: 'views/dev_panel_command_out.ejs'}).render(resp));
+                }.bind(this))
+                .fail(TangoWebappHelpers.error);
         },
         _ui: function () {
             return {
-                rows: [
+                elements: [
                     {
                         view: 'list',
                         id: 'list',
@@ -41,75 +50,85 @@
                         template: "#name#"
                     },
                     {
-                        id: 'form',
-                        view: 'form',
-                        complexData: true,
-                        elements: [
+                        view: 'text',
+                        type: 'hidden',
+                        height: 2,
+                        name: 'name',
+                        validate: webix.rules.isNotEmpty,
+                        invalidMessage: 'Command must be selected from the list'
+                    },
+                    {
+                        view: 'text',
+                        name: 'argin',
+                        placeholder: 'Input argument for the command e.g. 3.14 or [3.14, 2.87] etc'
+                        //TODO argin converter
+                    },
+                    {
+                        cols: [
                             {
                                 view: 'text',
-                                name: 'argin'
+                                name: 'info.in_type',
+                                label: 'Argin: ',
+                                labelWidth: 50,
+                                tooltip: '' //set when onBindRequest
                             },
                             {
-                                cols: [
-                                    {
-                                        view: 'text',
-                                        name: 'info.in_type',
-                                        label: 'Argin type:'
-                                    },
-                                    {
-                                        view: 'text',
-                                        name: 'info.out_type',
-                                        label: 'Argout type'
-                                    }
-                                ]
-                            },
-                            {
-                                //TODO replace with tooltips
-                                cols: [
-                                    {
-                                        view: 'text',
-                                        name: 'info.in_type_desc'
-                                    },
-                                    {
-                                        view: 'text',
-                                        name: 'info.out_type_desc'
-                                    }
-                                ]
-                            },
-                            {
-                                view: 'button',
-                                name: 'btnExecCmd',
-                                value: 'Execute',
-                                disabled: true,
-                                click: function () {
-                                    this.getTopParentView()._execute_command();
-                                }
+                                view: 'text',
+                                name: 'info.out_type',
+                                label: 'Argout:',
+                                labelWidth: 50,
+                                tooltip: '' //set when onBindRequest
                             }
-                            //,
-                            //{
-                            //    view: 'button',
-                            //    name: 'btnPlotCmd',
-                            //    disabled: true,
-                            //    value: 'Plot',
-                            //    click: function () {
-                            //        this.getTopParentView().plotCommand();
-                            //    }
-                            //}
                         ]
+                    },
+                    {
+                        view: 'button',
+                        name: 'btnExecCmd',
+                        value: 'Execute',
+                        click: function () {
+                            var form = this.getFormView();
+                            if (form.validate()) {
+                                form._execute_command();
+                            }
+                        }
                     }
                 ]
-            };
+            }
         },
         $init: function (config) {
             webix.extend(config, this._ui());
             this.$ready.push(function () {
-                this.$$('form').bind(this.$$('list'))
+                this.bind(this.$$('list'))
             }.bind(this));
         },
-        defaults: {}
+        defaults: {
+            complexData: true,
+            on: {
+                onBindApply: function () {
+                    var command = this.$$('list').getSelectedItem();
+                    if (!command) return;
 
-    }, synchronizer, webix.ProgressBar, webix.IdSpace, webix.ui.layout);
+                    this.clearValidation();
 
+                    this.elements['info.in_type'].define('tooltip', command.info.in_type_desc);
+                    this.elements['info.out_type'].define('tooltip', command.info.out_type_desc);
+
+                    if (command.info.in_type !== 'DevVoid') {
+                        this.elements.argin.define({
+                            validate: webix.rules.isNotEmpty,
+                            invalidMessage: 'Input argument can not be empty'
+                        });
+                    } else {
+                        this.elements.argin.define({validate: '', invalidMessage: 'Input argument can not be empty'});
+                    }
+                }
+            }
+        }
+    }, synchronizer, webix.ProgressBar, webix.IdSpace, webix.ui.form);
+
+    /**
+     * @type {webix.protoUI}
+     */
     var test_device_attributes = webix.protoUI({
         name: 'device_panel_attributes',
         _read: function () {
@@ -123,7 +142,7 @@
         },
         _ui: function () {
             return {
-                rows: [
+                elements: [
                     {
                         view: 'list',
                         id: 'list',
@@ -131,79 +150,91 @@
                         template: "#name#"
                     },
                     {
-                        id: 'form',
-                        view: 'form',
-                        //dataFeed: '...',
-                        elements: [
+                        view: 'text',
+                        type: 'hidden',
+                        height: 2,
+                        name: 'name',
+                        validate: webix.rules.isNotEmpty,
+                        invalidMessage: 'Attribute must be selected from the list'
+                    },
+                    {
+                        view: 'text',
+                        name: 'argin'
+                    },
+                    {
+                        view: "textarea",
+                        name: "info"
+                    },
+                    {
+                        cols: [
                             {
-                                view: 'text',
-                                name: 'argin'
-                            },
-                            {
-                                view: "textarea",
-                                name: "info"
-                            },
-                            {
-                                cols: [{
-                                    view: 'button',
-                                    name: 'btnRead',
-                                    value: 'Read',
-                                    disabled: true,
-                                    click: function () {
-                                        this.getTopParentView()._read();
+                                view: 'button',
+                                name: 'btnRead',
+                                value: 'Read',
+                                click: function () {
+                                    var form = this.getFormView();
+                                    if (form.validate()) {
+                                        form._read();
                                     }
-                                },
-                                    {
-                                        view: 'button',
-                                        name: 'btnWrite',
-                                        disabled: true,
-                                        value: 'Write',
-                                        click: function () {
-                                            this.getTopParentView()._write();
-                                        }
-                                    },
-                                    {
-                                        view: 'button',
-                                        name: 'btnPlot',
-                                        disabled: true,
-                                        value: 'Plot',
-                                        click: function () {
-                                            this.getTopParentView()._plot();
-                                        }
-                                    }]
-                            }
-                        ],
-                        on: {
-                            onBindApply: function (obj, dummy, master) {
-                                if (!obj) return this.clear();
-
-                                //TODO fetch from server
-                                this.elements['info'].setValue(_attribute_info.render(obj));
-                                this.elements['btnRead'].enable();
-                                if (obj.writable.includes("WRITE"))
-                                    this.elements['btnWrite'].enable();
-                                else
-                                    this.elements['btnWrite'].disable();
-                                if (obj.data_format === 'SPECTRUM' || obj.data_format === 'IMAGE') {
-                                    this.elements['btnPlot'].enable();
-                                } else {
-                                    this.elements['btnPlot'].disable();
                                 }
-                            }
+                            },
+                            {
+                                view: 'button',
+                                name: 'btnWrite',
+                                disabled: true,
+                                value: 'Write',
+                                click: function () {
+                                    var form = this.getFormView();
+                                    if (form.validate()) {
+                                        form._write();
+                                    }
+                                }
+                            },
+                            {
+                                view: 'button',
+                                name: 'btnPlot',
+                                disabled: true,
+                                value: 'Plot',
+                                click: function () {
+                                    var form = this.getFormView();
+                                    if (form.validate()) {
+                                        form._plot();
+                                    }
+                                }
+                            }]
+                    }
+                ],
+                on: {
+                    onBindApply: function (obj, dummy, master) {
+                        if (!obj) return this.clear();
+
+                        //TODO fetch from server
+                        this.elements['info'].setValue(_attribute_info.render(obj));
+                        if (obj.writable.includes("WRITE"))
+                            this.elements['btnWrite'].enable();
+                        else
+                            this.elements['btnWrite'].disable();
+                        if (obj.data_format === 'SPECTRUM' || obj.data_format === 'IMAGE') {
+                            this.elements['btnPlot'].enable();
+                        } else {
+                            this.elements['btnPlot'].disable();
                         }
                     }
-                ]
-            };
+                }
+            }
         },
         $init: function (config) {
             webix.extend(config, this._ui());
 
             this.$ready.push(function () {
-                this.$$('form').bind(this.$$('list'))
+                this.bind(this.$$('list'))
             }.bind(this));
         }
-    }, synchronizer, webix.ProgressBar, webix.IdSpace, webix.ui.layout);
+    }, synchronizer, webix.ProgressBar, webix.IdSpace, webix.ui.form);
 
+    /**
+     * @type {webix.protoUI}
+     */
     var test_device_pipes = webix.protoUI({
         name: 'device_panel_pipes',
         _read: function () {
@@ -217,7 +248,7 @@
         },
         _ui: function (context) {
             return {
-                rows: [
+                elements: [
                     {
                         view: 'list',
                         id: 'list',
@@ -225,49 +256,58 @@
                         template: "#name#"
                     },
                     {
-                        id: 'form',
-                        view: 'form',
-                        //dataFeed: '...',
-                        elements: [
+                        view: 'text',
+                        type: 'hidden',
+                        height: 2,
+                        name: 'name',
+                        validate: webix.rules.isNotEmpty,
+                        invalidMessage: 'Pipe must be selected from the list'
+                    },
+                    {
+                        view: 'textarea',
+                        name: 'argin'
+                    },
+                    {
+                        cols: [
                             {
-                                view: 'textarea',
-                                name: 'argin'
+                                view: 'button',
+                                name: 'btnRead',
+                                value: 'Read',
+                                click: function () {
+                                    var form = this.getFormView();
+                                    if (form.validate()) {
+                                        form._read();
+                                    }
+                                }
                             },
                             {
-                                cols: [
-                                    {
-                                        view: 'button',
-                                        name: 'btnRead',
-                                        value: 'Read',
-                                        disabled: true,
-                                        click: function () {
-                                            this.getTopParentView()._read();
-                                        }
-                                    },
-                                    {
-                                        view: 'button',
-                                        name: 'btnWrite',
-                                        disabled: true,
-                                        value: 'Write',
-                                        click: function () {
-                                            this.getTopParentView()._write();
-                                        }
+                                view: 'button',
+                                name: 'btnWrite',
+                                value: 'Write',
+                                click: function () {
+                                    var form = this.getFormView();
+                                    if (form.validate()) {
+                                        form._write();
                                     }
-                                ]
+                                }
                             }
                         ]
                     }
                 ]
-            };
+            }
         },
         $init: function (config) {
             webix.extend(config, this._ui());
             this.$ready.push(function () {
-                this.$$('form').bind(this.$$('list'))
+                this.bind(this.$$('list'))
             }.bind(this));
         }
-    }, synchronizer, webix.ProgressBar, webix.IdSpace, webix.ui.layout);
+    }, synchronizer, webix.ProgressBar, webix.IdSpace, webix.ui.form);
 
+    /**
+     *
+     * @type {webix.ui.config}
+     */
     var device_panel_header = {
         type: 'clean',
         id: 'device',
@@ -293,6 +333,9 @@
         }
     };
 
+    /**
+     * @type {webix.protoUI}
+     */
     var test_device_panel = webix.protoUI({
         name: 'test_device_panel',
         _ui: function (context) {
@@ -331,7 +374,8 @@
                     },
                     {view: "resizer"},
                     {
-                        template: 'output'
+                        view: 'textarea',
+                        id: 'output'
                     }
                 ]
             };

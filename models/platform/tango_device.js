@@ -75,7 +75,7 @@ TangoWebapp.TangoDevice = TangoWebapp.DataCollectionWrapper.extend('tango_device
          * @returns {Promise}
          */
         fetchAttrs: function () {
-            return this.host.rest.request().hosts(this.host.toUrl()).devices(this.name).attributes().get().then(function (resp) {
+            return this.toTangoRestApiRequest().attributes().get().then(function (resp) {
                 return TangoAttribute.create_many_as_existing(
                     resp.map(function (it) {
                         return MVC.Object.extend(it, {
@@ -111,7 +111,7 @@ TangoWebapp.TangoDevice = TangoWebapp.DataCollectionWrapper.extend('tango_device
          * @returns {Promise}
          */
         fetchAttrValues: function (attrs) {
-            return this.host.rest.request().hosts(this.host.toUrl()).devices(this.name).attributes('value')
+            return this.toTangoRestApiRequest().attributes('value')
                 .get('?' + attrs.map(function (attr) {
                         return "attr=" + attr
                     }).join('&')).fail(TangoWebappHelpers.error);
@@ -121,7 +121,7 @@ TangoWebapp.TangoDevice = TangoWebapp.DataCollectionWrapper.extend('tango_device
          * @returns {Promise}
          */
         fetchCommands: function () {
-            return this.host.rest.request().hosts(this.host.toUrl()).devices(this.name).commands().get().then(function (resp) {
+            return this.toTangoRestApiRequest().commands().get().then(function (resp) {
                 var commands = TangoCommand.create_many_as_existing(
                     resp.map(function (it) {
                         return MVC.Object.extend(it, {
@@ -136,7 +136,7 @@ TangoWebapp.TangoDevice = TangoWebapp.DataCollectionWrapper.extend('tango_device
          * @returns {Promise}
          */
         fetchPipes: function () {
-            return this.host.rest.request().hosts(this.host.toUrl()).devices(this.name).pipes().get().then(function (resp) {
+            return this.toTangoRestApiRequest().pipes().get().then(function (resp) {
                 var pipes = TangoPipe.create_many_as_existing(
                     resp.map(function (it) {
                         return MVC.Object.extend(it, {
@@ -163,7 +163,7 @@ TangoWebapp.TangoDevice = TangoWebapp.DataCollectionWrapper.extend('tango_device
          * @returns {Promise}
          */
         fetchProperties: function () {
-            return this.host.rest.request().hosts(this.host.toUrl()).devices(this.name).properties().get().then(function (resp) {
+            return this.toTangoRestApiRequest().properties().get().then(function (resp) {
                 var properties = TangoDeviceProperty.create_many_as_existing(
                     resp.map(function (it) {
                         return MVC.Object.extend(it, {
@@ -178,10 +178,16 @@ TangoWebapp.TangoDevice = TangoWebapp.DataCollectionWrapper.extend('tango_device
          *
          * @param cmd
          * @param arg
-         * @return {Promise}
+         * @return {webix.promise}
          */
         executeCommand: function (cmd, arg) {
-            return this.host.rest.request().hosts(this.host.toUrl()).devices(this.name).commands(cmd).exec(arg);
+            return this.toTangoRestApiRequest().commands(cmd).exec(arg);
+        },
+        /**
+         *
+         */
+        toTangoRestApiRequest: function () {
+            return this.host.rest.request().hosts(this.host.toUrl()).devices(this.name);
         }
     }
 );

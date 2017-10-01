@@ -17,8 +17,26 @@ TangoCommand = MVC.Model.extend('tango_command',
     },
     /** @Prototype */
     {
+        /**
+         *
+         * @param attrs
+         * @constructor
+         */
         init: function (attrs) {
             this._super(attrs)
+        },
+        /**
+         *
+         * @param argin
+         *
+         * @returns {webix.promise}
+         */
+        execute: function (argin) {
+            var device_id = this.id.substr(0, this.id.lastIndexOf('/'));
+
+            var device = PlatformContext.devices.getItem(device_id);
+
+            return device.executeCommand(this.name, argin);
         }
     }
 );

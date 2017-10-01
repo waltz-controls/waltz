@@ -404,6 +404,9 @@
     }, TangoWebapp.mixin.OpenAjaxListener, webix.IdSpace, webix.ui.layout);
 
     //TODO remove dashboard- from ids
+    /**
+     * @type {webix.protoUI}
+     */
     var dashboard = webix.protoUI({
         name: "dashboard",
         _ui: function () {
