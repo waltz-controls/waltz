@@ -12,10 +12,11 @@ new Test.Functional('atk_panel',{
                         id: 'monitor_window',
                         move: true,
                         fullscreen: true,
-                        body: TangoWebapp.ui.newDeviceMonitorView({
-                            device: device,
-                            id: 'test/monitor/' + TestValues.test_device
-                        })
+                        body: {
+                            view: "device_monitor",
+                            id: 'test/monitor/' + TestValues.test_device,
+                            device: device
+                        }
                     }
                 ).show();
             }).then(this.next_callback('check_open'))
