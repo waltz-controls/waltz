@@ -2,7 +2,7 @@
 (function () {
     /**
      *
-     * @type {{}}
+     * @type {webix.ui.config}
      */
     var tree_context_menu = {
         view: "contextmenu",
@@ -245,6 +245,9 @@
     }, TangoWebapp.mixin.OpenAjaxListener, webix.IdSpace, webix.EventSystem, webix.ui.tree);
 
 
+    /**
+     * @type {webix.protoUI}
+     */
     var devices_tree = webix.protoUI({
         name: 'devices_tree',
         _ui: function (config) {

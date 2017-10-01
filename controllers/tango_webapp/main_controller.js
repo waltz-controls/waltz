@@ -57,13 +57,17 @@ TangoWebapp.MainController = MVC.Controller.extend('main', {
 
         webix.ui.fullScreen();
     },
-    "tango_webapp.device_open subscribe": function (event) {
+    _promise_device: function (data) {
         var promise;
-        var id = event.data.id;
+        var id = data.id;
         if (PlatformContext.devices.exists(id))
             promise = webix.promise.resolve(PlatformContext.devices.getItem(id));
         else
-            promise = PlatformContext.tango_hosts.getItem(event.data.host_id).fetchDevice(event.data.name);
+            promise = PlatformContext.tango_hosts.getItem(data.host_id).fetchDevice(data.name);
+        return promise;
+    },
+    "tango_webapp.device_open subscribe": function (event) {
+        var promise = this._promise_device(event.data);
 
         promise.then(function (device) {
             var device_view_id = "view/" + device.id;
@@ -80,5 +84,25 @@ TangoWebapp.MainController = MVC.Controller.extend('main', {
 
             $$(device_view_id).$$('device_properties').activate();
         }).fail(TangoWebappHelpers.error);
+    },
+    "tango_webapp.device_view subscribe": function (event) {
+        var promise = this._promise_device(event.data);
+
+        promise.then(function (device) {
+            var device_view_id = "monitor/" + device.id;
+            if (!$$(device_view_id)) {
+                $$("main-tabview").addView(
+                    TangoWebapp.ui.newDeviceMonitorView(
+                        {
+                            device: device,
+                            id: device_view_id
+                        })
+                );
+            }
+            $$(device_view_id).show();
+
+            $$(device_view_id).$$('device_properties').activate();
+        }).fail(TangoWebappHelpers.error);
     }
+
 });
