@@ -13,13 +13,9 @@
             top.$$periodic.clearAll();
             device.fetchAttrs()
                 .then(function (attrs) {
-                    return device.fetchAttrInfos(attrs.map(function (it) {
-                        return it.name
-                    }));
-                })
-                .then(function () {
-                    TangoWebappHelpers.iterate(device.attrs, function (attr, id) {
+                    attrs.forEach(function (attr) {
                         var info = attr.info;
+                        var id = attr.id;
                         this._change[id] = this.$$change.add({
                             name: info.name,
                             abs_change: info.events.ch_event.abs_change,
@@ -40,16 +36,16 @@
                             period: info.events.per_event.period
                         });
                     }.bind(top));
-                });
-
+                }).fail(TangoWebappHelpers.error);
         },
         apply: function () {
             var top = this.getTopParentView();
 
             var device = top._device;
 
-            TangoWebapp.helpers.iterate(device.attributeInfoCollection, function (id, info) {
+            TangoWebappHelpers.iterate(device.attrs, function (attr, id) {
                 //change
+                var info = attr.info;
                 info.events.ch_event.abs_change = this.$$change.getItem(this._change[id]).abs_change;
                 info.events.ch_event.rel_change = this.$$change.getItem(this._change[id]).rel_change;
                 //archive
@@ -59,9 +55,13 @@
                 //periodic
                 info.events.per_event.period = this.$$periodic.getItem(this._periodic[id]).period;
 
-                device.attributeInfoCollection.updateItem(id, info);
+                //TODO method in TangoAttribute
+                attr.set_attributes({
+                    info: info
+                });
+                device.attrs.updateItem(id, info);
 
-                device.updateAttributeInfo(info.name);
+                attr.putInfo().fail(TangoWebappHelpers.error);
             }.bind(top));
         },
         _ui: function () {

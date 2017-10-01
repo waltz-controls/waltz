@@ -47,6 +47,18 @@ TangoAttribute = MVC.Model.extend('tango_attribute',
             return device.putAttrValues(values).then(function (resp) {
                 return resp[0];
             });
+        },
+        /**
+         *
+         * @returns {*|webix.promise}
+         */
+        //TODO extract AttributeInfo (aka MVC.Model.JSON) and move this method there
+        putInfo: function () {
+            var device_id = this._get_device_id();
+
+            var device = PlatformContext.devices.getItem(device_id);
+
+            return device.toTangoRestApiRequest().attributes(this.name).put('/info?async=true', this.info);
         }
     }
 );
