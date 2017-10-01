@@ -139,7 +139,7 @@ TangoWebapp.platform.UserContext = MVC.Model.extend('user_context',
 
             return ["UserContext[",
                 "user=", this.user,
-                ";tango_hosts=", this.rest_url,
+                ";rest_url=", this.rest_url,
                 ";tango_hosts=", tango_hosts.join(),
                 ";device_filters=", this.device_filters.join(), "]"].join('\n');
         }
