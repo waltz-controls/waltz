@@ -19,18 +19,24 @@ TangoAttribute = MVC.Model.extend('tango_attribute',
     {
         _get_device_id: function () {
             return this.id.substr(0, this.id.lastIndexOf('/'));
-        }, /**
-     * @returns {webix.promise}
-     */
-    read: function () {
-        var device_id = this._get_device_id();
+        },
+        /**
+         * @returns {webix.promise}
+         */
+        read: function () {
+            var device_id = this._get_device_id();
 
-        var device = PlatformContext.devices.getItem(device_id);
+            var device = PlatformContext.devices.getItem(device_id);
 
-        return device.fetchAttrValues([this.name]).then(function (resp) {
-            return resp[0];
-        });
-    },
+            return device.fetchAttrValues([this.name]).then(function (resp) {
+                return resp[0];
+            });
+        },
+        /**
+         *
+         * @param value
+         * @returns {webix.promise}
+         */
         write: function (value) {
             var device_id = this._get_device_id();
 

@@ -185,8 +185,7 @@ TangoWebapp.TangoDevice = TangoWebapp.DataCollectionWrapper.extend('tango_device
         },
         /**
          *
-         * @param attrs
-         * @param values
+         * @param {{attr:value}} values
          * @returns {webix.protoUI}
          */
         putAttrValues: function (values) {
@@ -201,6 +200,23 @@ TangoWebapp.TangoDevice = TangoWebapp.DataCollectionWrapper.extend('tango_device
          */
         toTangoRestApiRequest: function () {
             return this.host.rest.request().hosts(this.host.toUrl()).devices(this.name);
+        },
+        /**
+         *
+         * @param name
+         * @returns {*|webix.promise}
+         */
+        readPipe: function (name) {
+            return this.toTangoRestApiRequest().pipes(name).get();
+        },
+        /**
+         *
+         * @param {string} name
+         * @param {Object} obj
+         * @return {*|webix.promise}
+         */
+        writePipe: function (name, obj) {
+            return this.toTangoRestApiRequest().pipes(name).put("", obj);
         }
     }
 );

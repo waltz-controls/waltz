@@ -303,15 +303,31 @@
     var test_device_pipes = webix.protoUI({
         name: 'device_panel_pipes',
         _read: function () {
-            debugger
+            var pipe = this.$$('list').getSelectedItem();
+
+            pipe.read()
+                .then(function (resp) {
+                    this.getTopParentView().$$('output').setValue(new View({url: 'views/dev_panel_pipe_out.ejs'}).render(resp));
+                }.bind(this))
+                .fail(TangoWebappHelpers.error)
         },
         _write: function () {
-            debugger
+            var pipe = this.$$('list').getSelectedItem();
+
+            var input;
+            try {
+                input = JSON.parse(this.elements.input.getValue())
+            } catch (e) {
+                TangoWebappHelpers.error(e);
+            }
+
+            pipe.write(input)
+                .then(function (resp) {
+                    this.getTopParentView().$$('output').setValue(new View({url: 'views/dev_panel_pipe_out.ejs'}).render(resp));
+                }.bind(this))
+                .fail(TangoWebappHelpers.error)
         },
-        _help: function () {
-            debugger
-        },
-        _ui: function (context) {
+        _ui: function () {
             return {
                 elements: [
                     {
@@ -330,7 +346,8 @@
                     },
                     {
                         view: 'textarea',
-                        name: 'argin'
+                        name: 'input'
+                        //TODO code highlight
                     },
                     {
                         cols: [
