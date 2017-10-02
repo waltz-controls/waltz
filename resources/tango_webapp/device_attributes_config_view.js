@@ -1,8 +1,40 @@
 (function () {
+    var display = {
+        id: "display",
+        view: "datatable",
+        editable: true,
+        columns: [
+            {
+                id: 'name',
+                header: "Attribute name",
+                width: TangoWebapp.consts.NAME_COLUMN_WIDTH
+            },
+            {
+                id: 'label',
+                header: "Label",
+                editor: "text",
+                width: TangoWebapp.consts.NAME_COLUMN_WIDTH
+            },
+            {
+                id: 'format',
+                header: "Format",
+                editor: "text",
+                fillspace: true
+            }
+        ],
+        scheme: {
+            $update: function () {
+                debugger
+            }
+        }
+
+    };
+
     /**
      * @type {webix.protoUI}
      */
     var attr_config_view = webix.protoUI({
+        _attr_infos: null,
         refresh: function () {
             var top = this.getTopParentView();
 
@@ -48,26 +80,7 @@
                         cells: [
                             {
                                 header: "Display",
-                                body: {
-                                    id: "display",
-                                    view: "datatable",
-                                    editable: true,
-                                    columns: [
-                                        {
-                                            id: 'name',
-                                            header: "Attribute name",
-                                            width: TangoWebapp.consts.NAME_COLUMN_WIDTH
-                                        },
-                                        {
-                                            id: 'label',
-                                            header: "Label",
-                                            editor: "text",
-                                            width: TangoWebapp.consts.NAME_COLUMN_WIDTH
-                                        },
-                                        {id: 'format', header: "Format", editor: "text", fillspace: true}
-                                    ]
-
-                                }
+                                body: display
                             },
                             {
                                 header: "Unit",
@@ -102,20 +115,7 @@
                                         },
                                         {id: 'min_value', header: "Min value", editor: "text"},
                                         {id: 'max_value', header: "Max value", editor: "text", fillspace: true}
-                                    ],
-                                    scheme: {
-                                        $update: function (obj) {
-                                            var attr = top._device.attrs.getItem(obj.masterId);
-                                            var info = attr.info;
-
-                                            info.min_value = obj.info.min_value;
-                                            info.max_value = obj.info.min_value;
-
-                                            attr.set_attributes({info: info});
-                                            top._device.attrs.updateItem(obj.masterId, attr);
-                                        }
-                                    }
-
+                                    ]
                                 }
                             },
                             {
@@ -216,19 +216,26 @@
         $init: function (config) {
             webix.extend(config, this._ui());
 
+            this._attr_infos = new webix.DataCollection();
+
+            config.device.fetchAttrs().then(function (attrs) {
+                var infos = attrs.map(function (it) {
+                    return it.info;
+                });
+                this._attr_infos.parse(infos);
+            }.bind(this));
 
             this.$ready.push(function () {
-                //TODO scheme
-                this.$$('display').sync(this._device.attrs);
-                this.$$('unit').sync(this._device.attrs);
-                this.$$('range').sync(this._device.attrs);
-                this.$$('description').sync(this._device.attrs);
-                this.$$('alias').sync(this._device.attrs);
+                this.$$('display').sync(this._attr_infos);
+                this.$$('unit').sync(this._attr_infos);
+                this.$$('range').sync(this._attr_infos);
+                this.$$('description').sync(this._attr_infos);
+                this.$$('alias').sync(this._attr_infos);
 
                 this.$$alarms = this.$$('alarms');
 
                 this.refresh();
-            });
+            }.bind(this));
         },
         name: "device_attr_config"
     }, webix.IdSpace, TangoWebapp.mixin.TabActivator, TangoWebapp.mixin.DeviceSetter, webix.ui.layout);
