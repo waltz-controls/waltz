@@ -20,7 +20,14 @@
                 var hostId = tree._get_host_id(item);
                 var name = tree._get_device_name(item);
                 var device_id = hostId + "/" + name;
-                OpenAjax.hub.publish("tango_webapp.device_" + id, {data: {id: device_id, host_id: hostId, name: name}});
+                OpenAjax.hub.publish("tango_webapp.device_" + id, {
+                    data: {
+                        id: device_id,
+                        host_id: hostId,
+                        name: name,
+                        tab: 'device-properties'
+                    }
+                });
             }
         }
     };

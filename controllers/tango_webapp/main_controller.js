@@ -90,7 +90,7 @@ TangoWebapp.MainController = MVC.Controller.extend('main', {
             }
             $$(device_view_id).show();
 
-            $$(device_view_id).$$('device_properties').activate();
+            $$(device_view_id).$$(event.data.tab).activate();
         }).fail(TangoWebappHelpers.error);
     },
     "tango_webapp.device_view subscribe": function (event) {

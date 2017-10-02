@@ -161,7 +161,14 @@
                                                     var top = this.getTopParentView();
                                                     var device = top._device;
 
-                                                    TangoWebapp.helpers.openDeviceTab(device, 'device_attr_config');
+                                                    OpenAjax.hub.publish("tango_webapp.device_open", {
+                                                        data: {
+                                                            id: device.id,
+                                                            host_id: device.host.id,
+                                                            name: device.name,
+                                                            tab: 'device-attr-config'
+                                                        }
+                                                    });
                                                 }
                                             }
                                         ]
