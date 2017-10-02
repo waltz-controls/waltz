@@ -12,6 +12,11 @@
     </a>
 
 
+    <a href='../classes/DeviceFilter.html' id='DeviceFilter.html'>
+        DeviceFilter
+    </a>
+
+
     <a href='../classes/MVC.Class.html' id='MVC.Class.html'>
         MVC.Class
     </a>
@@ -54,11 +59,6 @@
 
     <a href='../classes/MVC.Model.html' id='MVC.Model.html'>
         <span class='matches_previous'>MVC.</span>Model
-    </a>
-
-
-    <a href='../classes/MVC.Model.Cookie.html' id='MVC.Model.Cookie.html'>
-        <span class='matches_previous'>MVC.Model.</span>Cookie
     </a>
 
 
@@ -112,8 +112,38 @@
     </a>
 
 
+    <a href='../classes/TangoAdminDevice.html' id='TangoAdminDevice.html'>
+        TangoAdminDevice
+    </a>
+
+
+    <a href='../classes/TangoAttribute.html' id='TangoAttribute.html'>
+        TangoAttribute
+    </a>
+
+
+    <a href='../classes/TangoCommand.html' id='TangoCommand.html'>
+        TangoCommand
+    </a>
+
+
+    <a href='../classes/TangoDeviceProperty.html' id='TangoDeviceProperty.html'>
+        TangoDeviceProperty
+    </a>
+
+
+    <a href='../classes/TangoPipe.html' id='TangoPipe.html'>
+        TangoPipe
+    </a>
+
+
     <a href='../classes/TangoWebapp.DataCollectionWrapper.html' id='TangoWebapp.DataCollectionWrapper.html'>
         TangoWebapp.DataCollectionWrapper
+    </a>
+
+
+    <a href='../classes/TangoWebapp.MainController.html' id='TangoWebapp.MainController.html'>
+        <span class='matches_previous'>TangoWebapp.</span>MainController
     </a>
 
 
@@ -179,7 +209,24 @@
 
         <div id='shortcuts'><a href='#TangoWebapp.TangoDevice'>TangoWebapp.TangoDevice</a>, <a
                 href='#TangoWebapp.TangoDevice.prototype'>prototype</a>, <a
+                href='#TangoWebapp.TangoDevice.prototype.deleteProperty'>deleteProperty</a>, <a
                 href='#TangoWebapp.TangoDevice.prototype.executeCommand'>executeCommand</a>, <a
+                href='#TangoWebapp.TangoDevice.prototype.fetchAdmin'>fetchAdmin</a>, <a
+                href='#TangoWebapp.TangoDevice.prototype.fetchAttrs'>fetchAttrs</a>, <a
+                href='#TangoWebapp.TangoDevice.prototype.fetchAttrValues'>fetchAttrValues</a>, <a
+                href='#TangoWebapp.TangoDevice.prototype.fetchCommands'>fetchCommands</a>, <a
+                href='#TangoWebapp.TangoDevice.prototype.fetchPipes'>fetchPipes</a>, <a
+                href='#TangoWebapp.TangoDevice.prototype.fetchProperties'>fetchProperties</a>, <a
+                href='#TangoWebapp.TangoDevice.prototype.init'>init</a>, <a
+                href='#TangoWebapp.TangoDevice.prototype.putAttrValues'>putAttrValues</a>, <a
+                href='#TangoWebapp.TangoDevice.prototype.putProperties'>putProperties</a>, <a
+                href='#TangoWebapp.TangoDevice.prototype.readPipe'>readPipe</a>, <a
+                href='#TangoWebapp.TangoDevice.prototype.set_attrs'>set_attrs</a>, <a
+                href='#TangoWebapp.TangoDevice.prototype.set_commands'>set_commands</a>, <a
+                href='#TangoWebapp.TangoDevice.prototype.set_pipes'>set_pipes</a>, <a
+                href='#TangoWebapp.TangoDevice.prototype.set_properties'>set_properties</a>, <a
+                href='#TangoWebapp.TangoDevice.prototype.toTangoRestApiRequest'>toTangoRestApiRequest</a>, <a
+                href='#TangoWebapp.TangoDevice.prototype.writePipe'>writePipe</a>, <a
                 href='#TangoWebapp.TangoDevice.static'>static</a></div>
 
 
@@ -193,10 +240,85 @@
             <div></div>
             <h2>Prototype Methods</h2>
             <div>
+                <div class='attribute' id="TangoWebapp.TangoDevice.prototype.deleteProperty"><h3>deleteProperty</h3>
+                    <p>@param name
+                        @returns {*|webix.promise}
+
+                    </p></div>
                 <div class='attribute' id="TangoWebapp.TangoDevice.prototype.executeCommand"><h3>executeCommand</h3>
                     <p>@param cmd
                         @param arg
-                        @return {Promise}
+                        @return {webix.promise}
+
+                    </p></div>
+                <div class='attribute' id="TangoWebapp.TangoDevice.prototype.fetchAdmin"><h3>fetchAdmin</h3>
+                    <p>@returns {webix.promise}
+
+                    </p></div>
+                <div class='attribute' id="TangoWebapp.TangoDevice.prototype.fetchAttrs"><h3>fetchAttrs</h3>
+                    <p>@returns {Promise}
+
+                    </p></div>
+                <div class='attribute' id="TangoWebapp.TangoDevice.prototype.fetchAttrValues"><h3>fetchAttrValues</h3>
+                    <p>@param attrs
+                        @returns {Promise}
+
+                    </p></div>
+                <div class='attribute' id="TangoWebapp.TangoDevice.prototype.fetchCommands"><h3>fetchCommands</h3>
+                    <p>@returns {Promise}
+
+                    </p></div>
+                <div class='attribute' id="TangoWebapp.TangoDevice.prototype.fetchPipes"><h3>fetchPipes</h3>
+                    <p>@returns {Promise}
+
+                    </p></div>
+                <div class='attribute' id="TangoWebapp.TangoDevice.prototype.fetchProperties"><h3>fetchProperties</h3>
+                    <p>@returns {Promise}
+
+                    </p></div>
+                <div class='attribute' id="TangoWebapp.TangoDevice.prototype.init"><h3>init</h3>
+                    <p>@param attrs
+
+                    </p></div>
+                <div class='attribute' id="TangoWebapp.TangoDevice.prototype.putAttrValues"><h3>putAttrValues</h3>
+                    <p>@param {{attr:value}} values
+                        @returns {webix.protoUI}
+
+                    </p></div>
+                <div class='attribute' id="TangoWebapp.TangoDevice.prototype.putProperties"><h3>putProperties</h3>
+                    <p>@param {prop:[]} props
+                        @returns {webix.promise}
+
+                    </p></div>
+                <div class='attribute' id="TangoWebapp.TangoDevice.prototype.readPipe"><h3>readPipe</h3>
+                    <p>@param name
+                        @returns {*|webix.promise}
+
+                    </p></div>
+                <div class='attribute' id="TangoWebapp.TangoDevice.prototype.set_attrs"><h3>set_attrs</h3>
+                    <p>@param v
+
+                    </p></div>
+                <div class='attribute' id="TangoWebapp.TangoDevice.prototype.set_commands"><h3>set_commands</h3>
+                    <p>@param v
+
+                    </p></div>
+                <div class='attribute' id="TangoWebapp.TangoDevice.prototype.set_pipes"><h3>set_pipes</h3>
+                    <p>@param v
+
+                    </p></div>
+                <div class='attribute' id="TangoWebapp.TangoDevice.prototype.set_properties"><h3>set_properties</h3>
+                    <p>@param v
+
+                    </p></div>
+                <div class='attribute' id="TangoWebapp.TangoDevice.prototype.toTangoRestApiRequest"><h3>
+                    toTangoRestApiRequest</h3>
+                    <p>
+                    </p></div>
+                <div class='attribute' id="TangoWebapp.TangoDevice.prototype.writePipe"><h3>writePipe</h3>
+                    <p>@param {string} name
+                        @param {Object} obj
+                        @return {*|webix.promise}
 
                     </p></div>
             </div>
