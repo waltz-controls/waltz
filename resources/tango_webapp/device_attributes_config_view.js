@@ -64,7 +64,10 @@
 
             TangoWebappHelpers.iterate(top._device.attrs, function (attr) {
                 attr.putInfo()
-                    .then(TangoWebappHelpers.log.bind(null, "Attribute configuration has been applied"))
+                    .then(TangoWebappHelpers.log.bind(null, "Attribute[" + attr.name + "] configuration has been updated"))
+                    .then(function () {
+                        OpenAjax.hub.publish("tango_webapp.device_view.update_attr_config", {data: attr.info})
+                    })
                     .fail(TangoWebappHelpers.error);
             });
         },
