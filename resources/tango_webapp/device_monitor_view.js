@@ -205,7 +205,8 @@
                                         id: "scalar",
                                         scheme: {
                                             $update: function (item) {
-                                                if (item.quality === 'ATTR_ALARM' || item.quality === 'ATTR_INVALID') item.$css = {"background-color": "lightcoral"};
+                                                if (item.quality === 'FAILURE') item.$css = {"background-color": "red"};
+                                                else if (item.quality === 'ATTR_ALARM' || item.quality === 'ATTR_INVALID') item.$css = {"background-color": "lightcoral"};
                                                 else if (item.quality === 'ATTR_WARNING') item.$css = {"background-color": "orange"};
                                                 else delete item.$css;
                                             }

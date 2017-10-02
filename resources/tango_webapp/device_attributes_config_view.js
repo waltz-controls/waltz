@@ -1,5 +1,12 @@
 (function () {
-    var display = {
+    var update_attr_info = function (info) {
+        var attr = TangoAttribute.find_one(info.masterId);
+        attr.set_attributes({info: info});
+        var device = PlatformContext.devices.getItem(attr.device_id);
+        device.attrs.updateItem(attr.id, attr);
+    };
+
+    var display_tab_body = {
         id: "display",
         view: "datatable",
         editable: true,
@@ -23,11 +30,115 @@
             }
         ],
         scheme: {
-            $update: function () {
-                debugger
-            }
+            $update: update_attr_info
         }
 
+    };
+
+    var unit_tab_body = {
+        id: "unit",
+        view: "datatable",
+        editable: true,
+        columns: [
+            {
+                id: 'name',
+                header: "Attribute name",
+                width: TangoWebapp.consts.NAME_COLUMN_WIDTH
+            },
+            {id: 'unit', header: "Unit", editor: "text"},
+            {id: 'display_unit', header: "Display unit", editor: "text"},
+            {id: 'standard_unit', header: "Standard unit", editor: "text", fillspace: true}
+        ],
+        scheme: {
+            $update: update_attr_info
+        }
+
+    };
+
+    var range_tab_body = {
+        id: "range",
+        view: "datatable",
+        editable: true,
+        columns: [
+            {
+                id: 'name',
+                header: "Attribute name",
+                width: TangoWebapp.consts.NAME_COLUMN_WIDTH
+            },
+            {id: 'min_value', header: "Min value", editor: "text"},
+            {id: 'max_value', header: "Max value", editor: "text", fillspace: true}
+        ],
+        scheme: {
+            $update: update_attr_info
+        }
+    };
+
+    var alarms_tab_body = {
+        id: "alarms",
+        view: "datatable",
+        editable: true,
+        columns: [
+            {
+                id: 'name',
+                header: "Attribute name",
+                width: TangoWebapp.consts.NAME_COLUMN_WIDTH
+            },
+            {id: 'min_alarm', header: "Min alarm", editor: "text"},
+            {id: 'max_alarm', header: "Max alarm", editor: "text"},
+            {id: 'min_warning', header: "Min warning", editor: "text"},
+            {id: 'max_warning', header: "Max warning", editor: "text"},
+            {id: 'delta_t', header: "Delta t", editor: "text"},
+            {id: 'delta_val', header: "Delta val", editor: "text", fillspace: true}
+        ],
+        scheme: {
+            $update: function (obj) {
+                var attr = TangoAttribute.find_one(obj.masterId);
+                //TODO extract TangoAttributeInfo
+                var info = attr.info;
+
+                info.alarms.min_alarm = obj.min_alarm;
+                info.alarms.max_alarm = obj.max_alarm;
+                info.alarms.min_warning = obj.min_warning;
+                info.alarms.max_warning = obj.max_warning;
+                info.alarms.delta_t = obj.delta_t;
+                info.alarms.delta_val = obj.delta_val;
+
+                attr.set_attributes({info: info});
+                var device = PlatformContext.devices.getItem(attr.device_id);
+                device.attrs.updateItem(attr.id, attr);
+            }
+        }
+    };
+
+    var description_tab_body = {
+        id: "description",
+        view: "datatable",
+        editable: true,
+        columns: [
+            {
+                id: 'name',
+                header: "Attribute name",
+                width: TangoWebapp.consts.NAME_COLUMN_WIDTH
+            },
+            {id: 'description', header: "Description", editor: "text", fillspace: true}
+        ],
+        scheme: {
+            $update: update_attr_info
+        }
+    };
+
+    var alias_tab_body = {
+        id: "alias",
+        view: "datatable",
+        // editable: true,
+        columns: [
+            {
+                id: 'name',
+                header: "Attribute name",
+                width: TangoWebapp.consts.NAME_COLUMN_WIDTH
+            },
+            {id: 'alias', header: "Alias", editor: "text", fillspace: true}
+        ]
     };
 
     /**
@@ -83,112 +194,27 @@
                         cells: [
                             {
                                 header: "Display",
-                                body: display
+                                body: display_tab_body
                             },
                             {
                                 header: "Unit",
-                                body: {
-                                    id: "unit",
-                                    view: "datatable",
-                                    editable: true,
-                                    columns: [
-                                        {
-                                            id: 'name',
-                                            header: "Attribute name",
-                                            width: TangoWebapp.consts.NAME_COLUMN_WIDTH
-                                        },
-                                        {id: 'unit', header: "Unit", editor: "text"},
-                                        {id: 'display_unit', header: "Display unit", editor: "text"},
-                                        {id: 'standard_unit', header: "Standard unit", editor: "text", fillspace: true}
-                                    ]
-
-                                }
+                                body: unit_tab_body
                             },
                             {
                                 header: "Range",
-                                body: {
-                                    id: "range",
-                                    view: "datatable",
-                                    editable: true,
-                                    columns: [
-                                        {
-                                            id: 'name',
-                                            header: "Attribute name",
-                                            width: TangoWebapp.consts.NAME_COLUMN_WIDTH
-                                        },
-                                        {id: 'min_value', header: "Min value", editor: "text"},
-                                        {id: 'max_value', header: "Max value", editor: "text", fillspace: true}
-                                    ]
-                                }
+                                body: range_tab_body
                             },
                             {
                                 header: "Alarms",
-                                body: {
-                                    id: "alarms",
-                                    view: "datatable",
-                                    editable: true,
-                                    columns: [
-                                        {
-                                            id: 'name',
-                                            header: "Attribute name",
-                                            width: TangoWebapp.consts.NAME_COLUMN_WIDTH
-                                        },
-                                        {id: 'min_alarm', header: "Min alarm", editor: "text"},
-                                        {id: 'max_alarm', header: "Max alarm", editor: "text"},
-                                        {id: 'min_warning', header: "Min warning", editor: "text"},
-                                        {id: 'max_warning', header: "Max warning", editor: "text"},
-                                        {id: 'delta_t', header: "Delta t", editor: "text"},
-                                        {id: 'delta_val', header: "Delta val", editor: "text", fillspace: true}
-                                    ],
-                                    scheme: {
-                                        $update: function (obj) {
-                                            var attr = top._device.attrs.getItem(obj.masterId);
-                                            var info = attr.info;
-
-                                            info.alarms.min_alarm = obj.min_alarm;
-                                            info.alarms.max_alarm = obj.max_alarm;
-                                            info.alarms.min_warning = obj.min_warning;
-                                            info.alarms.max_warning = obj.max_warning;
-                                            info.alarms.delta_t = obj.delta_t;
-                                            info.alarms.delta_val = obj.delta_val;
-
-                                            attr.set_attributes({info: info});
-                                            top._device.attrs.updateItem(obj.masterId, attr);
-                                        }
-                                    }
-                                }
+                                body: alarms_tab_body
                             },
                             {
                                 header: "Description",
-                                body: {
-                                    id: "description",
-                                    view: "datatable",
-                                    editable: true,
-                                    columns: [
-                                        {
-                                            id: 'name',
-                                            header: "Attribute name",
-                                            width: TangoWebapp.consts.NAME_COLUMN_WIDTH
-                                        },
-                                        {id: 'description', header: "Description", editor: "text", fillspace: true}
-                                    ]
-                                }
+                                body: description_tab_body
                             },
                             {
                                 header: "Alias",
-                                body: {
-                                    id: "alias",
-                                    view: "datatable",
-                                    editable: true,
-                                    columns: [
-                                        {
-                                            id: 'name',
-                                            header: "Attribute name",
-                                            width: TangoWebapp.consts.NAME_COLUMN_WIDTH
-                                        },
-                                        {id: 'alias', header: "Alias", editor: "text", fillspace: true}
-                                    ]
-                                }
+                                body: alias_tab_body
                             }
                         ]
                     },
@@ -223,7 +249,7 @@
 
             config.device.fetchAttrs().then(function (attrs) {
                 var infos = attrs.map(function (it) {
-                    return it.info;
+                    return webix.extend(webix.copy(it.info), {masterId: it.id});
                 });
                 this._attr_infos.parse(infos);
             }.bind(this));
