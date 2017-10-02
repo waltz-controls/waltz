@@ -78,7 +78,7 @@ TangoWebapp.MainController = MVC.Controller.extend('main', {
         var promise = this._promise_device(event.data);
 
         promise.then(function (device) {
-            if (!device.exported) throw "Device[" + device.id + "] is not exported";
+            if (!device.info.exported) throw "Device[" + device.id + "] is not exported";
 
             var device_view_id = "view/" + device.id;
             if (!$$(device_view_id)) {
@@ -99,7 +99,7 @@ TangoWebapp.MainController = MVC.Controller.extend('main', {
         var promise = this._promise_device(event.data);
 
         promise.then(function (device) {
-            if (!device.exported) throw "Device[" + device.id + "] is not exported";
+            if (!device.info.exported) throw "Device[" + device.id + "] is not exported";
             
             var device_view_id = "monitor/" + device.id;
             if (!$$(device_view_id)) {
