@@ -24,7 +24,7 @@ TangoWebapp.platform.BottomToolbar = MVC.Controller.extend("bottom_toolbar_contr
                     body: {
                         rows: [
                             {
-                                view: 'Logger',
+                                view: 'logger',
                                 id: 'main-log',
                                 ejs: 'views/main_log_item.ejs'
                             }

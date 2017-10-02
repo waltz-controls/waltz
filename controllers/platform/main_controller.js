@@ -11,10 +11,7 @@ TangoWebapp.platform.MainController = MVC.Controller.extend('main', {
      * @param {Object} params
      */
     load: function (params) {
-        //TODO deal with it somehow
-        TangoWebapp.consts.LOG_DATE_FORMATTER = webix.Date.dateToStr("%c");
-
-
+        //popup login screen
         webix.ui(TangoWebapp.platform.LoginController.getUI()).show();
 
         //draw ui
@@ -32,7 +29,7 @@ TangoWebapp.platform.MainController = MVC.Controller.extend('main', {
         });
         webix.ui.fullScreen();
 
-        TangoWebapp.debug("platform/main");
+        TangoWebappHelpers.debug("platform/main done.");
     },
     "tango_webapp.user_login subscribe": function (data) {
         var user_context = TangoWebapp.platform.UserContext.find_one(data.name);

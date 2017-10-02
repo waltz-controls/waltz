@@ -14,7 +14,7 @@
                 }
             }
         },
-        name: "Logger",
+        name: "logger",
         $init: function (config) {
             webix.extend(config, this._getUI());
 

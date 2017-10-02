@@ -1,4 +1,4 @@
-MVC.Object.extend(TangoWebapp.ui, {
+TangoWebapp.ui = {
     _webix_files: [
         "logger_view",
         "dashboard",
@@ -8,11 +8,11 @@ MVC.Object.extend(TangoWebapp.ui, {
         "device_attributes_config_view", "device_logging_view",
         "device_monitor_view"
     ]
-});
+};
 
 if (MVC.Browser.Rhino)
     print("Skipping webix for Rhino");
 else if (MVC.env() === 'production') {
-    include.add(include.add_defaults('../apps/tango_webapp/webix')); //this file is created during compression
+    include.add(include.add_defaults('../../apps/tango_webapp/webix')); //this file is created during compression
 } else
     include.apply(include, TangoWebapp.ui._webix_files);

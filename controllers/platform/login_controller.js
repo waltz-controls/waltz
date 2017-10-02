@@ -73,7 +73,7 @@ TangoWebapp.platform.LoginController = MVC.Controller.extend("login_controller",
 
         });
 
-        TangoWebapp.debug("Attached Authorization header for " + user_name);
+        TangoWebappHelpers.debug("Attached Authorization header for " + user_name);
 
         $$("login").hide();
     },

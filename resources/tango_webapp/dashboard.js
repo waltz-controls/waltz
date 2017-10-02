@@ -1,5 +1,20 @@
 //isolate this component
 (function () {
+    /**
+     * @type {webix.protoUI}
+     */
+    var textarea0 = webix.protoUI({
+        name: "textarea0",
+        $cssName: "textarea",
+        getValue: function () {
+            var rv = webix.ui.textarea.prototype.getValue.call(this);
+            return rv.split('\n');
+        },
+        setValue: function (value) {
+            webix.ui.textarea.prototype.setValue.call(this, value.join('\n'));
+        }
+    }, webix.ui.textarea);
+
     var getting_started = {
         minWidth: 240,
         minHeight: 240,

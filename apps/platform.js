@@ -5,6 +5,10 @@
 TangoWebapp.platform = {};
 
 include(function () { //runs after prior includes are loaded
+    include.plugins(
+        "controller", "view", "model"
+    );
+
     include.resources(
         "platform/webix/tango_mixins",
         "platform/helpers"

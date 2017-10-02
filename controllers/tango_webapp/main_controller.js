@@ -11,6 +11,9 @@ TangoWebapp.MainController = MVC.Controller.extend('main', {
      * @see PlatformContext
      */
     "platform_context.create subscribe": function (event) {
+        //TODO deal with it somehow
+        TangoWebapp.consts.LOG_DATE_FORMATTER = webix.Date.dateToStr("%c");
+
         if ($$('tango-webapp') === undefined) {
             webix.ui({
                 id: 'tango-webapp',
