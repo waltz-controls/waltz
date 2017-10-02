@@ -45,7 +45,7 @@ TangoWebapp.MainController = MVC.Controller.extend('main', {
                         }
                     },
                     {
-                        header: "<span class='webix_icon fa-microchip'></span> Device Test Panel",
+                        header: "<span class='webix_icon fa-keyboard-o'></span> Device Test Panel",
                         width: 300,
                         collapsed: true,
                         body: {
@@ -78,6 +78,8 @@ TangoWebapp.MainController = MVC.Controller.extend('main', {
         var promise = this._promise_device(event.data);
 
         promise.then(function (device) {
+            if (!device.exported) throw "Device[" + device.id + "] is not exported";
+
             var device_view_id = "view/" + device.id;
             if (!$$(device_view_id)) {
                 $$("main-tabview").addView(
@@ -97,6 +99,8 @@ TangoWebapp.MainController = MVC.Controller.extend('main', {
         var promise = this._promise_device(event.data);
 
         promise.then(function (device) {
+            if (!device.exported) throw "Device[" + device.id + "] is not exported";
+            
             var device_view_id = "monitor/" + device.id;
             if (!$$(device_view_id)) {
                 $$("main-tabview").addView(
