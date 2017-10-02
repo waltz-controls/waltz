@@ -17,7 +17,7 @@ TangoWebapp.platform.UserContext = MVC.Model.extend('user_context',
             device_filters: 'string[]' //TODO move to application layer?
         },
         default_attributes: {
-            rest_url: 'http://localhost:10001'
+            rest_url: 'http://' + TangoWebapp.consts.REST_API_HOST + ':' + TangoWebapp.consts.REST_API_PORT
         },
         /**
          * WARNING!!! Due to limitations of TangoWebapp storage this method always returns new instance
@@ -29,12 +29,12 @@ TangoWebapp.platform.UserContext = MVC.Model.extend('user_context',
          */
         find_one: function (id) {
             var result = this._super(id);
+            var default_tango_host = {};
+            default_tango_host[TangoWebapp.consts.TANGO_HOST + ':' + TangoWebapp.consts.TANGO_PORT] = '';
             if (result == null) {
                 result = new this({
                     user: id,
-                    tango_hosts: {
-                        'localhost:10000': ''
-                    },
+                    tango_hosts: default_tango_host,
                     device_filters: ['*/*/*']
                 });
             }
