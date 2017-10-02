@@ -9,6 +9,7 @@ TangoWebapp.TangoDevice = TangoWebapp.DataCollectionWrapper.extend('tango_device
         attributes: {
             id: 'string', //host_id/name
             name: 'string',
+            host: 'TangoHost',
             info: '{}',
             attrs: '[]',
             commands: '[]',
@@ -18,6 +19,9 @@ TangoWebapp.TangoDevice = TangoWebapp.DataCollectionWrapper.extend('tango_device
             //TODO use not selected as default id or similar - important is that it must be the same as in TangoHost
             id: 'unknown', //host_id/name
             name: 'not selected',
+            host: {
+                id: 'unknown'
+            },
             info: {}
         }
     },
