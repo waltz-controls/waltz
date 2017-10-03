@@ -16,10 +16,11 @@
                 type: 'heatmap'
             }];
 
+            var height = Math.max(value.height, this.$height);
             var layout = {
                 autosize: false,
-                width: value.width < TangoWebapp.consts.PLOTLY_SCALE_THRESHOLD ? value.width*2 : value.width,
-                height: value.height < TangoWebapp.consts.PLOTLY_SCALE_THRESHOLD ? value.height*2 : value.height,
+                width: Math.max(value.width, height),//assume square
+                height: height,
                 margin: {
                     l: 50,
                     r: 50,
