@@ -47,7 +47,7 @@
             },
             $init: function (config) {
                 webix.extend(config, this._ui(config));
-                this.$ready.push(this.update.bind(this, config.value));
+                // this.$ready.push(this.update.bind(this, config.value));
             },
             defaults: {}
         }, webix.IdSpace, webix.ui.layout);

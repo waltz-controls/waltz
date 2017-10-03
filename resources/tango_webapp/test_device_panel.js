@@ -126,36 +126,32 @@
         }
     }, synchronizer, webix.ProgressBar, webix.IdSpace, webix.ui.form);
 
-    var openSpectrumWindow = function (attr) {
-        webix.ui({
-            view: "window",
-            move: true,
-            head: {template: 'Plot attribute [' + attr.name + ']'},
-            width: 1024,
-            height: 480,
-            body: TangoWebapp.ui.newSpectrumView(attr),
-            on: {
-                onHide: function () {
-                    this.close();
-                }
-            }
-        }).show();
+    //TODO make instance functions
+    var openTab = function (view, resp) {
+        var $$tab = $$(this.id);
+        if (!$$tab) {
+            $$("main-tabview").addView(view);
+            $$tab = $$(this.id);
+        }
+
+        $$tab.show();
+        $$tab.update(resp.value);
     };
 
-    var openImageWindow = function (attr) {
-        webix.ui({
-            view: "window",
-            move: true,
-            head: {template: 'Image attribute [' + attr.name + ']'},
-            width: 524,
-            height: 524,
-            body: TangoWebapp.ui.newImageView(attr),
-            on: {
-                onHide: function () {
-                    this.close();
-                }
-            }
-        }).show();
+    var openSpectrumWindow = function (resp) {
+        openTab.bind(this)({
+            header: "<span class='webix_icon fa-area-chart'></span>[<span class='webix_strong'>" + this.device_id + '/' + this.name + "</span>]",
+            close: true,
+            body: TangoWebapp.ui.newSpectrumView(webix.extend({id: this.id}, resp))
+        }, resp);
+    };
+
+    var openImageWindow = function (resp) {
+        openTab.bind(this)({
+            header: "<span class='webix_icon fa-image'></span>[<span class='webix_strong'>" + this.device_id + '/' + this.name + "</span>]",
+            close: true,
+            body: TangoWebapp.ui.newImageView(webix.extend({id: this.id}, resp))
+        }, resp);
     };
 
     /**
@@ -188,11 +184,11 @@
 
             if (attribute.info.data_format === "SPECTRUM") {
                 attribute.read()
-                    .then(openSpectrumWindow)
+                    .then(openSpectrumWindow.bind(attribute))
                     .fail(TangoWebappHelpers.error);
             } else if (attribute.info.data_format === "IMAGE") {
                 attribute.read()
-                    .then(openImageWindow)
+                    .then(openImageWindow.bind(attribute))
                     .fail(TangoWebappHelpers.error);
             } else {
                 TangoWebappHelpers.error("Unsupported data format: " + attribute.info.data_format);

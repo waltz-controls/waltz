@@ -37,7 +37,7 @@
             Plotly.newPlot(this.getNode(), data, layout);
         },
         $init: function (config) {
-            this.$ready.push(this.update.bind(this, config.value));
+            // this.$ready.push(this.update.bind(this, config.value));
         },
         defaults: {
             template: "<div />"
