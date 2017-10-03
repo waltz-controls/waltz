@@ -15,6 +15,7 @@ TangoWebapp.consts = {
     TANGO_PORT: 10000,
     NAME_COLUMN_WIDTH: 250,
     TABS_DELIMITER_HEIGHT: 3,
+    PLOTLY_SCALE_THRESHOLD: 256,
     DATABASE: 'sys/database/2',
     LOG_DATE_FORMATTER: function (date) {
         return date;
