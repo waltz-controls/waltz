@@ -38,7 +38,7 @@ task prepareBuild << {
         from "index.html"
         into "${buildDir}"
         filter { String line ->
-            "$line".replaceAll("development|test","production")
+            "$line".replaceAll(",development|,test",",production")
         }
     }
 }
