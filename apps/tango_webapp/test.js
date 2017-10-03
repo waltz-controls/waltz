@@ -6,6 +6,7 @@ include.unit_tests(
     // 'cookie'
 );
 include.functional_tests(
+    'tango_webapp/image_view',
     'tango_webapp/device_panel',
     'tango_webapp/device_properties',
     'tango_webapp/device_polling',
