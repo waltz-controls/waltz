@@ -43,6 +43,7 @@
         _ui: function () {
             return {
                 elements: [
+                    filter,
                     {
                         view: 'list',
                         id: 'list',
@@ -126,6 +127,19 @@
         }
     }, synchronizer, webix.ProgressBar, webix.IdSpace, webix.ui.form);
 
+    var filter = {
+        view: 'text',
+        value: '',
+        placeholder: 'type to filter',
+        label: '<span class="webix_icon fa-filter"></span>',
+        labelWidth: 20,
+        on: {
+            onTimedKeyPress: function () {
+                this.getFormView().$$("list").filter("#name#", this.getValue());
+            }
+        }
+    };
+
     //TODO make instance functions
     var openTab = function (view, resp) {
         var $$tab = $$(this.id);
@@ -197,6 +211,7 @@
         _ui: function () {
             return {
                 elements: [
+                    filter,
                     {
                         view: 'list',
                         id: 'list',
@@ -326,6 +341,7 @@
         _ui: function () {
             return {
                 elements: [
+                    filter,
                     {
                         view: 'list',
                         id: 'list',
