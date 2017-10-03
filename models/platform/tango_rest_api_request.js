@@ -52,6 +52,11 @@ TangoWebapp.TangoRestApiRequest = MVC.Model.extend('tango_rest_api_request',
             return json;
         },
 
+        /**
+         *
+         * @param resp
+         * @private
+         */
         _failure: function (resp) {
             var json;
             try {

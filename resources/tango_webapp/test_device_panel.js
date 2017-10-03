@@ -34,11 +34,11 @@
             var command = this.$$('list').getSelectedItem();
             var argin = this.elements.argin.getValue();
             command.execute(argin)
+                .fail(error_handler.bind(this))
                 .then(function (resp) {
                     if (!resp.output) resp.output = "";
                     this.getTopParentView().$$('output').setValue(new View({url: 'views/dev_panel_command_out.ejs'}).render(resp));
-                }.bind(this))
-                .fail(TangoWebappHelpers.error);
+                }.bind(this));
         },
         _ui: function () {
             return {
@@ -168,6 +168,10 @@
         }, resp);
     };
 
+    var error_handler = function (resp) {
+        this.getTopParentView().$$('output').setValue(new View({url: 'views/dev_panel_error_out.ejs'}).render(resp))
+    };
+
     /**
      * @type {webix.protoUI}
      */
@@ -176,11 +180,12 @@
         _read: function () {
             var attribute = this.$$('list').getSelectedItem();
 
+
             attribute.read()
+                .fail(error_handler.bind(this))
                 .then(function (resp) {
                     this.getTopParentView().$$('output').setValue(new View({url: 'views/dev_panel_attribute_out.ejs'}).render(resp))
-                }.bind(this))
-                .fail(TangoWebappHelpers.error);
+                }.bind(this));
         },
         _write: function () {
             var attribute = this.$$('list').getSelectedItem();
@@ -188,22 +193,22 @@
             var v = this.elements.w_value.getValue();
 
             attribute.write(v)
+                .fail(error_handler.bind(this))
                 .then(function (resp) {
                     this.getTopParentView().$$('output').setValue(new View({url: 'views/dev_panel_attribute_out.ejs'}).render(resp))
-                }.bind(this))
-                .fail(TangoWebappHelpers.error);
+                }.bind(this));
         },
         _plot: function () {
             var attribute = this.$$('list').getSelectedItem();
 
             if (attribute.info.data_format === "SPECTRUM") {
                 attribute.read()
-                    .then(openSpectrumWindow.bind(attribute))
-                    .fail(TangoWebappHelpers.error);
+                    .fail(error_handler.bind(this))
+                    .then(openSpectrumWindow.bind(attribute));
             } else if (attribute.info.data_format === "IMAGE") {
                 attribute.read()
-                    .then(openImageWindow.bind(attribute))
-                    .fail(TangoWebappHelpers.error);
+                    .fail(error_handler.bind(this))
+                    .then(openImageWindow.bind(attribute));
             } else {
                 TangoWebappHelpers.error("Unsupported data format: " + attribute.info.data_format);
             }
@@ -317,10 +322,11 @@
             var pipe = this.$$('list').getSelectedItem();
 
             pipe.read()
+                .fail(error_handler.bind(this))
                 .then(function (resp) {
                     this.getTopParentView().$$('output').setValue(new View({url: 'views/dev_panel_pipe_out.ejs'}).render(resp));
                 }.bind(this))
-                .fail(TangoWebappHelpers.error)
+
         },
         _write: function () {
             var pipe = this.$$('list').getSelectedItem();
@@ -333,10 +339,10 @@
             }
 
             pipe.write(input)
+                .fail(error_handler.bind(this))
                 .then(function (resp) {
                     this.getTopParentView().$$('output').setValue(new View({url: 'views/dev_panel_pipe_out.ejs'}).render(resp));
                 }.bind(this))
-                .fail(TangoWebappHelpers.error)
         },
         _ui: function () {
             return {

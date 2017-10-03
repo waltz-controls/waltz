@@ -1,0 +1,10 @@
+----------------------------------------------------
+<%= name %>
+measure date: <%= new Date(timestamp)%>
+quality: <%= quality%>
+Errors: <% for(var i = 0, size = errors.length, error = errors[0]; i < size; error = errors[++i]) { %>
+<%= error.severity %>: <%= error.reason %>
+<%= error.description %>
+<%= error.origin %>
+-------------------------
+<% } %>
