@@ -46,7 +46,7 @@ TangoWebapp.platform.BottomToolbar = MVC.Controller.extend("bottom_toolbar_contr
                             template: "<span style='color: #606060;'>#type# #url# #msg#</span>",
                             data: {type: "", url: "", msg: ""}
                         },
-                        {},
+                        //TODO rest api call result
                         {
                             view: "button",
                             id: "btnLog",
