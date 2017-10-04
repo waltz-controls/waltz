@@ -246,6 +246,7 @@
         return {
             header: "<span class='webix_icon fa-eye'></span>[<span class='webix_strong'>" + config.device.name + "@" + config.device.host.id + "</span>]",
             close: true,
+            borderless: true,
             body: {
                 view: "device_monitor",
                 id: config.id,

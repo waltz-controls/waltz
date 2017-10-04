@@ -152,18 +152,22 @@
         $$tab.update(resp.value);
     };
 
+    //TODO send Open Ajax event and handle it in main_controller
     var openSpectrumWindow = function (resp) {
         openTab.bind(this)({
             header: "<span class='webix_icon fa-area-chart'></span>[<span class='webix_strong'>" + this.device_id + '/' + this.name + "</span>]",
             close: true,
+            borderless: true,
             body: TangoWebapp.ui.newSpectrumView(webix.extend({id: this.id}, resp))
         }, resp);
     };
 
+    //TODO send Open Ajax event and handle it in main_controller
     var openImageWindow = function (resp) {
         openTab.bind(this)({
             header: "<span class='webix_icon fa-image'></span>[<span class='webix_strong'>" + this.device_id + '/' + this.name + "</span>]",
             close: true,
+            borderless: true,
             body: TangoWebapp.ui.newImageView(webix.extend({id: this.id}, resp))
         }, resp);
     };

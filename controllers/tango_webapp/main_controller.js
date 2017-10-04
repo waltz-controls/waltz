@@ -26,24 +26,32 @@ TangoWebapp.MainController = MVC.Controller.extend('main', {
                             view: 'devices_tree'
                         }
                     },
+                    {width: 15},
                     {
-                        borderless: true,
+                        type: 'space',
                         context: event.data,
                         body: {
-                            type: 'space',
                             view: "tabview",
                             id: "main-tabview",
+                            tabbar: {
+                                height: 40,
+                                popupWidth: 480,
+                                tabMinWidth: TangoWebapp.consts.NAME_COLUMN_WIDTH
+                            },
                             cells: [
                                 {
                                     header: "<span class='webix_icon fa-dashboard'></span> Dashboard",
                                     body: {
                                         id: 'dashboard',
-                                        view: "dashboard"
+                                        view: "dashboard",
+                                        borderless: true,
+                                        type: 'space'
                                     }
                                 }
                             ]
                         }
                     },
+                    {width: 15},
                     {
                         header: "<span class='webix_icon fa-keyboard-o'></span> Device Test Panel",
                         width: 300,
