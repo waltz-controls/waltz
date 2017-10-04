@@ -28,11 +28,13 @@ TangoWebapp.MainController = MVC.Controller.extend('main', {
                     },
                     {width: 15},
                     {
-                        type: 'space',
+                        borderless: true,
                         context: event.data,
                         body: {
                             view: "tabview",
                             id: "main-tabview",
+                            type: 'space',
+                            padding: 0,
                             tabbar: {
                                 height: 40,
                                 popupWidth: 480,
@@ -43,9 +45,7 @@ TangoWebapp.MainController = MVC.Controller.extend('main', {
                                     header: "<span class='webix_icon fa-dashboard'></span> Dashboard",
                                     body: {
                                         id: 'dashboard',
-                                        view: "dashboard",
-                                        borderless: true,
-                                        type: 'space'
+                                        view: "dashboard"
                                     }
                                 }
                             ]
