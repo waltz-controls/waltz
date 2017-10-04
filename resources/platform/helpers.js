@@ -54,7 +54,6 @@ TangoWebapp.helpers = {
         webix.message({type: 'error', text: msg});
         $$('bottom-toolbar').switchLogBtnIcon('error');
         debugger
-        throw msg;
     },
 
     /**

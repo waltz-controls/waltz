@@ -76,26 +76,19 @@ TangoWebapp.TangoDevice = TangoWebapp.DataCollectionWrapper.extend('tango_device
             }));
         },
         /**
-         * @returns {Promise}
+         *
+         * @private
          */
-        fetchAttrs: function () {
-            return this.toTangoRestApiRequest().attributes().get().then(function (resp) {
-                return TangoAttribute.create_many_as_existing(
-                    resp.map(function (it) {
-                        return MVC.Object.extend(it, {
-                            id: this.id + "/" + it.name,
-                            device_id: this.id
-                        })
-                    }.bind(this)));
-            }.bind(this)).then(function (attributes) {
+        _attach_attrs_info: function () {
+            return function (attributes) {
                 var attr_names = attributes.map(function (it) {
                     return it.name;
                 });
 
                 var promise_info = this.host.rest.request().hosts(this.host.toUrl()).devices(this.name).attributes('info')
                     .get('?' + attr_names.map(function (it) {
-                            return "attr=" + it;
-                        }).join('&'));
+                        return "attr=" + it;
+                    }).join('&'));
 
                 return promise_info.then(function (infos) {
                     for (var i = 0; i < infos.length; ++i)
@@ -104,10 +97,31 @@ TangoWebapp.TangoDevice = TangoWebapp.DataCollectionWrapper.extend('tango_device
                         })
                     return attributes;
                 });
-            }.bind(this)).then(function (attributes) {
-                this.attrs.parse(attributes);
-                return attributes;
-            }.bind(this)).fail(TangoWebappHelpers.error);
+            }.bind(this);
+        },
+        /**
+         * @returns {Promise}
+         */
+        fetchAttrs: function () {
+            return this.toTangoRestApiRequest().attributes().get()
+                .then(function (resp) {
+                    return TangoAttribute.create_many_as_existing(
+                        resp.map(function (it) {
+                            return MVC.Object.extend(it, {
+                                id: this.id + "/" + it.name,
+                                device_id: this.id
+                            })
+                        }.bind(this)));
+                }.bind(this))
+                .then(this._attach_attrs_info())
+                .then(function (attributes) {
+                    this.attrs.parse(attributes);
+                    return attributes;
+                }.bind(this))
+                .fail(function (resp) {
+                    TangoWebappHelpers.error(resp);
+                    throw resp;
+                });
         },
         /**
          *
@@ -117,8 +131,11 @@ TangoWebapp.TangoDevice = TangoWebapp.DataCollectionWrapper.extend('tango_device
         fetchAttrValues: function (attrs) {
             return this.toTangoRestApiRequest().attributes('value')
                 .get('?' + attrs.map(function (attr) {
-                        return "attr=" + attr
-                    }).join('&')).fail(TangoWebappHelpers.error);
+                    return "attr=" + attr
+                }).join('&')).fail(function (resp) {
+                    TangoWebappHelpers.error(resp);
+                    throw resp;
+                });
         },
         /**
          *
