@@ -56,9 +56,10 @@ TangoWebapp.TangoRestApi = MVC.Model.extend('tango_rest_api',
                     OpenAjax.hub.publish("tango_webapp.tango_host_loaded", {data: newHost});
                         return newHost;
                     }.bind(this)
-                ).fail(function () {
+                ).fail(function (resp) {
                     var newHost = new TangoWebapp.TangoHost({
                         id: host,
+                        errors: resp.errors,
                         rest: this,
                         is_alive: false
                     });
