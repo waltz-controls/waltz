@@ -11,10 +11,10 @@
          * @param {data:[], width:int, height:int} value
          */
         update: function (value) {
-            var data = [{
-                z: [],
-                type: 'heatmap'
-            }];
+            var data = [];
+            for (var i = 0, j = 0; i < value.height; ++i, j += value.width) {
+                data.push(value.data.slice(j, j + value.width))
+            }
 
             var height = Math.max(value.height, this.$height);
             var layout = {
@@ -30,19 +30,18 @@
                 }
             };
 
-            for(var i = 0, j = 0; i < value.height; ++i, j += value.width){
-                data[0].z.push(value.data.slice(j, j + value.width))
-            }
-
-            Plotly.newPlot(this.getNode(), data, layout);
+            Plotly.relayout(this.getNode(), layout);
+            Plotly.restyle(this.getNode(), 'z', [data]);
         },
         $init: function (config) {
-            // this.$ready.push(this.update.bind(this, config.value));
-        },
-        defaults: {
-            template: "<div />"
+            this.$ready.push(function () {
+                Plotly.newPlot(this.getNode(), [{
+                    z: [],
+                    type: 'heatmap'
+                }]);
+            });
         }
-    }, webix.IdSpace, webix.ui.template);
+    }, webix.IdSpace, webix.ui.view);
 
     TangoWebapp.ui.newImageView = function (config) {
         return webix.extend({
