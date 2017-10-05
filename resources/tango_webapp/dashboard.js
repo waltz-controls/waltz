@@ -30,6 +30,9 @@
         ]
     };
 
+    /**
+     * @type {webix.protoUI}
+     */
     var server_wizard = webix.protoUI({
         name: 'server_wizard',
         /**
@@ -144,6 +147,9 @@
     }, webix.IdSpace, webix.ui.layout);
 
     //defining such variables helps navigating this component in IDE
+    /**
+     * @type {webix.protoUI}
+     */
     var dashboard_device_filters = webix.protoUI({
         name: 'dashboard_device_filters',
         _ui: function () {
@@ -196,6 +202,9 @@
         }
     }, TangoWebapp.mixin.OpenAjaxListener, webix.IdSpace, webix.ui.layout);
 
+    /**
+     * @type {webix.protoUI}
+     */
     var dashboard_tango_hosts = webix.protoUI({
         name: 'dashboard_tango_hosts',
         _ui: function () {
@@ -302,10 +311,13 @@
                         id: event.data
                     });
                     var rest = PlatformContext.rest;
-                    rest.fetchHost(event.data).then(function (tango_host) {
-                        return tango_host.fetchDatabase();
-                    }).then(function (db) {
+                    rest.fetchHost(event.data)
+                        .then(function (tango_host) {
+                            return tango_host.fetchDatabase();
+                        }).then(function (db) {
                         TangoWebappHelpers.log(db.device.host.id + " has been added.");
+                    }).fail(function (host) {
+                        TangoWebappHelpers.error("Failed to load Tango host[" + host.id + "]");//TODO errors
                     });
                 },
                 "user_context.delete_tango_host subscribe": function (event) {
