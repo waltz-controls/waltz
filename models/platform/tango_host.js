@@ -74,7 +74,7 @@ TangoWebapp.TangoHost = MVC.Model.extend("tango_host",
 
                     this.is_alive = true;
                     this.errors = [];
-
+                    OpenAjax.hub.publish("tango_webapp.tango_host_loaded", {data: this});
                         return device;
                     }.bind(this)
                 ).fail(function (resp) {
