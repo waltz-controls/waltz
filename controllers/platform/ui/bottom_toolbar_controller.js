@@ -43,7 +43,7 @@ TangoWebapp.platform.BottomToolbar = MVC.Controller.extend("bottom_toolbar_contr
                             borderless: true,
                             type: "header",
                             id: "rest-url",
-                            template: "<span style='color: #606060;'>#type# #url# #msg#</span>",
+                            template: "<span style='color: #606060;'>#msg#: #type# #url#</span>",
                             data: {type: "", url: "", msg: ""}
                         },
                         //TODO rest api call result
