@@ -7,15 +7,6 @@
         {
             name: 'spectrum',
             update: function (data) {
-                var plot = {
-                    y: data,
-                    x: data.map(function (it, ndx) {
-                        return ndx;
-                    }),
-                    // line: {shape: 'spline'},
-                    type: 'scatter'
-                };
-
                 var layout = {
                     autosize: false,
                     width: this.$width,
@@ -29,16 +20,20 @@
                     }
                 };
 
-                Plotly.newPlot(this.getNode(), [plot], layout);
+                Plotly.relayout(this.getNode(), layout);
+                Plotly.restyle(this.getNode(), 'y', [data]);
             },
             $init: function (config) {
                 // webix.extend(config, this._ui(config));
-                // this.$ready.push(this.update.bind(this, config.value));
-            },
-            defaults: {
-                template: '<div/>'
+                this.$ready.push(function () {
+                    Plotly.newPlot(this.getNode(), [{
+                        y: [],
+                        // line: {shape: 'spline'},
+                        type: 'scatter'
+                    }]);
+                }.bind(this));
             }
-        }, webix.IdSpace, webix.ui.template);
+        }, webix.IdSpace, webix.ui.view);
 
     TangoWebapp.ui.newSpectrumView = function (config) {
         return webix.extend({
