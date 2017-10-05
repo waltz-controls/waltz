@@ -5,52 +5,40 @@
      */
     var spectrum_plot = webix.protoUI(
         {
-            _ui: function (config) {
-                return {
-                    rows: [
-                        {
-                            view: "chart",
-                            type: "line",
-                            id: "chart",
-                            value: "#value#",
-                            color: "#f6960a",
-                            border: true,
-                            tooltip: {
-                                template: "#value#"
-                            },
-                            xAxis: {
-                                titel: "Index",
-                                template: "#ndx#"
-                            },
-                            YAxis: {
-                                titel: "Value",
-                                template: function (obj) {
-                                    return (obj % 20 ? "" : obj)
-                                }
-                            },
-                            legend: {
-                                width: 250,
-                                values: [{text: config.name, color: "#f6960a"}],
-                                align: 'center'
-                            }
-                        }]
-                };
-            },
             name: 'spectrum',
             update: function (data) {
-                var $$chart = this.$$("chart");
-                $$chart.clearAll();
-                $$chart.parse(data.map(function (el, ndx, value) {
-                    return {ndx: ndx, value: el, color: "#f6960a"};
-                }));
-                $$chart.refresh();
+                var plot = {
+                    y: data,
+                    x: data.map(function (it, ndx) {
+                        return ndx;
+                    }),
+                    // line: {shape: 'spline'},
+                    type: 'scatter'
+                };
+
+                var layout = {
+                    autosize: false,
+                    width: this.$width,
+                    height: this.$height,
+                    margin: {
+                        l: 50,
+                        r: 50,
+                        b: 50,
+                        t: 50,
+                        pad: 4
+                    }
+                };
+
+                Plotly.newPlot(this.getNode(), [plot], layout);
             },
             $init: function (config) {
-                webix.extend(config, this._ui(config));
+                // webix.extend(config, this._ui(config));
                 // this.$ready.push(this.update.bind(this, config.value));
             },
-            defaults: {}
-        }, webix.IdSpace, webix.ui.layout);
+            defaults: {
+                template: '<div/>'
+            }
+        }, webix.IdSpace, webix.ui.template);
 
     TangoWebapp.ui.newSpectrumView = function (config) {
         return webix.extend({
