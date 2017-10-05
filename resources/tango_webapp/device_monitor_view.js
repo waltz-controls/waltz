@@ -14,6 +14,40 @@
     }, webix.ui.template);
 
     /**
+     *
+     * @type {webix.config}
+     */
+    var scalar_tab = {
+        header: "Scalar",
+        select: "row", multiselect: true,
+        body: {
+            view: "datatable",
+            resizeColumn: true,
+            id: "scalar",
+            scheme: {
+                $update: function (item) {
+                    if (item.quality === 'FAILURE') item.$css = {"background-color": "red"};
+                    else if (item.quality === 'ATTR_ALARM' || item.quality === 'ATTR_INVALID') item.$css = {"background-color": "lightcoral"};
+                    else if (item.quality === 'ATTR_WARNING') item.$css = {"background-color": "orange"};
+                    else delete item.$css;
+                }
+            },
+            columns: [
+                {
+                    id: "label",
+                    header: "Name",
+                    width: TangoWebapp.consts.NAME_COLUMN_WIDTH,
+                    sort: "string"
+                },
+                {id: "value", header: "Value", width: 100},
+                {id: "quality", header: "Quality", width: 100, sort: "string"},
+                {id: "unit", header: "Unit", width: TangoWebapp.consts.NAME_COLUMN_WIDTH},
+                {id: "description", header: "Description", fillspace: true}
+            ]
+        }
+    };
+
+    /**
      * @type {webix.protoUI}
      */
     var device_monitor = webix.protoUI({
@@ -109,6 +143,7 @@
             },
             _ui: function (device) {
                 var top = this;
+
                 return {
                     rows: [
                         {
@@ -197,34 +232,7 @@
                             animate: false,
                             id: "attributes-tabview",
                             cells: [
-                                {
-                                    header: "Scalar",
-                                    select: "row", multiselect: true,
-                                    body: {
-                                        view: "datatable",
-                                        id: "scalar",
-                                        scheme: {
-                                            $update: function (item) {
-                                                if (item.quality === 'FAILURE') item.$css = {"background-color": "red"};
-                                                else if (item.quality === 'ATTR_ALARM' || item.quality === 'ATTR_INVALID') item.$css = {"background-color": "lightcoral"};
-                                                else if (item.quality === 'ATTR_WARNING') item.$css = {"background-color": "orange"};
-                                                else delete item.$css;
-                                            }
-                                        },
-                                        columns: [
-                                            {
-                                                id: "label",
-                                                header: "Name",
-                                                width: TangoWebapp.consts.NAME_COLUMN_WIDTH,
-                                                sort: "string"
-                                            },
-                                            {id: "value", header: "Value", width: 100},
-                                            {id: "quality", header: "Quality", width: 100, sort: "string"},
-                                            {id: "unit", header: "Unit", width: TangoWebapp.consts.NAME_COLUMN_WIDTH},
-                                            {id: "description", header: "Description", fillspace: true}
-                                        ]
-                                    }
-                                }
+                                scalar_tab
                             ]
                         }
                     ]
