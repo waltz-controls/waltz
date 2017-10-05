@@ -266,7 +266,7 @@
                         id: "txtFilter",
                         label: "<span class='webix_icon fa-filter' style='padding-left: 10px;'></span>",
                         labelWidth: 32,
-                        placeholder: "leave empty to discard",
+                        placeholder: "type to filter",
                         value: "",
                         on: {
                             onTimedKeyPress: function () {
