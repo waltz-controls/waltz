@@ -31,13 +31,22 @@ TangoWebapp.platform.PlatformContext = MVC.Model.extend('platform_context',
 
 
             var rest = PlatformContext.rest;
-            rest.promise.all(tango_hosts.map(function (it) {
-                return rest.fetchHost(it)
-            })).then(function (resp) {
-                PlatformContext.tango_hosts.parse(resp);
 
-                this.publish("create", {data: PlatformContext});
-            }.bind(this));
+
+            var fetched_hosts = tango_hosts.map(function (it) {
+                return rest.fetchHost(it)
+            });
+
+            fetched_hosts.forEach(function (host) {
+                host
+                    .then(function (resp) {
+                        PlatformContext.tango_hosts.parse(resp);
+
+                        this.publish("create", {data: PlatformContext});
+                    }.bind(this)).fail(function (host) {
+                    TangoWebappHelpers.error("Failed to load Tango host " + host.id)//TODO log errors
+                });
+            }.bind(this))
         }
     },
     /* @Prototype */
