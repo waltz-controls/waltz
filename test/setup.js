@@ -3,7 +3,7 @@ MVC.Console.log("Trying to load: test/setup.js");
 //TODO use everywhere
 TestValues = {
     rest_url: 'http://localhost:10001',
-    tango_host: 'localhost:10000',
+    tango_host: 'hzgxenvtest:10000',
     test_device: 'sys/tg_test/1'
 };
 

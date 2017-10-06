@@ -1,14 +1,11 @@
-if (window['UserContext'] === undefined)
-    UserContext = TangoWebapp.platform.UserContext;
-
 new MVC.Test.Unit('user_context', {
     test_create: function () {
-        var instance = UserContext.find_one("test");
+        var instance = TangoWebapp.platform.UserContext.find_one("test");
 
-        this.assert(UserContext.current === instance);
+        this.assert(UserContext === instance);
     },
     test_update: function () {
-        var instance = UserContext.find_one("test");
+        var instance = TangoWebapp.platform.UserContext.find_one("test");
 
         instance.update_attributes({
             tango_hosts: ["localhost:10001", "localhost:10002"]
@@ -16,11 +13,11 @@ new MVC.Test.Unit('user_context', {
 
         instance.destroy();
 
-        instance = UserContext.find_one("test");
+        instance = TangoWebapp.platform.UserContext.find_one("test");
         this.assert_each(["localhost:10001", "localhost:10002"], instance.tango_hosts);
     },
     test_destroy: function () {
-        var instance = UserContext.find_one("test");
+        var instance = TangoWebapp.platform.UserContext.find_one("test");
 
         UserContext.destroy("test");
     }

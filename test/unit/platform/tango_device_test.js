@@ -1,22 +1,22 @@
 new MVC.Test.Unit('tango_device', {
     test_fetch_device: function () {
-        var api = new TangoRestApi({url: 'http://localhost:10001'});
-        api.fetchHost("localhost", 10000)
+        var api = new TangoRestApi({url: TestValues.rest_url});
+        api.fetchHost(TestValues.tango_host)
             .then(function (host) {
-                return host.fetchDevice("sys/tg_test/1");
+                return host.fetchDevice(TestValues.test_device);
             })
             .then(this.next_callback("check_fetch"));
     },
     check_fetch: function (device) {
-        this.assert_equal("localhost:10000/sys/tg_test/1", device.id);
+        this.assert_equal(TestValues.tango_host + "/sys/tg_test/1", device.id);
         this.assert_equal("sys/tg_test/1", device.name);
         this.assert(device.info.exported);
         this.assert_not(device.host == null);
-        this.assert_equal("localhost:10000", device.host.id);
+        this.assert_equal(TestValues.tango_host, device.host.id);
     },
     test_fetch_non_existing_device: function () {
-        var api = new TangoRestApi({url: 'http://localhost:10001'});
-        api.fetchHost("localhost", 10000)
+        var api = new TangoRestApi({url: TestValues.rest_url});
+        api.fetchHost(TestValues.tango_host)
             .then(function (host) {
                 return host.fetchDevice("sys/tg_test/XXX");
             })
@@ -26,8 +26,8 @@ new MVC.Test.Unit('tango_device', {
         this.assert_equal("ExecuteCommandException", resp.errors[0].reason);
     },
     test_fetch_non_running_device: function () {
-        var api = new TangoRestApi({url: 'http://localhost:10001'});
-        api.fetchHost("localhost", 10000)
+        var api = new TangoRestApi({url: TestValues.rest_url});
+        api.fetchHost(TestValues.tango_host)
             .then(function (host) {
                 return host.fetchDevice("development/status_server/test");
             })
@@ -36,15 +36,15 @@ new MVC.Test.Unit('tango_device', {
     },
     check_fetch2: function (device) {
         this._delays--;
-        this.assert_equal("localhost:10000/development/status_server/test", device.id);
+        this.assert_equal(TestValues.tango_host + "/development/status_server/test", device.id);
     },
     check_failure: function (resp) {
         this._delays--;
         this.assert_equal("ExecuteCommandException", resp.errors[0].reason);
     },
     test_exec_cmd_on_non_exported_device: function () {
-        var api = new TangoRestApi({url: 'http://localhost:10001'});
-        api.fetchHost("localhost", 10000)
+        var api = new TangoRestApi({url: TestValues.rest_url});
+        api.fetchHost(TestValues.tango_host)
             .then(function (host) {
                 return host.fetchDevice("development/status_server/test");
             })
@@ -65,7 +65,7 @@ new MVC.Test.Unit('tango_device', {
             .then(this.next_callback("check_fetch1"));
     },
     check_fetch1: function (db) {
-        this.assert_equal("localhost:10000/sys/database/2", db.id);
+        this.assert_equal(TestValues.tango_host + "/sys/database/2", db.id);
         this.assert_equal("sys/database/2", db.device.name);
     },
     test_fetch_commands: function () {

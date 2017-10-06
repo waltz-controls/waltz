@@ -1,7 +1,7 @@
 new MVC.Test.Unit('tango_database', {
     test_getInfo: function () {
-        var api = new TangoRestApi({url: 'http://localhost:10001'});
-        api.fetchHost("localhost", 10000)
+        var api = new TangoRestApi({url: TestValues.rest_url});
+        api.fetchHost(TestValues.tango_host)
             .then(function (host) {
                 return host.fetchDatabase();
             })
@@ -11,7 +11,6 @@ new MVC.Test.Unit('tango_database', {
             .then(this.next_callback("check_fetch"));
     },
     check_fetch: function (info) {
-        debugger
         this.assert_equal("sys/tg_test/1", info.name);
     }
 });

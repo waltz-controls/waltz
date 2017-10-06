@@ -37,13 +37,6 @@ new Test.Functional('test_device_panel', {
         this.assert($$('device-panel-test').isEnabled());
         // this.assert_equal(100,$$('device-panel-test').$$('commands').$$('list').count());
     },
-    test_plot_open: function () {
-        webix.ui({view: 'Plot', name: 'test', data: [1, 2, 3, 2, 5, 6, 1, 2, 8, 9, 3, 4, 5, 6]}).show();
-        this.assert(true);
-    },
-    test_image_open: function () {
-        //TODO
-    },
     test_close: function () {
         $$('device-panel-test-window').destructor();
         this.assert_not($$('device-panel-test'));

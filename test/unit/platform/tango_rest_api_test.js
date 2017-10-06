@@ -6,12 +6,6 @@ var test = new MVC.Test.Unit('tango_rest_api', {
         one.req_ids.push(1, 2, 3);
         this.assert_equal(0, two.req_ids.length);
     },
-    test_send_event: function () {
-        var one = new TangoRestApi({url: TestValues.rest_url});
-        one.value.add({id: 1});
-
-        one.setCursor(1)
-    },
     test_load_host: function () {
         var one = new TangoRestApi({url: TestValues.rest_url});
 
