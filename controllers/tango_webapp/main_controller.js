@@ -28,7 +28,6 @@ TangoWebapp.MainController = MVC.Controller.extend('main', {
                     },
                     {width: 15},
                     {
-                        borderless: true,
                         context: event.data,
                         body: {
                             view: "tabview",
@@ -38,7 +37,9 @@ TangoWebapp.MainController = MVC.Controller.extend('main', {
                             tabbar: {
                                 height: 40,
                                 popupWidth: 480,
-                                tabMinWidth: TangoWebapp.consts.NAME_COLUMN_WIDTH
+                                tabMinWidth: TangoWebapp.consts.NAME_COLUMN_WIDTH,
+                                tabMoreWidth: 40,
+                                bottomPadding: 5
                             },
                             cells: [
                                 {
