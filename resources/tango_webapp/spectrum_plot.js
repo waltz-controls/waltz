@@ -3,6 +3,17 @@
     /**
      * @type {webix.protoUI}
      */
+    var spectrum_text = webix.protoUI({
+        name: 'spectrum_text',
+        update: function (data) {
+            this.clearAll();
+            this.parse(data);
+        }
+    }, webix.ui.list);
+
+    /**
+     * @type {webix.protoUI}
+     */
     var spectrum_plot = webix.protoUI(
         {
             name: 'spectrum',
@@ -35,9 +46,21 @@
             }
         }, webix.IdSpace, webix.ui.view);
 
+    /**
+     *
+     * @param {TangoAttribute} config
+     */
     TangoWebapp.ui.newSpectrumView = function (config) {
-        return webix.extend({
-            view: "spectrum"
-        }, config);
+        debugger
+        if (config.info.data_type === 'DevString') {
+            return webix.extend({
+                view: "spectrum_text"
+            }, config);
+        }
+        else {
+            return webix.extend({
+                view: "spectrum"
+            }, config);
+        }
     };
 })();

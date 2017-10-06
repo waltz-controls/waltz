@@ -11,6 +11,18 @@ new Test.Functional('test_image_view', {
 
         this.assert(true);
     },
+    test_plot_text_open: function () {
+        var spectrum = {view: 'spectrum_text', id: 'spectrum-text', name: 'test'};
+        webix.ui({
+            view: 'window',
+            close: true,
+            body: spectrum
+        }).show();
+
+        $$('spectrum-text').update(["text1", "text2", "text3", "text4"]);
+
+        this.assert(true);
+    },
     test_image_open: function () {
         var data = [];
 

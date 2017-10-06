@@ -60,7 +60,7 @@
                 this._device.fetchAttrs().then(function (attrs) {
                     attrs.map(function (it) {
                         return it.info;
-                    }).forEach(function (attrInfo) {
+                    }).forEach(function (attrInfo, ndx) {
                         switch (attrInfo.data_format) {
                             case "SCALAR":
                                 //skip State&Status as they handled differently
@@ -78,10 +78,7 @@
                             case "SPECTRUM":
                                 attrTabId = $$tabview.addView({
                                     header: attrInfo.label,
-                                    body: TangoWebapp.ui.newSpectrumView({
-                                        name: attrInfo.label,
-                                        value: []
-                                    })
+                                    body: TangoWebapp.ui.newSpectrumView(attrs[ndx])
                                 });
                                 this._monitoredAttributes[attrTabId] = attrInfo.name;
                                 break;

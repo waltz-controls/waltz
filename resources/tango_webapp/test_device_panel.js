@@ -154,11 +154,12 @@
 
     //TODO send Open Ajax event and handle it in main_controller
     var openSpectrumWindow = function (resp) {
+        this.value = resp;
         openTab.bind(this)({
             header: "<span class='webix_icon fa-area-chart'></span>[<span class='webix_strong'>" + this.device_id + '/' + this.name + "</span>]",
             close: true,
             borderless: true,
-            body: TangoWebapp.ui.newSpectrumView(webix.extend({id: this.id}, resp))
+            body: TangoWebapp.ui.newSpectrumView(this)
         }, resp);
     };
 
