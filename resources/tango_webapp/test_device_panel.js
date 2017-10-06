@@ -502,9 +502,11 @@
             disabled: true,
             on: {
                 "platform_context.create subscribe": function (event) {
+                    TangoWebappHelpers.debug('test_device_panel.platform_context.create subscribe');
                     event.controller.$$('device').bind(event.data.devices);
                 },
                 "platform_context.destroy subscribe": function (event) {
+                    TangoWebappHelpers.debug('test_device_panel.platform_context.destroy subscribe');
                     event.controller.$$('device').unbind();
                 }
             }

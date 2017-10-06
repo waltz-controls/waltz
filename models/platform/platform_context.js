@@ -37,16 +37,18 @@ TangoWebapp.platform.PlatformContext = MVC.Model.extend('platform_context',
                 return rest.fetchHost(it)
             });
 
-            fetched_hosts.forEach(function (host) {
-                host
-                    .then(function (resp) {
-                        PlatformContext.tango_hosts.parse(resp);
-
-                        this.publish("create", {data: PlatformContext});
-                    }.bind(this)).fail(function (host) {
-                    TangoWebappHelpers.error("Failed to load Tango host " + host.id)//TODO log errors
-                });
+            rest.promise.all(
+                tango_hosts.map(function (it) {
+                    return rest.fetchHost(it)
+                        .fail(function (failed_host) {
+                            TangoWebappHelpers.error("Failed to load Tango host " + failed_host.id)
+                            return failed_host;//prevent promise.all from failing
+                        })
+                })
+            ).then(function (hosts) {
+                PlatformContext.tango_hosts.parse(hosts);
             }.bind(this))
+                .then(this.publish.bind(this, "create", {data: PlatformContext}));
         }
     },
     /* @Prototype */
