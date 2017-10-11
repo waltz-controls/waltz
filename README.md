@@ -8,6 +8,20 @@
 
 This project is an attempt to implement Tango Controls Roadmap [Feature Request #6](http://www.tango-controls.org/community/roadmap/)
 
+## SonarCloud
+
+
+[![Lines Of Code](https://sonarcloud.io/api/badges/gate?key=org.tango-controls:TangoWebapp)](https://sonarcloud.io/dashboard?id=org.tango-controls%3ATangoWebapp)
+
+[![Lines Of Code](https://sonarcloud.io/api/badges/measure?key=org.tango-controls:TangoWebapp&metric=ncloc)](https://sonarcloud.io/dashboard?id=org.tango-controls%3ATangoWebapp)
+[![Lines Of Code](https://sonarcloud.io/api/badges/measure?key=org.tango-controls:TangoWebapp&metric=coverage)](https://sonarcloud.io/dashboard?id=org.tango-controls%3ATangoWebapp)
+[![Lines Of Code](https://sonarcloud.io/api/badges/measure?key=org.tango-controls:TangoWebapp&metric=sqale_debt_ratio)](https://sonarcloud.io/dashboard?id=org.tango-controls%3ATangoWebapp)
+
+[![Lines Of Code](https://sonarcloud.io/api/badges/measure?key=org.tango-controls:TangoWebapp&metric=bugs)](https://sonarcloud.io/dashboard?id=org.tango-controls%3ATangoWebapp)
+[![Lines Of Code](https://sonarcloud.io/api/badges/measure?key=org.tango-controls:TangoWebapp&metric=vulnerabilities)](https://sonarcloud.io/dashboard?id=org.tango-controls%3ATangoWebapp)
+[![Lines Of Code](https://sonarcloud.io/api/badges/measure?key=org.tango-controls:TangoWebapp&metric=code_smells)](https://sonarcloud.io/dashboard?id=org.tango-controls%3ATangoWebapp)
+[![Lines Of Code](https://sonarcloud.io/api/badges/measure?key=org.tango-controls:TangoWebapp&metric=duplicated_lines_density)](https://sonarcloud.io/dashboard?id=org.tango-controls%3ATangoWebapp)
+
 ## Live demo
 
 Watch this app running on Amazon cloud: [link](http://ec2-52-59-200-167.eu-central-1.compute.amazonaws.com:8080/TangoWebapp/)
