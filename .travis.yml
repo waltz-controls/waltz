@@ -9,7 +9,7 @@ script:
   - chmod 777 ./jmvcc
   - gradle prepareWar
 after_success:
-  - sonar-scanner -Dsonar.projectKey=org.tango-controls:TangoWebapp -Dsonar.sources=.
+  - sonar-scanner -Dsonar.projectKey=org.tango-controls:TangoWebapp -Dsonar.sources=. -Dsonar.exclusions=build/**,jmvc/**,docs/**,apps/**
 jdk:
   - openjdk8
 cache:
