@@ -1,8 +1,15 @@
 language: java
 sudo: false
+addons:
+  sonarcloud:
+    organization: "org.tango-controls" # the key of the org you chose at step #3
+    token:
+      secure: $SONAR_TOKEN
 script:
   - chmod 777 ./jmvcc
   - gradle prepareWar
+after_success:
+  - sonar-scanner
 jdk:
   - openjdk8
 cache:
