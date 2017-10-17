@@ -16,10 +16,11 @@
                 data.push(value.data.slice(j, j + value.width))
             }
 
-            var height = Math.max(value.height, this.$height);
+            var ratio = value.width / value.height;
+            var height = Math.max(this.$height, Math.min(this.$height, value.height));
             var layout = {
                 autosize: false,
-                width: Math.max(value.width, height),//assume square
+                width: height * ratio,//assume square
                 height: height,
                 margin: {
                     l: 50,
