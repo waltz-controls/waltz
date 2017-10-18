@@ -33,10 +33,6 @@ TangoWebapp.platform.PlatformContext = MVC.Model.extend('platform_context',
             var rest = PlatformContext.rest;
 
 
-            var fetched_hosts = tango_hosts.map(function (it) {
-                return rest.fetchHost(it)
-            });
-
             rest.promise.all(
                 tango_hosts.map(function (it) {
                     return rest.fetchHost(it)
