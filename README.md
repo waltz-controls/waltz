@@ -24,7 +24,7 @@ This project is an attempt to implement Tango Controls Roadmap [Feature Request 
 
 ## Live demo
 
-Watch this app running on Amazon cloud: [link](http://ec2-52-59-200-167.eu-central-1.compute.amazonaws.com:8080/TangoWebapp/)
+Watch this app running on Amazon cloud: [link](http://ec2-35-156-104-8.eu-central-1.compute.amazonaws.com:8080/TangoWebapp/)
 
 User: tango-cs
 Pass: tango
