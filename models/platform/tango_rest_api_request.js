@@ -1,3 +1,47 @@
+TangoWebapp.DummyStore = MVC.Class.extend(
+    /* @prototype */
+    {
+        /**
+         *
+         * @param {Object} id
+         */
+        find_one: function(id){
+            return null;
+        },
+        /**
+         *
+         * @param {Object} obj
+         */
+        create: function(obj){
+        },
+        /**
+         *
+         * @param {Object} id
+         */
+        destroy: function(id){
+        },
+        /**
+         * Finds instances using a test function.  If no test function is provided returns all instances.
+         * @param {Function} f
+         * @return {Array}
+         */
+        find : function(f){
+            return [];
+        },
+        /**
+         * Clears instances
+         */
+        clear : function(){
+        },
+        /**
+         * Returns if there is no instances
+         * @return {Boolean}
+         */
+        is_empty: function() {
+            return true;
+        }
+    });
+
 /**
  * Model tango_rest_api
  *
@@ -17,6 +61,14 @@ TangoWebapp.TangoRestApiRequest = MVC.Model.extend('tango_rest_api_request',
         default_attributes: {
             result: null,
             failure: null
+        },
+        init:function(){
+            this._super();
+            //do not store requests in production
+            if(MVC.env() === 'production') {
+                this.store_type = TangoWebapp.DummyStore;
+                this.store = new TangoWebapp.DummyStore();
+            }
         }
     },
     /* @Prototype */
@@ -26,8 +78,6 @@ TangoWebapp.TangoRestApiRequest = MVC.Model.extend('tango_rest_api_request',
         transport: null,
         init: function (params) {
             this._super(MVC.Object.extend(params, {id: this.Class._id++}));
-            //do not store requests in production
-            if(MVC.env() === 'production') this.Class.store.destroy(this._id);
             this.transport = webix.ajax;
             this.promise = webix.promise;
         },
