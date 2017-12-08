@@ -17,33 +17,35 @@
      *
      * @type {webix.config}
      */
-    var scalar_tab = {
-        header: "Scalar",
-        select: "row", multiselect: true,
-        body: {
-            view: "datatable",
-            resizeColumn: true,
-            id: "scalar",
-            scheme: {
-                $update: function (item) {
-                    if (item.quality === 'FAILURE') item.$css = {"background-color": "red"};
-                    else if (item.quality === 'ATTR_ALARM' || item.quality === 'ATTR_INVALID') item.$css = {"background-color": "lightcoral"};
-                    else if (item.quality === 'ATTR_WARNING') item.$css = {"background-color": "orange"};
-                    else delete item.$css;
-                }
-            },
-            columns: [
-                {
-                    id: "label",
-                    header: "Name",
-                    width: TangoWebapp.consts.NAME_COLUMN_WIDTH,
-                    sort: "string"
+    var scalar_tab = function(){
+        return {
+            header: "Scalar",
+            select: "row", multiselect: true,
+            body: {
+                view: "datatable",
+                resizeColumn: true,
+                id: "scalar",
+                scheme: {
+                    $update: function (item) {
+                        if (item.quality === 'FAILURE') item.$css = {"background-color": "red"};
+                        else if (item.quality === 'ATTR_ALARM' || item.quality === 'ATTR_INVALID') item.$css = {"background-color": "lightcoral"};
+                        else if (item.quality === 'ATTR_WARNING') item.$css = {"background-color": "orange"};
+                        else delete item.$css;
+                    }
                 },
-                {id: "value", header: "Value", width: 100},
-                {id: "quality", header: "Quality", width: 100, sort: "string"},
-                {id: "unit", header: "Unit", width: TangoWebapp.consts.NAME_COLUMN_WIDTH},
-                {id: "description", header: "Description", fillspace: true}
-            ]
+                columns: [
+                    {
+                        id: "label",
+                        header: "Name",
+                        width: TangoWebapp.consts.NAME_COLUMN_WIDTH,
+                        sort: "string"
+                    },
+                    {id: "value", header: "Value", width: 100},
+                    {id: "quality", header: "Quality", width: 100, sort: "string"},
+                    {id: "unit", header: "Unit", width: TangoWebapp.consts.NAME_COLUMN_WIDTH},
+                    {id: "description", header: "Description", fillspace: true}
+                ]
+            }
         }
     };
 
@@ -53,9 +55,9 @@
     var device_monitor = webix.protoUI({
             _monitoredAttributes: {},//this is shared object across all components. In this case it is safe, as keys are unique ids
             loadAttributes: function () {
-                var top = this.getTopParentView();
-                var $$scalar = top.$$('scalar');
-                var $$tabview = top.$$('attributes-tabview');
+                debugger
+                // var $$scalar = this.$$('scalar');
+                var $$tabview = this.$$('attributes-tabview');
                 var attrTabId;
                 this._device.fetchAttrs().then(function (attrs) {
                     attrs.map(function (it) {
@@ -65,7 +67,7 @@
                             case "SCALAR":
                                 //skip State&Status as they handled differently
                                 if (attrInfo.name === 'State' || attrInfo.name === 'Status') return;
-                                $$scalar.add({
+                                this.$$('scalar').add({
                                     id: attrInfo.name,
                                     label: attrInfo.label,
                                     value: "N/A",
@@ -73,6 +75,7 @@
                                     unit: attrInfo.unit,
                                     description: attrInfo.description
                                 });
+                                // this.$$('scalar').refresh(attrInfo.name);
                                 //TODO save attr list item id for future updates
                                 break;
                             case "SPECTRUM":
@@ -94,7 +97,7 @@
                                 break;
                         }
                     }.bind(this));
-                }.bind(top)).then($$scalar.refresh);
+                }.bind(this)).then(this.start.bind(this));
             },
             update: function (what) {
                 var $$state = this.$$('state');
@@ -119,13 +122,11 @@
                         attrs.push(id);
                     }
 
-                    var $$scalar = this.$$('scalar');
-
                     this._device.fetchAttrValues(attrs).then(function (resp) {
                         resp.forEach(this.update(function (attr) {
-                            if (!$$scalar.$destructed)
-                                $$scalar.updateItem(attr.name, attr);
-                        }));
+                            if (!this.$$('scalar').$destructed)
+                                this.$$('scalar').updateItem(attr.name, attr);
+                        }.bind(this)));
                     }.bind(this));
                 } else {
                     var attr = this._monitoredAttributes[tabId];//TODO get selected tabId
@@ -229,7 +230,7 @@
                             animate: false,
                             id: "attributes-tabview",
                             cells: [
-                                scalar_tab
+                                scalar_tab()
                             ]
                         }
                     ]
@@ -239,9 +240,11 @@
             $init: function (config) {
                 webix.extend(config, this._ui(config.device));
 
-                this.$ready.push(this.loadAttributes);
+                this.$ready.push(function(){
+                    this.loadAttributes();
+                }.bind(this));
 
-                this.$ready.push(this.start);
+                // this.$ready.push(this.start.mvc_bind(this));
             }
         }, webix.IdSpace, webix.EventSystem,
         TangoWebapp.mixin.DeviceSetter, TangoWebapp.mixin.TabActivator, TangoWebapp.mixin.Runnable,

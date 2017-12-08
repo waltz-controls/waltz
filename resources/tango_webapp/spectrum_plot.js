@@ -51,7 +51,6 @@
      * @param {TangoAttribute} config
      */
     TangoWebapp.ui.newSpectrumView = function (config) {
-        debugger
         if (config.info.data_type === 'DevString') {
             return webix.extend({
                 view: "spectrum_text"
