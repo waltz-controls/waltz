@@ -26,6 +26,8 @@ TangoWebapp.TangoRestApiRequest = MVC.Model.extend('tango_rest_api_request',
         transport: null,
         init: function (params) {
             this._super(MVC.Object.extend(params, {id: this.Class._id++}));
+            //do not store requests in production
+            if(MVC.env() === 'production') this.Class.store.destroy(this._id);
             this.transport = webix.ajax;
             this.promise = webix.promise;
         },
