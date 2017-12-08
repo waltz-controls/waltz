@@ -36,7 +36,7 @@ TangoWebapp.platform.LoginController = MVC.Controller.extend("login_controller",
                                 {
                                     cols: [
                                         {
-                                            view: "button", value: "Login", type: "form", click: function () {
+                                            view: "button", value: "Login", type: "form", hotkey: "enter", click: function () {
                                             var form = this.getFormView();
                                             var isValid = form.validate();
                                             if (!isValid) return;
