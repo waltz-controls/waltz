@@ -1,6 +1,6 @@
 include("platform");
 
-include.application('TangoWebapp', '0.3-rc3');
+include.application('TangoWebapp', '0.3-rc4');
 
 /**
  * Useful (or not) constants
