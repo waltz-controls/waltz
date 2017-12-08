@@ -8,6 +8,7 @@ include.application('TangoWebapp', '0.3-rc3');
  * @type {{REST_API_HOST: string, REST_API_PORT: number, REST_API_VERSION: string, TANGO_HOST: string, TANGO_PORT: number, NAME_COLUMN_WIDTH: number, TABS_DELIMITER_HEIGHT: number, DATABASE: string, LOG_DATE_FORMATTER: TangoWebapp.consts.LOG_DATE_FORMATTER}}
  */
 TangoWebapp.consts = {
+    REST_API_PROTOCOL: 'http',
     REST_API_HOST: 'localhost',
     REST_API_PORT: 10001,
     REST_API_VERSION: 'rc4',

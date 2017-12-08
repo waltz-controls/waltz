@@ -17,7 +17,7 @@ TangoWebapp.platform.UserContext = MVC.Model.extend('user_context',
             device_filters: 'string[]' //TODO move to application layer?
         },
         default_attributes: {
-            rest_url: 'http://' + TangoWebapp.consts.REST_API_HOST + ':' + TangoWebapp.consts.REST_API_PORT
+            rest_url: TangoWebapp.consts.REST_API_PROTOCOL + '://' + TangoWebapp.consts.REST_API_HOST + ':' + TangoWebapp.consts.REST_API_PORT
         },
         /**
          * WARNING!!! Due to limitations of TangoWebapp storage this method always returns new instance
