@@ -29,7 +29,7 @@ include(function () { //runs after prior includes are loaded
     // );
 
     if (include.get_env().match(/test/)) {
-        include('../test/setup');
+
 
         include.unit_tests(
             "platform/tango_rest_api_request",

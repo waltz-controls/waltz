@@ -5,6 +5,9 @@ include.unit_tests(
     // 'tango_rest',
     // 'cookie'
 );
+
+include('../test/setup');
+
 include.functional_tests(
     'tango_webapp/image_view',
     'tango_webapp/device_panel',

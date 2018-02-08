@@ -17,7 +17,7 @@
      *
      * @type {webix.config}
      */
-    var scalar_tab = function(){
+    var scalar_tab = function () {
         return {
             header: "Scalar",
             select: "row", multiselect: true,
@@ -240,7 +240,7 @@
             $init: function (config) {
                 webix.extend(config, this._ui(config.device));
 
-                this.$ready.push(function(){
+                this.$ready.push(function () {
                     this.loadAttributes();
                 }.bind(this));
 
