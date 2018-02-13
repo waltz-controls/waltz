@@ -11,9 +11,6 @@ TangoWebapp.platform.MainController = MVC.Controller.extend('main', {
      * @param {Object} params
      */
     load: function (params) {
-        //popup login screen
-        webix.ui(TangoWebapp.platform.LoginController.getUI()).show();
-
         //draw ui
         webix.ui({
             view: 'layout',

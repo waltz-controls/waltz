@@ -28,4 +28,4 @@ MVCOptions = {
     env: "compress"
 }
 load('jmvc/rhino/compression/setup.js');
-window.location = 'apps/tango_webapp/index.html';
+window.location = 'apps/tango_webapp/compress.html';

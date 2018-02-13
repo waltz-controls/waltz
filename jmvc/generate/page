@@ -36,7 +36,7 @@ loc_folders.push("jmvc");
 loc_folders.push("include.js");
 var data = {
 	path_to_jmvc: loc_folders.join("/"),
-	application_name: _args[0]
+	application_name: arguments[0]
 }
 //test/tests/engine.html -> ../../jmvc/include.js
 

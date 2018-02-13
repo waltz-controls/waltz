@@ -35,7 +35,7 @@ task prepareBuild << {
     }
 
     copy {
-        from "index.html"
+        from "index.jsp"
         into "${buildDir}"
         filter { String line ->
             "$line".replaceAll(",development|,test",",production")
@@ -49,6 +49,13 @@ task compress(type: Exec, dependsOn: 'prepareBuild') {
     commandLine './jmvcc', 'apps/tango_webapp/compress.js'
 
     doLast{
+        copy {
+            from "apps/tango_webapp/index.jsp"
+            into "${buildDir}/apps/tango_webapp/"
+            filter { String line ->
+                "$line".replaceAll(",development|,test",",production")
+            }
+        }
         file('apps/tango_webapp/production.js').renameTo(file("${buildDir}/apps/tango_webapp/production.js"))
         file('apps/tango_webapp/webix0.js').renameTo(file("${buildDir}/apps/tango_webapp/webix0.js"))
         file('apps/tango_webapp/webix.js').renameTo(file("${buildDir}/apps/tango_webapp/webix.js"))
