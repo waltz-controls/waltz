@@ -21,7 +21,7 @@ Login.MainController = MVC.Controller.extend('main',{
                         {
                             cols: [{}, {
                                 view: "form",
-                                id:'login-form',
+                                id:'frmLogin',
                                 elements: [
                                     {
                                         view: "text",
@@ -51,8 +51,7 @@ Login.MainController = MVC.Controller.extend('main',{
 
                                                     webix.storage.session.put('Authorization', "Basic " + btoa(form.getValues().username + ":" + form.getValues().password));
 
-                                                    //redirect back to main page - now use is logged in
-                                                    webix.send("../../index.jsp", {logged:true}, "post");
+                                                    window.location = "../../apps/tango_webapp/index.html";
                                                 }
                                             },
                                             {
@@ -79,15 +78,18 @@ Login.MainController = MVC.Controller.extend('main',{
     * @param {Object} params
     */
     load: function(params){
-        //automatically redirect is user is already logged in
-        var authorization = window.sessionStorage.getItem("Authorization");
-        if(authorization != null){
-            //redirect back to main page - now user is logged in
-            webix.send("../../index.jsp", {logged:true}, "post");
-        } else {
-            webix.ui(Login.MainController._get_instance()._ui());
+        webix.ui(Login.MainController._get_instance()._ui());
 
-            webix.html.remove(document.getElementById('ajax-loader'));
+        webix.html.remove(document.getElementById('ajax-loader'));
+
+        //automatically redirect is user is already logged in
+        var authorization = webix.storage.session.get("Authorization");
+        if(authorization != null && authorization.indexOf('Basic ') === 0){
+            var decoded = atob(authorization.substring(6)).split(':');
+            $$('frmLogin').setValues({
+                username: decoded[0],
+                password: decoded[1]
+            });
         }
     }
 });

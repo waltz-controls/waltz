@@ -11,6 +11,16 @@ TangoWebapp.platform.MainController = MVC.Controller.extend('main', {
      * @param {Object} params
      */
     load: function (params) {
+        var authorization = webix.storage.session.get("Authorization");
+        if(authorization != null && authorization.indexOf('Basic ') === 0) {
+            webix.attachEvent("onBeforeAjax", function (mode, url, params, x, headers) {
+                x.withCredentials = true;
+                headers["Authorization"] = webix.storage.session.get("Authorization");
+            });
+        } else {
+            webix.message("Authorization header was not set","error");
+        }
+
         //draw ui
         webix.ui({
             view: 'layout',
