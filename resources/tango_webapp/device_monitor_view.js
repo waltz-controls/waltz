@@ -133,8 +133,9 @@
                     attrs.push(attr);
                     this._device.fetchAttrValues(attrs).then(function (resp) {
                         resp.forEach(this.update(function (attr) {
+                            debugger
                             if (!this.$$(tabId).$destructed)
-                                this.$$(tabId).update(attr.value);
+                                this.$$(tabId).update(attr);
                         }.bind(this)));
                     }.bind(this));
                 }
