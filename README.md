@@ -48,17 +48,14 @@ Pass: tango
 
 ## Build ##
 
-This project uses gradle for high level build operations. Supported tasks are:
+This project uses jmvcc for high level build operations:
 
+```bash
+$> ./jmvcc jmvc/clean
+$> ./jmvcc jmvc/assemble
 ```
-Build tasks
------------
-clean - Deletes the build directory.
-prepareBuild - creates build's skeleton
-compress - compresses JavaScript
-prepareWar - archives build into a .war file
-deploy - deploys generated .war file to the downloads page 
-```
+
+This requires jjs to be in the $PATH (is shipped with OpenJDK8 and later)
 
 ## Implementation details ##
 
