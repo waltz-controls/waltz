@@ -173,6 +173,15 @@
         }, resp);
     };
 
+    var openScalarWindow = function(resp) {
+        openTab.bind(this)({
+            header: "<span class='webix_icon fa-image'></span>[<span class='webix_strong'>" + this.device_id + '/' + this.name + "</span>]",
+            close: true,
+            borderless: true,
+            body: TangoWebapp.ui.newScalarView(webix.extend({id: this.id}, resp))
+        }, resp)
+    };
+
     var error_handler = function (resp) {
         this.getTopParentView().$$('output').setValue(new View({url: 'views/dev_panel_error_out.ejs'}).render(resp))
     };
@@ -214,6 +223,10 @@
                 attribute.read()
                     .fail(error_handler.bind(this))
                     .then(openImageWindow.bind(attribute));
+            } else if (attribute.info.data_format === "SCALAR") {
+                attribute.read()
+                    .fail(error_handler.bind(this))
+                    .then(openScalarWindow.bind(attribute));
             } else {
                 TangoWebappHelpers.error("Unsupported data format: " + attribute.info.data_format);
             }
@@ -304,15 +317,11 @@
                         info = "Failed to parse attribute.info: " + e;
                     }
                     this.elements.info.setValue(info);
+                    this.elements['btnPlot'].enable();
                     if (obj.info.writable.includes("WRITE"))
                         this.elements['btnWrite'].enable();
                     else
                         this.elements['btnWrite'].disable();
-                    if (obj.info.data_format === 'SPECTRUM' || obj.info.data_format === 'IMAGE') {
-                        this.elements['btnPlot'].enable();
-                    } else {
-                        this.elements['btnPlot'].disable();
-                    }
                 }
             }
         }
