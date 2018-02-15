@@ -61,6 +61,7 @@
             name: 'scalar',
             update: function (data) {
                 var layout = {
+                    title: "Data acquired @ " + new Date(data.timestamp),
                     autosize: false,
                     width: this.$width,
                     height: this.$height,
