@@ -11,9 +11,6 @@ TangoWebapp.platform.MainController = MVC.Controller.extend('main', {
      * @param {Object} params
      */
     load: function (params) {
-        //popup login screen
-        webix.ui(TangoWebapp.platform.LoginController.getUI()).show();
-
         //draw ui
         webix.ui({
             view: 'layout',
@@ -29,18 +26,31 @@ TangoWebapp.platform.MainController = MVC.Controller.extend('main', {
         });
         webix.ui.fullScreen();
 
+        this.load_user();
+
         TangoWebappHelpers.debug("platform/main done.");
     },
-    "tango_webapp.user_login subscribe": function (data) {
-        var user_context = TangoWebapp.platform.UserContext.find_one(data.name);
-        TangoWebappHelpers.debug(user_context.toString());
+    load_user:function(){
+        var authorization = webix.storage.session.get("Authorization");
+        if(authorization != null && authorization.indexOf('Basic ') === 0) {
+            webix.attachEvent("onBeforeAjax", function (mode, url, params, x, headers) {
+                x.withCredentials = true;
+                headers["Authorization"] = webix.storage.session.get("Authorization");
+            });
+            var username = atob(authorization.substring(6)).split(':')[0];
 
-        var rest = new TangoWebapp.TangoRestApi({url: user_context.rest_url});
+            var user_context = TangoWebapp.platform.UserContext.find_one(username);
+            TangoWebappHelpers.debug(user_context.toString());
 
-        TangoWebapp.platform.PlatformContext.create({
-            user_context: user_context,
-            rest: rest
-        });
+            var rest = new TangoWebapp.TangoRestApi({url: user_context.rest_url});
+
+            TangoWebapp.platform.PlatformContext.create({
+                user_context: user_context,
+                rest: rest
+            });
+        } else {
+            webix.message("Authorization header was not set","error");
+        }
     },
     "tango_webapp.user_logout subscribe": function (event) {
         PlatformContext.destroy();

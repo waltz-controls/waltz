@@ -1,0 +1,2 @@
+$EXEC("ant -f jmvc/ant/build.xml clean -DbuildDir=build")
+echo($OUT)

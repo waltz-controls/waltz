@@ -97,7 +97,7 @@
                                 break;
                         }
                     }.bind(this));
-                }.bind(this)).then(this.start.bind(this));
+                }.bind(this)).then(this.start.bind(this)).fail(function(){debugger});
             },
             update: function (what) {
                 var $$state = this.$$('state');

@@ -7,7 +7,8 @@ addons:
       secure: $SONAR_TOKEN
 script:
   - chmod 777 ./jmvcc
-  - gradle prepareWar
+  - ./jmvcc jmvc/assemble
+  - test -e build/distributions/TangoWebapp.war
 after_success:
   - sonar-scanner -Dsonar.projectKey=org.tango-controls:TangoWebapp -Dsonar.sources=. -Dsonar.exclusions=build/**,jmvc/**,docs/**,apps/**
 jdk:

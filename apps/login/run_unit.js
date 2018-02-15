@@ -2,7 +2,7 @@ MVCOptions = {
     onload: true,
     env: "test",
     done_loading : function(){
-        print('\n\nRUNNING UNIT TESTS\nremember to update apps/tango_webapp/index.html\n');
+        print('\n\nRUNNING UNIT TESTS\nremember to update apps/login/index.html\n');
         OpenAjax.hub.subscribe("jmvc.test.assertions.update", this.report);
         OpenAjax.hub.subscribe("jmvc.test.test.complete", this.update_test);
         OpenAjax.hub.subscribe("jmvc.test.unit.complete", this.unit_results);
@@ -52,4 +52,4 @@ MVCOptions = {
 }
 
 load('jmvc/rhino/compression/setup.js');
-window.location = 'apps/tango_webapp/compress.html';
+window.location = 'apps/login/index.html';
