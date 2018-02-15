@@ -1,10 +1,14 @@
-webix.attachEvent("onBeforeAjax", function (mode, url, params, x, headers) {
-    x.withCredentials = true;
-    headers["Authorization"] = "Basic " + btoa("tango-cs:tango");
-});
+
 
 
 new MVC.Test.Unit('tango_rest_api_request', {
+    init:function(params){
+        this._super(params);
+        webix.attachEvent("onBeforeAjax", function (mode, url, params, x, headers) {
+            x.withCredentials = true;
+            headers["Authorization"] = "Basic " + btoa("tango-cs:tango");
+        });
+    },
     test_simple: function () {
         var instance = new TangoRestApiRequest({url: "http://localhost:10001/tango/rest/rc4"});
 

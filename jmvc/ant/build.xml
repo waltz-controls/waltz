@@ -5,7 +5,7 @@
     <property environment="env"/>
     <property name="application.name" value="${app}"/>
     <echo>application.name = ${application.name}</echo>
-    <property name="build.dir" value="${target.directory}"/>
+    <property name="build.dir" value="${buildDir}"/>
     <echo>build.dir = ${build.dir}</echo>
 
     <target name="test">
@@ -32,6 +32,10 @@
                 </not>
             </condition>
         </fail>
+    </target>
+
+    <target name="compress-and-move" depends="compress-javascript">
+        <antcall target="-move-app-productionjs"/>
     </target>
 
     <!--TODO -->
@@ -64,15 +68,16 @@
 
     <target name="-move-app-productionjs">
         <move todir="${build.dir}/apps/${application.name}">
-            <fileset dir="apps/${application.name}">
+            <fileset dir="apps/${application.name}" erroronmissingdir="false">
                 <include name="**/production.js"/>
+                <include name="**/webix.js"/>
             </fileset>
         </move>
     </target>
 
     <target name="-copy-app-mainjs">
         <copy todir="${build.dir}/apps/">
-            <fileset dir="apps">
+            <fileset dir="apps" erroronmissingdir="false">
                 <include name="**/${application.name}.js"/>
             </fileset>
         </copy>
@@ -155,16 +160,16 @@
     </target>
 
     <target name="-copy-index-html">
-        <copy file="apps/${application.name}/index.html" todir="${to.dir}" overwrite="true"/>
-        <replace file="${to.dir}/index.html">
-            <replacefilter token=",development" value=",production"/>
-            <replacefilter token=",test" value=",production"/>
-            <replacefilter token=".js" value=".min.js"/>
-            <replacefilter token="jmvc/include.min.js?" value="jmvc/include.js?"/>
-        </replace>
+        <copy todir="${to.dir}" overwrite="true">
+            <fileset dir="apps/${application.name}" includes="**/index.html **/index.jsp" erroronmissingdir="false"/>
+            <filterset begintoken="," endtoken="&quot;">
+                <filter token="development" value=",production&quot;"/>
+                <filter token="test" value=",production&quot;"/>
+            </filterset>
+        </copy>
     </target>
 
-    <target name="build" depends="compress-javascript,compress-css">
+    <target name="build">
         <echo>Making build dir...</echo>
         <mkdir dir="${build.dir}"/>
         <antcall target="-copy-jmvc-core"/>
@@ -174,10 +179,6 @@
         <antcall target="-move-app-productionjs"/>
 
         <antcall target="-copy-app-mainjs"/>
-
-        <antcall target="-copy-libs"/>
-
-        <antcall target="-copy-app-resources"/>
 
         <antcall target="-copy-app-images"/>
 
@@ -227,5 +228,16 @@
 
     <target name="clean">
         <delete dir="${build.dir}"/>
+    </target>
+
+    <target name="copy-webapp">
+        <copy todir="${build.dir}/WEB-INF" overwrite="true">
+            <fileset dir="WEB-INF"/>
+        </copy>
+        <copy file="index.jsp" todir="${build.dir}" overwrite="true"/>
+    </target>
+
+    <target name="war">
+        <zip destfile="${build.dir}/../distributions/TangoWebapp.war" basedir="${build.dir}"/>
     </target>
 </project>

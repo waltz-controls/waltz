@@ -46,9 +46,6 @@ Login.MainController = MVC.Controller.extend('main',{
                                                     var isValid = form.validate();
                                                     if (!isValid) return;
 
-                                                    webix.message("username=" + form.getValues().username, "debug");
-                                                    webix.message("password=" + form.getValues().password, "debug");
-
                                                     webix.storage.session.put('Authorization', "Basic " + btoa(form.getValues().username + ":" + form.getValues().password));
 
                                                     window.location = "../../apps/tango_webapp/index.html";

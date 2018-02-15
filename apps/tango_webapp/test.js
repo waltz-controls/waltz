@@ -6,7 +6,7 @@ include.unit_tests(
     // 'cookie'
 );
 
-include('../test/setup');
+include('../../test/setup');
 
 include.functional_tests(
     'tango_webapp/image_view',
@@ -22,4 +22,3 @@ include.functional_tests(
     // 'webix_ui'
 );
 
-webix.debug_bind = true;
