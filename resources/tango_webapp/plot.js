@@ -18,15 +18,16 @@
          *
          * @param {data:[], width:int, height:int} value
          */
-        update: function (value) {
+        update: function (resp) {
             var data = [];
-            for (var i = 0, j = 0; i < value.height; ++i, j += value.width) {
-                data.push(value.data.slice(j, j + value.width))
+            for (var i = 0, j = 0; i < resp.value.height; ++i, j += resp.value.width) {
+                data.push(resp.value.data.slice(j, j + resp.value.width))
             }
 
-            var ratio = value.width / value.height;
-            var height = Math.max(this.$height, Math.min(this.$height, value.height));
+            var ratio = resp.value.width / resp.value.height;
+            var height = Math.max(this.$height, Math.min(this.$height, resp.value.height));
             var layout = {
+                title: "Data acquired @ " + new Date(resp.timestamp),
                 autosize: false,
                 width: height * ratio,//assume square
                 height: height,
@@ -70,7 +71,8 @@
                 // Plotly.restyle(this.getNode(), 'y', [data]);
 
                 Plotly.extendTraces(this.getNode(), {
-                    y: [[data]]
+                    x: [[new Date(data.timestamp)]],
+                    y: [[data.value]]
                 }, [0]);
                 Plotly.relayout(this.getNode(), layout);
             },
@@ -78,6 +80,7 @@
                 // webix.extend(config, this._ui(config));
                 this.$ready.push(function () {
                     Plotly.newPlot(this.getNode(), [{
+                        x: [],
                         y: [],
                         line: {shape: 'spline'},
                         type: 'scatter'
@@ -103,7 +106,7 @@
         name: 'spectrum_text',
         update: function (data) {
             this.clearAll();
-            this.parse(data);
+            this.parse(data.value);
         }
     }, webix.ui.list);
 
@@ -115,6 +118,7 @@
             name: 'spectrum',
             update: function (data) {
                 var layout = {
+                    title: "Data acquired @ " + new Date(data.timestamp),
                     autosize: false,
                     width: this.$width,
                     height: this.$height,
@@ -122,7 +126,7 @@
                 };
 
                 Plotly.relayout(this.getNode(), layout);
-                Plotly.restyle(this.getNode(), 'y', [data]);
+                Plotly.restyle(this.getNode(), 'y', [data.value]);
             },
             $init: function (config) {
                 // webix.extend(config, this._ui(config));

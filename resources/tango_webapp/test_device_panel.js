@@ -149,7 +149,7 @@
         }
 
         $$tab.show();
-        $$tab.update(resp.value);
+        $$tab.update(resp);
     };
 
     //TODO send Open Ajax event and handle it in main_controller
