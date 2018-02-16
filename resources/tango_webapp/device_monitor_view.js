@@ -47,8 +47,25 @@
                     {id: "description", header: "Description", fillspace: true}
                 ],
                 onClick:{
-                    "fa-area-chart":function(){
-                        alert("Streaming");
+                    "fa-area-chart":function(event, id){
+                        var attrId = id.row;
+                        var item = this.getItem(attrId);
+                        var tabId = 'stream-' + item.id;
+
+                        if(!(this.getTopParentView()._monitoredAttributes.hasOwnProperty(tabId))) {
+                            var $$attrsView = this.getTopParentView().$$('attributes-tabview');
+                            $$attrsView.addView({
+                                id: tabId,
+                                header: "Stream " + item.label,
+                                body: TangoWebapp.ui.newScalarView({
+                                    id: "stream-" + attrId,
+                                    value: item.value,
+                                    timestamp: item.timestamp
+                                })
+                            }, 1);
+                            this.getTopParentView()._monitoredAttributes[tabId] = attrId;
+                        }
+                        this.getTopParentView().$$(tabId).show();
                     }
                 }
             }
