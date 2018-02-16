@@ -41,10 +41,16 @@
                         sort: "string"
                     },
                     {id: "value", header: "Value", width: 100},
+                    {id: "stream", header: "", width: 30, template: "<span class='webix_icon fa-area-chart'></span>"},
                     {id: "quality", header: "Quality", width: 100, sort: "string"},
                     {id: "unit", header: "Unit", width: TangoWebapp.consts.NAME_COLUMN_WIDTH},
                     {id: "description", header: "Description", fillspace: true}
-                ]
+                ],
+                onClick:{
+                    "fa-area-chart":function(){
+                        alert("Streaming");
+                    }
+                }
             }
         }
     };
@@ -133,7 +139,6 @@
                     attrs.push(attr);
                     this._device.fetchAttrValues(attrs).then(function (resp) {
                         resp.forEach(this.update(function (attr) {
-                            debugger
                             if (!this.$$(tabId).$destructed)
                                 this.$$(tabId).update(attr);
                         }.bind(this)));
