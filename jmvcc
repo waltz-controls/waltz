@@ -60,4 +60,4 @@ fi
 
 SCRIPT_FILE=$1
 shift
-jjs -classpath .:jmvc/rhino/compiler.jar:jmvc/rhino/compiler-integration.jar -scripting $SCRIPT_FILE -- $*
+jjs -classpath .:jmvc/rhino/closure-compiler-v20180204.jar:jmvc/rhino/compiler-integration.jar -scripting $SCRIPT_FILE -- $*

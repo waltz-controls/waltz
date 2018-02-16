@@ -84,7 +84,7 @@ with(imports) {
         var Array = Java.type("java.lang.reflect.Array");
         var JString = Java.type("java.lang.String");
 
-        var size = arguments.length * 2;
+        var size = arguments.length * 2 + 1;
 
         var args = Array.newInstance(JString.class, size);
 
@@ -95,7 +95,8 @@ with(imports) {
         }
 
         args[j++] = new JString("--js_output_file");
-        args[j] = new JString(arguments[i]);
+        args[j++] = new JString(arguments[i]);
+	args[j] = new JString("--strict_mode_input=false");
 
         var Arrays = Java.type("java.util.Arrays");
         print("Executing compiler with arguments: " + Arrays.toString(args));
