@@ -40,7 +40,7 @@
                         width: TangoWebapp.consts.NAME_COLUMN_WIDTH,
                         sort: "string"
                     },
-                    {id: "value", header: "Value", width: 100},
+                    {id: "value", header: "Value", width: 200},
                     {id: "stream", header: "", width: 30, template: "<span class='webix_icon fa-area-chart'></span>"},
                     {id: "quality", header: "Quality", width: 100, sort: "string"},
                     {id: "unit", header: "Unit", width: TangoWebapp.consts.NAME_COLUMN_WIDTH},
@@ -76,7 +76,7 @@
      * @type {webix.protoUI}
      */
     var device_monitor = webix.protoUI({
-            _monitoredAttributes: {},//this is shared object across all components. In this case it is safe, as keys are unique ids
+            _monitoredAttributes: null,//this is shared object across all components. In this case it is safe, as keys are unique ids
             loadAttributes: function () {
                 debugger
                 // var $$scalar = this.$$('scalar');
@@ -264,6 +264,8 @@
                 webix.extend(config, this._ui(config.device));
 
                 this.$ready.push(function () {
+                    this._monitoredAttributes = {};
+
                     this.loadAttributes();
                 }.bind(this));
 
