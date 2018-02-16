@@ -40,11 +40,34 @@
                         width: TangoWebapp.consts.NAME_COLUMN_WIDTH,
                         sort: "string"
                     },
-                    {id: "value", header: "Value", width: 100},
+                    {id: "value", header: "Value", width: 200},
+                    {id: "stream", header: "", width: 30, template: "<span class='webix_icon fa-area-chart'></span>"},
                     {id: "quality", header: "Quality", width: 100, sort: "string"},
                     {id: "unit", header: "Unit", width: TangoWebapp.consts.NAME_COLUMN_WIDTH},
                     {id: "description", header: "Description", fillspace: true}
-                ]
+                ],
+                onClick:{
+                    "fa-area-chart":function(event, id){
+                        var attrId = id.row;
+                        var item = this.getItem(attrId);
+                        var tabId = 'stream-' + item.id;
+
+                        if(!(this.getTopParentView()._monitoredAttributes.hasOwnProperty(tabId))) {
+                            var $$attrsView = this.getTopParentView().$$('attributes-tabview');
+                            $$attrsView.addView({
+                                id: tabId,
+                                header: "Stream " + item.label,
+                                body: TangoWebapp.ui.newScalarView({
+                                    id: "stream-" + attrId,
+                                    value: item.value,
+                                    timestamp: item.timestamp
+                                })
+                            }, 1);
+                            this.getTopParentView()._monitoredAttributes[tabId] = attrId;
+                        }
+                        this.getTopParentView().$$(tabId).show();
+                    }
+                }
             }
         }
     };
@@ -53,7 +76,7 @@
      * @type {webix.protoUI}
      */
     var device_monitor = webix.protoUI({
-            _monitoredAttributes: {},//this is shared object across all components. In this case it is safe, as keys are unique ids
+            _monitoredAttributes: null,//this is shared object across all components. In this case it is safe, as keys are unique ids
             loadAttributes: function () {
                 debugger
                 // var $$scalar = this.$$('scalar');
@@ -133,7 +156,6 @@
                     attrs.push(attr);
                     this._device.fetchAttrValues(attrs).then(function (resp) {
                         resp.forEach(this.update(function (attr) {
-                            debugger
                             if (!this.$$(tabId).$destructed)
                                 this.$$(tabId).update(attr);
                         }.bind(this)));
@@ -242,6 +264,8 @@
                 webix.extend(config, this._ui(config.device));
 
                 this.$ready.push(function () {
+                    this._monitoredAttributes = {};
+
                     this.loadAttributes();
                 }.bind(this));
 
