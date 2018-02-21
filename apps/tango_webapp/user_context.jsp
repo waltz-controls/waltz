@@ -16,7 +16,10 @@
 
 
 <%
-    //TODO extract user name
+    System.out.println(request.getMethod());
+    //TODO extract user name add Base64 data
     ConcurrentMap<String,String> storage = (ConcurrentMap<String,String>)request.getServletContext().getAttribute("UserContextStorage");
-    System.out.println(storage.remove("ingvord"));
+    out.print(storage.replace("ingvord", "{'name':'ingvord','foo':'bar'}"));
+    out.flush();
+
 %>
