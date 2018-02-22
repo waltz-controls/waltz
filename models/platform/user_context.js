@@ -81,48 +81,6 @@ TangoWebapp.platform.UserContext = MVC.Model.extend('user_context',
             UserContext = null;
             this.publish("destroy", {data: this});
         },
-        /**
-         *
-         * @param attrs
-         *
-         * @event {OpenAjax} user_context.update
-         */
-        update_attributes: function (attrs) {
-            this._super(attrs);
-            this.publish("update", {data: this});
-        },
-        /**
-         * Does nothing if tango_host is already exist
-         *
-         * @param {string} tango_host
-         *
-         * @event {OpenAjax} user_context.add_tango_host
-         */
-        add_tango_host: function (tango_host) {
-            if (this.tango_hosts.hasOwnProperty(tango_host)) return;
-            this.tango_hosts[tango_host] = "";
-            this.save();
-            this.publish("add_tango_host", {
-                context: this,
-                data: tango_host
-            })
-        },
-        /**
-         * Does nothing if tango_host is already deleted
-         *
-         * @param tango_host
-         *
-         * @event {OpenAjax} user_context.delete_tango_host
-         */
-        delete_tango_host: function (tango_host) {
-            if (!this.tango_hosts.hasOwnProperty(tango_host)) return;
-            delete this.tango_hosts[tango_host];
-            this.save();
-            this.publish("delete_tango_host", {
-                context: this,
-                data: tango_host
-            })
-        },
         toDeviceFilter: function () {
             return new DeviceFilter({
                 user: this.user,

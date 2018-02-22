@@ -175,7 +175,7 @@
                         click: function () {
                             //TODO validate
                             var value = this.getTopParentView().$$("value").getValue().split('\n');
-                            PlatformContext.user_context.update_attributes({
+                            UserContextController.update_attributes({
                                 device_filters: value
                             });
                             $$("devices-tree").updateRoot();
@@ -242,7 +242,7 @@
                                             var isValid = form.validate();
                                             if (!isValid) return;
 
-                                            UserContext.add_tango_host(form.elements.new_tango_host.getValue());
+                                            UserContextController.add_tango_host(form.elements.new_tango_host.getValue());
                                         }
                                     }
                                 ]
@@ -263,7 +263,7 @@
                         },
                         onClick: {
                             remove_tango_host: function (event, id) {
-                                UserContext.delete_tango_host(id);
+                                UserContextController.delete_tango_host(id);
                             }
                         }
                     }
@@ -306,7 +306,7 @@
 
                     $$('dashboard').$$('tango_hosts').parse(data);
                 },
-                "user_context.add_tango_host subscribe": function (event) {
+                "user_context_controller.add_tango_host subscribe": function (event) {
                     $$('dashboard').$$('tango_hosts').add({
                         id: event.data
                     });
@@ -320,7 +320,7 @@
                         TangoWebappHelpers.error("Failed to load Tango host[" + host.id + "]");//TODO errors
                     });
                 },
-                "user_context.delete_tango_host subscribe": function (event) {
+                "user_context_controller.delete_tango_host subscribe": function (event) {
                     $$('dashboard').$$('tango_hosts').remove(event.data);
 
                     //TODO do we need to remove tango_host from context here?

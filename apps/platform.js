@@ -22,7 +22,7 @@ include(function () { //runs after prior includes are loaded
         "platform/user_context", "platform/platform_context"
     );
     include.controllers(
-        "platform/login", "platform/main",
+        "platform/login", "platform/main", "platform/user_context",
         "platform/ui/top_toolbar", "platform/ui/bottom_toolbar"
     );
     // include.views(

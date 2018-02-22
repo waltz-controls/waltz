@@ -226,7 +226,7 @@
                         value: user_context.device_filters
                     });
                 },
-                "user_context.add_tango_host subscribe": function (event) {
+                "user_context_controller.add_tango_host subscribe": function (event) {
                     event.controller.parse({
                         parent: 'root',
                         data: [{
@@ -238,7 +238,7 @@
                         ]
                     });
                 },
-                "user_context.delete_tango_host subscribe": function (event) {
+                "user_context_controller.delete_tango_host subscribe": function (event) {
                     event.controller.remove(event.data);
                 },
                 "platform_context.create subscribe": function (event) {
