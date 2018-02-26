@@ -201,7 +201,10 @@ MVC.Native.extend('Array',
 	 */
     include: function(a, item){
         if(!a) return false;
-		return a.includes(item);
+		for(var i=0; i< a.length; i++){
+			if(a[i] == item) return true;
+		}
+		return false;
 	},
     /**
      *
