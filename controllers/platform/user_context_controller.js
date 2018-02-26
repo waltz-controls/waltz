@@ -10,6 +10,16 @@ TangoWebapp.platform.UserContextController = MVC.Controller.extend("user_context
         this._user_context = user_context;
     },
     /**
+     *
+     * @param user
+     * @event {OpenAjax} user_context_controller.found
+     */
+    find_user_context:function(user){
+        var found = TangoWebapp.platform.UserContext.find_one(user);
+        UserContext = found;
+        this.publish('user_context_controller.found', {data: found});
+    },
+    /**
      * Does nothing if tango_host is already exist
      *
      * @param {string} tango_host
@@ -50,6 +60,15 @@ TangoWebapp.platform.UserContextController = MVC.Controller.extend("user_context
     update_attributes: function (attrs) {
         this._user_context.update_attributes(attrs);
         this.publish("user_context_controller.update", {data: this});
+    },
+    /**
+     *
+     * @event {OpenAjax} user_context_controller.destroy
+     */
+    destroy:function(){
+        this._user_context.destroy();
+        UserContext = null;
+        this.publish("user_context_controller.destroy", {data: this});
     }
 
 

@@ -158,7 +158,7 @@
                     var tango_host_id = this._get_host_id(item);
                     var tango_host = PlatformContext.tango_hosts.getItem(tango_host_id);
 
-                    var filter = UserContext.toDeviceFilter();
+                    var filter = PlatformContext.UserContext.toDeviceFilter();
 
                     var self = this;
                     switch (item.$level) {
@@ -219,7 +219,7 @@
 
                     return false;//block further execution
                 },
-                "user_context.create subscribe": function (event) {
+                "user_context_controller.found subscribe": function (event) {
                     var user_context = event.data;
                     event.controller.devices_filter = new DeviceFilter({
                         user: user_context.user,

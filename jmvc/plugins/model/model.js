@@ -169,9 +169,13 @@ MVC.Model = MVC.Class.extend(
                 params = {};
             }
             var callbacks = this._clean_callbacks(cbks);
-            var inst = this.store.find_one(id, callbacks);
-            if(inst) callbacks.onSuccess(inst);
-            return inst;
+            var attributes = this.store.find_one(id, callbacks);
+            if(attributes != null) {
+                var inst = this.create_as_existing(attributes);
+                if (inst) callbacks.onSuccess(inst);
+                return inst;
+            }
+            return null;
         },
         /**
          * Lookups for data in the local storage
@@ -595,6 +599,14 @@ MVC.Model = MVC.Class.extend(
         add_errors       : function (errors) {
             //TODO accept var args
             if (errors) this.errors = this.errors.concat(errors);
+        },
+        /**
+         * Checks whether this instance has errors
+         *
+         * @return {boolean}
+         */
+        has_errors: function(){
+            return this.errors.length !== 0;
         },
         _resetAttributes : function (attributes) {
             this._clear();

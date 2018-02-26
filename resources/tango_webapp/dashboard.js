@@ -188,14 +188,14 @@
             webix.extend(config, this._ui());
 
             this.$ready.push(function () {
-                this.$$('value').setValue(PlatformContext.user_context.device_filters.join('\n'))
+                this.$$('value').setValue(PlatformContext.UserContext.device_filters.join('\n'))
             }.bind(this));
         },
         defaults: {
             minWidth: 240,
             minHeight: 240,
             on: {
-                "user_context.create subscribe": function (event) {
+                "user_context_controller.found subscribe": function (event) {
                     event.controller.$$('value').setValue(event.data.device_filters.join('\n'))
                 }
             }
@@ -275,7 +275,7 @@
 
             this.$ready.push(function () {
                 var data = [];
-                var context = PlatformContext.user_context;
+                var context = PlatformContext.UserContext;
 
                 for (var tango_host in context.tango_hosts) {
                     if (!context.tango_hosts.hasOwnProperty(tango_host)) continue;
@@ -292,7 +292,7 @@
             minWidth: 320,
             maxHeight: 480,
             on: {
-                "user_context.create subscribe": function (event) {
+                "user_context_controller.found subscribe": function (event) {
                     var data = [];
                     var context = event.data;
 
@@ -325,7 +325,7 @@
 
                     //TODO do we need to remove tango_host from context here?
                 },
-                "user_context.destroy subscribe": function () {
+                "user_context_controller.destroy subscribe": function () {
                     $$('dashboard').$$('tango_hosts').clearAll();
                     $$('dashboard').$$('tango_hosts').refresh();
                 }

@@ -8,7 +8,7 @@
 TangoWebapp.platform.UserContext = MVC.Model.extend('user_context',
     /* @Static */
     {
-        store_type: TangoWebappStorage,
+        store_type: TangoRemoteStorage,
         id: "user",
         attributes: {
             user: 'string',
@@ -24,22 +24,20 @@ TangoWebapp.platform.UserContext = MVC.Model.extend('user_context',
          *
          * @param id
          *
-         * @event {OpenAjax} user_context.create
          * @returns {UserContext} found or newly created with default values
          */
         find_one: function (id) {
             var result = this._super(id);
-            var default_tango_host = {};
-            default_tango_host[TangoWebapp.consts.TANGO_HOST + ':' + TangoWebapp.consts.TANGO_PORT] = '';
             if (result == null) {
+                var default_tango_host = {};
+                default_tango_host[TangoWebapp.consts.TANGO_HOST + ':' + TangoWebapp.consts.TANGO_PORT] = '';
+
                 result = new this({
                     user: id,
                     tango_hosts: default_tango_host,
                     device_filters: ['*/*/*']
                 });
             }
-            UserContext = result;
-            this.publish('create', {data: result});
             return result;
         },
         /**
@@ -74,12 +72,9 @@ TangoWebapp.platform.UserContext = MVC.Model.extend('user_context',
          *
          * Sets this.Class.current to null
          *
-         * @event {OpenAjax} user_context.destroy
          */
         destroy: function () {
-            this.save();
-            UserContext = null;
-            this.publish("destroy", {data: this});
+            this.Class.store.destroy(this[this.Class.id]);
         },
         toDeviceFilter: function () {
             return new DeviceFilter({

@@ -47,7 +47,7 @@ TangoWebapp.platform.MainController = MVC.Controller.extend('main', {
             var rest = new TangoWebapp.TangoRestApi({url: user_context.rest_url});
 
             TangoWebapp.platform.PlatformContext.create({
-                user_context: user_context,
+                UserContext: user_context,
                 rest: rest
             });
         } else {
