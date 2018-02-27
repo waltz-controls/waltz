@@ -13,7 +13,7 @@
 
 <% if (request.getHeader("Authorization") != null) { %>
 <script type="text/javascript">
-    window.sessionStorage.setItem("Authorization", <%= request.getHeader("Authorization") %>)
+    window.sessionStorage.setItem("Authorization", "<%= request.getHeader("Authorization") %>")
 </script>
 <% } %>
 

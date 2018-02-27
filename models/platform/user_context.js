@@ -32,7 +32,7 @@ TangoWebapp.platform.UserContext = MVC.Model.extend('user_context',
                 var default_tango_host = {};
                 default_tango_host[TangoWebapp.consts.TANGO_HOST + ':' + TangoWebapp.consts.TANGO_PORT] = '';
 
-                result = new this({
+                result = this.create_as_existing({
                     user: id,
                     tango_hosts: default_tango_host,
                     device_filters: ['*/*/*']

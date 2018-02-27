@@ -160,12 +160,18 @@
     </target>
 
     <target name="-copy-index-html">
-        <copy todir="${to.dir}" overwrite="true">
+        <copy todir="${build.dir}/apps/${application.name}" overwrite="true">
             <fileset dir="apps/${application.name}" includes="**/index.html **/index.jsp" erroronmissingdir="false"/>
             <filterset begintoken="," endtoken="&quot;">
                 <filter token="development" value=",production&quot;"/>
                 <filter token="test" value=",production&quot;"/>
             </filterset>
+        </copy>
+    </target>
+
+    <target name="-copy-pages">
+        <copy todir="${build.dir}/apps/${application.name}" overwrite="true">
+            <fileset dir="apps/${application.name}" includes="**/*.html **/*.jsp" excludes="**/index.html **/index.jsp" erroronmissingdir="false"/>
         </copy>
     </target>
 
@@ -184,9 +190,9 @@
 
         <antcall target="-copy-app-stylesheets"/>
 
-        <antcall target="-copy-index-html">
-            <param name="to.dir" value="${build.dir}/apps/${application.name}"/>
-        </antcall>
+        <antcall target="-copy-index-html"/>
+
+        <antcall target="-copy-pages"/>
     </target>
 
     <target name="-apply-ant-target">

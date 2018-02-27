@@ -109,7 +109,7 @@ TangoWebapp.platform.PlatformContext = MVC.Model.extend('platform_context',
          */
         destroy: function () {
             this._super();
-            this.user_context.destroy();
+            this.UserContext.save();
             //TODO clear all data
             PlatformContext = null;
         }
