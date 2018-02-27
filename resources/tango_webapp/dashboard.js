@@ -175,7 +175,7 @@
                         click: function () {
                             //TODO validate
                             var value = this.getTopParentView().$$("value").getValue().split('\n');
-                            PlatformContext.user_context.update_attributes({
+                            UserContextController.update_attributes({
                                 device_filters: value
                             });
                             $$("devices-tree").updateRoot();
@@ -188,14 +188,14 @@
             webix.extend(config, this._ui());
 
             this.$ready.push(function () {
-                this.$$('value').setValue(PlatformContext.user_context.device_filters.join('\n'))
+                this.$$('value').setValue(PlatformContext.UserContext.device_filters.join('\n'))
             }.bind(this));
         },
         defaults: {
             minWidth: 240,
             minHeight: 240,
             on: {
-                "user_context.create subscribe": function (event) {
+                "user_context_controller.found subscribe": function (event) {
                     event.controller.$$('value').setValue(event.data.device_filters.join('\n'))
                 }
             }
@@ -242,7 +242,7 @@
                                             var isValid = form.validate();
                                             if (!isValid) return;
 
-                                            UserContext.add_tango_host(form.elements.new_tango_host.getValue());
+                                            UserContextController.add_tango_host(form.elements.new_tango_host.getValue());
                                         }
                                     }
                                 ]
@@ -263,7 +263,7 @@
                         },
                         onClick: {
                             remove_tango_host: function (event, id) {
-                                UserContext.delete_tango_host(id);
+                                UserContextController.delete_tango_host(id);
                             }
                         }
                     }
@@ -275,7 +275,7 @@
 
             this.$ready.push(function () {
                 var data = [];
-                var context = PlatformContext.user_context;
+                var context = PlatformContext.UserContext;
 
                 for (var tango_host in context.tango_hosts) {
                     if (!context.tango_hosts.hasOwnProperty(tango_host)) continue;
@@ -292,7 +292,7 @@
             minWidth: 320,
             maxHeight: 480,
             on: {
-                "user_context.create subscribe": function (event) {
+                "user_context_controller.found subscribe": function (event) {
                     var data = [];
                     var context = event.data;
 
@@ -306,7 +306,7 @@
 
                     $$('dashboard').$$('tango_hosts').parse(data);
                 },
-                "user_context.add_tango_host subscribe": function (event) {
+                "user_context_controller.add_tango_host subscribe": function (event) {
                     $$('dashboard').$$('tango_hosts').add({
                         id: event.data
                     });
@@ -320,12 +320,12 @@
                         TangoWebappHelpers.error("Failed to load Tango host[" + host.id + "]");//TODO errors
                     });
                 },
-                "user_context.delete_tango_host subscribe": function (event) {
+                "user_context_controller.delete_tango_host subscribe": function (event) {
                     $$('dashboard').$$('tango_hosts').remove(event.data);
 
                     //TODO do we need to remove tango_host from context here?
                 },
-                "user_context.destroy subscribe": function () {
+                "user_context_controller.destroy subscribe": function () {
                     $$('dashboard').$$('tango_hosts').clearAll();
                     $$('dashboard').$$('tango_hosts').refresh();
                 }

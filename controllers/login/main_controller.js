@@ -80,7 +80,7 @@ Login.MainController = MVC.Controller.extend('main',{
         webix.html.remove(document.getElementById('ajax-loader'));
 
         //automatically redirect is user is already logged in
-        var authorization = webix.storage.session.get("Authorization");
+        var authorization = sessionStorage.getItem("Authorization");
         if(authorization != null && authorization.indexOf('Basic ') === 0){
             var decoded = atob(authorization.substring(6)).split(':');
             $$('frmLogin').setValues({

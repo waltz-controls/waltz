@@ -32,7 +32,7 @@ TangoWebapp.platform.MainController = MVC.Controller.extend('main', {
     },
     load_user:function(){
         var authorization = webix.storage.session.get("Authorization");
-        if(authorization != null && authorization.indexOf('Basic ') === 0) {
+        if (authorization !== null && authorization.indexOf('Basic ') === 0) {
             webix.attachEvent("onBeforeAjax", function (mode, url, params, x, headers) {
                 x.withCredentials = true;
                 headers["Authorization"] = webix.storage.session.get("Authorization");
@@ -42,10 +42,12 @@ TangoWebapp.platform.MainController = MVC.Controller.extend('main', {
             var user_context = TangoWebapp.platform.UserContext.find_one(username);
             TangoWebappHelpers.debug(user_context.toString());
 
+            UserContextController = new TangoWebapp.platform.UserContextController(user_context);
+
             var rest = new TangoWebapp.TangoRestApi({url: user_context.rest_url});
 
             TangoWebapp.platform.PlatformContext.create({
-                user_context: user_context,
+                UserContext: user_context,
                 rest: rest
             });
         } else {
@@ -93,7 +95,7 @@ TangoWebapp.platform.MainController = MVC.Controller.extend('main', {
             PlatformContext.tango_hosts.add(event.data);
         }
     },
-    "user_context.delete_tango_host subscribe": function (event) {
+    "user_context_controller.delete_tango_host subscribe": function (event) {
         PlatformContext.tango_hosts.remove(event.data);
     }
 });

@@ -7,7 +7,8 @@ TangoWebapp.platform.PlatformContext = MVC.Model.extend('platform_context',
     /* @Static */
     {
         attributes: {
-            id: 'string'
+            id: 'string',
+            UserContext: '{}'
         },
         default_attributes: {
             id: 'singleton'
@@ -20,7 +21,7 @@ TangoWebapp.platform.PlatformContext = MVC.Model.extend('platform_context',
             //TODO make this return value
             PlatformContext = this.create_as_existing(attrs);
 
-            var user_context = PlatformContext.user_context;
+            var user_context = PlatformContext.UserContext;
 
             var tango_hosts = [];
             for (var tango_host in user_context.tango_hosts) {
@@ -48,7 +49,7 @@ TangoWebapp.platform.PlatformContext = MVC.Model.extend('platform_context',
     /* @Prototype */
     {
         //TODO association
-        user_context: null,
+        UserContext: null,
         rest: null,
         tango_hosts: null,
         devices: null,
@@ -58,8 +59,8 @@ TangoWebapp.platform.PlatformContext = MVC.Model.extend('platform_context',
          *
          * @event {OpenAjax} platform_context.set_user_context
          */
-        set_user_context: function (v) {
-            this.user_context = v;
+        set_UserContext: function (v) {
+            this.UserContext = v;
             this.publish("set_user_context", {data: this});
         },
         /**
@@ -70,7 +71,7 @@ TangoWebapp.platform.PlatformContext = MVC.Model.extend('platform_context',
          */
         set_rest: function (v) {
             this.rest = v;
-            this.user_context.update_attributes({
+            this.UserContext.update_attributes({
                 rest_url: v.url
             });
 
@@ -108,7 +109,7 @@ TangoWebapp.platform.PlatformContext = MVC.Model.extend('platform_context',
          */
         destroy: function () {
             this._super();
-            this.user_context.destroy();
+            this.UserContext.save();
             //TODO clear all data
             PlatformContext = null;
         }

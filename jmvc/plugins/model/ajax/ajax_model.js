@@ -219,12 +219,11 @@ MVC.Model.Ajax = MVC.Model.extend(
         return null;
     },    
     /**
-     * overwrite this function if you don't want to eval js
      * @param {Object} json_string json string
      * @return {Object} json converted to data
      */
     json_from_string : function(json_string){
-        return eval('('+json_string+')'); //
+        return JSON.parse(json_string); //
     }
     
 },
