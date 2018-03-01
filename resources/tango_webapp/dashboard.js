@@ -372,7 +372,7 @@
             minWidth: 320,
             maxHeight: 480,
             on: {
-                "platform_context.create subscribe": function (event) {
+                "tango_webapp.initialize subscribe": function (event) {
                     event.controller.$$('tango-host-info-value')
                         .bind(event.data.tango_hosts)
                 },
@@ -419,7 +419,7 @@
             minWidth: 320,
             maxHeight: 480,
             on: {
-                "platform_context.create subscribe": function (event) {
+                "tango_webapp.initialize subscribe": function (event) {
                     event.controller.$$('tango-device-info-value')
                         .bind(event.data.devices)
                 },

@@ -57,6 +57,12 @@ TangoWebapp.platform.MainController = MVC.Controller.extend('main', {
     "tango_webapp.user_logout subscribe": function (event) {
         PlatformContext.destroy();
     },
+    "platform_context.create subscribe": function(event){
+        debugger
+        MVC.Controller.controllers.main.forEach(function(ctrl){
+            ctrl.dispatch('initialize',event.data);
+        })
+    },
     "platform_context.set_rest subscribe": function (event) {
         var rest = event.data.rest;
 

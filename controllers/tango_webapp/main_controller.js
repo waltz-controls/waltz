@@ -10,7 +10,7 @@ TangoWebapp.MainController = MVC.Controller.extend('main', {
      * @param {Object} event - event.data contains fully properly initialized PlatformContext model
      * @see PlatformContext
      */
-    "platform_context.create subscribe": function (event) {
+    initialize: function (platform_api) {
         //TODO deal with it somehow
         TangoWebapp.consts.LOG_DATE_FORMATTER = webix.Date.dateToStr("%c");
 
@@ -23,7 +23,7 @@ TangoWebapp.MainController = MVC.Controller.extend('main', {
         ui_builder.add_left_sidebar_item({
             header: "<span class='webix_icon fa-sitemap'></span> Devices",
             body: {
-                context: event.data,
+                context: platform_api.data,
                 view: 'devices_tree'
             }
         });
@@ -33,7 +33,7 @@ TangoWebapp.MainController = MVC.Controller.extend('main', {
             width: 300,
             collapsed: true,
             body: {
-                context: event.data,
+                context: platform_api.data,
                 view: 'test_device_panel',
                 id: 'test-device-panel'
             }
@@ -49,6 +49,8 @@ TangoWebapp.MainController = MVC.Controller.extend('main', {
             });
 
         ui_builder.build();
+
+        this.publish("tango_webapp.initialize", {data:platform_api});
     },
     _promise_device: function (data) {
         var promise;
