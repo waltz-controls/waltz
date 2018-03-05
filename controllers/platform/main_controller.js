@@ -54,9 +54,6 @@ TangoWebapp.platform.MainController = MVC.Controller.extend('main', {
             webix.message("Authorization header was not set","error");
         }
     },
-    "tango_webapp.user_logout subscribe": function (event) {
-        PlatformContext.destroy();
-    },
     "platform_context.create subscribe": function(event){
         var ui_builder = new UIBuilder();
 

@@ -1,5 +1,6 @@
 TangoWebapp.platform.LoginController = MVC.Controller.extend("login_controller", {
-    "tango_webapp.user_logout subscribe": function () {
+    "platform.user_logout subscribe": function () {
+        PlatformContext.destroy();
         window.location = "../../apps/login/index.jsp"
     }
 });
