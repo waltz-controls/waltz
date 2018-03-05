@@ -58,10 +58,18 @@ TangoWebapp.platform.MainController = MVC.Controller.extend('main', {
         PlatformContext.destroy();
     },
     "platform_context.create subscribe": function(event){
-        debugger
-        MVC.Controller.controllers.main.forEach(function(ctrl){
-            ctrl.dispatch('initialize',event.data);
-        })
+        const ui_builder = new UIBuilder();
+
+        MVC.Controller.controllers.main
+            .filter((ctrl) => 'initialize' in ctrl.prototype)
+            .forEach((ctrl) => {
+                ctrl.dispatch('initialize', {//TODO replace with PlatformAPI model
+                    context: event.data,
+                    ui_builder: ui_builder
+                })
+            }
+        );
+        ui_builder.build();
     },
     "platform_context.set_rest subscribe": function (event) {
         var rest = event.data.rest;

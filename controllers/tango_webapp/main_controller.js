@@ -14,7 +14,7 @@ TangoWebapp.MainController = MVC.Controller.extend('main', {
         //TODO deal with it somehow
         TangoWebapp.consts.LOG_DATE_FORMATTER = webix.Date.dateToStr("%c");
 
-        var ui_builder = new UIBuilder();
+        const ui_builder = platform_api.ui_builder;
 
         ui_builder.add_left_sidebar_item({
             header: "A form",
@@ -23,7 +23,7 @@ TangoWebapp.MainController = MVC.Controller.extend('main', {
         ui_builder.add_left_sidebar_item({
             header: "<span class='webix_icon fa-sitemap'></span> Devices",
             body: {
-                context: platform_api.data,
+                context: platform_api.context,
                 view: 'devices_tree'
             }
         });
@@ -33,7 +33,7 @@ TangoWebapp.MainController = MVC.Controller.extend('main', {
             width: 300,
             collapsed: true,
             body: {
-                context: platform_api.data,
+                context: platform_api.context,
                 view: 'test_device_panel',
                 id: 'test-device-panel'
             }
@@ -47,8 +47,6 @@ TangoWebapp.MainController = MVC.Controller.extend('main', {
                     view: "dashboard"
                 }
             });
-
-        ui_builder.build();
 
         this.publish("tango_webapp.initialize", {data:platform_api});
     },
