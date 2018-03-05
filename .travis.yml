@@ -14,7 +14,7 @@ after_success:
 deploy:
   provider: releases
   api_key: $GITHUB_OAUTH_TOKEN
-  file: build/distributions/TangoWebapp.war
+  file: "build/distributions/TangoWebapp.war"
   skip_cleanup: true
   on:
       tags: true
