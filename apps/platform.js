@@ -21,7 +21,7 @@ include(function () { //runs after prior includes are loaded
         "platform/tango_command", "platform/tango_attribute", "platform/tango_pipe", "platform/tango_device_property",
         "platform/tango_rest_api",
         "platform/user_context", "platform/platform_context",
-        "platform/ui_builder"
+        "platform/ui_builder", "platform/platform_api"
     );
     include.controllers(
         "platform/login", "platform/main", "platform/user_context",

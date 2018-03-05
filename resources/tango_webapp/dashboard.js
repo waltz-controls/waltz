@@ -175,7 +175,7 @@
                         click: function () {
                             //TODO validate
                             var value = this.getTopParentView().$$("value").getValue().split('\n');
-                            UserContextController.update_attributes({
+                            PlatformApi.user_context_controller().update_attributes({
                                 device_filters: value
                             });
                             $$("devices-tree").updateRoot();
@@ -242,7 +242,7 @@
                                             var isValid = form.validate();
                                             if (!isValid) return;
 
-                                            UserContextController.add_tango_host(form.elements.new_tango_host.getValue());
+                                            PlatformApi.user_context_controller().add_tango_host(form.elements.new_tango_host.getValue());
                                         }
                                     }
                                 ]
@@ -263,7 +263,7 @@
                         },
                         onClick: {
                             remove_tango_host: function (event, id) {
-                                UserContextController.delete_tango_host(id);
+                                PlatformApi.user_context_controller().delete_tango_host(id);
                             }
                         }
                     }

@@ -7,20 +7,15 @@ TangoWebapp.MainController = MVC.Controller.extend('main', {
     /**
      * This is the main entry point of the application. This function is invoked after jmvc has been completely initialized.
      *
-     * @param {Object} event - event.data contains fully properly initialized PlatformContext model
+     * @param {PlatformApi} platform_api - event.data contains fully properly initialized PlatformContext model
      * @see PlatformContext
      */
     initialize: function (platform_api) {
         //TODO deal with it somehow
         TangoWebapp.consts.LOG_DATE_FORMATTER = webix.Date.dateToStr("%c");
-
         var ui_builder = platform_api.ui_builder;
 
-        ui_builder.add_left_sidebar_item({
-            header: "A form",
-            body: {template: "row 1"}
-        });
-        ui_builder.add_left_sidebar_item({
+        ui_builder.set_left_item({
             header: "<span class='webix_icon fa-sitemap'></span> Devices",
             body: {
                 context: platform_api.context,

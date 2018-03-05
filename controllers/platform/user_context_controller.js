@@ -73,6 +73,3 @@ TangoWebapp.platform.UserContextController = MVC.Controller.extend("user_context
 
 
 });
-
-//define global var, set in platform/main_controller
-var UserContextController = null;
