@@ -164,8 +164,8 @@ MVC.Controller = MVC.Class.extend(
     dispatch: function(action_name, params){
 		if(!action_name) action_name = 'index';
 		
-		if(typeof action_name == 'string'){
-			if(!(action_name in this.prototype) ) throw 'No action named '+action_name+' was found for '+this.Class.className+' controller.';
+		if(typeof action_name === 'string'){
+			if(!(action_name in this.prototype) ) throw 'No action named '+action_name+' was found for '+this._path + '/' + this.className + ' controller.';
 		}else{ //action passed TODO:  WHERE IS THIS USED?
 			action_name = action_name.name;
 		}

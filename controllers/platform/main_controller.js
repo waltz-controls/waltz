@@ -42,8 +42,6 @@ TangoWebapp.platform.MainController = MVC.Controller.extend('main', {
             var user_context = TangoWebapp.platform.UserContext.find_one(username);
             TangoWebappHelpers.debug(user_context.toString());
 
-            UserContextController = new TangoWebapp.platform.UserContextController(user_context);
-
             var rest = new TangoWebapp.TangoRestApi({url: user_context.rest_url});
 
             TangoWebapp.platform.PlatformContext.create({
@@ -54,8 +52,20 @@ TangoWebapp.platform.MainController = MVC.Controller.extend('main', {
             webix.message("Authorization header was not set","error");
         }
     },
-    "tango_webapp.user_logout subscribe": function (event) {
-        PlatformContext.destroy();
+    "platform_context.create subscribe": function(event){
+        var platform_api = new TangoWebapp.platform.PlatformApi({
+            context: event.data,
+            ui_builder: {}
+        });
+
+        MVC.Controller.controllers.main
+            .filter(function(ctrl) { return 'initialize' in ctrl.prototype})
+            .forEach(function(ctrl) {
+                ctrl.dispatch('initialize', platform_api)
+            }
+        );
+        platform_api.ui_builder.build();
+        PlatformApi = platform_api;
     },
     "platform_context.set_rest subscribe": function (event) {
         var rest = event.data.rest;

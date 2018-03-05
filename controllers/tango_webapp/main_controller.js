@@ -7,69 +7,43 @@ TangoWebapp.MainController = MVC.Controller.extend('main', {
     /**
      * This is the main entry point of the application. This function is invoked after jmvc has been completely initialized.
      *
-     * @param {Object} event - event.data contains fully properly initialized PlatformContext model
+     * @param {PlatformApi} platform_api - event.data contains fully properly initialized PlatformContext model
      * @see PlatformContext
      */
-    "platform_context.create subscribe": function (event) {
+    initialize: function (platform_api) {
         //TODO deal with it somehow
         TangoWebapp.consts.LOG_DATE_FORMATTER = webix.Date.dateToStr("%c");
+        var ui_builder = platform_api.ui_builder;
 
-        if ($$('tango-webapp') === undefined) {
-            webix.ui({
-                id: 'tango-webapp',
-                multi: true,
-                cols: [
-                    {
-                        header: "<span class='webix_icon fa-sitemap'></span> Devices Tree",
-                        body: {
-                            context: event.data,
-                            view: 'devices_tree'
-                        }
-                    },
-                    {width: 15},
-                    {
-                        context: event.data,
-                        body: {
-                            view: "tabview",
-                            id: "main-tabview",
-                            type: 'space',
-                            padding: 0,
-                            tabbar: {
-                                height: 40,
-                                popupWidth: 480,
-                                tabMinWidth: TangoWebapp.consts.NAME_COLUMN_WIDTH,
-                                tabMoreWidth: 40,
-                                bottomPadding: 5
-                            },
-                            cells: [
-                                {
-                                    header: "<span class='webix_icon fa-dashboard'></span> Dashboard",
-                                    body: {
-                                        id: 'dashboard',
-                                        view: "dashboard"
-                                    }
-                                }
-                            ]
-                        }
-                    },
-                    {width: 15},
-                    {
-                        header: "<span class='webix_icon fa-keyboard-o'></span> Device Test Panel",
-                        width: 300,
-                        collapsed: true,
-                        body: {
-                            context: event.data,
-                            view: 'test_device_panel',
-                            id: 'test-device-panel'
-                        }
-                    }
-                ]
-            }, $$('content'));
+        ui_builder.set_left_item({
+            header: "<span class='webix_icon fa-sitemap'></span> Devices",
+            body: {
+                context: platform_api.context,
+                view: 'devices_tree'
+            }
+        });
 
-            webix.html.remove(document.getElementById('ajax-loader'));
-        }
+        ui_builder.set_right_item({
+            header: "<span class='webix_icon fa-keyboard-o'></span> Device Test Panel",
+            width: 300,
+            collapsed: true,
+            body: {
+                context: platform_api.context,
+                view: 'test_device_panel',
+                id: 'test-device-panel'
+            }
+        });
 
-        webix.ui.fullScreen();
+        ui_builder.add_mainview_item(
+            {
+                header: "<span class='webix_icon fa-dashboard'></span> Dashboard",
+                body: {
+                    id: 'dashboard',
+                    view: "dashboard"
+                }
+            });
+
+        this.publish("tango_webapp.initialize", {data:platform_api});
     },
     _promise_device: function (data) {
         var promise;
@@ -109,7 +83,7 @@ TangoWebapp.MainController = MVC.Controller.extend('main', {
 
         promise.then(function (device) {
             if (!device.info.exported) throw "Device[" + device.id + "] is not exported";
-            
+
             var device_view_id = "monitor/" + device.id;
             if (!$$(device_view_id)) {
                 $$("main-tabview").addView(

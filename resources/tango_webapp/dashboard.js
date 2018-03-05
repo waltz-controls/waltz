@@ -175,7 +175,7 @@
                         click: function () {
                             //TODO validate
                             var value = this.getTopParentView().$$("value").getValue().split('\n');
-                            UserContextController.update_attributes({
+                            PlatformApi.user_context_controller().update_attributes({
                                 device_filters: value
                             });
                             $$("devices-tree").updateRoot();
@@ -242,7 +242,7 @@
                                             var isValid = form.validate();
                                             if (!isValid) return;
 
-                                            UserContextController.add_tango_host(form.elements.new_tango_host.getValue());
+                                            PlatformApi.user_context_controller().add_tango_host(form.elements.new_tango_host.getValue());
                                         }
                                     }
                                 ]
@@ -263,7 +263,7 @@
                         },
                         onClick: {
                             remove_tango_host: function (event, id) {
-                                UserContextController.delete_tango_host(id);
+                                PlatformApi.user_context_controller().delete_tango_host(id);
                             }
                         }
                     }
@@ -372,7 +372,7 @@
             minWidth: 320,
             maxHeight: 480,
             on: {
-                "platform_context.create subscribe": function (event) {
+                "tango_webapp.initialize subscribe": function (event) {
                     event.controller.$$('tango-host-info-value')
                         .bind(event.data.tango_hosts)
                 },
@@ -419,7 +419,7 @@
             minWidth: 320,
             maxHeight: 480,
             on: {
-                "platform_context.create subscribe": function (event) {
+                "tango_webapp.initialize subscribe": function (event) {
                     event.controller.$$('tango-device-info-value')
                         .bind(event.data.devices)
                 },

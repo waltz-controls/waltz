@@ -78,7 +78,7 @@ TangoWebapp.platform.TopToolbarController = MVC.Controller.extend('top_toolbar_c
                                     icon: "sign-out",
                                     width: 36,
                                     click: function () {
-                                        OpenAjax.hub.publish('tango_webapp.user_logout', {});
+                                        OpenAjax.hub.publish('platform.user_logout', {});
                                     },
                                     align: "right"
                                 }
