@@ -14,7 +14,7 @@ TangoWebapp.MainController = MVC.Controller.extend('main', {
         //TODO deal with it somehow
         TangoWebapp.consts.LOG_DATE_FORMATTER = webix.Date.dateToStr("%c");
 
-        const ui_builder = platform_api.ui_builder;
+        var ui_builder = platform_api.ui_builder;
 
         ui_builder.add_left_sidebar_item({
             header: "A form",

@@ -58,11 +58,11 @@ TangoWebapp.platform.MainController = MVC.Controller.extend('main', {
         PlatformContext.destroy();
     },
     "platform_context.create subscribe": function(event){
-        const ui_builder = new UIBuilder();
+        var ui_builder = new UIBuilder();
 
         MVC.Controller.controllers.main
-            .filter((ctrl) => 'initialize' in ctrl.prototype)
-            .forEach((ctrl) => {
+            .filter(function(ctrl) { return 'initialize' in ctrl.prototype})
+            .forEach(function(ctrl) {
                 ctrl.dispatch('initialize', {//TODO replace with PlatformAPI model
                     context: event.data,
                     ui_builder: ui_builder
