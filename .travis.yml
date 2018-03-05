@@ -15,6 +15,7 @@ deploy:
   provider: releases
   api_key: $GITHUB_OAUTH_TOKEN
   file: "build/distributions/TangoWebapp.war"
+  prerelease: true
   skip_cleanup: true
   on:
       tags: true
