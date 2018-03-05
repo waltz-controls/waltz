@@ -11,6 +11,18 @@ script:
   - test -e build/distributions/TangoWebapp.war
 after_success:
   - sonar-scanner -Dsonar.projectKey=org.tango-controls:TangoWebapp -Dsonar.sources=. -Dsonar.exclusions=build/**,jmvc/**,docs/**,apps/**
+before_deploy:
+  # Set up git user name and tag this commit
+  - git config --local user.name "tango-CI"
+  - git config --local user.email "tango@esrf.fr"
+  - git tag "git tag | tail -n1 | gawk 'match($0, /v0.3-rc(\w+)/, v){ print substr($0, RSTART, RLENGTH-1) v[1]+1}'"
+deploy:
+  provider: releases
+  api_key: $GITHUB_OAUTH_TOKEN
+  file: build/distributions/TangoWebapp.war
+  skip_cleanup: true
+  on:
+      tags: true
 jdk:
   - openjdk8
 cache:
