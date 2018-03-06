@@ -8,6 +8,13 @@
     <property name="build.dir" value="${buildDir}"/>
     <echo>build.dir = ${build.dir}</echo>
 
+    <property name="env.REST_API_PROTOCOL" value="http"/>
+    <property name="env.REST_API_HOST" value="localhost"/>
+    <property name="env.REST_API_PORT" value="10001"/>
+    <property name="env.REST_API_VERSION" value="rc4"/>
+    <property name="env.TANGO_HOST" value="localhost"/>
+    <property name="env.TANGO_PORT" value="10000"/>
+
     <target name="test">
         <echo>Running unit tests...</echo>
         <exec executable="${basedir}/jmvcc" failonerror="true" failifexecutionfails="true" osfamily="unix">
@@ -165,6 +172,19 @@
             <filterset begintoken="," endtoken="&quot;">
                 <filter token="development" value=",production&quot;"/>
                 <filter token="test" value=",production&quot;"/>
+            </filterset>
+        </copy>
+    </target>
+
+    <target name="copy-constants">
+        <copy todir="${build.dir}/resources" file="resources/constants.js" overwrite="true">
+            <filterset begintoken="/*@*/" endtoken="/*@*/">
+                <filter token="REST_API_PROTOCOL" value="'${env.REST_API_PROTOCOL}'"/>
+                <filter token="REST_API_HOST" value="'${env.REST_API_HOST}'"/>
+                <filter token="REST_API_PORT" value="${env.REST_API_PORT}"/>
+                <filter token="REST_API_VERSION" value="'${env.REST_API_VERSION}'"/>
+                <filter token="TANGO_HOST" value="'${env.TANGO_HOST}'"/>
+                <filter token="TANGO_PORT" value="${env.TANGO_PORT}"/>
             </filterset>
         </copy>
     </target>
