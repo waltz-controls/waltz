@@ -3,7 +3,7 @@
  *
  * @type {TopToolbarController}
  */
-TangoWebapp.platform.TopToolbarController = MVC.Controller.extend('top_toolbar_controller',
+TangoWebappPlatform.TopToolbarController = MVC.Controller.extend('top_toolbar_controller',
     /* @Static */
     {
         getUI: function () {

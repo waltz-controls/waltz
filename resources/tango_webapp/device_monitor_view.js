@@ -272,7 +272,7 @@
                 // this.$ready.push(this.start.mvc_bind(this));
             }
         }, webix.IdSpace, webix.EventSystem,
-        TangoWebapp.mixin.DeviceSetter, TangoWebapp.mixin.TabActivator, TangoWebapp.mixin.Runnable,
+        TangoWebappPlatform.mixin.DeviceSetter, TangoWebappPlatform.mixin.TabActivator, TangoWebappPlatform.mixin.Runnable,
         webix.ui.layout);
 
     TangoWebapp.ui.newDeviceMonitorView = function (config) {

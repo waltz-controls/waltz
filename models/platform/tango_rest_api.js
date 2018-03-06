@@ -3,7 +3,7 @@
  *
  * @type {TangoRestApi}
  */
-TangoWebapp.TangoRestApi = MVC.Model.extend('tango_rest_api',
+TangoWebappPlatform.TangoRestApi = MVC.Model.extend('tango_rest_api',
     /** @Static */
     {
         _api_version: 'rc4',
@@ -33,7 +33,7 @@ TangoWebapp.TangoRestApi = MVC.Model.extend('tango_rest_api',
          * @returns {TangoRestApiRequest}
          */
         request: function () {
-            var request = new TangoWebapp.TangoRestApiRequest({url: this.url + "/tango/rest/" + this.Class._api_version});
+            var request = new TangoWebappPlatform.TangoRestApiRequest({url: this.url + "/tango/rest/" + this.Class._api_version});
             this.req_ids.push(request.id);//TODO or should we store actual ref here
             return request;
         },
@@ -48,7 +48,7 @@ TangoWebapp.TangoRestApi = MVC.Model.extend('tango_rest_api',
         fetchHost: function (host) {
             return this.request().hosts(host.replace(':', '/')).get()
                 .then(function (resp) {
-                        var newHost = new TangoWebapp.TangoHost(MVC.Object.extend(resp, {
+                        var newHost = new TangoWebappPlatform.TangoHost(MVC.Object.extend(resp, {
                             id: host,
                             rest: this,
                             is_alive: true
@@ -57,7 +57,7 @@ TangoWebapp.TangoRestApi = MVC.Model.extend('tango_rest_api',
                         return newHost;
                     }.bind(this)
                 ).fail(function (resp) {
-                    var newHost = new TangoWebapp.TangoHost({
+                    var newHost = new TangoWebappPlatform.TangoHost({
                         id: host,
                         errors: resp.errors,
                         rest: this,
@@ -91,4 +91,4 @@ TangoWebapp.TangoRestApi = MVC.Model.extend('tango_rest_api',
 );
 
 if (window['TangoRestApi'] === undefined)
-    TangoRestApi = TangoWebapp.TangoRestApi;
+    TangoRestApi = TangoWebappPlatform.TangoRestApi;

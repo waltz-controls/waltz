@@ -5,7 +5,7 @@
  *
  * @type {UserContext}
  */
-TangoWebapp.platform.UserContext = MVC.Model.extend('user_context',
+TangoWebappPlatform.UserContext = MVC.Model.extend('user_context',
     /* @Static */
     {
         store_type: TangoRemoteStorage,

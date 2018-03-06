@@ -3,7 +3,7 @@
  *
  * @type {PlatformApi}
  */
-TangoWebapp.platform.PlatformApi = MVC.Model.extend('platform_api',
+TangoWebappPlatform.PlatformApi = MVC.Model.extend('platform_api',
     /* @Static */
     {
         associations:{
@@ -32,6 +32,6 @@ TangoWebapp.platform.PlatformApi = MVC.Model.extend('platform_api',
          * @return {UserContextController}
          */
         user_context_controller:function(){
-            return new TangoWebapp.platform.UserContextController(this.user_context());
+            return new TangoWebappPlatform.UserContextController(this.user_context());
         }
     });

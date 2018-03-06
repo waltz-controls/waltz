@@ -180,7 +180,7 @@
                 this.refresh();
             }.bind(this));
         }
-    }, webix.IdSpace, TangoWebapp.mixin.TabActivator, TangoWebapp.mixin.DeviceSetter, webix.ui.layout);
+    }, webix.IdSpace, TangoWebappPlatform.mixin.TabActivator, TangoWebappPlatform.mixin.DeviceSetter, webix.ui.layout);
 
     TangoWebapp.ui.newDeviceEventsView = function (device) {
         return {

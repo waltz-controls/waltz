@@ -2,7 +2,7 @@
  *
  * @namespace
  */
-TangoWebapp.platform = {};
+TangoWebappPlatform = {};
 
 include(function () { //runs after prior includes are loaded
     include.plugins(

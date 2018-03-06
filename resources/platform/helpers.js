@@ -1,8 +1,8 @@
 /**
  *
- * @type {{strToHash: TangoWebapp.helpers.strToHash, iterate: TangoWebapp.helpers.iterate, log: TangoWebapp.helpers.log, error: TangoWebapp.helpers.error, debug: TangoWebapp.helpers.debug}}
+ * @type {{strToHash: TangoWebappPlatform.helpers.strToHash, iterate: TangoWebappPlatform.helpers.iterate, log: TangoWebappPlatform.helpers.log, error: TangoWebappPlatform.helpers.error, debug: TangoWebappPlatform.helpers.debug}}
  */
-TangoWebapp.helpers = {
+TangoWebappPlatform.helpers = {
     /**
      *
      * @param {string} str
@@ -72,4 +72,4 @@ TangoWebapp.helpers = {
     }
 };
 
-TangoWebappHelpers = TangoWebapp.helpers;
+TangoWebappHelpers = TangoWebappPlatform.helpers;

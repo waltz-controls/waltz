@@ -249,7 +249,7 @@
                 }
             }
         }
-    }, TangoWebapp.mixin.OpenAjaxListener, webix.IdSpace, webix.EventSystem, webix.ui.tree);
+    }, TangoWebappPlatform.mixin.OpenAjaxListener, webix.IdSpace, webix.EventSystem, webix.ui.tree);
 
 
     /**

@@ -2,7 +2,7 @@
  *
  * @type {BottomToolbar}
  */
-TangoWebapp.platform.BottomToolbar = MVC.Controller.extend("bottom_toolbar_controller", {
+TangoWebappPlatform.BottomToolbar = MVC.Controller.extend("bottom_toolbar_controller", {
     getUI: function () {
         webix.protoUI({
                 name: "bottom_toolbar",

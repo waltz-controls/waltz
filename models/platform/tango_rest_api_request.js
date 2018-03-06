@@ -1,4 +1,4 @@
-TangoWebapp.DummyStore = MVC.Class.extend(
+TangoWebappPlatform.DummyStore = MVC.Class.extend(
     /* @prototype */
     {
         /**
@@ -47,7 +47,7 @@ TangoWebapp.DummyStore = MVC.Class.extend(
  *
  * @type {TangoRestApiRequest}
  */
-TangoWebapp.TangoRestApiRequest = MVC.Model.extend('tango_rest_api_request',
+TangoWebappPlatform.TangoRestApiRequest = MVC.Model.extend('tango_rest_api_request',
     /* @Static */
     {
         _id: 1,
@@ -66,8 +66,8 @@ TangoWebapp.TangoRestApiRequest = MVC.Model.extend('tango_rest_api_request',
             this._super();
             //do not store requests in production
             if(MVC.env() === 'production') {
-                this.store_type = TangoWebapp.DummyStore;
-                this.store = new TangoWebapp.DummyStore();
+                this.store_type = TangoWebappPlatform.DummyStore;
+                this.store = new TangoWebappPlatform.DummyStore();
             }
         }
     },
@@ -263,4 +263,4 @@ TangoWebapp.TangoRestApiRequest = MVC.Model.extend('tango_rest_api_request',
 );
 
 if (window['TangoRestApiRequest'] === undefined)
-    TangoRestApiRequest = TangoWebapp.TangoRestApiRequest;
+    TangoRestApiRequest = TangoWebappPlatform.TangoRestApiRequest;

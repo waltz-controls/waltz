@@ -101,7 +101,7 @@
                 this.refresh();
             });
         }
-    }, webix.IdSpace, TangoWebapp.mixin.TabActivator, TangoWebapp.mixin.DeviceSetter, webix.ui.layout);
+    }, webix.IdSpace, TangoWebappPlatform.mixin.TabActivator, TangoWebappPlatform.mixin.DeviceSetter, webix.ui.layout);
 
     TangoWebapp.ui.newDeviceLoggingView = function (device) {
         return {

@@ -267,7 +267,7 @@
             }.bind(this));
         },
         name: "device_attr_config"
-    }, webix.IdSpace, TangoWebapp.mixin.TabActivator, TangoWebapp.mixin.DeviceSetter, webix.ui.layout);
+    }, webix.IdSpace, TangoWebappPlatform.mixin.TabActivator, TangoWebappPlatform.mixin.DeviceSetter, webix.ui.layout);
 
     TangoWebapp.ui.newDeviceAttrConfigView = function (device) {
         return {

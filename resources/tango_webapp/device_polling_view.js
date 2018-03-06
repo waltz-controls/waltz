@@ -243,7 +243,7 @@
                 }
             }
         }
-    }, webix.IdSpace, webix.EventSystem, TangoWebapp.mixin.TabActivator, TangoWebapp.mixin.DeviceSetter, webix.ui.layout);
+    }, webix.IdSpace, webix.EventSystem, TangoWebappPlatform.mixin.TabActivator, TangoWebappPlatform.mixin.DeviceSetter, webix.ui.layout);
 
     TangoWebapp.ui.newDevicePollingView = function (device) {
         return {

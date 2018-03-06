@@ -3,7 +3,7 @@
  *
  * @type {TangoWebapp.MainController}
  */
-TangoWebapp.platform.MainController = MVC.Controller.extend('main', {
+TangoWebappPlatform.MainController = MVC.Controller.extend('main', {
 }, {
     /**
      * This is the main entry point of the application. This function is invoked after jmvc has been completely initialized.
@@ -17,11 +17,11 @@ TangoWebapp.platform.MainController = MVC.Controller.extend('main', {
             id: 'main',
             type: 'space',
             rows: [
-                TangoWebapp.platform.TopToolbarController.getUI(),
+                TangoWebappPlatform.TopToolbarController.getUI(),
                 {
                     id: "content"
                 },
-                TangoWebapp.platform.BottomToolbar.getUI()
+                TangoWebappPlatform.BottomToolbar.getUI()
             ]
         });
         webix.ui.fullScreen();
@@ -39,12 +39,12 @@ TangoWebapp.platform.MainController = MVC.Controller.extend('main', {
             });
             var username = atob(authorization.substring(6)).split(':')[0];
 
-            var user_context = TangoWebapp.platform.UserContext.find_one(username);
+            var user_context = TangoWebappPlatform.UserContext.find_one(username);
             TangoWebappHelpers.debug(user_context.toString());
 
-            var rest = new TangoWebapp.TangoRestApi({url: user_context.rest_url});
+            var rest = new TangoWebappPlatform.TangoRestApi({url: user_context.rest_url});
 
-            TangoWebapp.platform.PlatformContext.create({
+            TangoWebappPlatform.PlatformContext.create({
                 UserContext: user_context,
                 rest: rest
             });
@@ -53,7 +53,7 @@ TangoWebapp.platform.MainController = MVC.Controller.extend('main', {
         }
     },
     "platform_context.create subscribe": function(event){
-        var platform_api = new TangoWebapp.platform.PlatformApi({
+        var platform_api = new TangoWebappPlatform.PlatformApi({
             context: event.data,
             ui_builder: {}
         });

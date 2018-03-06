@@ -3,7 +3,7 @@
  *
  * @type {PlatformContext}
  */
-TangoWebapp.platform.PlatformContext = MVC.Model.extend('platform_context',
+TangoWebappPlatform.PlatformContext = MVC.Model.extend('platform_context',
     /* @Static */
     {
         attributes: {
