@@ -10,12 +10,11 @@ include.css(
     'pre_experiment_data_collector/all', 'pre_experiment_data_collector/validationEngine.jquery'
     );
 include.libs(
-    'jquery-1.7.1','jquery.noty-2.2.2.packaged','jquery-ui-1.8.16.custom'
+    'jquery-1.7.1','jquery-ui-1.8.16.custom','jquery.noty-2.2.2.packaged','jquery.validationEngine-2.6.4', 'languages/jquery.validationEngine-en','webtoolkit.base64'
     );
 
 include.resources(
     'pre_experiment_data_collector/string', 'pre_experiment_data_collector/wizard_step_view_helpers', 'pre_experiment_data_collector/init_helper',
-    'pre_experiment_data_collector/jquery.validationEngine-2.6.4', 'pre_experiment_data_collector/languages/jquery.validationEngine-en', 'pre_experiment_data_collector/webtoolkit.base64',
     'pre_experiment_data_collector/noty_helper'
     );
 include.engines(
