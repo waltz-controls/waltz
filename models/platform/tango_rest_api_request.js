@@ -21,6 +21,14 @@ TangoWebappPlatform.DummyStore = MVC.Class.extend(
         destroy: function(id){
         },
         /**
+         * 
+         * @param id
+         * @param obj
+         */
+        update:function(id, obj){
+
+        },
+        /**
          * Finds instances using a test function.  If no test function is provided returns all instances.
          * @param {Function} f
          * @return {Array}

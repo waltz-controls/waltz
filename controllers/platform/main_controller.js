@@ -58,7 +58,12 @@ TangoWebappPlatform.MainController = MVC.Controller.extend('main', {
             return TangoWebappPlatform.UserContext.find_one(username);
         } else {
             TangoWebappHelpers.log("No Authorization found, fallback to test user context");
-            return TangoWebappPlatform.UserContext.find_one("test");
+            webix.attachEvent("onBeforeAjax", function (mode, url, params, x, headers) {
+                x.withCredentials = true;
+                headers["Authorization"] = "Basic " + btoa("tango-cs:tango");
+            });
+            TangoWebappPlatform.UserContext.set_store_type(TangoWebappPlatform.DummyStore);
+            return TangoWebappPlatform.UserContext.find_one("tango-cs");
         }
     },
     "platform_context.create subscribe": function(event){
