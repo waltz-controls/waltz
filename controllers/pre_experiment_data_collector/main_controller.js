@@ -9,7 +9,14 @@ PreExperimentDataCollectorController = MVC.Controller.extend('main',
     {
         getUI:function(){
             return {
-                template : "Body 1"
+                template : "<div id='wrapper'>" +
+                "<div id='loading-box'>" +
+                "<div id='loading' title='Loading...'></div>" +
+                "</div>" +
+                "<div id='example-2' style='display: none;' class='wizard'>" +
+                "<div class='header'>" +
+                "</div>" +
+                "<div id='Wizard'></div></div></div>"
             }
         }
     },
@@ -26,6 +33,11 @@ PreExperimentDataCollectorController = MVC.Controller.extend('main',
             ui_builder.add_mainview_item({
                 header:"PreExperiment Data Collector",
                 body:this.Class.getUI()
+            });
+        },
+        "platform_api.ui.initialized subscribe": function(event){
+            InitHelper(function(){
+                noty.alert("Application has been initialized successfully.")
             });
         }
     }
