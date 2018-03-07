@@ -4,20 +4,23 @@
  */
 TangoWebappPlatform = {};
 
-REST_API_PROTOCOL = "http";
-REST_API_HOST = "localhost";
-REST_API_PORT = 10001;
-REST_API_VERSION = "rc4";
-TANGO_HOST = "localhost";
-TANGO_PORT = 10000;
-
 include(function () { //runs after prior includes are loaded
     include.plugins(
         "controller", "view", "model"
     );
 
+    //use constant defaults if not in production
+    if(include.get_env().match(/development|test/)){
+        include.resources("platform/defaults")
+    }
+
+    if(MVC.Browser.Rhino){
+        include("../build/tmp/resources/constants") //ant  -copy-constants output
+    } else {
+        include.resources("constants")
+    }
+
     include.resources(
-        "constants",   //TODO if compress take ant output
         "platform/webix/tango_mixins",
         "platform/helpers"
     );

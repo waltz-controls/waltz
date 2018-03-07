@@ -22,8 +22,20 @@
         </exec>
     </target>
 
+    <target name="-copy-constants">
+        <copy todir="${build.dir}/../tmp/resources" file="resources/constants.js" overwrite="true" failonerror="true">
+            <filterset begintoken="/*@*/" endtoken="/*@*/">
+                <filter token="REST_API_PROTOCOL" value="'${env.REST_API_PROTOCOL}'"/>
+                <filter token="REST_API_HOST" value="'${env.REST_API_HOST}'"/>
+                <filter token="REST_API_PORT" value="${env.REST_API_PORT}"/>
+                <filter token="REST_API_VERSION" value="'${env.REST_API_VERSION}'"/>
+                <filter token="TANGO_HOST" value="'${env.TANGO_HOST}'"/>
+                <filter token="TANGO_PORT" value="${env.TANGO_PORT}"/>
+            </filterset>
+        </copy>
+    </target>
 
-    <target name="compress-javascript">
+    <target name="compress-javascript" depends="-copy-constants">
         <echo>Compressing javascript...</echo>
         <exec executable="${basedir}/jmvcc" failonerror="true" failifexecutionfails="true" osfamily="unix">
             <arg line="apps/${application.name}/compress.js"/>
@@ -172,19 +184,6 @@
             <filterset begintoken="," endtoken="&quot;">
                 <filter token="development" value=",production&quot;"/>
                 <filter token="test" value=",production&quot;"/>
-            </filterset>
-        </copy>
-    </target>
-
-    <target name="copy-constants">
-        <copy todir="${build.dir}/resources" file="resources/constants.js" overwrite="true">
-            <filterset begintoken="/*@*/" endtoken="/*@*/">
-                <filter token="REST_API_PROTOCOL" value="'${env.REST_API_PROTOCOL}'"/>
-                <filter token="REST_API_HOST" value="'${env.REST_API_HOST}'"/>
-                <filter token="REST_API_PORT" value="${env.REST_API_PORT}"/>
-                <filter token="REST_API_VERSION" value="'${env.REST_API_VERSION}'"/>
-                <filter token="TANGO_HOST" value="'${env.TANGO_HOST}'"/>
-                <filter token="TANGO_PORT" value="${env.TANGO_PORT}"/>
             </filterset>
         </copy>
     </target>
