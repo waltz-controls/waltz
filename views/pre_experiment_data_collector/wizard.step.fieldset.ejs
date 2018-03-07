@@ -1,0 +1,20 @@
+<form class="step regular-form" id="<%= element_id() %>" type="fieldset">
+    <fieldset>
+        <div class="title-wrap">
+            <strong class="label"><%= name %>:</strong>
+        </div>
+        <div class="form-box">
+            <% $.each(fields,function(ndx, field){ %>
+            <%= printField(ndx,field,values) %>
+            <% }) %>
+        </div>
+        <div class="ui-widget help-box">
+            <div class="ui-state-highlight ui-corner-all help-content">
+                <p>
+                    <span class="ui-icon ui-icon-info"></span>
+                    <%= help %>
+                </p>
+            </div>
+        </div>
+    </fieldset>
+</form>

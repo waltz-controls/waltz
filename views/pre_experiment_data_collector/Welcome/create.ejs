@@ -1,0 +1,12 @@
+            <input type="text" name="name" id="txtNewDataSetName" class="text ui-widget-content ui-corner-all validate[required,custom[duplicateName]]">
+                <!-- TODO replace with css -->
+                <br/>
+                <br/>
+            <label for="tmplName">Use as template:
+            <select id="tmplName" name="template" class="select ui-widget-content ui-corner-all">
+                <option value="none">none</option>
+                <% for(var i = 0, size = data.length ; i<size; ++i){ %>
+                <option value="<%= data[i]%>"><%= data[i]%></option>
+                <% } %>
+            </select>
+            </label>

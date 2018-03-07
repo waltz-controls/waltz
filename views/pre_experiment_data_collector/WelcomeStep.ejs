@@ -1,0 +1,32 @@
+<form class="step regular-form" id="WelcomeStep_frmWelcome">
+    <fieldset>
+        <div class="title-wrap">
+            <strong class="label">Welcome</strong>
+        </div>
+        <div class="form-box">
+            <div class="row" id="rowCreateNew">
+                <input type="hidden" id="flgCreateNew" value="false"/>
+                <input type="hidden" id="hdnNewDataSetName" value=""/>
+                <input type="hidden" id="hdnTmplName" value=""/>
+                <a href="javascript:void(0)" onclick="return false;" id="btnCreate" class="ui-button ui-widget ui-state-default ui-corner-all ui-button-text-icon-primary" title="Create new...">
+                    <span class="ui-button-icon-primary ui-icon ui-icon-circle-plus"></span>
+                    <span class="ui-button-text">Create new...</span>
+                </a>
+            </div>
+            <div class="row" id="rowUpload">
+                <a href="javascript:void(0)" onclick="return false;" id="btnUpload" class="ui-button ui-widget ui-state-default ui-corner-all ui-button-text-icon-primary" title="Upload DataSets from offline client...">
+                    <span class="ui-button-icon-primary ui-icon ui-icon-disk"></span>
+                    <span class="ui-button-text">Upload DataSets from offline client...</span>
+                </a>
+            </div>
+        </div>
+        <div class="ui-widget help-box">
+            <div class="ui-state-highlight ui-corner-all help-content">
+                <p>
+                    <span class="ui-icon ui-icon-info"></span>
+                    <%= help %>
+                </p>
+            </div>
+        </div>
+    </fieldset>
+</form>

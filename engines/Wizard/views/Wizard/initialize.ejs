@@ -1,0 +1,17 @@
+    <h2><%= title %></h2>
+
+    <h3>Progress <span id="location"></span></h3>
+    <div id="progressbar"></div>
+
+    <div id="wizard-steps" class="wizard-form wizard-branch wizard-wrapper">
+        <% for(var i = 0,size = forms.length, frm = forms[0]; i<size;frm = forms[++i]){ %>
+            <%= frm.toHtml() %>
+        <% } %>
+        <form class="navigation">
+            <ul class="clearfix">
+                <li><button type="button" name="backward" class="backward">Back</button></li>
+                <li><button type="button" name="forward" class="forward">Next</button></li>
+                <li><button type="button" name="submit" class="submit">Finish</button></li>
+            </ul>
+        </form>
+    </div>

@@ -1,0 +1,90 @@
+
+.category-table-holder{
+    margin:-40px 0;
+    width:912px;
+    height: 300px;
+    overflow-y: scroll;
+    overflow-x: hidden;
+}
+
+.category-table{
+    border-collapse:collapse;
+    padding:0;
+    margin:14px 0 40px;
+    background: url(images/bg-table-t.png) no-repeat;
+    width: 911px;
+    position:relative;
+}
+.category-table thead th{
+    height:41px;
+    font-weight:bold;
+    text-indent:17px;
+    background: url(images/separator03.gif) no-repeat;
+    padding:0 0 1px;
+}
+.category-table .number{
+    width:52px;
+}
+.category-table .image{
+    width:70px;
+}
+.category-table .name{
+    width:345px;
+}
+.category-table .price-holder{
+    width:132px;
+}
+.category-table .info{
+    width:324px;
+}
+
+.category-table .scroll{
+    width:40px;
+}
+
+.category-table tbody td{
+    height: 60px;
+    background:#fff;
+    border-bottom:1px solid #e2e2e3;
+    padding:15px 0 13px;
+}
+.category-table tbody .number{
+    text-indent:15px;
+    font-weight:bold;
+}
+.category-table tbody .image img{margin:0 auto;height: 100%;width: 100%;}
+.category-table tbody .name{
+    font-weight:bold;
+    text-indent:17px;
+}
+.category-table tbody .price-holder{
+    padding-left:17px;
+}
+.category-table tbody .price{
+    font-weight:bold;
+    color:#d52800;
+    display:inline-block;
+}
+.category-table tbody .basket-box{
+    width: 119px;
+    height: 20px;
+    padding:4px 0 0 4px;
+    display:inline-block;
+    vertical-align:middle;
+    overflow:hidden;
+}
+.category-table tbody .basket-box .text{
+    float:left;
+    border:1px solid #b3b1b2;
+    width:24px;
+    height:15px;
+    padding:0 0 0 3px;
+    margin:0 5px 0 0;
+    background:#fff;
+}
+.category-table tbody .odd td{
+    background:#f9f9f9;
+}
+.category-table tbody tr:hover td{
+    background:#f8fef1 !important;
+}

@@ -1,0 +1,31 @@
+<form class="step regular-form" id="<%= element_id() %>" type="<%= type %>">
+    <fieldset>
+        <div class="title-wrap">
+            <strong class="label"><%= name %>:</strong>
+        </div>
+        <div class="form-box">
+            <div class="accordion">
+                <% for(var i = 0, size = fields.length;i<size;i++) { %>
+                <% var choice = fields[i] %>
+                <h3 choice-id="<%= choice.id %>"><a href="#"><%= choice.name %> <strong>(<%= choice.description %>)</strong></a></h3>
+                <div>
+                    <fieldset style="height: 300px;">
+                    <input type="hidden" name="<%= choice.id %>" id="<%= choice.id %>" >
+                        <% $.each(choice.fields, function(ndx, field){ %>
+                        <%= printField(ndx,field,values) %>
+                        <% }); %>
+                    </fieldset>
+                </div>
+                <% } %>
+                </div>
+            </div>
+        <div class="ui-widget help-box">
+            <div class="ui-state-highlight ui-corner-all help-content">
+                <p>
+                    <span class="ui-icon ui-icon-info"></span>
+                    <%= help %>
+                </p>
+            </div>
+        </div>
+    </fieldset>
+</form>

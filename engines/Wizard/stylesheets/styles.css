@@ -1,0 +1,121 @@
+/*
+ * The main contributor to this project is Institute of Materials Research,
+ * Helmholtz-Zentrum Geesthacht,
+ * Germany.
+ *
+ * This project is a contribution of the Helmholtz Association Centres and
+ * Technische Universitaet Muenchen to the ESS Design Update Phase.
+ *
+ * The project's funding reference is FKZ05E11CG1.
+ *
+ * Copyright (c) 2012. Institute of Materials Research,
+ * Helmholtz-Zentrum Geesthacht,
+ * Germany.
+ *
+ * This program is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU General Public License
+ * as published by the Free Software Foundation; either version 2
+ * of the License, or (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA
+ */
+
+.wizard h1 {
+    background-color: #333;
+    color: #fff;
+    font-size: 2.0em;
+    margin: 0;
+    padding: 10px;
+}
+
+.wizard h2 {
+    background-color: #f4f4f4;
+    border-bottom: #ddd 1px solid;
+    border-top-left-radius: 10px;
+    border-top-right-radius: 10px;
+    padding: 5px 10px;
+    margin: 0 0 10px 0;
+}
+
+.wizard h1 a {
+    color: #fff;
+    text-decoration: none;
+}
+
+.wizard h1 a:hover {
+    color: #eee;
+    text-decoration: underline;
+}
+
+.wizard h3 span {
+    font-weight: normal;
+}
+
+.wizard #navigation {
+    background-color: #fff;
+    border: #ddd 1px solid;
+    border-radius: 10px;
+    margin: 10px;
+    padding: 10px;
+}
+
+.wizard #navigation li {
+    margin: 2px 0;
+}
+
+.wizard label.error {
+    color: #ff0000;
+    margin-left: 10px;
+}
+
+.wizard #progressbar {
+    margin: 10px 0;
+    width: 400px;
+    height: 15px;
+}
+
+.wizard {
+    background-color: #fff;
+    border: #ddd 1px solid;
+    border-radius: 10px;
+    padding: 10px;
+}
+
+.wizard .wizard-step {
+    margin: 10px;
+}
+
+.navigation {
+    border-top: #ddd 1px solid;
+    margin-top: 10px;
+    padding-top: 10px;
+}
+
+.wizard .navigation ul {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+}
+
+.wizard .navigation li {
+    float: left;
+    margin-right: 10px;
+}
+
+.wizard .clearfix:before, .clearfix:after {
+    content: "\0020";
+    display: block;
+    height: 0;
+    visibility: hidden;
+}
+
+.wizard .clearfix:after {
+    clear: both;
+}
