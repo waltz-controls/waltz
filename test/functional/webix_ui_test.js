@@ -15,13 +15,13 @@ new Test.Functional('webix_ui',{
         }).show();
     },
     test_log:function(){
-        TangoWebapp.log('Here is the log message');
+        TangoWebappPlatform.log('Here is the log message');
     },
     test_error:function(){
-        TangoWebapp.error('Here is the error message');
+        TangoWebappPlatform.error('Here is the error message');
     },
     test_error_long:function(){
-        TangoWebapp.error('Here is the error message with very very very long content\n\t possibly with line breaks\n\n\t\t\t\t etc...');
+        TangoWebappPlatform.error('Here is the error message with very very very long content\n\t possibly with line breaks\n\n\t\t\t\t etc...');
     },
     test_log_close: function(){
         $$('logger').close();

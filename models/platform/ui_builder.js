@@ -82,7 +82,7 @@ UIBuilder = MVC.Model.extend('ui_builder',
                     tabbar: {
                         height: 40,
                         popupWidth: 480,
-                        tabMinWidth: TangoWebapp.consts.NAME_COLUMN_WIDTH,
+                        tabMinWidth: TangoWebappPlatform.consts.NAME_COLUMN_WIDTH,
                         tabMoreWidth: 40,
                         bottomPadding: 5
                     },

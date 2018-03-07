@@ -16,7 +16,7 @@
                         id: "logging",
                         view: "datatable",
                         columns: [
-                            {id: 'name', header: "Property name", width: TangoWebapp.consts.NAME_COLUMN_WIDTH},
+                            {id: 'name', header: "Property name", width: TangoWebappPlatform.consts.NAME_COLUMN_WIDTH},
                             {id: 'value', header: "Value", fillspace: true}
                         ]
                     },

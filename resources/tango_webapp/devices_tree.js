@@ -79,7 +79,7 @@
                 case 2://tango_host
                     return item.id;
                 default:
-                    TangoWebapp.debug("_get_host_id called for wrong item: " + item.id);
+                    TangoWebappPlatform.debug("_get_host_id called for wrong item: " + item.id);
             }
         },
         /**

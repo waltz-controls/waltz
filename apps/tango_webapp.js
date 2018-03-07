@@ -10,6 +10,7 @@ include.libs(
     //"webix/codebase/webix_debug"
 );
 include.resources(
+    "tango_webapp/customize_platform"
 );
 include.engines(
 );

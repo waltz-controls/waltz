@@ -8,7 +8,7 @@
 TangoWebappPlatform.UserContext = MVC.Model.extend('user_context',
     /* @Static */
     {
-        store_type: TangoRemoteStorage,
+        store_type: TangoWebappStorage,
         id: "user",
         attributes: {
             user: 'string',
@@ -17,7 +17,7 @@ TangoWebappPlatform.UserContext = MVC.Model.extend('user_context',
             device_filters: 'string[]' //TODO move to application layer?
         },
         default_attributes: {
-            rest_url: TangoWebapp.consts.REST_API_PROTOCOL + '://' + TangoWebapp.consts.REST_API_HOST + ':' + TangoWebapp.consts.REST_API_PORT
+            rest_url: TangoWebappPlatform.consts.REST_API_PROTOCOL + '://' + TangoWebappPlatform.consts.REST_API_HOST + ':' + TangoWebappPlatform.consts.REST_API_PORT
         },
         /**
          * WARNING!!! Due to limitations of TangoWebapp storage this method always returns new instance
@@ -30,7 +30,7 @@ TangoWebappPlatform.UserContext = MVC.Model.extend('user_context',
             var result = this._super(id);
             if (result == null) {
                 var default_tango_host = {};
-                default_tango_host[TangoWebapp.consts.TANGO_HOST + ':' + TangoWebapp.consts.TANGO_PORT] = '';
+                default_tango_host[TangoWebappPlatform.consts.TANGO_HOST + ':' + TangoWebappPlatform.consts.TANGO_PORT] = '';
 
                 result = this.create_as_existing({
                     user: id,
@@ -49,6 +49,15 @@ TangoWebappPlatform.UserContext = MVC.Model.extend('user_context',
          */
         update: function (id, attrs) {
             this.store.update(id, attrs);
+        },
+        /**
+         *
+         *
+         * @param store
+         */
+        set_store_type:function(store){
+            this.store_type = store;
+            this.store = new store(this);
         }
     },
     /* @Prototype */

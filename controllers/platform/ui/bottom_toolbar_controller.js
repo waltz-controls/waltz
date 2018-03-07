@@ -4,6 +4,42 @@
  */
 TangoWebappPlatform.BottomToolbar = MVC.Controller.extend("bottom_toolbar_controller", {
     getUI: function () {
+        /**
+         * @type {webix.protoUI}
+         */
+        var logger = webix.protoUI({
+            _view: null,
+            _limit: 125,
+            _getUI: function () {
+                var top = this;
+                return {
+                    template: function (obj) {
+                        return top._view.render(obj);
+                    }
+                }
+            },
+            name: "logger",
+            $init: function (config) {
+                webix.extend(config, this._getUI());
+
+                this._view = new View({url: config.ejs});
+            },
+            log: function (item) {
+                if (item.type === 'error') item.$css = {"background-color": "lightcoral"};
+                item.adjusted = true;
+                var id = this.add(item);
+                this.moveTop(id);
+                while (this.data.count() > this._limit) {
+                    this.remove(this.getLastId());
+                }
+            },
+            defaults: {
+                type: {
+                    height: Infinity
+                }
+            }
+        }, webix.IdSpace, webix.ui.list);
+
         webix.protoUI({
                 name: "bottom_toolbar",
                 switchLogBtnIcon: function (type) {
@@ -86,7 +122,7 @@ TangoWebappPlatform.BottomToolbar = MVC.Controller.extend("bottom_toolbar_contro
         var id = $$('main-log').log({
             type: 'error',
             value: data.data.errors[0].description,
-            timestamp: TangoWebapp.consts.LOG_DATE_FORMATTER(new Date())
+            timestamp: TangoWebappPlatform.consts.LOG_DATE_FORMATTER(new Date())
         });
         $$('bottom-toolbar').switchLogBtnIcon('error');
     },

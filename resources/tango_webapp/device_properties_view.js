@@ -51,7 +51,7 @@
                         multiselect: true,
                         editable: true,
                         columns: [
-                            {id: "name", header: "Property name", width: TangoWebapp.consts.NAME_COLUMN_WIDTH},
+                            {id: "name", header: "Property name", width: TangoWebappPlatform.consts.NAME_COLUMN_WIDTH},
                             {id: "values", header: "Value", fillspace: true, editor: "text"}
                         ],
                         dataFeed: '...'

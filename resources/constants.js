@@ -7,9 +7,9 @@
  *     $> REST_API_HOST=hzgxenvtest ./jmvcc jmvc/assemble
  * </pre>
  *
- * @type {{REST_API_HOST: string, REST_API_PORT: number, REST_API_VERSION: string, TANGO_HOST: string, TANGO_PORT: number, NAME_COLUMN_WIDTH: number, TABS_DELIMITER_HEIGHT: number, DATABASE: string, LOG_DATE_FORMATTER: TangoWebapp.consts.LOG_DATE_FORMATTER}}
+ * @type {{REST_API_HOST: string, REST_API_PORT: number, REST_API_VERSION: string, TANGO_HOST: string, TANGO_PORT: number, NAME_COLUMN_WIDTH: number, TABS_DELIMITER_HEIGHT: number, DATABASE: string, LOG_DATE_FORMATTER: TangoWebappPlatform.consts.LOG_DATE_FORMATTER}}
  */
-TangoWebapp.consts = {
+TangoWebappPlatform.consts = {
     REST_API_PROTOCOL: /*@*/REST_API_PROTOCOL/*@*/,
     REST_API_HOST: /*@*/REST_API_HOST/*@*/,
     REST_API_PORT: /*@*/REST_API_PORT/*@*/,

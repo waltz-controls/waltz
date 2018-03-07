@@ -37,13 +37,13 @@
                     {
                         id: "label",
                         header: "Name",
-                        width: TangoWebapp.consts.NAME_COLUMN_WIDTH,
+                        width: TangoWebappPlatform.consts.NAME_COLUMN_WIDTH,
                         sort: "string"
                     },
                     {id: "value", header: "Value", width: 200},
                     {id: "stream", header: "", width: 30, template: "<span class='webix_icon fa-area-chart'></span>"},
                     {id: "quality", header: "Quality", width: 100, sort: "string"},
-                    {id: "unit", header: "Unit", width: TangoWebapp.consts.NAME_COLUMN_WIDTH},
+                    {id: "unit", header: "Unit", width: TangoWebappPlatform.consts.NAME_COLUMN_WIDTH},
                     {id: "description", header: "Description", fillspace: true}
                 ],
                 onClick:{

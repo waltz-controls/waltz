@@ -1,7 +1,7 @@
 /**
  * Main controller
  *
- * @type {TangoWebapp.MainController}
+ * @type {TangoWebappPlatform.MainController}
  */
 TangoWebappPlatform.MainController = MVC.Controller.extend('main', {
 }, {
@@ -11,6 +11,9 @@ TangoWebappPlatform.MainController = MVC.Controller.extend('main', {
      * @param {Object} params
      */
     load: function (params) {
+        //override date formatter
+        TangoWebappPlatform.consts.LOG_DATE_FORMATTER = webix.Date.dateToStr("%c");
+        
         //draw ui
         webix.ui({
             view: 'layout',
@@ -26,11 +29,24 @@ TangoWebappPlatform.MainController = MVC.Controller.extend('main', {
         });
         webix.ui.fullScreen();
 
-        this.load_user();
+        var user_ctx = this.load_user_context();
+
+        TangoWebappHelpers.debug(user_ctx.toString());
+
+        var rest = new TangoWebappPlatform.TangoRestApi({url: user_ctx.rest_url});
+
+        TangoWebappPlatform.PlatformContext.create({
+            UserContext: user_ctx,
+            rest: rest
+        });
 
         TangoWebappHelpers.debug("platform/main done.");
     },
-    load_user:function(){
+    /**
+     *
+     * @return {UserContext}
+     */
+    load_user_context:function(){
         var authorization = webix.storage.session.get("Authorization");
         if (authorization !== null && authorization.indexOf('Basic ') === 0) {
             webix.attachEvent("onBeforeAjax", function (mode, url, params, x, headers) {
@@ -39,17 +55,10 @@ TangoWebappPlatform.MainController = MVC.Controller.extend('main', {
             });
             var username = atob(authorization.substring(6)).split(':')[0];
 
-            var user_context = TangoWebappPlatform.UserContext.find_one(username);
-            TangoWebappHelpers.debug(user_context.toString());
-
-            var rest = new TangoWebappPlatform.TangoRestApi({url: user_context.rest_url});
-
-            TangoWebappPlatform.PlatformContext.create({
-                UserContext: user_context,
-                rest: rest
-            });
+            return TangoWebappPlatform.UserContext.find_one(username);
         } else {
-            webix.message("Authorization header was not set","error");
+            TangoWebappHelpers.log("No Authorization found, fallback to test user context");
+            return TangoWebappPlatform.UserContext.find_one("test");
         }
     },
     "platform_context.create subscribe": function(event){
