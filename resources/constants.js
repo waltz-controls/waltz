@@ -1,6 +1,12 @@
 /**
  * Useful (or not) constants
  *
+ * These that are surrounded with @ can be overridden during assemble via environment variables
+ *
+ * <pre>
+ *     $> REST_API_HOST=hzgxenvtest ./jmvcc jmvc/assemble
+ * </pre>
+ *
  * @type {{REST_API_HOST: string, REST_API_PORT: number, REST_API_VERSION: string, TANGO_HOST: string, TANGO_PORT: number, NAME_COLUMN_WIDTH: number, TABS_DELIMITER_HEIGHT: number, DATABASE: string, LOG_DATE_FORMATTER: TangoWebapp.consts.LOG_DATE_FORMATTER}}
  */
 TangoWebapp.consts = {
