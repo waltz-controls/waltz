@@ -22,7 +22,7 @@ TangoWebappStorage = MVC.Class.extend(
          * @param {Object} id
          */
         find_one: function (id) {
-            return id ? this.storing_class.create_as_existing(JSON.parse(localStorage.getItem(this.key))[id]) : null;
+            return id ? JSON.parse(localStorage.getItem(this.key))[id] : null;
         },
         /**
          *
