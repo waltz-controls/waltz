@@ -3,7 +3,7 @@
  *
  * @type {TangoDatabase}
  */
-TangoWebapp.TangoDatabase = MVC.Model.extend('tango_database',
+TangoWebappPlatform.TangoDatabase = MVC.Model.extend('tango_database',
     /* @Static */
     {
 
@@ -89,4 +89,4 @@ TangoWebapp.TangoDatabase = MVC.Model.extend('tango_database',
 );
 
 if (window['TangoDatabase'] === undefined)
-    TangoDatabase = TangoWebapp.TangoDatabase;
+    TangoDatabase = TangoWebappPlatform.TangoDatabase;

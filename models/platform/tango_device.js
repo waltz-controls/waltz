@@ -3,7 +3,7 @@
  *
  * @type {TangoDevice}
  */
-TangoWebapp.TangoDevice = TangoWebapp.DataCollectionWrapper.extend('tango_device',
+TangoWebappPlatform.TangoDevice = TangoWebappPlatform.DataCollectionWrapper.extend('tango_device',
     /** @Static */
     {
         attributes: {
@@ -275,4 +275,4 @@ TangoWebapp.TangoDevice = TangoWebapp.DataCollectionWrapper.extend('tango_device
 );
 
 if (window['TangoDevice'] === undefined)
-    TangoDevice = TangoWebapp.TangoDevice;
+    TangoDevice = TangoWebappPlatform.TangoDevice;

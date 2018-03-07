@@ -1,4 +1,4 @@
-TangoWebapp.platform.UserContextController = MVC.Controller.extend("user_context_controller", {}, {
+TangoWebappPlatform.UserContextController = MVC.Controller.extend("user_context_controller", {}, {
     _user_context: null,
     /**
      * Defines global var UserContextController
@@ -15,7 +15,7 @@ TangoWebapp.platform.UserContextController = MVC.Controller.extend("user_context
      * @event {OpenAjax} user_context_controller.found
      */
     find_user_context:function(user){
-        var found = TangoWebapp.platform.UserContext.find_one(user);
+        var found = TangoWebappPlatform.UserContext.find_one(user);
         UserContext = found;
         this.publish('user_context_controller.found', {data: found});
     },

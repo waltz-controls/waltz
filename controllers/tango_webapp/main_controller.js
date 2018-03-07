@@ -11,8 +11,6 @@ TangoWebapp.MainController = MVC.Controller.extend('main', {
      * @see PlatformContext
      */
     initialize: function (platform_api) {
-        //TODO deal with it somehow
-        TangoWebapp.consts.LOG_DATE_FORMATTER = webix.Date.dateToStr("%c");
         var ui_builder = platform_api.ui_builder;
 
         ui_builder.set_left_item({

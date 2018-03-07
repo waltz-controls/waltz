@@ -200,7 +200,7 @@
                 }
             }
         }
-    }, TangoWebapp.mixin.OpenAjaxListener, webix.IdSpace, webix.ui.layout);
+    }, TangoWebappPlatform.mixin.OpenAjaxListener, webix.IdSpace, webix.ui.layout);
 
     /**
      * @type {webix.protoUI}
@@ -331,7 +331,7 @@
                 }
             }
         }
-    }, TangoWebapp.mixin.OpenAjaxListener, webix.ui.layout);
+    }, TangoWebappPlatform.mixin.OpenAjaxListener, webix.ui.layout);
 
 
     var dashboard_tango_host_info = webix.protoUI({
@@ -381,7 +381,7 @@
                 }
             }
         }
-    }, TangoWebapp.mixin.OpenAjaxListener, webix.IdSpace, webix.ui.layout);
+    }, TangoWebappPlatform.mixin.OpenAjaxListener, webix.IdSpace, webix.ui.layout);
 
     var dashboard_device_info = webix.protoUI({
         name: 'dashboard_device_info',
@@ -428,7 +428,7 @@
                 }
             }
         }
-    }, TangoWebapp.mixin.OpenAjaxListener, webix.IdSpace, webix.ui.layout);
+    }, TangoWebappPlatform.mixin.OpenAjaxListener, webix.IdSpace, webix.ui.layout);
 
     //TODO remove dashboard- from ids
     /**

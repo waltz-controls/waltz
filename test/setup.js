@@ -11,8 +11,8 @@ PlatformContext = (function () {
     tango_hosts = {};
     tango_hosts[TestValues.tango_host] = '';
 
-    return new TangoWebapp.platform.PlatformContext({
-        UserContext: new TangoWebapp.platform.UserContext({
+    return new TangoWebappPlatform.PlatformContext({
+        UserContext: new TangoWebappPlatform.UserContext({
             user: 'test',
             tango_hosts: tango_hosts,
             device_filters: ['*/*/*']

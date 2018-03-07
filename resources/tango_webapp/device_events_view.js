@@ -69,7 +69,7 @@
             return {
                 rows: [
                     {
-                        height: TangoWebapp.consts.TABS_DELIMITER_HEIGHT
+                        height: TangoWebappPlatform.consts.TABS_DELIMITER_HEIGHT
                     },
                     {
                         view: "tabview",
@@ -84,13 +84,13 @@
                                         {
                                             id: 'name',
                                             header: "Attribute name",
-                                            width: TangoWebapp.consts.NAME_COLUMN_WIDTH
+                                            width: TangoWebappPlatform.consts.NAME_COLUMN_WIDTH
                                         },
                                         {
                                             id: 'abs_change',
                                             header: "Absolute",
                                             editor: "text",
-                                            width: TangoWebapp.consts.NAME_COLUMN_WIDTH
+                                            width: TangoWebappPlatform.consts.NAME_COLUMN_WIDTH
                                         },
                                         {
                                             id: 'rel_change', header: "Relative", fillspace: true, editor: "text"
@@ -108,19 +108,19 @@
                                         {
                                             id: 'name',
                                             header: "Attribute name",
-                                            width: TangoWebapp.consts.NAME_COLUMN_WIDTH
+                                            width: TangoWebappPlatform.consts.NAME_COLUMN_WIDTH
                                         },
                                         {
                                             id: 'abs_change',
                                             header: "Absolute",
                                             editor: "text",
-                                            width: TangoWebapp.consts.NAME_COLUMN_WIDTH
+                                            width: TangoWebappPlatform.consts.NAME_COLUMN_WIDTH
                                         },
                                         {
                                             id: 'rel_change',
                                             header: "Relative",
                                             editor: "text",
-                                            width: TangoWebapp.consts.NAME_COLUMN_WIDTH
+                                            width: TangoWebappPlatform.consts.NAME_COLUMN_WIDTH
                                         },
                                         {id: 'period', header: "Period (ms)", fillspace: true, editor: "text"}
                                     ]
@@ -136,7 +136,7 @@
                                         {
                                             id: 'name',
                                             header: "Attribute name",
-                                            width: TangoWebapp.consts.NAME_COLUMN_WIDTH
+                                            width: TangoWebappPlatform.consts.NAME_COLUMN_WIDTH
                                         },
                                         {id: 'period', header: "Period (ms)", fillspace: true, editor: "text"}
                                     ]
@@ -180,7 +180,7 @@
                 this.refresh();
             }.bind(this));
         }
-    }, webix.IdSpace, TangoWebapp.mixin.TabActivator, TangoWebapp.mixin.DeviceSetter, webix.ui.layout);
+    }, webix.IdSpace, TangoWebappPlatform.mixin.TabActivator, TangoWebappPlatform.mixin.DeviceSetter, webix.ui.layout);
 
     TangoWebapp.ui.newDeviceEventsView = function (device) {
         return {

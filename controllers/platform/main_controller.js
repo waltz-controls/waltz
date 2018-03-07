@@ -1,9 +1,9 @@
 /**
  * Main controller
  *
- * @type {TangoWebapp.MainController}
+ * @type {TangoWebappPlatform.MainController}
  */
-TangoWebapp.platform.MainController = MVC.Controller.extend('main', {
+TangoWebappPlatform.MainController = MVC.Controller.extend('main', {
 }, {
     /**
      * This is the main entry point of the application. This function is invoked after jmvc has been completely initialized.
@@ -11,26 +11,42 @@ TangoWebapp.platform.MainController = MVC.Controller.extend('main', {
      * @param {Object} params
      */
     load: function (params) {
+        //override date formatter
+        TangoWebappPlatform.consts.LOG_DATE_FORMATTER = webix.Date.dateToStr("%c");
+        
         //draw ui
         webix.ui({
             view: 'layout',
             id: 'main',
             type: 'space',
             rows: [
-                TangoWebapp.platform.TopToolbarController.getUI(),
+                TangoWebappPlatform.TopToolbarController.getUI(),
                 {
                     id: "content"
                 },
-                TangoWebapp.platform.BottomToolbar.getUI()
+                TangoWebappPlatform.BottomToolbar.getUI()
             ]
         });
         webix.ui.fullScreen();
 
-        this.load_user();
+        var user_ctx = this.load_user_context();
+
+        TangoWebappHelpers.debug(user_ctx.toString());
+
+        var rest = new TangoWebappPlatform.TangoRestApi({url: user_ctx.rest_url});
+
+        TangoWebappPlatform.PlatformContext.create({
+            UserContext: user_ctx,
+            rest: rest
+        });
 
         TangoWebappHelpers.debug("platform/main done.");
     },
-    load_user:function(){
+    /**
+     *
+     * @return {UserContext}
+     */
+    load_user_context:function(){
         var authorization = webix.storage.session.get("Authorization");
         if (authorization !== null && authorization.indexOf('Basic ') === 0) {
             webix.attachEvent("onBeforeAjax", function (mode, url, params, x, headers) {
@@ -39,21 +55,14 @@ TangoWebapp.platform.MainController = MVC.Controller.extend('main', {
             });
             var username = atob(authorization.substring(6)).split(':')[0];
 
-            var user_context = TangoWebapp.platform.UserContext.find_one(username);
-            TangoWebappHelpers.debug(user_context.toString());
-
-            var rest = new TangoWebapp.TangoRestApi({url: user_context.rest_url});
-
-            TangoWebapp.platform.PlatformContext.create({
-                UserContext: user_context,
-                rest: rest
-            });
+            return TangoWebappPlatform.UserContext.find_one(username);
         } else {
-            webix.message("Authorization header was not set","error");
+            TangoWebappHelpers.log("No Authorization found, fallback to test user context");
+            return TangoWebappPlatform.UserContext.find_one("test");
         }
     },
     "platform_context.create subscribe": function(event){
-        var platform_api = new TangoWebapp.platform.PlatformApi({
+        var platform_api = new TangoWebappPlatform.PlatformApi({
             context: event.data,
             ui_builder: {}
         });

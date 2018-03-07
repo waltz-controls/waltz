@@ -9,7 +9,7 @@ new MVC.Test.Unit('tango_mixins', {
                     }
                 }
             }
-        }, TangoWebapp.mixin.OpenAjaxListener, webix.ui.text);
+        }, TangoWebappPlatform.mixin.OpenAjaxListener, webix.ui.text);
 
         var self = this;
         var instance = webix.ui({

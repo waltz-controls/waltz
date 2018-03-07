@@ -3,7 +3,7 @@
  *
  * @type {TopToolbarController}
  */
-TangoWebapp.platform.TopToolbarController = MVC.Controller.extend('top_toolbar_controller',
+TangoWebappPlatform.TopToolbarController = MVC.Controller.extend('top_toolbar_controller',
     /* @Static */
     {
         getUI: function () {
@@ -40,7 +40,7 @@ TangoWebapp.platform.TopToolbarController = MVC.Controller.extend('top_toolbar_c
                         {
                             view: "text",
                             id: "txtTangoRestApiVersion",
-                            value: TangoWebapp.consts.REST_API_VERSION,
+                            value: TangoWebappPlatform.consts.REST_API_VERSION,
                             disabled: true, //TODO different versions support
                             width: 50
                         },

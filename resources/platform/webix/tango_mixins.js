@@ -2,7 +2,7 @@
  *
  * @namespace
  */
-TangoWebapp.mixin = {
+TangoWebappPlatform.mixin = {
     /**
      *
      * Requires `on` property to be defined
@@ -34,7 +34,7 @@ TangoWebapp.mixin = {
      */
     DeviceSetter: {
         device_setter: function (device) {
-            if (!device) TangoWebapp.error("device can not be undefined");
+            if (!device) TangoWebappPlatform.error("device can not be undefined");
             this._device = device;
             return device;
         }
