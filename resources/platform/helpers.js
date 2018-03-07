@@ -1,8 +1,8 @@
 /**
  *
- * @type {{strToHash: TangoWebapp.helpers.strToHash, iterate: TangoWebapp.helpers.iterate, log: TangoWebapp.helpers.log, error: TangoWebapp.helpers.error, debug: TangoWebapp.helpers.debug}}
+ * @type {{strToHash: TangoWebappPlatform.helpers.strToHash, iterate: TangoWebappPlatform.helpers.iterate, log: TangoWebappPlatform.helpers.log, error: TangoWebappPlatform.helpers.error, debug: TangoWebappPlatform.helpers.debug}}
  */
-TangoWebapp.helpers = {
+TangoWebappPlatform.helpers = {
     /**
      *
      * @param {string} str
@@ -36,7 +36,7 @@ TangoWebapp.helpers = {
     log: function (msg) {
         console.log(msg);
         webix.message(msg);
-        $$('main-log').log({type: '', value: msg, timestamp: TangoWebapp.consts.LOG_DATE_FORMATTER(new Date())});
+        $$('main-log').log({type: '', value: msg, timestamp: TangoWebappPlatform.consts.LOG_DATE_FORMATTER(new Date())});
     },
 
     /**
@@ -49,7 +49,7 @@ TangoWebapp.helpers = {
         var id = $$('main-log').log({
             type: 'error',
             value: msg,
-            timestamp: TangoWebapp.consts.LOG_DATE_FORMATTER(new Date())
+            timestamp: TangoWebappPlatform.consts.LOG_DATE_FORMATTER(new Date())
         });
         webix.message({type: 'error', text: msg});
         $$('bottom-toolbar').switchLogBtnIcon('error');
@@ -66,10 +66,10 @@ TangoWebapp.helpers = {
             var id = $$('main-log').log({
                 type: '',
                 value: msg,
-                timestamp: TangoWebapp.consts.LOG_DATE_FORMATTER(new Date())
+                timestamp: TangoWebappPlatform.consts.LOG_DATE_FORMATTER(new Date())
             });
         }
     }
 };
 
-TangoWebappHelpers = TangoWebapp.helpers;
+TangoWebappHelpers = TangoWebappPlatform.helpers;

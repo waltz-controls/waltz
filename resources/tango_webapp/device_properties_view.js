@@ -51,7 +51,7 @@
                         multiselect: true,
                         editable: true,
                         columns: [
-                            {id: "name", header: "Property name", width: TangoWebapp.consts.NAME_COLUMN_WIDTH},
+                            {id: "name", header: "Property name", width: TangoWebappPlatform.consts.NAME_COLUMN_WIDTH},
                             {id: "values", header: "Value", fillspace: true, editor: "text"}
                         ],
                         dataFeed: '...'
@@ -118,7 +118,7 @@
                 this.$$('frmNewProperty').bind(this.$$('device_properties_data'));
             }.bind(this));
         }
-    }, webix.IdSpace, webix.EventSystem, TangoWebapp.mixin.DeviceSetter, TangoWebapp.mixin.TabActivator, webix.ui.layout);
+    }, webix.IdSpace, webix.EventSystem, TangoWebappPlatform.mixin.DeviceSetter, TangoWebappPlatform.mixin.TabActivator, webix.ui.layout);
 
     TangoWebapp.ui.newDevicePropertiesView = function (device) {
         return {

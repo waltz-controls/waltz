@@ -2,12 +2,23 @@
  *
  * @namespace
  */
-TangoWebapp.platform = {};
+TangoWebappPlatform = {};
 
 include(function () { //runs after prior includes are loaded
     include.plugins(
         "controller", "view", "model"
     );
+
+    //use constant defaults if not in production
+    if(include.get_env().match(/development|test/)){
+        include.resources("platform/defaults")
+    }
+
+    if(MVC.Browser.Rhino){
+        include("../build/tmp/resources/constants") //ant  -copy-constants output
+    } else {
+        include.resources("constants")
+    }
 
     include.resources(
         "platform/webix/tango_mixins",

@@ -14,13 +14,13 @@
             {
                 id: 'name',
                 header: "Attribute name",
-                width: TangoWebapp.consts.NAME_COLUMN_WIDTH
+                width: TangoWebappPlatform.consts.NAME_COLUMN_WIDTH
             },
             {
                 id: 'label',
                 header: "Label",
                 editor: "text",
-                width: TangoWebapp.consts.NAME_COLUMN_WIDTH
+                width: TangoWebappPlatform.consts.NAME_COLUMN_WIDTH
             },
             {
                 id: 'format',
@@ -43,7 +43,7 @@
             {
                 id: 'name',
                 header: "Attribute name",
-                width: TangoWebapp.consts.NAME_COLUMN_WIDTH
+                width: TangoWebappPlatform.consts.NAME_COLUMN_WIDTH
             },
             {id: 'unit', header: "Unit", editor: "text"},
             {id: 'display_unit', header: "Display unit", editor: "text"},
@@ -63,7 +63,7 @@
             {
                 id: 'name',
                 header: "Attribute name",
-                width: TangoWebapp.consts.NAME_COLUMN_WIDTH
+                width: TangoWebappPlatform.consts.NAME_COLUMN_WIDTH
             },
             {id: 'min_value', header: "Min value", editor: "text"},
             {id: 'max_value', header: "Max value", editor: "text", fillspace: true}
@@ -81,7 +81,7 @@
             {
                 id: 'name',
                 header: "Attribute name",
-                width: TangoWebapp.consts.NAME_COLUMN_WIDTH
+                width: TangoWebappPlatform.consts.NAME_COLUMN_WIDTH
             },
             {id: 'min_alarm', header: "Min alarm", editor: "text"},
             {id: 'max_alarm', header: "Max alarm", editor: "text"},
@@ -118,7 +118,7 @@
             {
                 id: 'name',
                 header: "Attribute name",
-                width: TangoWebapp.consts.NAME_COLUMN_WIDTH
+                width: TangoWebappPlatform.consts.NAME_COLUMN_WIDTH
             },
             {id: 'description', header: "Description", editor: "text", fillspace: true}
         ],
@@ -135,7 +135,7 @@
             {
                 id: 'name',
                 header: "Attribute name",
-                width: TangoWebapp.consts.NAME_COLUMN_WIDTH
+                width: TangoWebappPlatform.consts.NAME_COLUMN_WIDTH
             },
             {id: 'alias', header: "Alias", editor: "text", fillspace: true}
         ]
@@ -187,7 +187,7 @@
             return {
                 rows: [
                     {
-                        height: TangoWebapp.consts.TABS_DELIMITER_HEIGHT
+                        height: TangoWebappPlatform.consts.TABS_DELIMITER_HEIGHT
                     },
                     {
                         view: "tabview",
@@ -267,7 +267,7 @@
             }.bind(this));
         },
         name: "device_attr_config"
-    }, webix.IdSpace, TangoWebapp.mixin.TabActivator, TangoWebapp.mixin.DeviceSetter, webix.ui.layout);
+    }, webix.IdSpace, TangoWebappPlatform.mixin.TabActivator, TangoWebappPlatform.mixin.DeviceSetter, webix.ui.layout);
 
     TangoWebapp.ui.newDeviceAttrConfigView = function (device) {
         return {

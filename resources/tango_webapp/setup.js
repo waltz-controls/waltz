@@ -1,6 +1,5 @@
 TangoWebapp.ui = {
     _webix_files: [
-        "logger_view",//TODO move to platform
         "dashboard",
         "devices_tree",
         "plot", "test_device_panel",

@@ -1,9 +1,6 @@
-
-
-
 new MVC.Test.Unit('tango_rest_api_request', {
-    init:function(params){
-        this._super(params);
+    init:function(test, testname){
+        this._super(test, testname);
         webix.attachEvent("onBeforeAjax", function (mode, url, params, x, headers) {
             x.withCredentials = true;
             headers["Authorization"] = "Basic " + btoa("tango-cs:tango");

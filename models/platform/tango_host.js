@@ -2,7 +2,7 @@
  *
  * @type {TangoHost}
  */
-TangoWebapp.TangoHost = MVC.Model.extend("tango_host",
+TangoWebappPlatform.TangoHost = MVC.Model.extend("tango_host",
     /** @Static */
     {
         attributes: {
@@ -45,7 +45,7 @@ TangoWebapp.TangoHost = MVC.Model.extend("tango_host",
                     return db.getDeviceInfo(name);
                 })
                 .then(function (info) {
-                    var device = new TangoWebapp.TangoDevice({
+                    var device = new TangoWebappPlatform.TangoDevice({
                         info: info,
                         id: this.id + "/" + name,
                         name: name,
@@ -66,7 +66,7 @@ TangoWebapp.TangoHost = MVC.Model.extend("tango_host",
                         //jmvc fails to set "attributes" due to already existing function in the model
                         delete resp.attributes;
 
-                        var device = new TangoWebapp.TangoDevice(MVC.Object.extend(resp, {
+                        var device = new TangoWebappPlatform.TangoDevice(MVC.Object.extend(resp, {
                             id: this.id + "/" + this.name,
                             name: this.name,
                             host: this
@@ -84,7 +84,7 @@ TangoWebapp.TangoHost = MVC.Model.extend("tango_host",
                     }.bind(this)
                 ).then(function (device) {
                     OpenAjax.hub.publish("tango_webapp.device_loaded", {data: device});//TODO use PlatformContext directly?
-                    this.database = new TangoWebapp.TangoDatabase({
+                    this.database = new TangoWebappPlatform.TangoDatabase({
                         id: device.id,
                         device: device,
                         info: this.info
@@ -98,4 +98,4 @@ TangoWebapp.TangoHost = MVC.Model.extend("tango_host",
 
 //TODO move to separate file: compatibility
 if (window['TangoHost'] === undefined)
-    TangoHost = TangoWebapp.TangoHost;
+    TangoHost = TangoWebappPlatform.TangoHost;

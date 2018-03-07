@@ -3,7 +3,7 @@
  *
  * @type {DataCollectionWrapper}
  */
-TangoWebapp.DataCollectionWrapper = MVC.Model.extend(
+TangoWebappPlatform.DataCollectionWrapper = MVC.Model.extend(
     /* @Prototype */
     {
         value: null,

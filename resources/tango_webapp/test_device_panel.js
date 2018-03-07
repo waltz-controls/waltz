@@ -520,5 +520,5 @@
                 }
             }
         }
-    }, TangoWebapp.mixin.OpenAjaxListener, webix.IdSpace, webix.ui.layout)
+    }, TangoWebappPlatform.mixin.OpenAjaxListener, webix.IdSpace, webix.ui.layout)
 })();

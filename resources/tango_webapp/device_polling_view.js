@@ -109,7 +109,7 @@
             return {
                 rows: [
                     {
-                        height: TangoWebapp.consts.TABS_DELIMITER_HEIGHT
+                        height: TangoWebappPlatform.consts.TABS_DELIMITER_HEIGHT
                     },
                     {
                         view: "tabview",
@@ -121,7 +121,7 @@
                                     view: "datatable",
                                     editable: true,
                                     columns: [
-                                        {id: "name", header: "Command", width: TangoWebapp.consts.NAME_COLUMN_WIDTH},
+                                        {id: "name", header: "Command", width: TangoWebappPlatform.consts.NAME_COLUMN_WIDTH},
                                         {id: "isPolled", header: "Is Polled", template: "{common.checkbox()}"},
                                         {id: "period", header: "Period (ms)", fillspace: true, editor: "text"}
                                     ],
@@ -137,7 +137,7 @@
                                     view: "datatable",
                                     editable: true,
                                     columns: [
-                                        {id: "name", header: "Attribute", width: TangoWebapp.consts.NAME_COLUMN_WIDTH},
+                                        {id: "name", header: "Attribute", width: TangoWebappPlatform.consts.NAME_COLUMN_WIDTH},
                                         {id: "isPolled", header: "Is Polled", template: "{common.checkbox()}"},
                                         {id: "period", header: "Period (ms)", fillspace: true, editor: "text"}
                                     ],
@@ -243,7 +243,7 @@
                 }
             }
         }
-    }, webix.IdSpace, webix.EventSystem, TangoWebapp.mixin.TabActivator, TangoWebapp.mixin.DeviceSetter, webix.ui.layout);
+    }, webix.IdSpace, webix.EventSystem, TangoWebappPlatform.mixin.TabActivator, TangoWebappPlatform.mixin.DeviceSetter, webix.ui.layout);
 
     TangoWebapp.ui.newDevicePollingView = function (device) {
         return {
