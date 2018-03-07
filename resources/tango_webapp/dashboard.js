@@ -372,9 +372,9 @@
             minWidth: 320,
             maxHeight: 480,
             on: {
-                "tango_webapp.initialize subscribe": function (event) {
+                "platform_api.ui.initialized subscribe": function (event) {
                     event.controller.$$('tango-host-info-value')
-                        .bind(event.data.tango_hosts)
+                        .bind(event.data.context.tango_hosts)
                 },
                 "platform_context.destroy subscribe": function (event) {
                     event.controller.$$('tango-host-info-value').unbind()
@@ -419,9 +419,9 @@
             minWidth: 320,
             maxHeight: 480,
             on: {
-                "tango_webapp.initialize subscribe": function (event) {
+                "platform_api.ui.initialized subscribe": function (event) {
                     event.controller.$$('tango-device-info-value')
-                        .bind(event.data.devices)
+                        .bind(event.data.context.devices)
                 },
                 "platform_context.destroy subscribe": function (event) {
                     event.controller.$$('tango-device-info-value').unbind()

@@ -510,9 +510,9 @@
         defaults: {
             disabled: true,
             on: {
-                "tango_webapp.initialize subscribe": function (event) {
+                "platform_api.ui.initialized subscribe": function (event) {
                     TangoWebappHelpers.debug('test_device_panel.platform_context.create subscribe');
-                    event.controller.$$('device').bind(event.data.devices);
+                    event.controller.$$('device').bind(event.data.context.devices);
                 },
                 "platform_context.destroy subscribe": function (event) {
                     TangoWebappHelpers.debug('test_device_panel.platform_context.destroy subscribe');

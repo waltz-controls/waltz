@@ -241,8 +241,8 @@
                 "user_context_controller.delete_tango_host subscribe": function (event) {
                     event.controller.remove(event.data);
                 },
-                "tango_webapp.initialize subscribe": function (event) {
-                    event.controller.updateRoot(event.data);
+                "platform_api.ui.initialized subscribe": function (event) {
+                    event.controller.updateRoot(event.data.context);
                 },
                 "platform_context.set_rest subscribe": function (event) {
                     event.controller.updateRoot(event.data);

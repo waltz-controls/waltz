@@ -40,8 +40,6 @@ TangoWebapp.MainController = MVC.Controller.extend('main', {
                     view: "dashboard"
                 }
             });
-
-        this.publish("tango_webapp.initialize", {data:platform_api});
     },
     _promise_device: function (data) {
         var promise;
