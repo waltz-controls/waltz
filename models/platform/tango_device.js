@@ -74,6 +74,13 @@ TangoWebappPlatform.TangoDevice = TangoWebappPlatform.DataCollectionWrapper.exte
                 pipes: new webix.DataCollection(),
                 properties: new webix.DataCollection()
             }));
+            var sort = function(){
+                this.sort("#name#", "asc", "string");
+            };
+            this.attrs.waitData.then(sort.bind(this.attrs));
+            this.commands.waitData.then(sort.bind(this.commands));
+            this.pipes.waitData.then(sort.bind(this.pipes));
+            this.properties.waitData.then(sort.bind(this.properties));
         },
         /**
          *
