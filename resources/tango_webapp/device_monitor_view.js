@@ -36,7 +36,7 @@
                 columns: [
                     {
                         id: "label",
-                        header: "Name",
+                        header: ["Name", {content:"textFilter"}],
                         width: TangoWebappPlatform.consts.NAME_COLUMN_WIDTH,
                         sort: "string"
                     },
