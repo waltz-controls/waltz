@@ -41,6 +41,18 @@ TangoWebappPlatform.TangoDatabase = MVC.Model.extend('tango_database',
             });
         },
         /**
+         * Returns error response if alias is not set - limitation of the native Tango API
+         *
+         * @param name
+         * @return {*|Promise}
+         */
+        getDeviceAlias: function (name) {
+            return this.device.executeCommand("DbGetDeviceAlias", name)
+                .then(function(resp){
+                    return resp.output;
+                })
+        },
+        /**
          *
          * @param svalue
          */

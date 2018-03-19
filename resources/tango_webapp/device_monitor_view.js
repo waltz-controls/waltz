@@ -172,10 +172,11 @@
                                 {
                                     id: "state",
                                     view: "device_monitor_header",
-                                    template: "[#devname#] -- #value#",
+                                    template: "#alias# [#devname#] -- #value#",
                                     type: "header",
                                     data: {
                                         devname: device.name,
+                                        alias:   device.alias,
                                         value: "UNKNOWN"
                                     }
                                 },
@@ -277,7 +278,7 @@
 
     TangoWebapp.ui.newDeviceMonitorView = function (config) {
         return {
-            header: "<span class='webix_icon fa-eye'></span>[<span class='webix_strong'>" + config.device.name + "@" + config.device.host.id + "</span>]",
+            header: "<span class='webix_icon fa-eye'></span>[<span class='webix_strong'>" + config.device.display_name + "@" + config.device.host.id + "</span>]",
             close: true,
             borderless: true,
             body: {

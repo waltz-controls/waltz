@@ -40,6 +40,95 @@
         name: 'devices_tree_tree',
         /**
          *
+         * @param tango_host
+         * @param id
+         * @return {Promise} an array of domains
+         * @private
+         */
+        _expand_tango_host:function(tango_host){
+            var filter = PlatformContext.UserContext.toDeviceFilter();
+            return webix.promise.all(filter.domain_filter.map(function (it) {
+                return tango_host.fetchDatabase()
+                    .fail(function () {
+                        return [];
+                    })
+                    .then(function (db) {
+                        return db.getDeviceDomainList(it)
+                    }).then(function (resp) {
+                        return resp.output.map(function (el) {
+                            return {value: el, _value: el, webix_kids: true, $css: 'domain'};
+                        });
+                    });
+            })).then(function(filtered_domains){
+                return Array.prototype.concat.apply([], filtered_domains); //flatten an array of arrays
+            });
+        },
+
+        /**
+         *
+         * @param tango_host
+         * @param domain
+         * @return {Promise}
+         * @private
+         */
+        _expand_domain:function(tango_host, domain){
+            var filter = PlatformContext.UserContext.toDeviceFilter();
+            return webix.promise.all(filter.getFamilyFilters(domain).map(function (it) {
+                return tango_host.fetchDatabase()
+                    .then(function (db) {
+                        return db.getDeviceFamilyList(it);
+                    }).then(function (resp) {
+                        return resp.output.map(function (el) {
+                            return {value: el, _value: el, webix_kids: true, $css: 'family'};
+                        });
+                    })
+            })).then(function(filtered_families){
+                return Array.prototype.concat.apply([], filtered_families);//flatten an array of arrays
+            });
+        },
+        /**
+         *
+         * @param tango_host
+         * @param domain
+         * @param family
+         * @return {Promise}
+         * @private
+         */
+        _expand_family: function(tango_host, domain, family){
+            var filter = PlatformContext.UserContext.toDeviceFilter();
+            return webix.promise.all(filter.getMemberFilters(domain, family).map(function (it) {
+                var db = tango_host.fetchDatabase();
+
+                return db.then(function (db) {
+                    return db.getDeviceMemberList(it)
+                        .then(function (resp) {
+                            return webix.promise.all(resp.output.map(function (member) {
+                                //TODO extract helper
+                                var device_name = [domain, family, member].join("/");
+                                return db.getDeviceAlias(device_name)
+                                    .then(function (alias) {
+                                        return {
+                                            $css: 'member',
+                                            value: alias,
+                                            _value: member
+                                        }
+                                    })
+                                    .fail(function () {
+                                        return {
+                                            $css: 'member',
+                                            value: member,
+                                            _value: member
+                                        }
+                                    });
+                            }));
+                        });
+                })
+            })).then(function(filtered_members){
+                return Array.prototype.concat.apply([], filtered_members);//flatten an array of arrays
+            });
+        },
+        /**
+         *
          * @param context
          * @private
          */
@@ -88,9 +177,9 @@
          * @private
          */
         _get_device_name: function (item) {
-            var member = item.value;
-            var family = this.getItem(item.$parent).value;
-            var domain = this.getItem(this.getItem(item.$parent).$parent).value;
+            var member = item._value;
+            var family = this.getItem(item.$parent)._value;
+            var domain = this.getItem(this.getItem(item.$parent).$parent)._value;
             return [domain, family, member].join('/');
         },
         /**
@@ -158,62 +247,30 @@
                     var tango_host_id = this._get_host_id(item);
                     var tango_host = PlatformContext.tango_hosts.getItem(tango_host_id);
 
-                    var filter = PlatformContext.UserContext.toDeviceFilter();
-
                     var self = this;
                     switch (item.$level) {
                         case 2://tango_host
-                            filter.domain_filter.map(function (it) {
-                                return tango_host.fetchDatabase()
-                                    .fail(function () {
-                                        self.parse({
-                                            parent: id,
-                                            data: []
-                                        });
-                                    })
-                                    .then(function (db) {
-                                        return db.getDeviceDomainList(it)
-                                    }).then(function (resp) {
-                                        self.parse({
-                                            parent: id,
-                                            data: resp.output.map(function (el) {
-                                                return {value: el, webix_kids: true, $css: 'domain'};
-                                            })
-                                        });
-                                    });
+                            this._expand_tango_host(tango_host).then(function(domains){
+                                self.parse({
+                                    parent: id,
+                                    data: domains
+                                });
                             });
                             return false;
                         case 3://domain
-                            filter.getFamilyFilters(item.value).map(function (it) {
-                                return tango_host.fetchDatabase()
-                                    .then(function (db) {
-                                        return db.getDeviceFamilyList(it);
-                                    }).then(function (resp) {
-                                        self.parse({
-                                            parent: id,
-                                            data: resp.output.map(function (el) {
-                                                return {value: el, webix_kids: true, $css: 'family'};
-                                            })
-                                        })
-                                    })
+                            this._expand_domain(tango_host, item._value).then(function(families){
+                                self.parse({
+                                    parent: id,
+                                    data: families
+                                })
                             });
                             return false;
                         case 4://family
-                            filter.getMemberFilters(this.getItem(item.$parent).value, item.value).map(function (it) {
-                                return tango_host.fetchDatabase()
-                                    .then(function (db) {
-                                        return db.getDeviceMemberList(it);
-                                    }).then(function (resp) {
-                                        self.parse({
-                                            parent: id,
-                                            data: resp.output.map(function (el) {
-                                                return {
-                                                    $css: 'member',
-                                                    value: el
-                                                };
-                                            })
-                                        })
-                                    })
+                            this._expand_family(tango_host,this.getItem(item.$parent)._value,item._value).then(function(members){
+                                self.parse({
+                                    parent: id,
+                                    data: members
+                                })
                             });
                     }
 

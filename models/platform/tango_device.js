@@ -9,6 +9,7 @@ TangoWebappPlatform.TangoDevice = TangoWebappPlatform.DataCollectionWrapper.exte
         attributes: {
             id: 'string', //host_id/name
             name: 'string',
+            alias: 'string',
             host: 'TangoHost',
             info: '{}',
             attrs: '[]',
@@ -18,7 +19,8 @@ TangoWebappPlatform.TangoDevice = TangoWebappPlatform.DataCollectionWrapper.exte
         default_attributes: {
             //TODO use not selected as default id or similar - important is that it must be the same as in TangoHost
             id: 'unknown', //host_id/name
-            name: 'not selected',
+            name: 'unknown',
+            alias: 'unknown',
             host: {
                 id: 'unknown'
             },
@@ -54,6 +56,9 @@ TangoWebappPlatform.TangoDevice = TangoWebappPlatform.DataCollectionWrapper.exte
         set_properties: function (v) {
             this.properties = v;
         },
+        set_display_name: function(v){
+            this.display_name = v;
+        },
         /**
          *
          * @param v
@@ -69,6 +74,7 @@ TangoWebappPlatform.TangoDevice = TangoWebappPlatform.DataCollectionWrapper.exte
             //we can not just set these properties here i.e. this.attrs = ...
             //in this case the property will be shared across all instances
             this._super(MVC.Object.extend(attrs, {
+                display_name: attrs.alias ? attrs.alias : attrs.name,//TODO wrap into an entity that will resolve this globally
                 attrs: new webix.DataCollection(),
                 commands: new webix.DataCollection(),
                 pipes: new webix.DataCollection(),

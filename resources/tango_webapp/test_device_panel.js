@@ -428,7 +428,7 @@
         height: 30,
         //TODO align center
         complexData: true,
-        template: '[<span class="webix_strong">#name#@#host.id#</span>] exported = #info.exported#',
+        template: '[<span class="webix_strong">#display_name#@#host.id#</span>] exported = #info.exported#',
         on: {
             onBindApply: function () {
                 var top = this.getTopParentView();

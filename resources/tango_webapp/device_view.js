@@ -13,7 +13,7 @@ webix.protoUI({
 
 TangoWebapp.ui.newDeviceView = function (config) {
     return {
-        header: "<span class='webix_icon fa-microchip'></span>[<span class='webix_strong'>" + config.device.name + "@" + config.device.host.id + "</span>]",
+        header: "<span class='webix_icon fa-microchip'></span>[<span class='webix_strong'>" + config.device.display_name + "@" + config.device.host.id + "</span>]",
         close : true,
         borderless: true,
         body  : {

@@ -42,11 +42,18 @@ TangoWebappPlatform.TangoHost = MVC.Model.extend("tango_host",
         fetchDevice: function (name) {
             return this.fetchDatabase()
                 .then(function (db) {
-                    return db.getDeviceInfo(name);
+                    return webix.promise.all(
+                        [
+                            db.getDeviceInfo(name),
+                            db.getDeviceAlias(name).fail(function(){
+                                return "";
+                            })
+                        ]);
                 })
                 .then(function (info) {
                     var device = new TangoWebappPlatform.TangoDevice({
-                        info: info,
+                        info: info[0],
+                        alias: info[1],
                         id: this.id + "/" + name,
                         name: name,
                         host: this
