@@ -6,7 +6,7 @@
 
 [![Docs](https://img.shields.io/badge/Generated-Docs-green.svg)](https://tango-controls.github.io/tango-webapp/)
 
-[![release](http://github-release-version.herokuapp.com/github/tango-controls/tango-webapp/release.svg?style=flat)](https://github.com/tango-controls/tango-webapp/releases)
+[![release](https://img.shields.io/github/release/tango-controls/tango-webapp.svg?style=flat)](https://github.com/tango-controls/tango-webapp/releases/latest)
 
 This project is an attempt to implement Tango Controls Roadmap Feature Request #6, see [Tango Controls Roadmap](http://www.tango-controls.org/about-us/feature-requests/)
 
