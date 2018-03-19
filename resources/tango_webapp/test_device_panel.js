@@ -61,7 +61,7 @@
                     {
                         view: 'text',
                         name: 'argin',
-                        placeholder: 'Input argument for the command e.g. 3.14 or [3.14, 2.87] etc'
+                        placeholder: 'Input e.g. 3.14 or [3.14, 2.87] etc'
                         //TODO argin converter
                     },
                     {
