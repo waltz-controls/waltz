@@ -285,7 +285,26 @@
                                 self.parse({
                                     parent: id,
                                     data: members
-                                })
+                                });
+
+                                if(members.length > 10 ){
+                                    members.forEach(function(member){
+                                        tango_host.fetchDatabase().then(function(db){
+                                            var device_name = [self.getItem(item.$parent)._value,item._value, member._value].join("/");
+
+                                            return db.getDeviceAlias(device_name)
+
+                                        }).then(function (alias) {
+                                            member.value = alias;
+                                            self.parse({
+                                                parent: id,
+                                                data: [
+                                                    member
+                                                ]
+                                            })
+                                        })
+                                    })
+                                }
                             }, function (err) {
                                 debugger
                             });
