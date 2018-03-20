@@ -287,6 +287,7 @@
                                     data: members
                                 });
 
+                                //load device aliases sequentially if there are too many members
                                 if(members.length > 10 ){
                                     members.forEach(function(member){
                                         tango_host.fetchDatabase().then(function(db){
