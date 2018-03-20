@@ -47,8 +47,9 @@
          */
         _expand_tango_host:function(tango_host){
             var filter = PlatformContext.UserContext.toDeviceFilter();
+            var db = tango_host.fetchDatabase();
             return webix.promise.all(filter.domain_filter.map(function (it) {
-                return tango_host.fetchDatabase()
+                return db
                     .fail(function () {
                         return [];
                     })
@@ -73,8 +74,9 @@
          */
         _expand_domain:function(tango_host, domain){
             var filter = PlatformContext.UserContext.toDeviceFilter();
+            var db = tango_host.fetchDatabase();
             return webix.promise.all(filter.getFamilyFilters(domain).map(function (it) {
-                return tango_host.fetchDatabase()
+                return db
                     .then(function (db) {
                         return db.getDeviceFamilyList(it);
                     }).then(function (resp) {
@@ -96,34 +98,47 @@
          */
         _expand_family: function(tango_host, domain, family){
             var filter = PlatformContext.UserContext.toDeviceFilter();
+            var db = tango_host.fetchDatabase();
             return webix.promise.all(filter.getMemberFilters(domain, family).map(function (it) {
-                var db = tango_host.fetchDatabase();
-
                 return db.then(function (db) {
                     return db.getDeviceMemberList(it)
                         .then(function (resp) {
-                            return webix.promise.all(resp.output.map(function (member) {
-                                //TODO extract helper
-                                var device_name = [domain, family, member].join("/");
-                                return db.getDeviceAlias(device_name)
-                                    .then(function (alias) {
-                                        return {
-                                            $css: 'member',
-                                            value: alias,
-                                            _value: member
-                                        }
-                                    })
-                                    .fail(function () {
-                                        return {
-                                            $css: 'member',
-                                            value: member,
-                                            _value: member
-                                        }
-                                    });
-                            }));
+                            var count = 0;
+
+                            if(resp.output.length > 10){
+                                return resp.output.map(function(member){
+                                    return {
+                                        $css: 'member',
+                                        value: member,
+                                        _value: member
+                                    }
+                                });
+                            } else {
+                                return webix.promise.all(resp.output.map(function (member) {
+                                    //TODO extract helper
+                                    var device_name = [domain, family, member].join("/");
+
+                                    return db.getDeviceAlias(device_name)
+                                        .then(function (alias) {
+                                            return {
+                                                $css: 'member',
+                                                value: alias,
+                                                _value: member
+                                            }
+                                        })
+                                        .fail(function () {
+                                            return {
+                                                $css: 'member',
+                                                value: member,
+                                                _value: member
+                                            }
+                                        });
+                                }));
+                            }
                         });
                 })
             })).then(function(filtered_members){
+                debugger
                 return Array.prototype.concat.apply([], filtered_members);//flatten an array of arrays
             });
         },
@@ -271,6 +286,8 @@
                                     parent: id,
                                     data: members
                                 })
+                            }, function (err) {
+                                debugger
                             });
                     }
 
