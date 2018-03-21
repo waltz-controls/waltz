@@ -48,7 +48,7 @@
         _expand_tango_host:function(tango_host){
             var filter = PlatformContext.UserContext.toDeviceFilter();
             var db = tango_host.fetchDatabase();
-            return webix.promise.all(filter.domain_filter.map(function (it) {
+            return webix.promise.all(filter.getDomainFilters().map(function (it) {
                 return db
                     .fail(function () {
                         return [];
