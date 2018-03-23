@@ -10,7 +10,7 @@ TangoWebapp.MainController = MVC.Controller.extend('main', {
      * @param {PlatformApi} platform_api - event.data contains fully properly initialized PlatformContext model
      * @see PlatformContext
      */
-    initialize: function (platform_api) {
+    buildUI: function (platform_api) {
         var ui_builder = platform_api.ui_builder;
 
         ui_builder.set_left_item({
@@ -40,6 +40,9 @@ TangoWebapp.MainController = MVC.Controller.extend('main', {
                     view: "dashboard"
                 }
             });
+    },
+    initialize:function(platform_api){
+        OpenAjax.hub.publish("platform_api.ui.initialized", {data: platform_api});
     },
     _promise_device: function (data) {
         var promise;

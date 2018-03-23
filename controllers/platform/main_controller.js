@@ -73,14 +73,19 @@ TangoWebappPlatform.MainController = MVC.Controller.extend('main', {
         });
 
         MVC.Controller.controllers.main
+            .filter(function(ctrl) { return 'buildUI' in ctrl.prototype})
+            .forEach(function(ctrl) {
+                ctrl.dispatch('buildUI', platform_api)
+            }
+        );
+        platform_api.ui_builder.build();
+        PlatformApi = platform_api;
+        MVC.Controller.controllers.main
             .filter(function(ctrl) { return 'initialize' in ctrl.prototype})
             .forEach(function(ctrl) {
                 ctrl.dispatch('initialize', platform_api)
             }
         );
-        platform_api.ui_builder.build();
-        PlatformApi = platform_api;
-        this.publish("platform_api.ui.initialized", {data:platform_api});
     },
     "platform_context.set_rest subscribe": function (event) {
         var rest = event.data.rest;
