@@ -66,26 +66,24 @@ TangoWebappPlatform.MainController = MVC.Controller.extend('main', {
             return TangoWebappPlatform.UserContext.find_one("tango-cs");
         }
     },
+    _dispatch:function(what, platform_api){
+        MVC.Controller.controllers.main
+            .filter(function(ctrl) { return what in ctrl.prototype})
+            .forEach(function(ctrl) {
+                ctrl.dispatch(what, platform_api)
+            }
+                );
+    },
     "platform_context.create subscribe": function(event){
         var platform_api = new TangoWebappPlatform.PlatformApi({
             context: event.data,
             ui_builder: {}
         });
 
-        MVC.Controller.controllers.main
-            .filter(function(ctrl) { return 'buildUI' in ctrl.prototype})
-            .forEach(function(ctrl) {
-                ctrl.dispatch('buildUI', platform_api)
-            }
-        );
+        this._dispatch("buildUI", platform_api);
         platform_api.ui_builder.build();
         PlatformApi = platform_api;
-        MVC.Controller.controllers.main
-            .filter(function(ctrl) { return 'initialize' in ctrl.prototype})
-            .forEach(function(ctrl) {
-                ctrl.dispatch('initialize', platform_api)
-            }
-        );
+        this._dispatch("initialize", platform_api);
     },
     "platform_context.set_rest subscribe": function (event) {
         var rest = event.data.rest;
