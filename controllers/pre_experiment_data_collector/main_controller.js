@@ -27,7 +27,7 @@ PreExperimentDataCollectorController = MVC.Controller.extend('main',
          *
          * @param {PlatformApi} platform_api
          */
-        initialize: function (platform_api) {
+        buildUI: function (platform_api) {
             var ui_builder = platform_api.ui_builder;
 
             ui_builder.add_mainview_item({
@@ -35,7 +35,7 @@ PreExperimentDataCollectorController = MVC.Controller.extend('main',
                 body:this.Class.getUI()
             });
         },
-        "platform_api.ui.initialized subscribe": function(event){
+        initialize: function(platform_api){
             InitHelper(function(){
                 noty.alert("Application has been initialized successfully.")
             });
