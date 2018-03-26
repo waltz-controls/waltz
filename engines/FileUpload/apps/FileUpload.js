@@ -40,5 +40,5 @@ include.plugins(
 include(function () { //runs after prior includes are loaded
     include.models();
     include.controllers('FileUpload');
-    include.views('views/FileUpload/initialize', 'views/FileUpload/template-upload', 'views/FileUpload/template-download');
+    include.views('views/FileUpload_controller/initialize', 'views/FileUpload_controller/template-upload', 'views/FileUpload_controller/template-download');
 });

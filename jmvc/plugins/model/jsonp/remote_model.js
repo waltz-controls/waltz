@@ -166,7 +166,7 @@ MVC.Model.JsonP = MVC.Model.extend(
 
             params[this.id] = id;
 
-            this._send_request('destroy',params,cbs);
+            this._send_request('delete',params,cbs);
         },
         _send_request:function(action, params, cbs){
             this._add_standard_params(params, action);

@@ -23,7 +23,7 @@ WelcomeController = MVC.Controller.extend('rows',
             if($.inArray(dataSet.name,welcome.data) > -1) return;
 
             console.log("DataSet["+dataSet.name+"] has been created");
-            var $row = $(new View({url:'views/main/Welcome/dataset_row.ejs'}).render(dataSet));
+            var $row = $(new View({url:'views/pre_experiment_data_collector/Welcome/dataset_row.ejs'}).render(dataSet));
 
             var $welcome = $(welcome.element());
             var $target = $('div.form-box',$welcome);
@@ -49,7 +49,7 @@ WelcomeController = MVC.Controller.extend('rows',
 
             $row.remove();
 
-            var dataset = DataSet.find(name);
+            var dataset = DataSet.find(function(inst){ return inst.name === name})[0];
             dataset.destroy({
                 onComplete   : function () {
                     var welcome = WelcomeStep.find_by_element(MVC.$E('WelcomeStep_frmWelcome'));
@@ -78,7 +78,7 @@ WelcomeController = MVC.Controller.extend('rows',
                     //MdlDialog
                     titel:'Create a new DataSet',
                     header:'Please enter a name:',
-                    view:'views/main/Welcome/create.ejs',
+                    view:'views/pre_experiment_data_collector/Welcome/create.ejs',
                     //model specific fields
                     data:frmWelcome.data,
                     name:null,

@@ -14,8 +14,8 @@ PreExperimentDataCollectorController = MVC.Controller.extend('main',
                 "<div id='loading' title='Loading...'></div>" +
                 "</div>" +
                 "<div id='example-2' style='display: none;' class='wizard'>" +
-                "<div class='header'>" +
-                "</div>" +
+                // "<div class='header'>" +
+                // "</div>" +
                 "<div id='Wizard'></div></div></div>"
             }
         }

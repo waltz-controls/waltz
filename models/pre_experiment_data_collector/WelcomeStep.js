@@ -14,7 +14,7 @@ WelcomeStep = MVC.Model.extend('WelcomeStep',
             help: 'Choose or create a new dataset. When creating a new one make sure that its name is file name compatible.',
             data:[]
         },
-        view: 'views/main/WelcomeStep.ejs',
+        view: 'views/pre_experiment_data_collector/WelcomeStep.ejs',
         create:function(attributes,cbks){
             var instance = this.create_as_existing(attributes);
             instance.refresh(this._clean_callbacks(cbks));
@@ -56,7 +56,7 @@ WelcomeStep = MVC.Model.extend('WelcomeStep',
                     //update UI with values
                     $('form.step').each(function(){
                         var id = WizardStep.element_id_to_id($(this).attr('id'));
-                        var step = WizardStep.find(id);
+                        var step = WizardStep.find(function(inst){ return inst.id === id})[0];
                         if(step != null)
                             step.refresh(data);
                     });

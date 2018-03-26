@@ -9,5 +9,5 @@ include.plugins(
 include(function(){ //runs after prior includes are loaded
 include.models('MdlDialog');
 include.controllers('MdlDialog');
-include.views('views/MdlDialog/init', 'views/MdlDialog/default_model');
+include.views('views/MdlDialog_controller/init', 'views/MdlDialog_controller/default_model');
 });

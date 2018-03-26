@@ -3,11 +3,11 @@ include("platform");
 include.application('PreExperimentDataCollector', '0.1-SNAPSHOT');
 
 ApplicationContext = {
-    domain:'http://localhost:8080/predator'
+    domain:'http://localhost:8080/PreExperimentDataCollector'
 }
 
 include.css(
-    'pre_experiment_data_collector/all', 'pre_experiment_data_collector/validationEngine.jquery'
+    'pre_experiment_data_collector/smoothness/jquery-ui-1.8.16.custom', 'pre_experiment_data_collector/validationEngine.jquery', 'pre_experiment_data_collector/all'
     );
 include.libs(
     'jquery-1.7.1','jquery-ui-1.8.16.custom','jquery.noty-2.2.2.packaged','jquery.validationEngine-2.6.4', 'languages/jquery.validationEngine-en','webtoolkit.base64'

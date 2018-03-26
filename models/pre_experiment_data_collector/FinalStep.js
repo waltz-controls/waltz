@@ -12,7 +12,7 @@ FinalStep = MVC.Model.extend('FinalStep',
         id:'frmFinal',
         help:'This demonstrates all the values from the dataset that were actually downloaded from the server. Please review them carefully. If you find a mistake you can navigate to the corresponding Wizard step and correct the value.'
     },
-    view:'views/main/FinalStep.ejs'
+    view:'views/pre_experiment_data_collector/FinalStep.ejs'
 },
 /* @Prototype */
 {
@@ -31,7 +31,7 @@ FinalStep = MVC.Model.extend('FinalStep',
                 //TODO reuse ViewHelpers#printField
                 var $dataHolder = $(MVC.$E("dataHolder"));
                 var values = [];
-                var view = new View({url:'views/main/final.value.ejs'});
+                var view = new View({url:'views/pre_experiment_data_collector/final.value.ejs'});
                 for(var v in data.attributes())
                     values.push(view.render({
                         fld_id:v,

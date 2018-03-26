@@ -4,7 +4,7 @@
 WizardStep = MVC.Model.JsonP.extend('WizardStep',
 /* @Static */
 {
-find_url: ApplicationContext.domain + "/Meta.json",
+find_all_url: ApplicationContext.domain + "/Meta",
 domain: ApplicationContext.domain,
 attributes: {
     id: "string",
@@ -18,7 +18,7 @@ attributes: {
 default_attributes: {
     values: {}
 },
-view: 'views/main/wizard.step.###.ejs'
+view: 'views/pre_experiment_data_collector/wizard.step.###.ejs'
 },
 /* @Prototype */
 {
@@ -83,7 +83,7 @@ update: function () {
     });
 
     console.log("Updating dataset[" + DataSet.gDataSetName + "]");
-    var dataSet = DataSet.find(DataSet.gDataSetName);
+    var dataSet = DataSet.find(function(inst){ return inst.name === DataSet.gDataSetName})[0];
     dataSet.update_attributes(data, {
         onComplete: function () {
             console.log("Data has been updated successfully!");

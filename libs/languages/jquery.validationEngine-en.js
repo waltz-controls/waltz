@@ -184,7 +184,7 @@
 	            },
                 "duplicateName"     : {
                     "func"     : function (field) {
-                        return (DataSet.find(field.val()) == null);
+                        return (DataSet.find(function(inst){ return inst.name === field.val()}).length === 0);
                     },
                     "alertText": "*  DataSet names must not duplicate"
                 }

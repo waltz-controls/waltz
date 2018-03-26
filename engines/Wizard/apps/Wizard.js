@@ -38,5 +38,5 @@ include.plugins(
 include(function () { //runs after prior includes are loaded
     include.models();
     include.controllers('Wizard');
-    include.views('views/Wizard/initialize');
+    include.views('views/Wizard_controller/initialize');
 });

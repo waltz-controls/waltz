@@ -39,12 +39,12 @@
         }
         var data = MVC.Object.extend({}, field);
         data.values = values;
-        return new View({ url:'views/main/wizard.step.field.ejs' }).render(data,this);
+        return new View({ url:'views/pre_experiment_data_collector/wizard.step.field.ejs' }).render(data,this);
     },
     printForm:function (ndx, form, values) {
         var data = MVC.Object.extend({}, form);
         data.values = values;
-        return new View({ url:'views/main/wizard.step.' + form.type + '.ejs' }).render(data,this);
+        return new View({ url:'views/pre_experiment_data_collector/wizard.step.' + form.type + '.ejs' }).render(data,this);
     },
     isRequired:function (validation) {
         return validation != null && validation.contains('required');
