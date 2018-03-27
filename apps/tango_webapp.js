@@ -33,3 +33,6 @@ include(function () { //runs after prior includes are loaded
         "tango_webapp/setup"
     );
 });
+
+//addons
+include('pre_experiment_data_collector');

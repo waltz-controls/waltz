@@ -1,0 +1,21 @@
+<% for (var i=0, files=data.files, l=files.length, file=files[0]; i<l; file=files[++i]) { %>
+<tr class="template-upload file-row" >
+    <td class="image"></td>
+    <td class="name"><%= file.name %></td>
+    <td class="price-holder">
+        <strong class="price"><%= data.formatFileSize(file.size)%></strong>
+    </td>
+        <% if(file.error) { %>
+    <td class="error">
+        <div style="padding: 0px 0.7em;" class="ui-state-error ui-corner-all">
+            <p><span style="margin-right: 0.3em; float: left;" class="ui-icon ui-icon-alert"></span>
+                <strong>Error:</strong> <%= (fileUploadErrors[file.error] || file.error) %></p>
+        </div>
+    </td>
+        <% } else { %>
+    <td><div class="progressbar"><div style="width:0%;"></div></div></td>
+        <% } %>
+    <td></td>
+</tr>
+<% } %>
+<% $('tr.file-row:odd').addClass('odd'); %>

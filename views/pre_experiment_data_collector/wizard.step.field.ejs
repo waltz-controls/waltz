@@ -1,0 +1,4 @@
+<div class="row">
+    <a title="<%= description %>"><label for="<%= id %>" class="<%= isRequired(validation) ? 'required' : 'normal'%>"><%= name %><%= printAsterisk(validation) %>:</label></a>
+    <%= printInput(type,id,validation,readonly,values) %>
+</div>
