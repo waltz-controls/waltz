@@ -34,7 +34,7 @@ Pass: tango
 ## Requirements ##
 
 * Tango Controls environment (tested on Tango 8 and Tango 9)
-* Tango REST Server that supports API spec version at least rc3 (tested on mtango.server-rc3-0.1)
+* Tango REST Server that supports API spec version rc4 (tested on [mtangorest.server-rc4-2.4](https://bintray.com/ingvord/generic/mtangorest.server/rc4-2.4))
 * Web server that can handle .war files (tested on Apache Tomcat 8)
 
 ## Getting started ##
@@ -54,7 +54,8 @@ This project uses jmvcc for high level build operations:
 
 ```bash
 $> ./jmvcc jmvc/clean
-$> ./jmvcc jmvc/assemble
+$> REST_API_PROTOCOL=[http|https] REST_API_HOST=[localhost] REST_API_PORT=[10001] TANGO_HOST=[localhost] TANGO_PORT=10000 \
+./jmvcc jmvc/assemble
 ```
 
 This requires jjs to be in the $PATH (is shipped with OpenJDK8 and later)
