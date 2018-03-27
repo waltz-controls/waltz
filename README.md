@@ -54,8 +54,9 @@ This project uses jmvcc for high level build operations:
 
 ```bash
 $> ./jmvcc jmvc/clean
-$> REST_API_PROTOCOL=[http|https] REST_API_HOST=[localhost] REST_API_PORT=[10001] TANGO_HOST=[localhost] TANGO_PORT=10000 \
-./jmvcc jmvc/assemble
+$> REST_API_PROTOCOL=[http|https] REST_API_HOST=[localhost] REST_API_PORT=[10001]  \
+   TANGO_HOST=[localhost] TANGO_PORT=10000 \
+   ./jmvcc jmvc/assemble
 ```
 
 This requires jjs to be in the $PATH (is shipped with OpenJDK8 and later)
