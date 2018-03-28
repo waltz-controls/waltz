@@ -2,10 +2,10 @@
 (function () {
     var margins = {
         l: 50,
-            r: 50,
-            b: 50,
-            t: 50,
-            pad: 4
+        r: 50,
+        b: 50,
+        t: 50,
+        pad: 4
     };
 
     /**
@@ -68,13 +68,11 @@
                     margin: margins
                 };
 
-
-                // Plotly.restyle(this.getNode(), 'y', [data]);
-
                 Plotly.extendTraces(this.getNode(), {
                     x: [[new Date(data.timestamp)]],
                     y: [[data.value]]
                 }, [0]);
+                //TODO check if required
                 Plotly.relayout(this.getNode(), layout);
             },
             $init: function (config) {
@@ -86,6 +84,30 @@
                         line: {shape: 'spline'},
                         type: 'scatter'
                     }]);
+                }.bind(this));
+                this.$ready.push(function () {
+                    var node = this.getNode();
+                    webix.ui({
+                        view: "contextmenu",
+                        id: config.id + "_menu",
+                        data: [
+                            "Clear"
+                        ],
+                        master: node, //  ID of a DIV container
+                        on: {
+                            onItemClick: function (id) {
+                                Plotly.deleteTraces(node, 0);
+                                Plotly.addTraces(node, {
+                                    x: [],
+                                    y: []
+                                });
+                                Plotly.relayout(node,
+                                    {
+                                        title: ""
+                                    });
+                            }
+                        }
+                    });
                 }.bind(this));
             }
         }, webix.IdSpace, webix.ui.view);

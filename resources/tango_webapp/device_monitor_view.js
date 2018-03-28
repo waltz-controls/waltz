@@ -52,20 +52,9 @@
                         var item = this.getItem(attrId);
                         var tabId = 'stream-' + item.id;
 
-                        if(!(this.getTopParentView()._monitoredAttributes.hasOwnProperty(tabId))) {
-                            var $$attrsView = this.getTopParentView().$$('attributes-tabview');
-                            $$attrsView.addView({
-                                id: tabId,
-                                header: "Stream " + item.label,
-                                body: TangoWebapp.ui.newScalarView({
-                                    id: "stream-" + attrId,
-                                    value: item.value,
-                                    timestamp: item.timestamp
-                                })
-                            }, 1);
-                            this.getTopParentView()._monitoredAttributes[tabId] = attrId;
-                        }
-                        this.getTopParentView().$$(tabId).show();
+                        this.getTopParentView().addTab(tabId, attrId, item);
+
+
                     }
                 }
             }
@@ -121,6 +110,23 @@
                         }
                     }.bind(this));
                 }.bind(this)).then(this.start.bind(this)).fail(function(){debugger});
+            },
+            addTab:function(tabId, attrId, item){
+                if(!(this._monitoredAttributes.hasOwnProperty(tabId))) {
+                    var $$attrsView = this.getTopParentView().$$('attributes-tabview');
+                    $$attrsView.addView({
+                        id: tabId,
+                        width: 300,
+                        header: "Stream " + item.label,
+                        body: TangoWebapp.ui.newScalarView({
+                            id: "stream-" + attrId,
+                            value: item.value,
+                            timestamp: item.timestamp
+                        })
+                    }, 1);
+                    this._monitoredAttributes[tabId] = attrId;
+                }
+                this.$$(tabId).show();
             },
             update: function (what) {
                 var $$state = this.$$('state');
@@ -212,20 +218,17 @@
                                             {
                                                 view: "button",
                                                 type: "iconButton",
-                                                icon: "cogs",
+                                                icon: "pause",
                                                 width: 36,
                                                 click: function (id, ev) {
                                                     var top = this.getTopParentView();
-                                                    var device = top._device;
-
-                                                    OpenAjax.hub.publish("tango_webapp.device_open", {
-                                                        data: {
-                                                            id: device.id,
-                                                            host_id: device.host.id,
-                                                            name: device.name,
-                                                            tab: 'device-attr-config'
-                                                        }
-                                                    });
+                                                    if(this.config.icon === "pause"){
+                                                        top.stop();
+                                                    } else {
+                                                        top.start();
+                                                    }
+                                                    this.define("icon", this.config.icon === "pause" ? "play" : "pause");
+                                                    this.refresh();
                                                 }
                                             }
                                         ]
@@ -252,6 +255,7 @@
                             view: "tabview",
                             gravity: 4,
                             animate: false,
+                            fitBiggest:true,
                             id: "attributes-tabview",
                             cells: [
                                 scalar_tab()
