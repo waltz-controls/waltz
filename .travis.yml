@@ -13,6 +13,7 @@ after_success:
   - sonar-scanner -Dsonar.projectKey=org.tango-controls:TangoWebapp -Dsonar.sources=. -Dsonar.exclusions=build/**,jmvc/**,docs/**,apps/**
 deploy:
   - provider: releases
+    prerelease: true
     api_key: $GITHUB_OAUTH_TOKEN
     file: "build/distributions/TangoWebapp.war"
     skip_cleanup: true
