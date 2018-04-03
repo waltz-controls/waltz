@@ -52,9 +52,8 @@
                         var item = this.getItem(attrId);
                         var tabId = 'stream-' + item.id;
 
-                        this.getTopParentView().addTab(tabId, attrId, item);
-
-
+                        // this.getTopParentView().addTab(tabId, attrId, item);
+                        this.getTopParentView().handlePlot(attrId, item);
                     }
                 }
             }
@@ -65,6 +64,7 @@
      * @type {webix.protoUI}
      */
     var device_monitor = webix.protoUI({
+            _plottedAttributes: null,
             _monitoredAttributes: null,//this is shared object across all components. In this case it is safe, as keys are unique ids
             loadAttributes: function () {
                 debugger
@@ -111,6 +111,18 @@
                     }.bind(this));
                 }.bind(this)).then(this.start.bind(this)).fail(function(){debugger});
             },
+            handlePlot:function(attrId, item){
+                var $$plot = this.$$('scalar-plot');
+                var indexOf = this._plottedAttributes.indexOf(attrId);
+                if(indexOf === -1) {
+                    $$plot.addTrace(item.label, [item.timestamp], [item.value], this._plottedAttributes.length);
+                    this._plottedAttributes.push(attrId);
+                } else {
+                    $$plot.deleteTrace(indexOf);
+                    this._plottedAttributes =
+                        this._plottedAttributes.splice(indexOf, 1);
+                }
+            },
             addTab:function(tabId, attrId, item){
                 if(!(this._monitoredAttributes.hasOwnProperty(tabId))) {
                     var $$attrsView = this.getTopParentView().$$('attributes-tabview');
@@ -153,9 +165,20 @@
 
                     this._device.fetchAttrValues(attrs).then(function (resp) {
                         resp.forEach(this.update(function (attr) {
-                            if (!this.$$('scalar').$destructed)
+                            if (!this.$$('scalar').$destructed) {
                                 this.$$('scalar').updateItem(attr.name, attr);
+                            }
                         }.bind(this)));
+
+                        var plotted = resp.filter(function(attr){
+                            return this._plottedAttributes.indexOf(attr.name) > -1
+                        }.bind(this));
+                        if(plotted.length === 0) return;
+                        this.$$('scalar-plot').updateTraces(
+                            plotted.map(function(el, ndx){ return ndx;}),
+                            plotted.map(function(el){ return el.timestamp;}),
+                            plotted.map(function(el){ return el.value;})
+                        );
                     }.bind(this));
                 } else {
                     var attr = this._monitoredAttributes[tabId];//TODO get selected tabId
@@ -241,14 +264,25 @@
                             ]
                         },
                         {
-                            view: "fieldset",
-                            label: "Status:",
-                            body: {
-                                view: "textarea",
-                                id: "status",
-                                minHeight: 50,
-                                value: "Device is in UNKNOWN state"
-                            }
+                            cols:[{
+                                view: "fieldset",
+                                label: "Status:",
+                                minHeight: 250,
+                                minWidth: 50,
+                                body: {
+                                    view: "textarea",
+                                    id: "status",
+                                    minHeight: 50,
+                                    value: "Device is in UNKNOWN state"
+                                }
+                            },
+                            {view: "resizer"},
+                                {
+                                    gravity: 4,
+                                    id: 'scalar-plot',
+                                    view: 'scalar'
+                                }
+                            ]
                         },
                         {view: "resizer"},
                         {
@@ -269,6 +303,7 @@
                 webix.extend(config, this._ui(config.device));
 
                 this.$ready.push(function () {
+                    this._plottedAttributes = [];
                     this._monitoredAttributes = {};
 
                     this.loadAttributes();

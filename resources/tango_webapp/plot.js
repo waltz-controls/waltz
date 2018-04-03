@@ -59,21 +59,80 @@
     var scalar_plot = webix.protoUI(
         {
             name: 'scalar',
-            update: function (data) {
-                var layout = {
-                    title: "Data acquired @ " + new Date(data.timestamp),
+            _relayout:function(layout){
+                Plotly.relayout(this.getNode(), layout);
+            },
+            /**
+             *
+             * @param trace name
+             * @param {[]} x x values
+             * @param {[]} y y values
+             * @param {int} ndx
+             */
+            addTrace: function(trace, x, y, ndx){
+                Plotly.addTraces(this.getNode(), {
+                    x: x.map(function(time){ return new Date(time);}),
+                    y: y,
+                    name: trace
+                }, ndx);
+                this._relayout({
                     autosize: false,
                     width: this.$width,
                     height: this.$height,
                     margin: margins
-                };
-
+                });
+            },
+            /**
+             *
+             * @param {int} ndx same as used in addTrace
+             */
+            deleteTrace: function(ndx){
+                Plotly.deleteTraces(this.getNode(), ndx);
+                this._relayout({
+                    autosize: false,
+                    width: this.$width,
+                    height: this.$height,
+                    margin: margins
+                });
+            },
+            /**
+             *
+             * @param {[]} traces an array of traces indices
+             * @param {[]} times
+             * @param {[]} data an array of data arrays
+             */
+            updateTraces:function(traces,times,data){
+                debugger
                 Plotly.extendTraces(this.getNode(), {
-                    x: [[new Date(data.timestamp)]],
+                    x: times.map(function(time){ return [new Date(time)];}),
+                    y: data.map(function(data){ return [data];})
+                }, traces);
+                //TODO check if required
+                this._relayout({
+                    autosize: false,
+                    width: this.$width,
+                    height: this.$height,
+                    margin: margins
+                });
+            },
+            /**
+             *
+             * @param {{timestamp: int, value: data}} data
+             */
+            update: function (data) {
+                var date = new Date(data.timestamp);
+                Plotly.extendTraces(this.getNode(), {
+                    x: [[date]],
                     y: [[data.value]]
                 }, [0]);
                 //TODO check if required
-                Plotly.relayout(this.getNode(), layout);
+                this._relayout({
+                    title: "Data acquired @ " + date,
+                    autosize: false,
+                    width: this.$width,
+                    height: this.$height,
+                    margin: margins
+                });
             },
             $init: function (config) {
                 // webix.extend(config, this._ui(config));
