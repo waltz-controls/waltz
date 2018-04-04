@@ -59,22 +59,26 @@
     var scalar_plot = webix.protoUI(
         {
             name: 'scalar',
-            _relayout:function(layout){
+            _traces: null,
+            _relayout: function (layout) {
                 Plotly.relayout(this.getNode(), layout);
             },
             /**
              *
              * @param trace name
-             * @param {[]} x x values
-             * @param {[]} y y values
+             * @param {[]} x timestamps
+             * @param {[]} y values
              * @param {int} ndx
              */
-            addTrace: function(trace, x, y, ndx){
+            addTrace: function (trace, x, y, ndx) {
                 Plotly.addTraces(this.getNode(), {
-                    x: x.map(function(time){ return new Date(time);}),
+                    x: x.map(function (time) {
+                        return new Date(time);
+                    }),
                     y: y,
                     name: trace
                 }, ndx);
+                this._traces[ndx] = trace;
                 this._relayout({
                     autosize: false,
                     width: this.$width,
@@ -86,8 +90,9 @@
              *
              * @param {int} ndx same as used in addTrace
              */
-            deleteTrace: function(ndx){
-                Plotly.deleteTraces(this.getNode(), ndx);
+            deleteTrace: function (ndx) {
+                Plotly.deleteTraces(this.getNode(), [ndx]);
+                this._traces.splice(ndx,1);
                 this._relayout({
                     autosize: false,
                     width: this.$width,
@@ -101,11 +106,14 @@
              * @param {[]} times
              * @param {[]} data an array of data arrays
              */
-            updateTraces:function(traces,times,data){
-                debugger
+            updateTraces: function (traces, times, data) {
                 Plotly.extendTraces(this.getNode(), {
-                    x: times.map(function(time){ return [new Date(time)];}),
-                    y: data.map(function(data){ return [data];})
+                    x: times.map(function (time) {
+                        return [new Date(time)];
+                    }),
+                    y: data.map(function (data) {
+                        return [data];
+                    })
                 }, traces);
                 //TODO check if required
                 this._relayout({
@@ -134,17 +142,23 @@
                     margin: margins
                 });
             },
+            _newPlot: function (config) {
+                this._traces = [];
+                Plotly.newPlot(this.getNode(), [], {
+                    showlegend: true
+                });
+            },
             $init: function (config) {
                 // webix.extend(config, this._ui(config));
+                this.$ready.push(this._newPlot.bind(this, config));
                 this.$ready.push(function () {
-                    Plotly.newPlot(this.getNode(), [{
-                        x: [],
-                        y: [],
-                        line: {shape: 'spline'},
-                        type: 'scatter'
-                    }]);
+                    if (!config.empty) {
+                        this.addTrace(config.name, [], [], 0);
+                        this.update(config);
+                    }
                 }.bind(this));
                 this.$ready.push(function () {
+                    var self = this;
                     var node = this.getNode();
                     webix.ui({
                         view: "contextmenu",
@@ -155,10 +169,13 @@
                         master: node, //  ID of a DIV container
                         on: {
                             onItemClick: function (id) {
-                                Plotly.deleteTraces(node, 0);
-                                Plotly.addTraces(node, {
-                                    x: [],
-                                    y: []
+                                Plotly.deleteTraces(node, self._traces.map(function(el, ndx){ return ndx;}));
+                                self._traces.forEach(function(trace){
+                                    Plotly.addTraces(node, {
+                                        x: [],
+                                        y: [],
+                                        name : trace
+                                    });
                                 });
                                 Plotly.relayout(node,
                                     {
