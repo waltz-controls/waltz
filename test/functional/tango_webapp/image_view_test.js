@@ -45,5 +45,37 @@ new Test.Functional('test_image_view', {
     test_image_close: function () {
         $$('image-window').close();
         this.assert(true);
+    },
+    test_scalar_open:function(){
+        webix.ui({
+            view: 'window',
+            id: 'scalar-window',
+            fullscreen: true,
+            close: true,
+            body: {
+                id: 'scalar-plot',
+                view: 'scalar',
+                empty: true
+            }
+        }).show();
+    },
+    test_scalar_add_traces:function(){
+        var now = +new Date();
+        $$('scalar-plot').addTrace("trace-1",[now - 1000],[1], 0);
+        $$('scalar-plot').addTrace("trace-2",[now -  750],[2], 1);
+        $$('scalar-plot').addTrace("trace-3",[now -  950],[3], 2);
+    },
+    test_scalar_update_traces:function(){
+        var now = +new Date();
+        $$('scalar-plot').updateTraces([0,1,2],[now, now, now],[3,1,2]);
+    },
+    test_scalar_delete_traces:function(){
+        $$('scalar-plot').deleteTrace(1);
+        var now = +new Date();
+        $$('scalar-plot').updateTraces([0,1],[now, now],[1,2]);
+    },
+    test_scalar_close:function(){
+        $$('scalar-window').close();
+        this.assert(true);
     }
 });
