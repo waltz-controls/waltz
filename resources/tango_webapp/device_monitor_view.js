@@ -43,7 +43,7 @@
                     {id: "value", header: "Value", width: 200},
                     {
                         id: "stream", header: "", width: 30, template: function (obj) {
-                            if(obj._plotted)
+                            if (obj._plotted)
                                 return "<span class='chart webix_icon fa-times-circle-o'></span>";
                             else
                                 return "<span class='chart webix_icon fa-line-chart'></span>";
@@ -163,25 +163,63 @@
                     what(attr);
             }
         },
-        run: function () {
-            //TODO always update plotted attributes
-            var attrs = ['State', 'Status'];
-            var tabId = this.$$('attributes-tabview').getValue();
+        _update: function (tabId) {
             if (tabId === 'scalar') {
-                var pull = this.$$('scalar').data.pull;
-                for (var id in  pull) {
-                    if (!pull.hasOwnProperty(id)) continue;
-                    attrs.push(id);
-                }
-
-                this._device.fetchAttrValues(attrs).then(function (resp) {
+                return function (resp) {
                     resp.forEach(this.update(function (attr) {
                         if (!this.$$('scalar').$destructed) {
                             this.$$('scalar').updateItem(attr.name, attr);
                         }
                     }.bind(this)));
+                }.bind(this);
+            } else {
+                return function (resp) {
+                    resp.forEach(this.update(function (attr) {
+                        if (!this.$$(tabId).$destructed)
+                            this.$$(tabId).update(attr);
+                    }.bind(this)));
 
+                    this._plottedAttributes.forEach(function (el) {
+                        var item = resp.filter(function(el0){
+                            return el0.name === el.name
+                        });
+                        if(item.length === 1) {
+                            el.value = item[0].value;
+                            el.timestamp = item[0].timestamp;
+                        }
+                    });
+                }.bind(this);
+            }
+        },
+        _update_attrs: function (tabId, attrs) {
+            if (tabId === 'scalar') {
+                var pull = this.$$('scalar').data.pull;
+                for (var id in  pull) {
+                    if (!pull.hasOwnProperty(id) || attrs.indexOf(id) > -1) continue;
+                    attrs.push(id);
+                }
+            } else {
+                var attr = this._monitoredAttributes[tabId];//TODO get selected tabId
+                attrs.push(attr);
+            }
+        },
+        run: function () {
+            var attrs = ['State', 'Status'];
+
+            attrs.push.apply(attrs, this._plottedAttributes.map(function (el) {
+                return el.name
+            }));
+
+
+            var tabId = this.$$('attributes-tabview').getValue();
+
+            this._update_attrs(tabId, attrs);
+
+            this._device.fetchAttrValues(attrs)
+                .then(this._update(tabId, attrs))
+                .then(function(){
                     var plotted = this._plottedAttributes;
+
                     if (plotted.length === 0) return;
                     this.$$('scalar-plot').updateTraces(
                         plotted.map(function (el, ndx) {
@@ -193,18 +231,8 @@
                         plotted.map(function (el) {
                             return el.value;
                         })
-                        );
+                    );
                 }.bind(this));
-            } else {
-                var attr = this._monitoredAttributes[tabId];//TODO get selected tabId
-                attrs.push(attr);
-                this._device.fetchAttrValues(attrs).then(function (resp) {
-                    resp.forEach(this.update(function (attr) {
-                        if (!this.$$(tabId).$destructed)
-                            this.$$(tabId).update(attr);
-                    }.bind(this)));
-                }.bind(this));
-            }
         },
         _ui: function (device) {
             var top = this;
