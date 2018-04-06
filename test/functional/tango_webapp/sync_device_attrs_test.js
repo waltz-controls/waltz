@@ -76,6 +76,7 @@ new Test.Functional('sync_device_attrs',{
             }
         }, webix.IdSpace, webix.ui.layout);
 
+
         PlatformContext.rest.fetchHost(TestValues.tango_host)
             .then(function (host) {
                 return host.fetchDevice(TestValues.test_device);
@@ -136,6 +137,6 @@ new Test.Functional('sync_device_attrs',{
         this.assert($$('monitor_window').isVisible());
     },
     test_close: function () {
-        $$('monitor_window').close();
+        $$('monitor_window').destructor();
     }
 });

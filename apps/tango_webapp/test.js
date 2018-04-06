@@ -17,7 +17,8 @@ include.functional_tests(
     'tango_webapp/device_attr_config',
     'tango_webapp/device_logging',
     'tango_webapp/device_monitor',
-    'tango_webapp/sync_device_attrs'
+    'tango_webapp/sync_device_attrs',
+    'tango_webapp/sync_attributes'
 
     // 'device_tree',
     // 'webix_ui'
