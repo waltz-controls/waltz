@@ -111,7 +111,25 @@ new MVC.Test.Functional('sync_attributes', {
         // $$('device1').data.sync(device1.attrs);
         // $$('device2').data.sync(device2.attrs);
         // $$('device3').data.sync(device3.attrs);
-        
+
+        setTimeout(function(){
+            attrs.add(new TangoAttribute({
+                id: '5',
+                name: 'attr 5',
+                device_id: '2'
+            }));
+            attrs.add(new TangoAttribute({
+                id: '6',
+                name: 'attr 6',
+                device_id: '1'
+            }));
+            attrs.add(new TangoAttribute({
+                id: '7',
+                name: 'attr 7',
+                device_id: '3'
+            }));
+        }, 5000);
+
         window.show();
     },
     test_close_simple: function(){
