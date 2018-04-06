@@ -8,6 +8,7 @@
         _command: null,
         synchronize: function (device) {
             TangoWebappHelpers.debug("device[" + device.id + "]." + this._what + ".count=" + device[this._what].count());
+            //TODO move this logic to devices_tree (when user clicks on a device)
             if (!device[this._what].count()) {
                 this.showProgress({
                     type: "icon"

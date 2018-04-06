@@ -247,6 +247,7 @@
 
             this._attr_infos = new webix.DataCollection();
 
+            //TODO sync with device.attrs
             config.device.fetchAttrs().then(function (attrs) {
                 var infos = attrs.map(function (it) {
                     return webix.extend(webix.copy(it.info), {masterId: it.id});

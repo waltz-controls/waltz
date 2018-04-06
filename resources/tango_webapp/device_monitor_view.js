@@ -77,6 +77,7 @@
         _monitoredAttributes: null,//this is shared object across all components. In this case it is safe, as keys are unique ids
         loadAttributes: function () {
             debugger
+            //TODO sync with device.attrs
             // var $$scalar = this.$$('scalar');
             var $$tabview = this.$$('attributes-tabview');
             var attrTabId;
@@ -234,78 +235,80 @@
                     );
                 }.bind(this));
         },
-        _ui: function (device) {
-            var top = this;
-
+        _ui_header:function(device){
             return {
-                rows: [
+                cols: [
                     {
-                        cols: [
-                            {
-                                id: "state",
-                                view: "device_monitor_header",
-                                template: "#alias# [#devname#] -- #value#",
-                                type: "header",
-                                data: {
-                                    devname: device.name,
-                                    alias: device.alias,
-                                    value: "UNKNOWN"
-                                }
-                            },
-                            {
-                                width: 15
-                            },
-                            {
-                                view: "form",
-                                id: "frmUpdateRate",
-                                width: 320,
-                                elements: [{
-                                    cols: [
-                                        {
-                                            view: "text",
-                                            label: "Update rate (ms):",
-                                            labelWidth: 120,
-                                            value: top._delay,
-                                            name: "updateRate",
-                                            validate: webix.rules.isNumber
-                                        },
-                                        {
-                                            view: "button",
-                                            type: "iconButton",
-                                            icon: "check",
-                                            width: 36,
-                                            click: function () {
-                                                var form = this.getFormView();
-                                                if (form.validate()) {
-                                                    top.changeDelay(form.getValues().updateRate);
-                                                }
-                                            }
-                                        },
-                                        {
-                                            view: "button",
-                                            type: "iconButton",
-                                            icon: "pause",
-                                            width: 36,
-                                            click: function (id, ev) {
-                                                var top = this.getTopParentView();
-                                                if (this.config.icon === "pause") {
-                                                    top.stop();
-                                                } else {
-                                                    top.start();
-                                                }
-                                                this.define("icon", this.config.icon === "pause" ? "play" : "pause");
-                                                this.refresh();
-                                            }
+                        id: "state",
+                        view: "device_monitor_header",
+                        template: "#alias# [#devname#] -- #value#",
+                        type: "header",
+                        data: {
+                            devname: device.name,
+                            alias: device.alias,
+                            value: "UNKNOWN"
+                        }
+                    },
+                    {
+                        width: 15
+                    },
+                    {
+                        view: "form",
+                        id: "frmUpdateRate",
+                        width: 320,
+                        elements: [{
+                            cols: [
+                                {
+                                    view: "text",
+                                    label: "Update rate (ms):",
+                                    labelWidth: 120,
+                                    value: top._delay,
+                                    name: "updateRate",
+                                    validate: webix.rules.isNumber
+                                },
+                                {
+                                    view: "button",
+                                    type: "iconButton",
+                                    icon: "check",
+                                    width: 36,
+                                    click: function () {
+                                        var top = this.getTopParentView();
+                                        var form = this.getFormView();
+                                        if (form.validate()) {
+                                            top.changeDelay(form.getValues().updateRate);
                                         }
-                                    ]
+                                    }
+                                },
+                                {
+                                    view: "button",
+                                    type: "iconButton",
+                                    icon: "pause",
+                                    width: 36,
+                                    click: function (id, ev) {
+                                        var top = this.getTopParentView();
+                                        if (this.config.icon === "pause") {
+                                            top.stop();
+                                        } else {
+                                            top.start();
+                                        }
+                                        this.define("icon", this.config.icon === "pause" ? "play" : "pause");
+                                        this.refresh();
+                                    }
                                 }
-                                ]
-                            },
-                            {
-                                width: 10
-                            }
+                            ]
+                        }
                         ]
                     },
+                    {
+                        width: 10
+                    }
+                ]
+            };
+        },
+        _ui: function (device) {
+            return {
+                rows: [
+                    this._ui_header(device),
                     {
                         cols: [{
                             view: "fieldset",
