@@ -68,7 +68,7 @@ TangoWebappPlatform.TangoDevice = MVC.Model.extend('tango_device',
         },
         _sync:function(what, master){
             var id = this.id;
-            this[what].sync(master,function(){
+            this[what].data.sync(master,function(){
                 this.filter(function(obj){
                     return obj.device_id === id;
                 });
@@ -131,7 +131,6 @@ TangoWebappPlatform.TangoDevice = MVC.Model.extend('tango_device',
         fetchAttrs: function () {
             return this.toTangoRestApiRequest().attributes().get()
                 .then(function (resp) {
-                    //create attributes and add them to global attributes storage
                     return TangoAttribute.create_many_as_existing(
                         resp.map(function (it) {
                             return MVC.Object.extend(it, {
@@ -169,7 +168,8 @@ TangoWebappPlatform.TangoDevice = MVC.Model.extend('tango_device',
                 var commands = TangoCommand.create_many_as_existing(
                     resp.map(function (it) {
                         return MVC.Object.extend(it, {
-                            id: this.id + "/" + it.name
+                            id: this.id + "/" + it.name,
+                            device_id: this.id
                         })
                     }.bind(this)));
                 return commands;
@@ -183,7 +183,8 @@ TangoWebappPlatform.TangoDevice = MVC.Model.extend('tango_device',
                 var pipes = TangoPipe.create_many_as_existing(
                     resp.map(function (it) {
                         return MVC.Object.extend(it, {
-                            id: this.id + "/" + it.name
+                            id: this.id + "/" + it.name,
+                            device_id: this.id
                         })
                     }.bind(this)));
                 return pipes;

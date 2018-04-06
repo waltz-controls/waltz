@@ -516,7 +516,7 @@ MVC.Model = MVC.Class.extend(
 
             }
             //if (!(MVC.Array.include(this._properties,property))) this._properties.push(property);
-            else
+            else if(!this.Class.attributes[property])
                 this.Class.add_attribute(property, MVC.Object.guess_type(value));
         },
         _setAssociation  : function (attribute, values) {

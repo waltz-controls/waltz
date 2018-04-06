@@ -428,18 +428,17 @@
         height: 30,
         //TODO align center
         complexData: true,
-        template: '[<span class="webix_strong">#display_name#@#host.id#</span>] exported = #info.exported#',
+        template: '[<span class="webix_strong">#display_name#@#host.id#</span>]',
         on: {
-            onBindApply: function () {
+            onBindApply: function (obj) {
                 var top = this.getTopParentView();
-                var device = this.data;
-                if (!device.id || device.id == 'unknown' || !device.info.exported) {
+                var device = obj;
+                if (!device || !device.id || device.id === undefined || !device.info.exported) {
                     top.disable();
                     return;
                 }
 
                 top.$$('commands').synchronize(device);
-                //TODO rename MVC.Class.attributes to anything
                 top.$$('attrs').synchronize(device);
                 top.$$('pipes').synchronize(device);
                 top.enable();
