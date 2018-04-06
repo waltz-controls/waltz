@@ -6,7 +6,7 @@
 TangoCommand = MVC.Model.extend('tango_command',
     /** @Static */
     {
-
+        store_type: WebixDataCollectionStorage,
         attributes: {
             id: 'string',//host_id/device_id/name
             name: 'string',

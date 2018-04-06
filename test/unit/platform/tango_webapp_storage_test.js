@@ -37,6 +37,9 @@ new MVC.Test.Unit('tango_webapp_storage', {
             attributes: {
                 id: 'string',
                 name: 'string'
+            },
+            default_attributes:{
+                name: undefined
             }
         },{
 
@@ -59,5 +62,13 @@ new MVC.Test.Unit('tango_webapp_storage', {
         item1.destroy();
         this.assert_null(Item.find_one(item1.id));
         this.assert_equal(1, Item.find_all().length);
+
+        Item.create_many_as_existing([
+            { id: 1, name: 'override item 1'},
+            { id: 3, name: 'item 3'}
+        ]);
+
+        this.assert_equal(3, Item.find_all().length);
+        this.assert_equal('override item 1', Item.find_one(item1.id).name);
     }
 });

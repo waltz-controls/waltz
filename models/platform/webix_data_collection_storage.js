@@ -13,7 +13,9 @@ var WebixDataCollectionStorage = MVC.Class.extend(
          */
         init: function (klass) {
             this.storing_class = klass;
-            this._data = new webix.DataCollection();
+            this._data = new webix.DataCollection({
+                defaultData: klass.default_attributes
+            });
         },
         /**
          *
@@ -27,7 +29,10 @@ var WebixDataCollectionStorage = MVC.Class.extend(
          * @param {Object} obj
          */
         create: function (obj) {
-            obj[obj.Class.id] = this._data.add(obj);
+            if(this._data.exists(obj[obj.Class.id]))
+                this.update(obj[obj.Class.id], obj);
+            else
+                obj[obj.Class.id] = this._data.add(obj);
         },
         /**
          * Updates stored instance

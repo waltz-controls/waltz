@@ -503,12 +503,12 @@ MVC.Model = MVC.Class.extend(
 
 
             this[property] = MVC.Array.include(['created_at', 'updated_at'], property) ? MVC.Date.parse(value) : value;
-            if (property == this.Class.id && this[property]) {
+            if (property === this.Class.id && this[property]) {
                 this.is_new_record = this.Class.new_record_func;
                 if (this.Class.store) {
-                    if (!old) {
+                    if (old === undefined) {
                         this.Class.store.create(this);
-                    } else if (old != this[property]) {
+                    } else if (old !== this[property]) {
                         this.Class.store.destroy(old);
                         this.Class.store.create(this);
                     }
