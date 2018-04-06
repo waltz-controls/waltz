@@ -6,6 +6,7 @@
 UserScript = TangoWebapp.UserScript = MVC.Model.extend('user_script',
     /** @Static */
     {
+        store_type: WebixDataCollectionStorage,
         id: 'name',
         attributes:{
             name: 'string',
