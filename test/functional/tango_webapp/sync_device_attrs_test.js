@@ -32,7 +32,6 @@ new Test.Functional('sync_device_attrs',{
                             scheme:{
                                 $update:function(obj){
                                     obj.info.description = obj.description;
-                                    delete obj.description;
                                 },
                                 $save:function(){
                                     debugger
@@ -66,6 +65,10 @@ new Test.Functional('sync_device_attrs',{
                     this.$$('monitor').data.sync(config.attrs);
                     this.$$('panel').data.sync(config.attrs);
                     this.$$('list').data.sync(config.attrs);
+
+                    this.$$('panel').attachEvent("onEditorChange", function(){
+                        debugger
+                    })
 
                     this.$$('form').bind(config.attrs);
                     this.$$('list').attachEvent("onAfterSelect", function(id){  config.attrs.setCursor(id); });

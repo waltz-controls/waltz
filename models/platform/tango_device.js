@@ -87,11 +87,18 @@ TangoWebappPlatform.TangoDevice = MVC.Model.extend('tango_device',
                 attrs: new webix.DataCollection(),
                 commands: new webix.DataCollection(),
                 pipes: new webix.DataCollection(),
-                properties: new webix.DataCollection()
+                properties: new webix.DataCollection(),
+                attr_infos: new webix.DataCollection()
             }));
             this._sync('attrs',TangoAttribute.store._data);
             this._sync('commands',TangoCommand.store._data);
             this._sync('pipes',TangoPipe.store._data);
+            var id = this.id;
+            this.attr_infos.sync(TangoAttributeInfo.store._data, function(){
+                this.filter(function(info){
+                    return info.attr.device_id === id;
+                });
+            });
 
             var sort = function(){
                 this.sort("#name#", "asc", "string");
@@ -117,10 +124,12 @@ TangoWebappPlatform.TangoDevice = MVC.Model.extend('tango_device',
                     }).join('&'));
 
                 return promise_info.then(function (infos) {
-                    for (var i = 0; i < infos.length; ++i)
-                        attributes[i].set_attributes({
-                            info: infos[i]
+                    TangoAttributeInfo.create_many_as_existing(infos.map(function(info, ndx){
+                        return MVC.Object.extend(info, {
+                            attr: attributes[ndx]
                         })
+                    }));
+
                     return attributes;
                 });
             }.bind(this);

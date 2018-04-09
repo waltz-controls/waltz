@@ -18,25 +18,21 @@
             attributes: {
                 id: 'string',//host_id/device_id/name
                 name: 'string',
-                device_id: 'string'
-                //TODO value
+                device_id: 'string',
+                info: 'DataCollection',
+                value: 'any'
             },
-            default_attributes: {}
+            default_attributes: {
+                value: undefined
+            }
         },
         /** @Prototype */
         {
-            _get_device_id: function () {
-                return this.id.substr(0, this.id.lastIndexOf('/'));
-            },
             /**
              * @returns {webix.promise}
              */
             read: function () {
-                var device_id = this._get_device_id();
-
-                var device = PlatformContext.devices.getItem(device_id);
-
-
+                var device = PlatformContext.devices.getItem(this.device_id);
                 return device.fetchAttrValues([this.name]).then(handle_resp);
             },
             /**
@@ -45,9 +41,7 @@
              * @returns {webix.promise}
              */
             write: function (value) {
-                var device_id = this._get_device_id();
-
-                var device = PlatformContext.devices.getItem(device_id);
+                var device = PlatformContext.devices.getItem(this.device_id);
 
                 var values = {};
                 values[this.name] = value;
@@ -59,9 +53,7 @@
              */
             //TODO extract AttributeInfo (aka MVC.Model.JSON) and move this method there
             putInfo: function () {
-                var device_id = this._get_device_id();
-
-                var device = PlatformContext.devices.getItem(device_id);
+                var device = PlatformContext.devices.getItem(this.device_id);
 
                 return device.toTangoRestApiRequest().attributes(this.name).put('/info?async=true', this.info);
             }

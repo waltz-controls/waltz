@@ -144,6 +144,10 @@ MVC.Model = MVC.Class.extend(
             }
         },
         /**
+         * Defines whether non-predefine attributes will be added on fly
+         */
+        dynamic: false,
+        /**
          * Creates an instance of this model from a json string
          *
          * @param {String} json
@@ -516,7 +520,7 @@ MVC.Model = MVC.Class.extend(
 
             }
             //if (!(MVC.Array.include(this._properties,property))) this._properties.push(property);
-            else if(!this.Class.attributes[property])
+            else if(this.Class.dynamic && !this.Class.attributes[property])
                 this.Class.add_attribute(property, MVC.Object.guess_type(value));
         },
         _setAssociation  : function (attribute, values) {
