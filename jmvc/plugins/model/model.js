@@ -144,6 +144,10 @@ MVC.Model = MVC.Class.extend(
             }
         },
         /**
+         * Defines whether non-predefine attributes will be added on fly
+         */
+        dynamic: false,
+        /**
          * Creates an instance of this model from a json string
          *
          * @param {String} json
@@ -170,6 +174,9 @@ MVC.Model = MVC.Class.extend(
             }
             var callbacks = this._clean_callbacks(cbks);
             var attributes = this.store.find_one(id, callbacks);
+            if(attributes != null && attributes.Class){
+                return attributes;
+            }
             if(attributes != null) {
                 var inst = this.create_as_existing(attributes);
                 if (inst) callbacks.onSuccess(inst);
@@ -500,12 +507,12 @@ MVC.Model = MVC.Class.extend(
 
 
             this[property] = MVC.Array.include(['created_at', 'updated_at'], property) ? MVC.Date.parse(value) : value;
-            if (property == this.Class.id && this[property]) {
+            if (property === this.Class.id && this[property]) {
                 this.is_new_record = this.Class.new_record_func;
                 if (this.Class.store) {
-                    if (!old) {
+                    if (old === undefined) {
                         this.Class.store.create(this);
-                    } else if (old != this[property]) {
+                    } else if (old !== this[property]) {
                         this.Class.store.destroy(old);
                         this.Class.store.create(this);
                     }
@@ -513,7 +520,7 @@ MVC.Model = MVC.Class.extend(
 
             }
             //if (!(MVC.Array.include(this._properties,property))) this._properties.push(property);
-            else
+            else if(this.Class.dynamic && !this.Class.attributes[property])
                 this.Class.add_attribute(property, MVC.Object.guess_type(value));
         },
         _setAssociation  : function (attribute, values) {

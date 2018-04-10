@@ -5,6 +5,7 @@
 TangoWebappPlatform.TangoHost = MVC.Model.extend("tango_host",
     /** @Static */
     {
+        store_type: WebixDataCollectionStorage,
         attributes: {
             host: "string",
             port: "number",
@@ -14,9 +15,8 @@ TangoWebappPlatform.TangoHost = MVC.Model.extend("tango_host",
             is_alive: 'boolean'
         },
         default_attributes: {
-            id: 'not selected',
             host: 'unknown',
-            port: 0,
+            port: undefined,
             name: 'unknown',
             info: [],
             is_alive: false
@@ -73,7 +73,7 @@ TangoWebappPlatform.TangoHost = MVC.Model.extend("tango_host",
                         //jmvc fails to set "attributes" due to already existing function in the model
                         delete resp.attributes;
 
-                        var device = new TangoWebappPlatform.TangoDevice(MVC.Object.extend(resp, {
+                        var device = TangoWebappPlatform.TangoDevice.create_as_existing(MVC.Object.extend(resp, {
                             id: this.id + "/" + this.name,
                             name: this.name,
                             host: this
@@ -90,7 +90,6 @@ TangoWebappPlatform.TangoHost = MVC.Model.extend("tango_host",
                         throw resp;
                     }.bind(this)
                 ).then(function (device) {
-                    OpenAjax.hub.publish("tango_webapp.device_loaded", {data: device});//TODO use PlatformContext directly?
                     this.database = new TangoWebappPlatform.TangoDatabase({
                         id: device.id,
                         device: device,

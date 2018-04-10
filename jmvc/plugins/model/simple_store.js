@@ -45,8 +45,11 @@ MVC.Store = MVC.Class.extend(
      */
     find : function(f){
         var instances = [];
+
         for(var id in this._data){
             var inst = this._data[id];
+            if (typeof f !== 'function')
+                return inst;
             if(!f || f(inst))
                 instances.push(inst);
         }

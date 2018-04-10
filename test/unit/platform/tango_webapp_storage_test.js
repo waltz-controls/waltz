@@ -30,5 +30,45 @@ new MVC.Test.Unit('tango_webapp_storage', {
 
         var result = instance.find_one("test-remote");
         this.assert_null(result);
+    },
+    test_webix_data_collection:function(){
+        var Item = MVC.Model.extend("item",{
+            store_type: WebixDataCollectionStorage,
+            attributes: {
+                id: 'string',
+                name: 'string'
+            },
+            default_attributes:{
+                name: undefined
+            }
+        },{
+
+        });
+
+        var item1 = Item.create_as_existing({id:1, name:'item 1'});
+
+        this.assert_not(Item.store.is_empty());
+        this.assert(item1 === Item.find_one(item1.id));
+
+        var item2 = new Item({id: 2, name:'item 2'});
+        this.assert(item2 === Item.find_one(item2.id));
+
+        item1.update_attributes({
+            name: 'new item 1 name'
+        });
+
+        this.assert_equal('new item 1 name', Item.find_one(item1.id).name);
+
+        item1.destroy();
+        this.assert_null(Item.find_one(item1.id));
+        this.assert_equal(1, Item.find_all().length);
+
+        Item.create_many_as_existing([
+            { id: 1, name: 'override item 1'},
+            { id: 3, name: 'item 3'}
+        ]);
+
+        this.assert_equal(3, Item.find_all().length);
+        this.assert_equal('override item 1', Item.find_one(item1.id).name);
     }
 });

@@ -1,9 +1,13 @@
 (function () {
-    var update_attr_info = function (info) {
-        var attr = TangoAttribute.find_one(info.masterId);
-        attr.set_attributes({info: info});
-        var device = PlatformContext.devices.getItem(attr.device_id);
-        device.attrs.updateItem(attr.id, attr);
+    var attribute_name_column = function () {
+        return {
+            id: 'name',
+            header: ["Attribute name", {content: "textFilter"}],
+            width: TangoWebappPlatform.consts.NAME_COLUMN_WIDTH,
+            template: function (obj) {
+                return obj.attr.name;
+            }
+        };
     };
 
     var display_tab_body = {
@@ -11,11 +15,7 @@
         view: "datatable",
         editable: true,
         columns: [
-            {
-                id: 'name',
-                header: "Attribute name",
-                width: TangoWebappPlatform.consts.NAME_COLUMN_WIDTH
-            },
+            attribute_name_column(),
             {
                 id: 'label',
                 header: "Label",
@@ -28,11 +28,7 @@
                 editor: "text",
                 fillspace: true
             }
-        ],
-        scheme: {
-            $update: update_attr_info
-        }
-
+        ]
     };
 
     var unit_tab_body = {
@@ -40,19 +36,11 @@
         view: "datatable",
         editable: true,
         columns: [
-            {
-                id: 'name',
-                header: "Attribute name",
-                width: TangoWebappPlatform.consts.NAME_COLUMN_WIDTH
-            },
+            attribute_name_column(),
             {id: 'unit', header: "Unit", editor: "text"},
             {id: 'display_unit', header: "Display unit", editor: "text"},
             {id: 'standard_unit', header: "Standard unit", editor: "text", fillspace: true}
-        ],
-        scheme: {
-            $update: update_attr_info
-        }
-
+        ]
     };
 
     var range_tab_body = {
@@ -60,17 +48,10 @@
         view: "datatable",
         editable: true,
         columns: [
-            {
-                id: 'name',
-                header: "Attribute name",
-                width: TangoWebappPlatform.consts.NAME_COLUMN_WIDTH
-            },
+            attribute_name_column(),
             {id: 'min_value', header: "Min value", editor: "text"},
             {id: 'max_value', header: "Max value", editor: "text", fillspace: true}
-        ],
-        scheme: {
-            $update: update_attr_info
-        }
+        ]
     };
 
     var alarms_tab_body = {
@@ -78,34 +59,53 @@
         view: "datatable",
         editable: true,
         columns: [
+            attribute_name_column(),
             {
-                id: 'name',
-                header: "Attribute name",
-                width: TangoWebappPlatform.consts.NAME_COLUMN_WIDTH
+                id: 'min_alarm', header: "Min alarm", editor: "text", template: function (obj) {
+                    return obj.alarms.min_alarm;
+                }
             },
-            {id: 'min_alarm', header: "Min alarm", editor: "text"},
-            {id: 'max_alarm', header: "Max alarm", editor: "text"},
-            {id: 'min_warning', header: "Min warning", editor: "text"},
-            {id: 'max_warning', header: "Max warning", editor: "text"},
-            {id: 'delta_t', header: "Delta t", editor: "text"},
-            {id: 'delta_val', header: "Delta val", editor: "text", fillspace: true}
+            {
+                id: 'max_alarm', header: "Max alarm", editor: "text", template: function (obj) {
+                    return obj.alarms.max_alarm;
+                }
+            },
+            {
+                id: 'min_warning', header: "Min warning", editor: "text", template: function (obj) {
+                    return obj.alarms.min_warning;
+                }
+            },
+            {
+                id: 'max_warning', header: "Max warning", editor: "text", template: function (obj) {
+                    return obj.alarms.max_warning;
+                }
+            },
+            {
+                id: 'delta_t', header: "Delta t", editor: "text", template: function (obj) {
+                    return obj.alarms.delta_t;
+                }
+            },
+            {
+                id: 'delta_val', header: "Delta val", editor: "text", fillspace: true, template: function (obj) {
+                    return obj.alarms.delta_val;
+                }
+            }
         ],
         scheme: {
             $update: function (obj) {
-                var attr = TangoAttribute.find_one(obj.masterId);
-                //TODO extract TangoAttributeInfo
-                var info = attr.info;
+                //this method works around webix limitation on editing complex data in a datatable
 
-                info.alarms.min_alarm = obj.min_alarm;
-                info.alarms.max_alarm = obj.max_alarm;
-                info.alarms.min_warning = obj.min_warning;
-                info.alarms.max_warning = obj.max_warning;
-                info.alarms.delta_t = obj.delta_t;
-                info.alarms.delta_val = obj.delta_val;
+                ['min_alarm', 'max_alarm', 'min_warning', 'max_warning', 'delta_t', 'delta_val']
+                .filter(function (el) {
+                    return obj[el];
+                }).forEach(function (el) {
+                    obj.alarms[el] = obj[el];
+                    delete obj[el];
+                });
 
-                attr.set_attributes({info: info});
-                var device = PlatformContext.devices.getItem(attr.device_id);
-                device.attrs.updateItem(attr.id, attr);
+                // obj.update_attributes({
+                //     alarms: obj.alarms
+                // });
             }
         }
     };
@@ -115,16 +115,9 @@
         view: "datatable",
         editable: true,
         columns: [
-            {
-                id: 'name',
-                header: "Attribute name",
-                width: TangoWebappPlatform.consts.NAME_COLUMN_WIDTH
-            },
+            attribute_name_column(),
             {id: 'description', header: "Description", editor: "text", fillspace: true}
-        ],
-        scheme: {
-            $update: update_attr_info
-        }
+        ]
     };
 
     var alias_tab_body = {
@@ -132,11 +125,7 @@
         view: "datatable",
         // editable: true,
         columns: [
-            {
-                id: 'name',
-                header: "Attribute name",
-                width: TangoWebappPlatform.consts.NAME_COLUMN_WIDTH
-            },
+            attribute_name_column(),
             {id: 'alias', header: "Alias", editor: "text", fillspace: true}
         ]
     };
@@ -151,33 +140,18 @@
 
             var device = top._device;
 
-            top.$$alarms.clearAll();
-            device.fetchAttrs().then(function (attrs) {
-                attrs.forEach(function (attr) {
-                    var id = attr.id;
-                    var info = attr.info;
-                    this.$$alarms.add({
-                        masterId: id,
-                        name: info.name,
-                        min_alarm: info.alarms.min_alarm,
-                        max_alarm: info.alarms.max_alarm,
-                        min_warning: info.alarms.min_warning,
-                        max_warning: info.alarms.max_warning,
-                        delta_t: info.alarms.delta_t,
-                        delta_val: info.alarms.delta_val
-                    })
-                }.bind(top));
-            }).then(TangoWebappHelpers.log.bind(null, "Attribute configuration has been refreshed"))
+            device.fetchAttrs()
+                .then(TangoWebappHelpers.log.bind(null, "Attribute configuration has been refreshed"))
                 .fail(TangoWebappHelpers.error);
         },
         apply: function () {
             var top = this.getTopParentView();
 
-            TangoWebappHelpers.iterate(top._device.attrs, function (attr) {
-                attr.putInfo()
-                    .then(TangoWebappHelpers.log.bind(null, "Attribute[" + attr.name + "] configuration has been updated"))
+            TangoWebappHelpers.iterate(top._device.attr_infos, function (info) {
+                info.put()
+                    .then(TangoWebappHelpers.log.bind(null, "Attribute[" + info.attr.name + "] configuration has been updated"))
                     .then(function () {
-                        OpenAjax.hub.publish("tango_webapp.device_view.update_attr_config", {data: attr.info})
+                        OpenAjax.hub.publish("tango_webapp.device_view.update_attr_config", {data: info})
                     })
                     .fail(TangoWebappHelpers.error);
             });
@@ -242,28 +216,21 @@
                 ]
             };
         },
+        _device: null,
         $init: function (config) {
             webix.extend(config, this._ui());
 
-            this._attr_infos = new webix.DataCollection();
-
-            config.device.fetchAttrs().then(function (attrs) {
-                var infos = attrs.map(function (it) {
-                    return webix.extend(webix.copy(it.info), {masterId: it.id});
-                });
-                this._attr_infos.parse(infos);
-            }.bind(this));
+            //TODO sync with device.attrs
+            this._device = config.device;
+            this._device.fetchAttrs();
 
             this.$ready.push(function () {
-                this.$$('display').sync(this._attr_infos);
-                this.$$('unit').sync(this._attr_infos);
-                this.$$('range').sync(this._attr_infos);
-                this.$$('description').sync(this._attr_infos);
-                this.$$('alias').sync(this._attr_infos);
-
-                this.$$alarms = this.$$('alarms');
-
-                this.refresh();
+                this.$$('display').sync(this._device.attr_infos);
+                this.$$('unit').sync(this._device.attr_infos);
+                this.$$('range').sync(this._device.attr_infos);
+                this.$$('description').sync(this._device.attr_infos);
+                this.$$('alias').sync(this._device.attr_infos);
+                this.$$('alarms').sync(this._device.attr_infos);
             }.bind(this));
         },
         name: "device_attr_config"

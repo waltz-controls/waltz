@@ -3,9 +3,10 @@
  *
  * @type {TangoDevice}
  */
-TangoWebappPlatform.TangoDevice = TangoWebappPlatform.DataCollectionWrapper.extend('tango_device',
+TangoWebappPlatform.TangoDevice = MVC.Model.extend('tango_device',
     /** @Static */
     {
+        store_type: WebixDataCollectionStorage,
         attributes: {
             id: 'string', //host_id/name
             name: 'string',
@@ -18,7 +19,6 @@ TangoWebappPlatform.TangoDevice = TangoWebappPlatform.DataCollectionWrapper.exte
         },
         default_attributes: {
             //TODO use not selected as default id or similar - important is that it must be the same as in TangoHost
-            id: 'unknown', //host_id/name
             name: 'unknown',
             alias: 'unknown',
             host: {
@@ -66,9 +66,18 @@ TangoWebappPlatform.TangoDevice = TangoWebappPlatform.DataCollectionWrapper.exte
         set_pipes: function (v) {
             this.pipes = v;
         },
+        _sync:function(what, master){
+            var id = this.id;
+            this[what].data.sync(master,function(){
+                this.filter(function(obj){
+                    return obj.device_id === id;
+                });
+            });
+        },
         /**
          *
          * @param attrs
+         * @constructor
          */
         init: function (attrs) {
             //we can not just set these properties here i.e. this.attrs = ...
@@ -78,8 +87,10 @@ TangoWebappPlatform.TangoDevice = TangoWebappPlatform.DataCollectionWrapper.exte
                 attrs: new webix.DataCollection(),
                 commands: new webix.DataCollection(),
                 pipes: new webix.DataCollection(),
-                properties: new webix.DataCollection()
+                properties: new webix.DataCollection(),
+                attr_infos: new webix.DataCollection()
             }));
+
             var sort = function(){
                 this.sort("#name#", "asc", "string");
             };
@@ -94,6 +105,7 @@ TangoWebappPlatform.TangoDevice = TangoWebappPlatform.DataCollectionWrapper.exte
          */
         _attach_attrs_info: function () {
             return function (attributes) {
+                var self = this;
                 var attr_names = attributes.map(function (it) {
                     return it.name;
                 });
@@ -104,10 +116,12 @@ TangoWebappPlatform.TangoDevice = TangoWebappPlatform.DataCollectionWrapper.exte
                     }).join('&'));
 
                 return promise_info.then(function (infos) {
-                    for (var i = 0; i < infos.length; ++i)
-                        attributes[i].set_attributes({
-                            info: infos[i]
+                    var result = TangoAttributeInfo.create_many_as_existing(infos.map(function(info, ndx){
+                        return MVC.Object.extend(info, {
+                            attr: attributes[ndx]
                         })
+                    }));
+                    self.attr_infos.parse(result);
                     return attributes;
                 });
             }.bind(this);
@@ -118,19 +132,17 @@ TangoWebappPlatform.TangoDevice = TangoWebappPlatform.DataCollectionWrapper.exte
         fetchAttrs: function () {
             return this.toTangoRestApiRequest().attributes().get()
                 .then(function (resp) {
-                    return TangoAttribute.create_many_as_existing(
+                    var attrs= TangoAttribute.create_many_as_existing(
                         resp.map(function (it) {
                             return MVC.Object.extend(it, {
                                 id: this.id + "/" + it.name,
                                 device_id: this.id
                             })
                         }.bind(this)));
+                    this.attrs.parse(attrs);
+                    return attrs;
                 }.bind(this))
                 .then(this._attach_attrs_info())
-                .then(function (attributes) {
-                    this.attrs.parse(attributes);
-                    return attributes;
-                }.bind(this))
                 .fail(function (resp) {
                     TangoWebappHelpers.error(resp);
                     throw resp;
@@ -159,7 +171,8 @@ TangoWebappPlatform.TangoDevice = TangoWebappPlatform.DataCollectionWrapper.exte
                 var commands = TangoCommand.create_many_as_existing(
                     resp.map(function (it) {
                         return MVC.Object.extend(it, {
-                            id: this.id + "/" + it.name
+                            id: this.id + "/" + it.name,
+                            device_id: this.id
                         })
                     }.bind(this)));
                 this.commands.parse(commands);
@@ -174,7 +187,8 @@ TangoWebappPlatform.TangoDevice = TangoWebappPlatform.DataCollectionWrapper.exte
                 var pipes = TangoPipe.create_many_as_existing(
                     resp.map(function (it) {
                         return MVC.Object.extend(it, {
-                            id: this.id + "/" + it.name
+                            id: this.id + "/" + it.name,
+                            device_id: this.id
                         })
                     }.bind(this)));
                 this.pipes.parse(pipes);

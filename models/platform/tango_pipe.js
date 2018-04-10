@@ -6,10 +6,10 @@
 TangoPipe = MVC.Model.extend('tango_pipe',
     /** @Static */
     {
-
         attributes: {
             id: 'string', //host_id/device_id/name
-            name: 'string'
+            name: 'string',
+            device_id: 'string'
         },
         default_attributes: {}
     },
@@ -22,9 +22,7 @@ TangoPipe = MVC.Model.extend('tango_pipe',
          * @returns {webix.promise}
          */
         read: function () {
-            var device_id = this._get_device_id();
-
-            var device = PlatformContext.devices.getItem(device_id);
+            var device = PlatformContext.devices.getItem(this.device_id);
 
             return device.readPipe(this.name);
         },
@@ -34,9 +32,7 @@ TangoPipe = MVC.Model.extend('tango_pipe',
          * @returns {webix.promise}
          */
         write: function (value) {
-            var device_id = this._get_device_id();
-
-            var device = PlatformContext.devices.getItem(device_id);
+            var device = PlatformContext.devices.getItem(this.device_id);
 
             return device.writePipe(this.name, value);
         }
