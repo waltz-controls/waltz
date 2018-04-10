@@ -6,7 +6,6 @@
 TangoAttributeInfo = MVC.Model.extend('tango_attribute_info',
     /* @Static */
     {
-        store_type: WebixDataCollectionStorage,
         dynamic: true,
         attributes: {
             id:'string'//attr_id/info

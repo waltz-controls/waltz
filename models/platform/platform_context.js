@@ -56,9 +56,6 @@ TangoWebappPlatform.PlatformContext = MVC.Model.extend('platform_context',
         rest: null,
         tango_hosts: null,
         devices: null,
-        attrs: null,
-        commands: null,
-        pipes: null,
         /**
          *
          * @param {UserContext} v
@@ -97,9 +94,6 @@ TangoWebappPlatform.PlatformContext = MVC.Model.extend('platform_context',
         init: function (attrs) {
             this.tango_hosts = TangoHost.store._data;
             this.devices = TangoDevice.store._data;
-            this.attrs = TangoAttribute.store._data;
-            this.commands = TangoCommand.store._data;
-            this.pipes = TangoPipe.store._data;
 
             this._super(attrs);//calls set_rest
         },
@@ -113,9 +107,6 @@ TangoWebappPlatform.PlatformContext = MVC.Model.extend('platform_context',
             this.UserContext.save();
             this.tango_hosts.store.clear();
             this.devices.store.clear();
-            this.attrs.store.clear();
-            this.commands.store.clear();
-            this.pipes.store.clear();
             PlatformContext = null;
         }
     }

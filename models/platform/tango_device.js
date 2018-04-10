@@ -90,15 +90,6 @@ TangoWebappPlatform.TangoDevice = MVC.Model.extend('tango_device',
                 properties: new webix.DataCollection(),
                 attr_infos: new webix.DataCollection()
             }));
-            this._sync('attrs',TangoAttribute.store._data);
-            this._sync('commands',TangoCommand.store._data);
-            this._sync('pipes',TangoPipe.store._data);
-            var id = this.id;
-            this.attr_infos.sync(TangoAttributeInfo.store._data, function(){
-                this.filter(function(info){
-                    return info.attr.device_id === id;
-                });
-            });
 
             var sort = function(){
                 this.sort("#name#", "asc", "string");
@@ -114,6 +105,7 @@ TangoWebappPlatform.TangoDevice = MVC.Model.extend('tango_device',
          */
         _attach_attrs_info: function () {
             return function (attributes) {
+                var self = this;
                 var attr_names = attributes.map(function (it) {
                     return it.name;
                 });
@@ -124,12 +116,12 @@ TangoWebappPlatform.TangoDevice = MVC.Model.extend('tango_device',
                     }).join('&'));
 
                 return promise_info.then(function (infos) {
-                    TangoAttributeInfo.create_many_as_existing(infos.map(function(info, ndx){
+                    var result = TangoAttributeInfo.create_many_as_existing(infos.map(function(info, ndx){
                         return MVC.Object.extend(info, {
                             attr: attributes[ndx]
                         })
                     }));
-
+                    self.attr_infos.parse(result);
                     return attributes;
                 });
             }.bind(this);
@@ -140,13 +132,15 @@ TangoWebappPlatform.TangoDevice = MVC.Model.extend('tango_device',
         fetchAttrs: function () {
             return this.toTangoRestApiRequest().attributes().get()
                 .then(function (resp) {
-                    return TangoAttribute.create_many_as_existing(
+                    var attrs= TangoAttribute.create_many_as_existing(
                         resp.map(function (it) {
                             return MVC.Object.extend(it, {
                                 id: this.id + "/" + it.name,
                                 device_id: this.id
                             })
                         }.bind(this)));
+                    this.attrs.parse(attrs);
+                    return attrs;
                 }.bind(this))
                 .then(this._attach_attrs_info())
                 .fail(function (resp) {
@@ -181,6 +175,7 @@ TangoWebappPlatform.TangoDevice = MVC.Model.extend('tango_device',
                             device_id: this.id
                         })
                     }.bind(this)));
+                this.commands.parse(commands);
                 return commands;
             }.bind(this));
         },
@@ -196,6 +191,7 @@ TangoWebappPlatform.TangoDevice = MVC.Model.extend('tango_device',
                             device_id: this.id
                         })
                     }.bind(this)));
+                this.pipes.parse(pipes);
                 return pipes;
             }.bind(this));
         },

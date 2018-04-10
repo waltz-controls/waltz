@@ -6,7 +6,6 @@
 TangoPipe = MVC.Model.extend('tango_pipe',
     /** @Static */
     {
-        store_type: WebixDataCollectionStorage,
         attributes: {
             id: 'string', //host_id/device_id/name
             name: 'string',

@@ -14,7 +14,6 @@
     TangoAttribute = MVC.Model.extend('tango_attribute',
         /** @Static */
         {
-            store_type: WebixDataCollectionStorage,
             attributes: {
                 id: 'string',//host_id/device_id/name
                 name: 'string',
@@ -51,7 +50,6 @@
              *
              * @returns {*|webix.promise}
              */
-            //TODO extract AttributeInfo (aka MVC.Model.JSON) and move this method there
             putInfo: function () {
                 var device = PlatformContext.devices.getItem(this.device_id);
 
