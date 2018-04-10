@@ -232,7 +232,6 @@ MVC.Model = MVC.Class.extend(
             var inst = this.find(id);
             if (!inst) throw "Instance[id=" + id + "] was not found!";
             var callbacks = this._clean_callbacks(cbks);
-            this.store.update(id,attributes);
             this.publish("update", {data: inst});
             callbacks.onSuccess(inst);
         },

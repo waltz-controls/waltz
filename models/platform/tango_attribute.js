@@ -20,31 +20,20 @@
                 name: 'string',
                 device_id: 'string',
                 info: 'DataCollection',
-                value: 'object'
+                value: 'any'
             },
             default_attributes: {
+                value: undefined
             }
         },
         /** @Prototype */
         {
-            init:function(attrs){
-                this._super(attrs);
-                this.value = {
-                    value: undefined,
-                    quality: undefined,
-                    timestamp: undefined
-                }
-            },
             /**
              * @returns {webix.promise}
              */
             read: function () {
                 var device = PlatformContext.devices.getItem(this.device_id);
-                return device.fetchAttrValues([this.name]).then(function(resp){
-                    this.update_attributes({
-                        value: resp[0]
-                    })
-                }.bind(this));
+                return device.fetchAttrValues([this.name]).then(handle_resp);
             },
             /**
              *

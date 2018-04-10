@@ -156,27 +156,14 @@ TangoWebappPlatform.TangoDevice = MVC.Model.extend('tango_device',
         },
         /**
          *
-         * @param {[]} attrs attribute's names
+         * @param attrs
          * @returns {Promise}
          */
         fetchAttrValues: function (attrs) {
             return this.toTangoRestApiRequest().attributes('value')
                 .get('?' + attrs.map(function (attr) {
                     return "attr=" + attr
-                }).join('&'))
-                .then(function(resp){
-                    //TODO replace with something more fancy
-                    var map = resp.map(function(val){
-                        return this.attrs.find(function(attr){
-                            return attr.name === val.name;
-                        })
-                    }.bind(this));
-                    map.forEach(function(attr, ndx){
-                        attr[0].Class.store._data.updateItem(attr[0].id, { value: resp[ndx]});
-                    });
-                    //TODO send event
-                }.bind(this))
-                .fail(function (resp) {
+                }).join('&')).fail(function (resp) {
                     TangoWebappHelpers.error(resp);
                     throw resp;
                 });

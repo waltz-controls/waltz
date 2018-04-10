@@ -35,14 +35,12 @@
                 },
                 columns: [
                     {
-                        id: "name",
+                        id: "label",
                         header: ["Name", {content: "textFilter"}],
                         width: TangoWebappPlatform.consts.NAME_COLUMN_WIDTH,
                         sort: "string"
                     },
-                    {id: "value", header: "Value", width: 200, template:function(obj){
-                            return obj.value.value;
-                        }},
+                    {id: "value", header: "Value", width: 200},
                     {
                         id: "stream", header: "", width: 30, template: function (obj) {
                             if (obj._plotted)
@@ -51,15 +49,9 @@
                                 return "<span class='chart webix_icon fa-line-chart'></span>";
                         }
                     },
-                    {id: "quality", header: "Quality", width: 100, sort: "string", template:function(obj){
-                            return obj.value.quality;
-                        }},
-                    {id: "unit", header: "Unit", width: TangoWebappPlatform.consts.NAME_COLUMN_WIDTH, template:function(obj){
-                        return obj.info.unit;
-                        }},
-                    {id: "description", header: "Description", fillspace: true, template:function(obj){
-                            return obj.info.description;
-                        }}
+                    {id: "quality", header: "Quality", width: 100, sort: "string"},
+                    {id: "unit", header: "Unit", width: TangoWebappPlatform.consts.NAME_COLUMN_WIDTH},
+                    {id: "description", header: "Description", fillspace: true}
                 ],
                 onClick: {
                     "chart": function (event, id) {
@@ -90,28 +82,21 @@
             var $$tabview = this.$$('attributes-tabview');
             var attrTabId;
             this._device.fetchAttrs().then(function (attrs) {
-                this.$$('scalar').sync(this._device.attrs, function(){
-                    this.filter(function(attr){
-                        return attr.info.data_format === 'SCALAR'
-                            && !(attr.name === 'State' || attr.name === 'Status');
-                    });
-                });
-
                 attrs.map(function (it) {
                     return it.info;
                 }).forEach(function (attrInfo, ndx) {
                     switch (attrInfo.data_format) {
                         case "SCALAR":
                             //skip State&Status as they handled differently
-                            // if (attrInfo.name === 'State' || attrInfo.name === 'Status') return;
-                            // this.$$('scalar').add({
-                            //     id: attrInfo.name,
-                            //     label: attrInfo.label,
-                            //     value: "N/A",
-                            //     quality: "N/A",
-                            //     unit: attrInfo.unit,
-                            //     description: attrInfo.description
-                            // });
+                            if (attrInfo.name === 'State' || attrInfo.name === 'Status') return;
+                            this.$$('scalar').add({
+                                id: attrInfo.name,
+                                label: attrInfo.label,
+                                value: "N/A",
+                                quality: "N/A",
+                                unit: attrInfo.unit,
+                                description: attrInfo.description
+                            });
                             // this.$$('scalar').refresh(attrInfo.name);
                             //TODO save attr list item id for future updates
                             break;
@@ -180,7 +165,15 @@
             }
         },
         _update: function (tabId) {
-            if (tabId !== 'scalar') {
+            if (tabId === 'scalar') {
+                return function (resp) {
+                    resp.forEach(this.update(function (attr) {
+                        if (!this.$$('scalar').$destructed) {
+                            this.$$('scalar').updateItem(attr.name, attr);
+                        }
+                    }.bind(this)));
+                }.bind(this);
+            } else {
                 return function (resp) {
                     resp.forEach(this.update(function (attr) {
                         if (!this.$$(tabId).$destructed)
@@ -201,9 +194,11 @@
         },
         _update_attrs: function (tabId, attrs) {
             if (tabId === 'scalar') {
-                TangoWebappHelpers.iterate(this.$$('scalar').data, function(attr){
-                    if(attrs.indexOf(attr.name) === -1) attrs.push(attr.name);
-                })
+                var pull = this.$$('scalar').data.pull;
+                for (var id in  pull) {
+                    if (!pull.hasOwnProperty(id) || attrs.indexOf(id) > -1) continue;
+                    attrs.push(id);
+                }
             } else {
                 var attr = this._monitoredAttributes[tabId];//TODO get selected tabId
                 attrs.push(attr);
@@ -357,8 +352,6 @@
             this.$ready.push(function () {
                 this._plottedAttributes = [];
                 this._monitoredAttributes = {};
-
-
 
                 this.loadAttributes();
             }.bind(this));
