@@ -11,6 +11,7 @@ include('../../test/setup');
 include.functional_tests(
     'tango_webapp/image_view',
     'tango_webapp/device_panel',
+    'tango_webapp/device_tree',
     'tango_webapp/device_properties',
     'tango_webapp/device_polling',
     'tango_webapp/device_events',

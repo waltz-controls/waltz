@@ -1,7 +1,7 @@
 TangoWebapp.ui = {
     _webix_files: [
         "dashboard",
-        "devices_tree",
+        "devices_tree","device_tree",
         "plot", "test_device_panel",
         "device_view", "device_properties_view", "device_polling_view", "device_events_view",
         "device_attributes_config_view", "device_logging_view",

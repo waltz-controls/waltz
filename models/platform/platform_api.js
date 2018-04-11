@@ -31,7 +31,10 @@ TangoWebappPlatform.PlatformApi = MVC.Model.extend('platform_api',
          *
          * @return {UserContextController}
          */
-        user_context_controller:function(){
+        UserContextController:function(){
             return new TangoWebappPlatform.UserContextController(this.user_context());
+        },
+        PlatformUIController:function(){
+            return new TangoWebappPlatform.UIController();
         }
     });

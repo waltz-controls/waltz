@@ -18,11 +18,11 @@ TangoWebappPlatform.TangoDevice = TangoWebappPlatform.DataCollectionWrapper.exte
         },
         default_attributes: {
             //TODO use not selected as default id or similar - important is that it must be the same as in TangoHost
-            id: 'unknown', //host_id/name
-            name: 'unknown',
-            alias: 'unknown',
+            id: undefined, //host_id/name
+            name: undefined,
+            alias: undefined,
             host: {
-                id: 'unknown'
+                id: undefined
             },
             info: {}
         }

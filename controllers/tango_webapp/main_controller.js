@@ -13,11 +13,20 @@ TangoWebapp.MainController = MVC.Controller.extend('main', {
     buildUI: function (platform_api) {
         var ui_builder = platform_api.ui_builder;
 
-        ui_builder.set_left_item({
+        ui_builder.add_left_sidebar_item({
             header: "<span class='webix_icon fa-sitemap'></span> Devices",
             body: {
                 context: platform_api.context,
                 view: 'devices_tree'
+            }
+        });
+
+        ui_builder.add_left_sidebar_item({
+            header: "<span class='webix_icon fa-microchip'></span> Device",
+            id:'device_tree',
+            body: {
+                context: platform_api.context,
+                view: 'device_tree'
             }
         });
 

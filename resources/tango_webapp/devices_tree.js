@@ -225,9 +225,37 @@
             on: {
                 onBeforeContextMenu: function (id, e, node) {
                     var item = this.getItem(id);
-                    return item.$level == 5;//member
+                    if(item.$level === 5) {
+                        this.select(id);
+                        return true;//member
+                    }
+                    return false;
                 },
-                onItemClick: function (id, e, node) {
+                onItemDblClick:function(id){
+                    var item = this.getItem(id);
+                    if (!item) return false;//TODO or true
+
+                    var tango_host_id;
+                    var tango_host;
+                    var device_name;
+                    switch (item.$level) {
+                        case 5://member
+                            tango_host_id = this._get_host_id(item);
+                            device_name = this._get_device_name(item);
+
+                            PlatformApi.PlatformUIController().expandDeviceTree();
+                            break;
+                        default:
+                            TangoWebappHelpers.debug("device_tree#onItemDblClick " + id);
+                    }
+                },
+                /**
+                 * Happens before click events
+                 *
+                 * @param id
+                 * @return {boolean}
+                 */
+                onAfterSelect: function(id){
                     var item = this.getItem(id);
                     if (!item) return false;//TODO or true
 
@@ -255,6 +283,7 @@
                         default:
                             TangoWebappHelpers.debug("device_tree#clickOnItem " + id);
                     }
+
                 },
                 onDataRequest: function (id, cbk, url) {
                     var item = this.getItem(id);
