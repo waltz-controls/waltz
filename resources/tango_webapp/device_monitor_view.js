@@ -26,6 +26,9 @@
                 resizeColumn: true,
                 id: "scalar",
                 scheme: {
+                    value: 'N/A',
+                    quality: 'N/A',
+                    timestamp: 'N/A',
                     $update: function (item) {
                         if (item.quality === 'FAILURE') item.$css = {"background-color": "red"};
                         else if (item.quality === 'ATTR_ALARM' || item.quality === 'ATTR_INVALID') item.$css = {"background-color": "lightcoral"};
@@ -49,8 +52,12 @@
                                 return "<span class='chart webix_icon fa-line-chart'></span>";
                         }
                     },
-                    {id: "quality", header: "Quality", width: 100, sort: "string"},
-                    {id: "unit", header: "Unit", width: TangoWebappPlatform.consts.NAME_COLUMN_WIDTH},
+                    {id: "quality", header: "Quality", width: 180, sort: "string"},
+                    {id: "timestamp", header: "Last updated", width: 180, template: function (obj) {
+                            return TangoWebappPlatform.consts.LOG_DATE_FORMATTER(new Date(obj.timestamp));
+                        }
+                    },
+                    {id: "unit", header: "Unit", width: 60},
                     {id: "description", header: "Description", fillspace: true}
                 ],
                 onClick: {
@@ -75,50 +82,81 @@
     var device_monitor = webix.protoUI({
         _plottedAttributes: null,
         _monitoredAttributes: null,//this is shared object across all components. In this case it is safe, as keys are unique ids
-        loadAttributes: function () {
-            debugger
-            // var $$scalar = this.$$('scalar');
-            var $$tabview = this.$$('attributes-tabview');
-            var attrTabId;
-            this._device.fetchAttrs().then(function (attrs) {
-                attrs.map(function (it) {
-                    return it.info;
-                }).forEach(function (attrInfo, ndx) {
-                    switch (attrInfo.data_format) {
-                        case "SCALAR":
-                            //skip State&Status as they handled differently
-                            if (attrInfo.name === 'State' || attrInfo.name === 'Status') return;
-                            this.$$('scalar').add({
-                                id: attrInfo.name,
-                                label: attrInfo.label,
-                                value: "N/A",
-                                quality: "N/A",
-                                unit: attrInfo.unit,
-                                description: attrInfo.description
-                            });
-                            // this.$$('scalar').refresh(attrInfo.name);
-                            //TODO save attr list item id for future updates
-                            break;
-                        case "SPECTRUM":
-                            attrTabId = $$tabview.addView({
-                                header: attrInfo.label,
-                                body: TangoWebapp.ui.newSpectrumView(attrs[ndx])
-                            });
-                            this._monitoredAttributes[attrTabId] = attrInfo.name;
-                            break;
-                        case "IMAGE":
-                            attrTabId = $$tabview.addView({
-                                header: attrInfo.label,
-                                body: TangoWebapp.ui.newImageView({
-                                    name: attrInfo.label,
-                                    value: []
-                                })
-                            });
-                            this._monitoredAttributes[attrTabId] = attrInfo.name;
-                            break;
+        _add_scalars: function(scalars){
+            this.$$('scalar').parse(
+                scalars.map(function(scalar){
+                    return {
+                        id: scalar.info.name,
+                        label: scalar.info.label,
+                        unit: scalar.info.unit,
+                        description: scalar.info.description
                     }
-                }.bind(this));
-            }.bind(this)).then(this.start.bind(this)).fail(function () {
+                }));
+            //reshow progress as it is removed by parse
+            this.$$('scalar').showProgress({
+                type: "icon"
+            });
+        },
+        addAttribute: function (attr) {
+            var $$tabview = this.$$('attributes-tabview');
+            switch (attr.info.data_format) {
+                case "SCALAR":
+                    //TODO replace with sync or parse
+                    //skip State&Status as they handled differently
+                    if (attr.info.name === 'State' || attr.info.name === 'Status') return;
+                    this.$$('scalar').add({
+                        id: attr.info.name,
+                        label: attr.info.label,
+                        unit: attr.info.unit,
+                        description: attr.info.description
+                    });
+                    // this.$$('scalar').refresh(attrInfo.name);
+                    //TODO save attr list item id for future updates
+                    break;
+                case "SPECTRUM":
+                    attrTabId = $$tabview.addView({
+                        header: attr.info.label,
+                        body: TangoWebapp.ui.newSpectrumView(attr)
+                    });
+                    this._monitoredAttributes[attrTabId] = attr.info.name;
+                    break;
+                case "IMAGE":
+                    attrTabId = $$tabview.addView({
+                        header: attr.info.label,
+                        body: TangoWebapp.ui.newImageView({
+                            name: attr.info.label,
+                            value: []
+                        })
+                    });
+                    this._monitoredAttributes[attrTabId] = attr.info.name;
+                    break;
+            }
+        },
+        loadAttributes: function (device) {
+            console.time('loadAttributes')
+            //TODO sync with device.attrs
+            return device.fetchAttrs().then(function (attrs) {
+                var scalars = attrs.filter(function(attr){
+                    return attr.info.data_format === 'SCALAR' && !(attr.name === 'State' || attr.name === 'Status');
+                });
+
+                this._add_scalars(scalars);
+
+                var others = attrs.filter(function(el){
+                    return scalars.indexOf(el) < 0;
+                });
+
+                others.forEach(function (attr) {
+                    setTimeout(function () {
+                        console.time('others');
+                        this.addAttribute(attr);
+                        console.timeEnd('others');
+                    }.bind(this), 10);
+                }.bind(this))
+
+                console.timeEnd('loadAttributes');
+            }.bind(this))
+                .fail(function () {
                 debugger
             });
         },
@@ -193,11 +231,9 @@
         },
         _update_attrs: function (tabId, attrs) {
             if (tabId === 'scalar') {
-                var pull = this.$$('scalar').data.pull;
-                for (var id in  pull) {
-                    if (!pull.hasOwnProperty(id) || attrs.indexOf(id) > -1) continue;
-                    attrs.push(id);
-                }
+                TangoWebappHelpers.iterate(this.$$('scalar').data, function (el) {
+                    if (attrs.indexOf(el.id) === -1) attrs.push(el.id);
+                });
             } else {
                 var attr = this._monitoredAttributes[tabId];//TODO get selected tabId
                 attrs.push(attr);
@@ -215,7 +251,7 @@
 
             this._update_attrs(tabId, attrs);
 
-            this._device.fetchAttrValues(attrs)
+            return this._device.fetchAttrValues(attrs)
                 .then(this._update(tabId, attrs))
                 .then(function(){
                     var plotted = this._plottedAttributes;
@@ -234,78 +270,80 @@
                     );
                 }.bind(this));
         },
-        _ui: function (device) {
-            var top = this;
-
+        _ui_header: function (device) {
             return {
-                rows: [
+                cols: [
                     {
-                        cols: [
-                            {
-                                id: "state",
-                                view: "device_monitor_header",
-                                template: "#alias# [#devname#] -- #value#",
-                                type: "header",
-                                data: {
-                                    devname: device.name,
-                                    alias: device.alias,
-                                    value: "UNKNOWN"
-                                }
-                            },
-                            {
-                                width: 15
-                            },
-                            {
-                                view: "form",
-                                id: "frmUpdateRate",
-                                width: 320,
-                                elements: [{
-                                    cols: [
-                                        {
-                                            view: "text",
-                                            label: "Update rate (ms):",
-                                            labelWidth: 120,
-                                            value: top._delay,
-                                            name: "updateRate",
-                                            validate: webix.rules.isNumber
-                                        },
-                                        {
-                                            view: "button",
-                                            type: "iconButton",
-                                            icon: "check",
-                                            width: 36,
-                                            click: function () {
-                                                var form = this.getFormView();
-                                                if (form.validate()) {
-                                                    top.changeDelay(form.getValues().updateRate);
-                                                }
-                                            }
-                                        },
-                                        {
-                                            view: "button",
-                                            type: "iconButton",
-                                            icon: "pause",
-                                            width: 36,
-                                            click: function (id, ev) {
-                                                var top = this.getTopParentView();
-                                                if (this.config.icon === "pause") {
-                                                    top.stop();
-                                                } else {
-                                                    top.start();
-                                                }
-                                                this.define("icon", this.config.icon === "pause" ? "play" : "pause");
-                                                this.refresh();
-                                            }
+                        id: "state",
+                        view: "device_monitor_header",
+                        template: "#alias# [#devname#] -- #value#",
+                        type: "header",
+                        data: {
+                            devname: device ? device.name : "Custom monitor",
+                            alias: device ? device.alias : "",
+                            value: "UNKNOWN"
+                        }
+                    },
+                    {
+                        width: 15
+                    },
+                    {
+                        view: "form",
+                        id: "frmUpdateRate",
+                        width: 320,
+                        elements: [{
+                            cols: [
+                                {
+                                    view: "text",
+                                    label: "Update rate (ms):",
+                                    labelWidth: 120,
+                                    value: this._delay,
+                                    name: "updateRate",
+                                    validate: webix.rules.isNumber
+                                },
+                                {
+                                    view: "button",
+                                    type: "iconButton",
+                                    icon: "check",
+                                    width: 36,
+                                    click: function () {
+                                        var top = this.getTopParentView();
+                                        var form = this.getFormView();
+                                        if (form.validate()) {
+                                            top.changeDelay(form.getValues().updateRate);
                                         }
-                                    ]
+                                    }
+                                },
+                                {
+                                    view: "button",
+                                    type: "iconButton",
+                                    icon: "pause",
+                                    width: 36,
+                                    click: function (id, ev) {
+                                        var top = this.getTopParentView();
+                                        if (this.config.icon === "pause") {
+                                            top.stop();
+                                        } else {
+                                            top.start();
+                                        }
+                                        this.define("icon", this.config.icon === "pause" ? "play" : "pause");
+                                        this.refresh();
+                                    }
                                 }
-                                ]
-                            },
-                            {
-                                width: 10
-                            }
+                            ]
+                        }
                         ]
                     },
+                    {
+                        width: 10
+                    }
+                ]
+            };
+        },
+        _ui: function (device) {
+            return {
+                rows: [
+                    this._ui_header(device),
                     {
                         cols: [{
                             view: "fieldset",
@@ -350,7 +388,19 @@
                 this._plottedAttributes = [];
                 this._monitoredAttributes = {};
 
-                this.loadAttributes();
+                webix.extend(this.$$('scalar'),webix.ProgressBar);
+                this.$$('scalar').showProgress({
+                    type: "icon"
+                });
+
+                this.loadAttributes(config.device)
+                    .then(function () {
+                        this.start();
+                        return this.run();
+                    }.bind(this))
+                    .then(function () {
+                        this.$$('scalar').hideProgress();
+                    }.bind(this));
             }.bind(this));
 
             // this.$ready.push(this.start.mvc_bind(this));
