@@ -49,7 +49,7 @@ UIBuilder = MVC.Model.extend('ui_builder',
                 return {
                     header: '<span class="webix_icon fa-bars"></span>',
                     width: 300,
-                    collapsed: true,
+                    // collapsed: true,
                     body: {
                         view: "accordion",
                         rows: this._ui[what].map(function (el, ndx) {
