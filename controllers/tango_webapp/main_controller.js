@@ -28,6 +28,20 @@ TangoWebapp.MainController = MVC.Controller.extend('main', {
         ui_builder.add_mainview_item(
             {
                 header: "<span class='webix_icon fa-dashboard'></span> Dashboard",
+                borderless: true,
+                body: {
+                    id: 'configurable_monitor',
+                    view: "device_monitor",
+                    device: {
+                        name: '',
+                        alias: ''
+                    }
+                }
+            });
+
+        ui_builder.add_mainview_item(
+            {
+                header: "<span class='webix_icon fa-gears'></span> Settings",
                 body: {
                     id: 'dashboard',
                     view: "dashboard"
@@ -100,5 +114,11 @@ TangoWebapp.MainController = MVC.Controller.extend('main', {
         }).then(function () {
             $$('devices-tree').updateRoot();
         }).fail(TangoWebappHelpers.error);
+    },
+    "tango_webapp.attr_add_to_monitor subscribe": function(event){
+        var attr = event.data;
+        var $$monitor = $$('configurable_monitor');
+        $$monitor.addAttribute(attr);
+        if(!$$monitor.isRunning()) $$monitor.start();
     }
 });

@@ -53,6 +53,9 @@ TangoWebappPlatform.mixin = {
                     this.run();
             }.bind(this), this._delay);
         },
+        isRunning:function(){
+            return this._intervalId !== 0;
+        },
         changeDelay: function (delay) {
             this._delay = delay;
             this.stop();
@@ -60,6 +63,7 @@ TangoWebappPlatform.mixin = {
         },
         stop: function () {
             clearInterval(this._intervalId);
+            this._intervalId = 0;
         }
     }
 };

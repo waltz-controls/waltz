@@ -279,8 +279,8 @@
                         template: "#alias# [#devname#] -- #value#",
                         type: "header",
                         data: {
-                            devname: device ? device.name : "Custom monitor",
-                            alias: device ? device.alias : "",
+                            devname: device.name,
+                            alias: device.alias,
                             value: "UNKNOWN"
                         }
                     },
@@ -393,6 +393,7 @@
                     type: "icon"
                 });
 
+                if(config.device.id !== undefined)
                 this.loadAttributes(config.device)
                     .then(function () {
                         this.start();

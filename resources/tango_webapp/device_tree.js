@@ -8,17 +8,17 @@
     var context_menu = {
         view: "contextmenu",
         //autoheight: true,
+        id: 'attrs-menu',
         data: [
             {id: 'add_to_monitor', value: 'Add to monitor'}
         ],
         on: {
             onItemClick: function (id) {
-                var tree = this.getContext().obj;
+                var tree = this.config.master;
                 var item = tree.getItem(this.getContext().id);
+                var parent = tree.getItem(item.$parent);
                 OpenAjax.hub.publish("tango_webapp.attr_" + id, {
-                    data: {
-                        id: item.id
-                    }
+                    data: parent.values.getItem(item.id)
                 });
             }
         }
@@ -59,6 +59,7 @@
                     //TODO API
                     if(this.getItem(id).$parent === 'attrs'){
                         this.select(id);
+                        this.$$("attrs-menu").config.master = this;
                         return true;
                     }
                     return false;
