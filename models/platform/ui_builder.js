@@ -63,6 +63,7 @@ UIBuilder = MVC.Model.extend('ui_builder',
         },
         build: function () {
             var ui = {
+                view: 'accordion',
                 id: 'ui',
                 multi: true,
                 cols: []
