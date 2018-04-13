@@ -5,6 +5,25 @@
 (function () {
     var header = "<span class='webix_icon fa-microchip'></span> Device: ";
 
+    var context_menu = {
+        view: "contextmenu",
+        //autoheight: true,
+        data: [
+            {id: 'add_to_monitor', value: 'Add to monitor'}
+        ],
+        on: {
+            onItemClick: function (id) {
+                var tree = this.getContext().obj;
+                var item = tree.getItem(this.getContext().id);
+                OpenAjax.hub.publish("tango_webapp.attr_" + id, {
+                    data: {
+                        id: item.id
+                    }
+                });
+            }
+        }
+    };
+
     /**
      * @type {webix.protoUI}
      */
@@ -15,6 +34,7 @@
                 this.bind(config.context.devices)
             }.bind(this));
 
+            webix.ui(context_menu).attachTo(this);
         },
         _update_header: function (device) {
             $$("device_tree").config.header = webix.template(function () {
@@ -25,6 +45,23 @@
         defaults: {
             select: true,
             on: {
+                onAfterSelect:function(id){
+                    if(id === 'Attrs' || id === 'Commands' || id === 'Pipes') return;
+                    OpenAjax.hub.publish("tango_webapp.item_selected", {
+                        data: {
+                            id: id,
+                            values: this.getItem(this.getItem(id).$parent).values
+                        }
+                    });
+                },
+                onBeforeContextMenu: function(id){
+                    //TODO API
+                    if(this.getItem(id).$parent === 'Attrs'){
+                        this.select(id);
+                        return true;
+                    }
+                    return false;
+                },
                 onBindApply: function (obj) {
                     if (obj.id === undefined) return false;
 
@@ -39,19 +76,22 @@
                                 id: 'Attrs',
                                 value: 'attributes',
                                 webix_kids: true,
-                                device: obj
+                                device: obj,
+                                values: obj.attrs
                             },
                             {
                                 id: 'Commands',
                                 value: 'commands',
                                 webix_kids: true,
-                                device: obj
+                                device: obj,
+                                values: obj.commands
                             },
                             {
                                 id: 'Pipes',
                                 value: 'pipes',
                                 webix_kids: true,
-                                device: obj
+                                device: obj,
+                                values: obj.pipes
                             }
                         ]
                     });
