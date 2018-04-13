@@ -511,6 +511,11 @@
         defaults: {
             disabled: true,
             on: {
+                "tango_webapp.item_selected subscribe":function(event){
+                    var self = event.controller;
+                    self.$$(event.data.kind).show(true);
+                    self.$$(event.data.kind).$$('list').select(event.data.id);
+                },
                 "platform_api.ui.initialized subscribe": function (event) {
                     TangoWebappHelpers.debug('test_device_panel.platform_context.create subscribe');
                     event.controller.$$('device').bind(event.data.context.devices);
@@ -521,5 +526,19 @@
                 }
             }
         }
-    }, TangoWebappPlatform.mixin.OpenAjaxListener, webix.IdSpace, webix.ui.layout)
+    }, TangoWebappPlatform.mixin.OpenAjaxListener, webix.IdSpace, webix.ui.layout);
+
+
+    TangoWebapp.ui.newDeviceControlPanel = function (context) {
+        return {
+            header: "<span class='webix_icon fa-keyboard-o'></span> Device Control Panel",
+            width: 300,
+            collapsed: true,
+            body: {
+                context: context,
+                view: 'test_device_panel',
+                id: 'test-device-panel'
+            }
+        };
+    }
 })();

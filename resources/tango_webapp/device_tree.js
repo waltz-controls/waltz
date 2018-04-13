@@ -46,17 +46,18 @@
             select: true,
             on: {
                 onAfterSelect:function(id){
-                    if(id === 'Attrs' || id === 'Commands' || id === 'Pipes') return;
+                    if(id === 'attrs' || id === 'commands' || id === 'pipes') return;
                     OpenAjax.hub.publish("tango_webapp.item_selected", {
                         data: {
                             id: id,
+                            kind: this.getItem(id).$parent,
                             values: this.getItem(this.getItem(id).$parent).values
                         }
                     });
                 },
                 onBeforeContextMenu: function(id){
                     //TODO API
-                    if(this.getItem(id).$parent === 'Attrs'){
+                    if(this.getItem(id).$parent === 'attrs'){
                         this.select(id);
                         return true;
                     }
@@ -73,21 +74,21 @@
                         open:true,
                         data: [
                             {
-                                id: 'Attrs',
+                                id: 'attrs',
                                 value: 'attributes',
                                 webix_kids: true,
                                 device: obj,
                                 values: obj.attrs
                             },
                             {
-                                id: 'Commands',
+                                id: 'commands',
                                 value: 'commands',
                                 webix_kids: true,
                                 device: obj,
                                 values: obj.commands
                             },
                             {
-                                id: 'Pipes',
+                                id: 'pipes',
                                 value: 'pipes',
                                 webix_kids: true,
                                 device: obj,
@@ -101,7 +102,7 @@
                 onDataRequest: function (id) {
                     var item = this.getItem(id);
                     if(item.$level !== 1) return false;
-                    item.device['fetch' + id]().then(function(items){
+                    item.device['fetch' + MVC.String.classize(id)]().then(function(items){
                         this.parse({
                             parent: id,
                             data: items.map(function(item){

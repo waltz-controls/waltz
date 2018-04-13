@@ -23,16 +23,7 @@ TangoWebapp.MainController = MVC.Controller.extend('main', {
 
         ui_builder.add_left_sidebar_item(TangoWebapp.ui.newDeviceTree(platform_api.context));
 
-        ui_builder.set_right_item({
-            header: "<span class='webix_icon fa-keyboard-o'></span> Device Test Panel",
-            width: 300,
-            collapsed: true,
-            body: {
-                context: platform_api.context,
-                view: 'test_device_panel',
-                id: 'test-device-panel'
-            }
-        });
+        ui_builder.set_right_item(TangoWebapp.ui.newDeviceControlPanel(platform_api.context));
 
         ui_builder.add_mainview_item(
             {
