@@ -109,7 +109,6 @@
             }
         },
         $init: function (config) {
-            debugger
             webix.extend(config, this._ui());
             this.$ready.push(function () {
                 this.$$('device_properties_data').parse(this._device.fetchProperties());

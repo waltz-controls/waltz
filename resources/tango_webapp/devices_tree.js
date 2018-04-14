@@ -140,7 +140,6 @@
                         });
                 })
             })).then(function(filtered_members){
-                debugger
                 return Array.prototype.concat.apply([], filtered_members);//flatten an array of arrays
             });
         },

@@ -14,7 +14,6 @@
 
             var f = function (resp) {
                 return function (collection, type) {
-                    debugger
                     var polled = resp.output.filter(function (el) {
                         return el.indexOf(type + " name") > -1
                     }).map(map);
