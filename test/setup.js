@@ -4,7 +4,8 @@ MVC.Console.log("Trying to load: test/setup.js");
 TestValues = {
     rest_url: 'http://localhost:10001',
     tango_host: 'localhost:10000',
-    test_device: 'sys/tg_test/1'
+    test_device: 'sys/tg_test/1',
+    database: 'sys/database/2'
 };
 
 PlatformContext = (function () {

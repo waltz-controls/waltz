@@ -82,6 +82,7 @@
     var device_monitor = webix.protoUI({
         _plottedAttributes: null,
         _monitoredAttributes: null,//this is shared object across all components. In this case it is safe, as keys are unique ids
+        _monitoredDevices: null,// device_id -> attrs
         _add_scalars: function(scalars){
             this.$$('scalar').parse(
                 scalars.map(function(scalar){
@@ -92,6 +93,10 @@
                         description: scalar.info.description
                     }
                 }));
+
+            scalars.forEach(function(scalar){
+                this._add_device(scalar);
+            }, this);
             //reshow progress as it is removed by parse
             this.$$('scalar').showProgress({
                 type: "icon"
@@ -131,6 +136,12 @@
                     this._monitoredAttributes[attrTabId] = attr.info.name;
                     break;
             }
+
+            this._add_device(attr);
+        },
+        _add_device:function(attr){
+            if(this._monitoredDevices[attr.device_id] === undefined) this._monitoredDevices[attr.device_id] = [];
+            this._monitoredDevices[attr.device_id].push(attr);
         },
         loadAttributes: function (device) {
             console.time('loadAttributes')
@@ -387,6 +398,7 @@
             this.$ready.push(function () {
                 this._plottedAttributes = [];
                 this._monitoredAttributes = {};
+                this._monitoredDevices = {};
 
                 webix.extend(this.$$('scalar'),webix.ProgressBar);
                 this.$$('scalar').showProgress({

@@ -5,7 +5,7 @@ TangoWebapp.ui = {
         "plot", "test_device_panel",
         "device_view", "device_properties_view", "device_polling_view", "device_events_view",
         "device_attributes_config_view", "device_logging_view",
-        "device_monitor_view"
+        "attrs_monitor_view","device_monitor_view"
     ]
 };
 
