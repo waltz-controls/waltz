@@ -31,11 +31,7 @@ TangoWebapp.MainController = MVC.Controller.extend('main', {
                 borderless: true,
                 body: {
                     id: 'configurable_monitor',
-                    view: "device_monitor",
-                    device: {
-                        name: '',
-                        alias: ''
-                    }
+                    view: "attrs_monitor"
                 }
             });
 
