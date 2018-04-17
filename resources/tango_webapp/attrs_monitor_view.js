@@ -80,8 +80,18 @@
                 },
                 columns: [
                     {
+                        id: 'device_id',
+                        // header: ["Device", {content: "textFilter"}], //TODO custom filter https://docs.webix.com/datatable__headers_footers.html#customheaderandfootercontent
+                        header: "Device",
+                        width: TangoWebappPlatform.consts.NAME_COLUMN_WIDTH,
+                        sort: "string",
+                        template:function(obj){
+                            return PlatformContext.devices.getItem(obj.device_id).display_name;
+                        }
+                    },
+                    {
                         id: "label",
-                        header: ["Name", {content: "textFilter"}],
+                        header: ["Attribute", {content: "textFilter"}],
                         width: TangoWebappPlatform.consts.NAME_COLUMN_WIDTH,
                         sort: "string"
                     },
@@ -113,6 +123,7 @@
 
             this.add({
                 id: attr.id,
+                device_id: attr.device_id,
                 label: attr.info.label,
                 unit: attr.info.unit,
                 description: attr.info.description
