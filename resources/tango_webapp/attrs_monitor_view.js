@@ -145,7 +145,23 @@
         },
         defaults: {
             select: true,
-            resizeColumn: true
+            resizeColumn: true,
+            on: {
+                "onAfterSelect":function(id){
+                    var item = this.getItem(id.id);
+
+
+                    PlatformContext.devices.setCursor(item.device_id);
+
+                    OpenAjax.hub.publish("tango_webapp.item_selected", {
+                        data: {
+                            id: id.id,
+                            kind: 'attrs',
+                            values: PlatformContext.devices.getItem(item.device_id)
+                        }
+                    });
+                }
+            }
         }
     }, webix.EventSystem, webix.OverlayBox, webix.ui.datatable);
 
