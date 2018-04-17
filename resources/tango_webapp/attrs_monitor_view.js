@@ -71,6 +71,7 @@
                     quality: 'N/A',
                     timestamp: new Date(NaN),
                     plotted: false,
+                    plotIndex: undefined,
                     $update: function (item) {
                         if (item.quality === 'FAILURE') item.$css = {"background-color": "red"};
                         else if (item.quality === 'ATTR_ALARM' || item.quality === 'ATTR_INVALID') item.$css = {"background-color": "lightcoral"};
@@ -208,6 +209,7 @@
         _monitored: null,
         _plotted: null,
         _devices: null,
+        _plotIndex: 0, //TODO is this shared?
         _add_attr: function (attr) {
             if (attr.info.data_format === 'SPECTRUM') {
                 this.$$('attributes').addView({
@@ -230,10 +232,11 @@
             var $$scalars = this.$$('scalars');
 
             $$scalars.updateItem(item.id, {
-                plotted: true
+                plotted: true,
+                plotIndex: this._plotIndex++
             });
 
-            $$plot.addTrace(item.label, [item.timestamp], [item.value], this._plotted.getIndexById(item.id));
+            $$plot.addTrace(item.label, [item.timestamp], [item.value], item.plotIndex);
         },
         /**
          *
@@ -243,11 +246,21 @@
             var $$plot = this.$$('plot');
             var $$scalars = this.$$('scalars');
 
-            $$plot.deleteTrace(this._plotted.getIndexById(item.id));
+            var index = item.plotIndex;
+
+            $$plot.deleteTrace(index);
 
             $$scalars.updateItem(item.id, {
-                plotted: false
+                plotted: false,
+                plotIndex: undefined
             });
+
+            //TODO replace plotted with array?
+            TangoWebappHelpers.iterate(this._plotted, function(plotted){
+                if(plotted.plotIndex >= index) plotted.plotIndex--;
+            });
+
+            this._plotIndex--;
         },
         /**
          *
@@ -268,8 +281,8 @@
                 plotted.push(scalar);
             });
             this.$$('plot').updateTraces(
-                plotted.map(function (el, ndx) {
-                    return ndx;
+                plotted.map(function (el) {
+                    return el.plotIndex;
                 }),
                 plotted.map(function (el) {
                     return el.timestamp;
