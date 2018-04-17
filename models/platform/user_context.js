@@ -14,7 +14,8 @@ TangoWebappPlatform.UserContext = MVC.Model.extend('user_context',
             user: 'string',
             rest_url: 'string',
             tango_hosts: '{}',
-            device_filters: 'string[]' //TODO move to application layer?
+            device_filters: 'string[]',
+            ext:'object'
         },
         default_attributes: {
             rest_url: TangoWebappPlatform.consts.REST_API_PROTOCOL + '://' + TangoWebappPlatform.consts.REST_API_HOST + ':' + TangoWebappPlatform.consts.REST_API_PORT
@@ -35,7 +36,8 @@ TangoWebappPlatform.UserContext = MVC.Model.extend('user_context',
                 result = this.create_as_existing({
                     user: id,
                     tango_hosts: default_tango_host,
-                    device_filters: ['*/*/*']
+                    device_filters: ['*/*/*'],
+                    ext: Object.create(null)
                 });
             }
             return result;
