@@ -67,7 +67,7 @@
         _config: function () {
             return {
                 scheme: {
-                    value: 'N/A',
+                    value: NaN,
                     quality: 'N/A',
                     timestamp: new Date(NaN),
                     plotted: false,
@@ -147,11 +147,11 @@
                     var attrId = id.row;
                     var item = this.getItem(attrId);
                     // this.getTopParentView().addTab(tabId, attrId, item);
-                    this.updateItem(attrId, {
-                        plotted: !item.plotted
-                    });
-
-                    this.getTopParentView().handlePlot(item);
+                    if(item.plotted){
+                        this.getTopParentView().stopPlot(item);
+                    } else {
+                        this.getTopParentView().startPlot(item);
+                    }
 
                     return false;
                 }
@@ -194,14 +194,33 @@
                 });
             }
         },
-        handlePlot: function (item) {
+        /**
+         *
+         * @param {} item
+         */
+        startPlot:function(item){
             var $$plot = this.$$('plot');
-            if (item.plotted) {
-                $$plot.addTrace(item.label, [item.timestamp], [item.value], this._plotted.count() - 1);
-            } else {
-                var indexOf = this._plottedAttributes.indexOf(item);
-                $$plot.deleteTrace(indexOf);
-            }
+            var $$scalars = this.$$('scalars');
+
+            $$scalars.updateItem(item.id, {
+                plotted: true
+            });
+
+            $$plot.addTrace(item.label, [item.timestamp], [item.value], this._plotted.getIndexById(item.id));
+        },
+        /**
+         *
+         * @param item
+         */
+        stopPlot:function(item){
+            var $$plot = this.$$('plot');
+            var $$scalars = this.$$('scalars');
+
+            $$plot.deleteTrace(this._plotted.getIndexById(item.id));
+
+            $$scalars.updateItem(item.id, {
+                plotted: false
+            });
         },
         /**
          *
