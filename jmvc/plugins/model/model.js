@@ -358,8 +358,8 @@ MVC.Model = MVC.Class.extend(
             if (!this.default_attributes[property])
                 this.default_attributes[property] = null;
         },
-        attributes             : {},
-        default_attributes     : {},
+        attributes             : Object.create(null),
+        default_attributes     : Object.create(null),
         /**
          * Used for converting callbacks to to seperate failure and succcess
          * @param {Object} callbacks
@@ -540,7 +540,7 @@ MVC.Model = MVC.Class.extend(
          * @return {Object}
          */
         attributes       : function () {
-            var attributes = {};
+            var attributes = Object.create(null);
             var cas = this.Class.attributes;
             for (var attr in cas) {
                 if (cas.hasOwnProperty(attr)) {

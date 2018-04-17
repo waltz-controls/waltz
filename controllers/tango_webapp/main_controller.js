@@ -29,10 +29,7 @@ TangoWebapp.MainController = MVC.Controller.extend('main', {
             {
                 header: "<span class='webix_icon fa-dashboard'></span> Dashboard",
                 borderless: true,
-                body: {
-                    id: 'configurable_monitor',
-                    view: "attrs_monitor"
-                }
+                body: TangoWebapp.ui.newAttrsMonitorView({id: 'configurable_monitor'})
             });
 
         ui_builder.add_mainview_item(

@@ -66,7 +66,44 @@
         name: 'scalars',
         _config: function () {
             return {
-                }
+                scheme: {
+                    value: 'N/A',
+                    quality: 'N/A',
+                    timestamp: new Date(NaN),
+                    plotted: false,
+                    $update: function (item) {
+                        if (item.quality === 'FAILURE') item.$css = {"background-color": "red"};
+                        else if (item.quality === 'ATTR_ALARM' || item.quality === 'ATTR_INVALID') item.$css = {"background-color": "lightcoral"};
+                        else if (item.quality === 'ATTR_WARNING') item.$css = {"background-color": "orange"};
+                        else delete item.$css;
+                    }
+                },
+                columns: [
+                    {
+                        id: "label",
+                        header: ["Name", {content: "textFilter"}],
+                        width: TangoWebappPlatform.consts.NAME_COLUMN_WIDTH,
+                        sort: "string"
+                    },
+                    {id: "value", header: "Value", width: 200},
+                    {
+                        id: "stream", header: "", width: 30, template: function (obj) {
+                            if (obj.plotted)
+                                return "<span class='chart webix_icon fa-times-circle-o'></span>";
+                            else
+                                return "<span class='chart webix_icon fa-line-chart'></span>";
+                        }
+                    },
+                    {id: "quality", header: "Quality", width: 180, sort: "string"},
+                    {
+                        id: "timestamp", header: "Last updated", width: 180, template: function (obj) {
+                            return TangoWebappPlatform.consts.LOG_DATE_FORMATTER(new Date(obj.timestamp));
+                        }
+                    },
+                    {id: "unit", header: "Unit", width: 60},
+                    {id: "description", header: "Description", fillspace: true}
+                ]
+            }
         },
         /**
          * @param {TangoAttribute} attr
@@ -97,48 +134,32 @@
         },
         defaults: {
             select: true,
-            resizeColumn: true,
-            scheme: {
-                value: 'N/A',
-                quality: 'N/A',
-                timestamp: new Date(NaN),
-                plotted: false,
-                $update: function (item) {
-                    if (item.quality === 'FAILURE') item.$css = {"background-color": "red"};
-                    else if (item.quality === 'ATTR_ALARM' || item.quality === 'ATTR_INVALID') item.$css = {"background-color": "lightcoral"};
-                    else if (item.quality === 'ATTR_WARNING') item.$css = {"background-color": "orange"};
-                    else delete item.$css;
-                }
-            },
-            columns: [
-                {
-                    id: "label",
-                    header: ["Name", {content: "textFilter"}],
-                    width: TangoWebappPlatform.consts.NAME_COLUMN_WIDTH,
-                    sort: "string"
-                },
-                {id: "value", header: "Value", width: 200},
-                {
-                    id: "stream", header: "", width: 30, template: function (obj) {
-                        if (obj.plotted)
-                            return "<span class='chart webix_icon fa-times-circle-o'></span>";
-                        else
-                            return "<span class='chart webix_icon fa-line-chart'></span>";
-                    }
-                },
-                {id: "quality", header: "Quality", width: 180, sort: "string"},
-                {
-                    id: "timestamp", header: "Last updated", width: 180, template: function (obj) {
-                        return TangoWebappPlatform.consts.LOG_DATE_FORMATTER(new Date(obj.timestamp));
-                    }
-                },
-                {id: "unit", header: "Unit", width: 60},
-                {id: "description", header: "Description", fillspace: true}
-            ]
+            resizeColumn: true
         }
     }, webix.EventSystem, webix.OverlayBox, webix.ui.datatable);
 
     newScalars = function(){
+        return {
+            view: 'scalars',
+            id: 'scalars',
+            onClick: {
+                "chart": function (event, id) {
+                    var attrId = id.row;
+                    var item = this.getItem(attrId);
+                    // this.getTopParentView().addTab(tabId, attrId, item);
+                    this.updateItem(attrId, {
+                        plotted: !item.plotted
+                    });
+
+                    this.getTopParentView().handlePlot(item);
+
+                    return false;
+                }
+            }
+        };
+    };
+
+    newAttributes = function(){
         return {
             view: 'tabview',
             gravity: 2,
@@ -146,22 +167,7 @@
             cells: [
                 {
                     header: "Scalars",
-                    body: {
-                        view: 'scalars',
-                        id: 'scalars',
-                        onClick: {
-                            "chart": function (event, id) {
-                                var attrId = id.row;
-                                var item = this.getItem(attrId);
-                                // this.getTopParentView().addTab(tabId, attrId, item);
-                                this.updateItem(attrId, {
-                                    plotted: !item.plotted
-                                });
-
-                                this.getTopParentView().handlePlot(item);
-                            }
-                        }
-                    }
+                    body: newScalars()
                 }
             ]
         }
@@ -250,14 +256,16 @@
                     .filter(function (attr_to_update) {
                         return attr_to_update.device_id === device.id;
                     });
-                device.fetchAttrValues(filtered_attrs_to_update
-                    .map(function (attr_to_update) {
-                        return attr_to_update.name;
-                    })).then(function (filtered_attrs_to_update, resp) {
-                    this.update(filtered_attrs_to_update.map(function (filtered_attr_to_update, ndx) {
-                        return MVC.Object.extend(filtered_attr_to_update, resp[ndx]);
-                    }));
-                }.bind(this, filtered_attrs_to_update.slice()));
+                
+                if(filtered_attrs_to_update.length !== 0)
+                    device.fetchAttrValues(filtered_attrs_to_update
+                        .map(function (attr_to_update) {
+                            return attr_to_update.name;
+                        })).then(function (filtered_attrs_to_update, resp) {
+                            this.update(filtered_attrs_to_update.map(function (filtered_attr_to_update, ndx) {
+                                return MVC.Object.extend(filtered_attr_to_update, resp[ndx]);
+                            }));
+                    }.bind(this, filtered_attrs_to_update.slice()));
             }
         },
         /**
@@ -267,6 +275,7 @@
         addAttribute: function (attr) {
             if (this._monitored.getItem(attr.id) !== undefined) return;
 
+            attr = attr.attributes();
             this._monitored.add(attr);
 
             if (attr.info.data_format !== 'SCALAR') {
@@ -275,7 +284,7 @@
                 this.$$('scalars').addAttribute(attr);
             }
 
-            this._devices[attr.device_id] = null;
+            this._devices[attr.device_id] = PlatformContext.devices.getItem(attr.device_id); //sync filtered?
         },
         _ui: function () {
             return {
@@ -284,7 +293,7 @@
                     {
                         view: 'resizer'
                     },
-                    newScalars(),
+                    newAttributes(),
                     newToolbar()
                 ]
             }
