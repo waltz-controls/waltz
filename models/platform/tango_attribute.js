@@ -21,7 +21,22 @@
                 device_id: 'string'
                 //TODO value
             },
-            default_attributes: {}
+            default_attributes: {},
+            /**
+             *
+             * @param id
+             * @return {{tango_host: string, tango_port: number, device: string, name: string}}
+             */
+            parseId:function(id){
+                var parts = id.split('/');
+
+                return {
+                    id: id,
+                    host:parts[0],
+                    device:[parts[1],parts[2], parts[3]].join('/'),
+                    name:parts[4]
+                }
+            }
         },
         /** @Prototype */
         {

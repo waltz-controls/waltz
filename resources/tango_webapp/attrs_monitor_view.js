@@ -330,9 +330,10 @@
         /**
          *
          * @param {TangoAttribute} attr
+         * @return boolean
          */
         addAttribute: function (attr) {
-            if (this._monitored.getItem(attr.id) !== undefined) return;
+            if (this._monitored.getItem(attr.id) !== undefined) return false;
 
             attr = attr.attributes();
             this._monitored.add(attr);
@@ -344,6 +345,15 @@
             }
 
             this._devices[attr.device_id] = PlatformContext.devices.getItem(attr.device_id); //sync filtered?
+
+            return true;
+        },
+        /**
+         *
+         * @param {TangoAttribute} attr
+         */
+        removeAttribute:function(attr){
+            //TODO
         },
         _ui: function () {
             return {
@@ -382,5 +392,72 @@
             view: "attrs_monitor",
             id: context.id
         }
+    }
+
+    /**
+     * @type {webix.protoUI}
+     */
+    var stateful_attrs_monitor = webix.protoUI({
+        name:'stateful_attrs_monitor',
+        /**
+         *
+         * @param {string[]} state atributes' names
+         */
+        restoreState:function(state){
+            var ids = state.map(function(id){
+                return TangoAttribute.parseId(id);
+            });
+
+            //unique host -> unique devices
+            var unique_hosts = Object.create(null);
+            ids.forEach(function(id){
+                if(unique_hosts[id.host] === undefined)
+                    unique_hosts[id.host] = Object.create(null);
+
+                unique_hosts[id.host][id.device] = null;
+            });
+
+
+            var self = this;
+            for(var host in unique_hosts)
+                for (var device in unique_hosts[host])
+                    (function(host, device) {
+                        PlatformContext.rest.fetchHost(host)
+                            .then(function (host) {
+                                return host.fetchDevice(device);
+                            })
+                            .then(function (device) {
+                                return device.fetchAttrs();
+                            })
+                            .then(function (attrs) {
+                                attrs.filter(function (attr) {
+                                    return state.indexOf(attr.id) > -1;
+                                }).forEach(function (attr) {
+                                    webix.ui.attrs_monitor.prototype.addAttribute.apply(self, arguments);
+                                });
+                            })
+                    })(host, device);
+        },
+        addAttribute:function(attr){
+            if(webix.ui.attrs_monitor.prototype.addAttribute.apply(this, arguments)) {
+                PlatformContext.UserContext.ext[this.config.id].push(attr.id);
+                PlatformContext.UserContext.save();
+            }
+        },
+        $init:function(config){
+            this.$ready.push(function(){
+                if(PlatformContext.UserContext.ext[this.config.id])
+                    this.restoreState(PlatformContext.UserContext.ext[this.config.id]);
+                else {
+                    PlatformContext.UserContext.ext[this.config.id] = [];
+                }
+            }.bind(this));
+        }
+    },attrs_monitor_view);
+
+    TangoWebapp.ui.newStatefulAttrsMonitorView = function (config) {
+        return webix.extend(config, {
+            view: "stateful_attrs_monitor"
+        });
     }
 })();

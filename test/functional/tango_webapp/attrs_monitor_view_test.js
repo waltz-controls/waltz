@@ -13,7 +13,7 @@ new Test.Functional('attrs_panel',{
                         id: 'monitor_window',
                         move: true,
                         fullscreen: true,
-                        body: TangoWebapp.ui.newAttrsMonitorView({
+                        body: TangoWebapp.ui.newStatefulAttrsMonitorView({
                             id: 'test/attrs_monitor/' + TestValues.test_device
                         })
                     }

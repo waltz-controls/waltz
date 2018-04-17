@@ -13,6 +13,7 @@ PlatformContext = (function () {
     tango_hosts[TestValues.tango_host] = '';
 
     return new TangoWebappPlatform.PlatformContext({
+        //TODO this is overrided by the app when loaded prevent it
         UserContext: new TangoWebappPlatform.UserContext({
             user: 'test',
             tango_hosts: tango_hosts,
