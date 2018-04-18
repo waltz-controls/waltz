@@ -66,6 +66,13 @@ TangoRemoteStorage = MVC.Class.extend('tango_remote_storage',
         },
         /**
          *
+         */
+        find:function(f){
+            if(typeof f === 'function') throw new TypeError('TangoRemoteStorage does not support find by function!');
+            return [this.find_one(f)];
+        },
+        /**
+         *
          * @param {Object} obj
          */
         create: function (obj) {

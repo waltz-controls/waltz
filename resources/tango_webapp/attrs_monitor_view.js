@@ -392,7 +392,30 @@
             view: "attrs_monitor",
             id: context.id
         }
-    }
+    };
+
+    var AttrsMonitorState = TangoWebappPlatform.WidgetState.extend(
+        {
+            init:function(attrs){
+                attrs.data = attrs.data || Object.create(null);
+                this._super(attrs);
+            },
+            /**
+             * @return {Array}
+             */
+            asIdArray:function(){
+                var result = [];
+                for(var id in this.data)
+                    result.push(id);
+                return result;
+            },
+            updateState:function(id, plotted){
+                var item = Object.create(null);
+                item[id] = plotted;
+                this._super(item);
+            }
+        }
+        );
 
     /**
      * @type {webix.protoUI}
@@ -401,16 +424,16 @@
         name:'stateful_attrs_monitor',
         /**
          *
-         * @param {string[]} state atributes' names
+         * @param {AttrsMonitorState} state atributes' names
          */
         restoreState:function(state){
-            var ids = state.map(function(id){
+            var parsedIds = state.asIdArray().map(function(id){
                 return TangoAttribute.parseId(id);
             });
 
             //unique host -> unique devices
             var unique_hosts = Object.create(null);
-            ids.forEach(function(id){
+            parsedIds.forEach(function(id){
                 if(unique_hosts[id.host] === undefined)
                     unique_hosts[id.host] = Object.create(null);
 
@@ -430,27 +453,48 @@
                                 return device.fetchAttrs();
                             })
                             .then(function (attrs) {
+                                var ids = state.asIdArray();
                                 attrs.filter(function (attr) {
-                                    return state.indexOf(attr.id) > -1;
+                                    return ids.indexOf(attr.id) > -1;
                                 }).forEach(function (attr) {
                                     webix.ui.attrs_monitor.prototype.addAttribute.apply(self, arguments);
+                                    if(state.data[attr.id])
+                                        webix.ui.attrs_monitor.prototype.startPlot.call(self, self.$$('scalars').getItem(attr.id));
                                 });
                             })
+                            .fail(function(err){
+                                TangoWebappHelpers.error(err);
+                            })
+
                     })(host, device);
         },
+        /**
+         * Overrides attrs_monitor_view.addAttribute by adding state update
+         *
+         * @param {TangoAttribute} attr
+         */
         addAttribute:function(attr){
             if(webix.ui.attrs_monitor.prototype.addAttribute.apply(this, arguments)) {
-                PlatformContext.UserContext.ext[this.config.id].push(attr.id);
-                PlatformContext.UserContext.save();
+                this.state.updateState(attr.id, false);
             }
+        },
+        startPlot:function(item){
+            webix.ui.attrs_monitor.prototype.startPlot.apply(this, arguments);
+            this.state.updateState(item.id, true);
+        },
+        stopPlot:function(item){
+            webix.ui.attrs_monitor.prototype.stopPlot.apply(this, arguments);
+            this.state.updateState(item.id, false);
         },
         $init:function(config){
             this.$ready.push(function(){
-                if(PlatformContext.UserContext.ext[this.config.id])
-                    this.restoreState(PlatformContext.UserContext.ext[this.config.id]);
-                else {
-                    PlatformContext.UserContext.ext[this.config.id] = [];
-                }
+                this.state = AttrsMonitorState.find_one(this.config.id);
+                if(this.state !== null)
+                    this.restoreState(this.state);
+                else
+                    this.state = new AttrsMonitorState({
+                        id: this.config.id
+                    })
             }.bind(this));
         }
     },attrs_monitor_view);

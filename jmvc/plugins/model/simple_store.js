@@ -13,7 +13,7 @@ MVC.Store = MVC.Class.extend(
 	 * @param {Object} klass
 	 */
     init: function(klass){
-		this._data = {};
+		this._data = Object.create(null);
         this.storing_class = klass;
 	},
 	/**
@@ -44,6 +44,7 @@ MVC.Store = MVC.Class.extend(
      * @return {Array}
      */
     find : function(f){
+        if(typeof f !== 'function') return [this.find_one(f)];
         var instances = [];
         for(var id in this._data){
             var inst = this._data[id];
@@ -52,11 +53,14 @@ MVC.Store = MVC.Class.extend(
         }
         return instances;
     },
+    update:function(id, attributes){
+        MVC.Object.extend(this._data[id], attributes);
+    },
     /**
      * Clears instances
      */
     clear : function(){
-        this._data = {};
+        this._data = Object.create(null);
     },
     /**
      * Returns if there is no instances

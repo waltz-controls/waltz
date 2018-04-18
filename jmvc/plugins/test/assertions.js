@@ -195,7 +195,9 @@ new MVC.Test.Unit('TestCase Name',{
      */
 	error: function(error) {
 	    this.errors++;
-	    this.messages.push(error.name + ": "+ error.message + "(" + MVC.Test.inspect(error) +")");
+        var message = error.name + ": "+ error.message + "(" + MVC.Test.inspect(error) +")";
+        this.messages.push(message);
+	    console.error(message);
 	 },
 	_get_next_name :function(){
 		for(var i = 0; i < this._test.test_array.length; i++){

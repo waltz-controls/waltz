@@ -17,7 +17,8 @@ PlatformContext = (function () {
         UserContext: new TangoWebappPlatform.UserContext({
             user: 'test',
             tango_hosts: tango_hosts,
-            device_filters: ['*/*/*']
+            device_filters: ['*/*/*'],
+            ext: Object.create(null)
         })
     })
 })();

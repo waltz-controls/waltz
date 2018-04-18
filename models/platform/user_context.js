@@ -44,16 +44,6 @@ TangoWebappPlatform.UserContext = MVC.Model.extend('user_context',
         },
         /**
          *
-         * @param id
-         * @param attrs
-         *
-         * @override model.js#update
-         */
-        update: function (id, attrs) {
-            this.store.update(id, attrs);
-        },
-        /**
-         *
          *
          * @param store
          */
@@ -85,7 +75,9 @@ TangoWebappPlatform.UserContext = MVC.Model.extend('user_context',
          *
          */
         destroy: function () {
+            this.save();
             this.Class.store.destroy(this[this.Class.id]);
+            this.publish("destroy", {data:this});
         },
         toDeviceFilter: function () {
             return new DeviceFilter({
