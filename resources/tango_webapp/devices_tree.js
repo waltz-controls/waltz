@@ -16,10 +16,13 @@
         on: {
             onItemClick: function (id) {
                 var tree = this.getContext().obj;
+                if(tree === undefined) TangoWebappHelpers.error("tree is undefined");
                 var item = tree.getItem(this.getContext().id);
                 var hostId = tree._get_host_id(item);
                 var name = tree._get_device_name(item);
                 var device_id = hostId + "/" + name;
+
+                tree.select(item.id);
                 OpenAjax.hub.publish("tango_webapp.device_" + id, {
                     data: {
                         id: device_id,
@@ -225,18 +228,13 @@
             on: {
                 onBeforeContextMenu: function (id, e, node) {
                     var item = this.getItem(id);
-                    if(item.$level === 5) {
-                        this.select(id);
-                        return true;//member
-                    }
-                    return false;
+                    return item.$level === 5;
                 },
                 onItemDblClick:function(id){
                     var item = this.getItem(id);
                     if (!item) return false;//TODO or true
 
                     var tango_host_id;
-                    var tango_host;
                     var device_name;
                     switch (item.$level) {
                         case 5://member
@@ -283,7 +281,6 @@
                         default:
                             TangoWebappHelpers.debug("device_tree#clickOnItem " + id);
                     }
-
                 },
                 onDataRequest: function (id, cbk, url) {
                     var item = this.getItem(id);
