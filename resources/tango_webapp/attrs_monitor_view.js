@@ -278,18 +278,7 @@
 
             this._plotIndex--;
         },
-        /**
-         *
-         */
-        update: function (attrs) {
-            attrs.forEach(function (attr) {
-                if (this.$$('attributes').getTabbar().getValue() === 'scalars' && this.$$('scalars').exists(attr.id)) {
-                    this.$$('scalars').updateItem(attr.id, attr);
-                } else if(this.$$(attr.id) !== undefined) {
-                    this.$$(attr.id).update(attr);
-                }
-            }, this);
-
+        _update_plot:function(){
             if (this._plotted.count() === 0) return;
 
             var plotted =[];
@@ -306,7 +295,21 @@
                 plotted.map(function (el) {
                     return el.value;
                 })
-                );
+            );
+        },
+        /**
+         *
+         */
+        update: function (attrs) {
+            attrs.forEach(function (attr) {
+                if (attr.info.data_format === 'SCALAR' && this.$$('scalars').exists(attr.id)) {
+                    this.$$('scalars').updateItem(attr.id, attr);
+                } else if(this.$$(attr.id) !== undefined) {
+                    this.$$(attr.id).update(attr);
+                }
+            }, this);
+
+            this._update_plot();
         },
         before_start:function(){
             this.$$('startStop').define("icon", "pause");
