@@ -12,11 +12,12 @@
                 this.showProgress({
                     type: "icon"
                 });
-                device[this._command]().then(function () {
+                device[this._command]().then(function (items) {
+                    this.$$('list').data.importData(items);
                     this.hideProgress();
                 }.bind(this))
             }
-            this.$$('list').data.sync(device[this._what]);
+            this.$$('list').data.importData(device[this._what]);
             this.elements.name.setValue('');//drop currently selected item
         },
         $init: function (config) {
