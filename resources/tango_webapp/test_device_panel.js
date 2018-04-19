@@ -514,7 +514,9 @@
                 "tango_webapp.item_selected subscribe":function(event){
                     var self = event.controller;
                     self.$$(event.data.kind).show(true);
-                    self.$$(event.data.kind).$$('list').select(event.data.id);
+                    var $$list = self.$$(event.data.kind).$$('list');
+                    if($$list.getSelectedId() !== event.data.id)
+                        $$list.select(event.data.id);
                 },
                 "platform_api.ui.initialized subscribe": function (event) {
                     TangoWebappHelpers.debug('test_device_panel.platform_context.create subscribe');
