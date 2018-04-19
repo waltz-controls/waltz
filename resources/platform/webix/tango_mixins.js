@@ -52,6 +52,8 @@ TangoWebappPlatform.mixin = {
                 if (!this.$destructed && this.isVisible())
                     this.run();
             }.bind(this), this._delay);
+            if(this.before_start !== undefined && typeof this.before_start === 'function')
+                this.before_start();
         },
         isRunning:function(){
             return this._intervalId !== 0;
@@ -64,6 +66,8 @@ TangoWebappPlatform.mixin = {
         stop: function () {
             clearInterval(this._intervalId);
             this._intervalId = 0;
+            if(this.after_stop !== undefined && typeof this.after_stop === 'function')
+                this.after_stop();
         }
     }
 };

@@ -27,15 +27,14 @@
                     }
                 },
                 {
-                    view: "toggle",
+                    view: "button",
                     id: "startStop",
                     type: "iconButton",
-                    offIcon: "play",
-                    onIcon: "pause",
+                    icon: "play",
                     align: 'right',
                     width: 30,
                     click: function () {
-                        if (this.getValue()) {
+                        if (this.getTopParentView().isRunning()) {
                             this.getTopParentView().stop();
                         } else {
                             this.getTopParentView().start();
@@ -308,6 +307,14 @@
                     return el.value;
                 })
                 );
+        },
+        before_start:function(){
+            this.$$('startStop').define("icon", "pause");
+            this.$$('startStop').refresh();
+        },
+        after_stop:function(){
+            this.$$('startStop').define("icon", "play");
+            this.$$('startStop').refresh();
         },
         run: function () {
             var attrs_to_update = [];
