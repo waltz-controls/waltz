@@ -79,26 +79,27 @@
                                 value: 'attributes',
                                 webix_kids: true,
                                 device: obj,
-                                values: obj.attrs
+                                values: obj.attrs,
+                                open: obj.attrs.count() > 0
                             },
                             {
                                 id: 'commands',
                                 value: 'commands',
                                 webix_kids: true,
                                 device: obj,
-                                values: obj.commands
+                                values: obj.commands,
+                                open: obj.commands.count() > 0
                             },
                             {
                                 id: 'pipes',
                                 value: 'pipes',
                                 webix_kids: true,
                                 device: obj,
-                                values: obj.pipes
+                                values: obj.pipes,
+                                open: obj.pipes.count() > 0
                             }
                         ]
                     });
-
-                    //TODO if device.attrs.count() > 0 continue loading
                 },
                 onDataRequest: function (id) {
                     var item = this.getItem(id);
