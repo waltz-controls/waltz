@@ -319,21 +319,30 @@
             this.$$('startStop').define("icon", "play");
             this.$$('startStop').refresh();
         },
-        run: function () {
-            var attrs_to_update = [];
+        /**
+         *
+         * @return {[]}
+         * @private
+         */
+        _get_attrs_to_update:function(){
+            var result = [];
             TangoWebappHelpers.iterate(this._plotted, function (plotted) {
-                attrs_to_update.push(
+                result.push(
                     this._monitored.getItem(plotted.id));
             }.bind(this));
 
             if (this.$$('attributes').getTabbar().getValue() === 'scalars') {
                 TangoWebappHelpers.iterate(this.$$('scalars').data, function (scalar) {
-                    if (!scalar.plotted) attrs_to_update.push(this._monitored.getItem(scalar.id));
+                    if (!scalar.plotted) result.push(this._monitored.getItem(scalar.id));
                 }.bind(this));
             } else {
-                attrs_to_update.push(
+                result.push(
                     this._monitored.getItem(this.$$('attributes').getTabbar().getValue()));
             }
+            return result;
+        },
+        run: function () {
+            var attrs_to_update = this._get_attrs_to_update();
 
             for (var device_id in this._devices) {
                 var device = this._devices[device_id];
@@ -407,7 +416,7 @@
          * @param {TangoAttribute} attr
          */
         removeAttribute:function(attr){
-            //TODO
+            this.removeItem(attr.id);
         },
         _ui: function () {
             return {
@@ -439,9 +448,19 @@
                     this.removeItem(id);
                 }.bind(this))
             }.bind(this));
+        },
+        defaults:{
+            on:{
+                "tango_webapp.item_selected subscribe":function(event){
+                    if(event.data.kind !== 'attrs') return;
+                    var self = event.controller;
+                    if(self.$$('scalars').exists(event.data.id) && self.$$('scalars').getSelectedId() !== event.data.id)
+                        self.$$('scalars').select(event.data.id);
+                }
+            }
         }
     },
-        TangoWebappPlatform.mixin.Runnable,
+        TangoWebappPlatform.mixin.Runnable, TangoWebappPlatform.mixin.OpenAjaxListener,
         webix.EventSystem, webix.IdSpace,
         webix.ui.layout);
 
