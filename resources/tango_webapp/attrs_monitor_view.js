@@ -112,7 +112,12 @@
                         }
                     },
                     {id: "unit", header: "Unit", width: 60},
-                    {id: "description", header: "Description", fillspace: true}
+                    {id: "description", header: "Description", fillspace:true},
+                    {
+                        id: "remove", header: "", width: 30, template: function (obj) {
+                            return "<span class='remove webix_icon fa-trash'></span>";
+                        }
+                    }
                 ]
             }
         },
@@ -182,6 +187,14 @@
                     }
 
                     return false;
+                },
+                "remove":function(event, id){
+                    var attrId = id.row;
+                    var item = this.getItem(attrId);
+
+                    this.getTopParentView().removeItem(item);
+
+                    return false;
                 }
             }
         };
@@ -222,6 +235,10 @@
                     body: TangoWebapp.ui.newImageView(attr)
                 });
             }
+        },
+        removeItem:function(item){
+            this._monitored.remove(item.id);
+            this.$$('scalars').remove(item.id);
         },
         /**
          *
