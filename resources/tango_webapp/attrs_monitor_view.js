@@ -188,10 +188,7 @@
                     return false;
                 },
                 "remove":function(event, id){
-                    var attrId = id.row;
-                    var item = this.getItem(attrId);
-
-                    this.getTopParentView().removeItem(item);
+                    this.getTopParentView().removeItem(id.row);
 
                     return false;
                 }
@@ -225,19 +222,22 @@
         _add_attr: function (attr) {
             if (attr.info.data_format === 'SPECTRUM') {
                 this.$$('attributes').addView({
+                    close:true,
                     header: attr.info.label,
                     body: TangoWebapp.ui.newSpectrumView(attr)
                 });
             } else if (attr.info.data_format === 'IMAGE') {
                 this.$$('attributes').addView({
+                    close:true,
                     header: attr.info.label,
                     body: TangoWebapp.ui.newImageView(attr)
                 });
             }
         },
-        removeItem:function(item){
-            this._monitored.remove(item.id);
-            this.$$('scalars').remove(item.id);
+        removeItem:function(id){
+            this._monitored.remove(id);
+            if(this.$$('scalars').exists(id))
+                this.$$('scalars').remove(id);
         },
         /**
          *
@@ -283,9 +283,9 @@
          */
         update: function (attrs) {
             attrs.forEach(function (attr) {
-                if (this.$$('attributes').getTabbar().getValue() === 'scalars') {
+                if (this.$$('attributes').getTabbar().getValue() === 'scalars' && this.$$('scalars').exists(attr.id)) {
                     this.$$('scalars').updateItem(attr.id, attr);
-                } else {
+                } else if(this.$$(attr.id) !== undefined) {
                     this.$$(attr.id).update(attr);
                 }
             }, this);
@@ -431,6 +431,10 @@
                         return obj.plotted;
                     })
                 });
+
+                this.$$('attributes').getTabbar().attachEvent("onBeforeTabClose",function(id){
+                    this.removeItem(id);
+                }.bind(this))
             }.bind(this));
         }
     },
@@ -527,6 +531,12 @@
             if(webix.ui.attrs_monitor.prototype.addAttribute.apply(this, arguments)) {
                 this.state.updateState(attr.id, false);
             }
+        },
+        removeItem:function (id) {
+            webix.ui.attrs_monitor.prototype.removeItem.apply(this, arguments);
+            var state = this.state.getState();
+            delete state[id];
+            this.state.setState(state);
         },
         startPlot:function(item){
             webix.ui.attrs_monitor.prototype.startPlot.apply(this, arguments);
