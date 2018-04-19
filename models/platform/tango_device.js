@@ -106,6 +106,7 @@ TangoWebappPlatform.TangoDevice = TangoWebappPlatform.DataCollectionWrapper.exte
                 return promise_info.then(function (infos) {
                     for (var i = 0; i < infos.length; ++i)
                         attributes[i].set_attributes({
+                            display_name:infos[i].label,
                             info: infos[i]
                         })
                     return attributes;

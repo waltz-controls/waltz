@@ -49,7 +49,7 @@
                         view: 'list',
                         id: 'list',
                         select: true,
-                        template: "#name#"
+                        template: "#display_name#"
                     },
                     {
                         view: 'text',
@@ -240,7 +240,7 @@
                         view: 'list',
                         id: 'list',
                         select: true,
-                        template: "#name#"
+                        template: "#display_name#"
                     },
                     {
                         view: 'text',
@@ -367,7 +367,7 @@
                         view: 'list',
                         id: 'list',
                         select: true,
-                        template: "#name#"
+                        template: "#display_name#"
                     },
                     {
                         view: 'text',

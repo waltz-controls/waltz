@@ -108,7 +108,7 @@
                             parent: id,
                             data: items.map(function(item){
                                 return MVC.Object.extend(item, {
-                                    value: item.name
+                                    value: item.display_name
                                 })
                             })
                         })
