@@ -326,7 +326,7 @@
             }
 
             for (var device_id in this._devices) {
-                var device = PlatformContext.devices.getItem(device_id);
+                var device = this._devices[device_id];
 
                 var filtered_attrs_to_update = attrs_to_update
                     .filter(function (attr_to_update) {
@@ -341,8 +341,35 @@
                             this.update(filtered_attrs_to_update.map(function (filtered_attr_to_update, ndx) {
                                 return MVC.Object.extend(filtered_attr_to_update, resp[ndx]);
                             }));
-                    }.bind(this, filtered_attrs_to_update.slice()));
+                    }.bind(this, filtered_attrs_to_update.slice()))
+                        .fail(function(err){
+                            TangoWebappHelpers.error(err);
+                        });
             }
+        },
+        /**
+         *
+         * @param {[]}  scalars
+         */
+        parseScalars:function(scalars){
+            this._monitored.parse(scalars);
+            this.$$('scalars').parse(scalars.map(function(scalar){
+                return {
+                    id: scalar.id,
+                    device_id: scalar.device_id,
+                    label: scalar.info.label,
+                    unit: scalar.info.unit,
+                    description: scalar.info.description
+                }
+            }));
+
+            this.$$('scalars').hideOverlay();
+        },
+        /**
+         * @param {TangoDevice} device
+         */
+        addDevice:function(device){
+            this._devices[device.id] = device;
         },
         /**
          *
@@ -361,7 +388,7 @@
                 this.$$('scalars').addAttribute(attr);
             }
 
-            this._devices[attr.device_id] = PlatformContext.devices.getItem(attr.device_id); //sync filtered?
+            this.addDevice(PlatformContext.devices.getItem(attr.device_id)); //sync filtered?
 
             return true;
         },
@@ -405,10 +432,9 @@
         webix.ui.layout);
 
     TangoWebapp.ui.newAttrsMonitorView = function (context) {
-        return {
-            view: "attrs_monitor",
-            id: context.id
-        }
+        return webix.extend(context, {
+            view: "attrs_monitor"
+        });
     };
 
     var AttrsMonitorState = TangoWebappPlatform.WidgetState.extend(

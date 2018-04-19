@@ -80,27 +80,13 @@
      * @type {webix.protoUI}
      */
     var device_monitor = webix.protoUI({
-        _plottedAttributes: null,
-        _monitoredAttributes: null,//this is shared object across all components. In this case it is safe, as keys are unique ids
-        _monitoredDevices: null,// device_id -> attrs
         _add_scalars: function(scalars){
-            this.$$('scalar').parse(
-                scalars.map(function(scalar){
-                    return {
-                        id: scalar.info.name,
-                        label: scalar.info.label,
-                        unit: scalar.info.unit,
-                        description: scalar.info.description
-                    }
-                }));
-
-            scalars.forEach(function(scalar){
-                this._add_device(scalar);
-            }, this);
+            this.$$('attributes').parseScalars(scalars);
+            this.$$('attributes').addDevice(this.config.device);
             //reshow progress as it is removed by parse
-            this.$$('scalar').showProgress({
-                type: "icon"
-            });
+            // this.$$('scalar').showProgress({
+            //     type: "icon"
+            // });
         },
         addAttribute: function (attr) {
             var $$tabview = this.$$('attributes-tabview');
@@ -136,22 +122,23 @@
                     this._monitoredAttributes[attrTabId] = attr.info.name;
                     break;
             }
-
-            this._add_device(attr);
         },
-        _add_device:function(attr){
-            if(this._monitoredDevices[attr.device_id] === undefined) this._monitoredDevices[attr.device_id] = [];
-            this._monitoredDevices[attr.device_id].push(attr);
-        },
+        /**
+         * Loads device attributes
+         *
+         * @param {TangoDevice} device
+         */
         loadAttributes: function (device) {
             console.time('loadAttributes')
             //TODO sync with device.attrs
             return device.fetchAttrs().then(function (attrs) {
                 var scalars = attrs.filter(function(attr){
-                    return attr.info.data_format === 'SCALAR' && !(attr.name === 'State' || attr.name === 'Status');
+                    return attr.info.data_format === 'SCALAR';
                 });
 
                 this._add_scalars(scalars);
+
+                return;
 
                 var others = attrs.filter(function(el){
                     return scalars.indexOf(el) < 0;
@@ -283,7 +270,7 @@
         },
         _ui_header: function (device) {
             return {
-                cols: [
+                rows: [
                     {
                         id: "state",
                         view: "device_monitor_header",
@@ -296,57 +283,15 @@
                         }
                     },
                     {
-                        width: 15
-                    },
-                    {
-                        view: "form",
-                        id: "frmUpdateRate",
-                        width: 320,
-                        elements: [{
-                            cols: [
-                                {
-                                    view: "text",
-                                    label: "Update rate (ms):",
-                                    labelWidth: 120,
-                                    value: this._delay,
-                                    name: "updateRate",
-                                    validate: webix.rules.isNumber
-                                },
-                                {
-                                    view: "button",
-                                    type: "iconButton",
-                                    icon: "check",
-                                    width: 36,
-                                    click: function () {
-                                        var top = this.getTopParentView();
-                                        var form = this.getFormView();
-                                        if (form.validate()) {
-                                            top.changeDelay(form.getValues().updateRate);
-                                        }
-                                    }
-                                },
-                                {
-                                    view: "button",
-                                    type: "iconButton",
-                                    icon: "pause",
-                                    width: 36,
-                                    click: function (id, ev) {
-                                        var top = this.getTopParentView();
-                                        if (this.config.icon === "pause") {
-                                            top.stop();
-                                        } else {
-                                            top.start();
-                                        }
-                                        this.define("icon", this.config.icon === "pause" ? "play" : "pause");
-                                        this.refresh();
-                                    }
-                                }
-                            ]
+                        view: 'fieldset',
+                        label: 'Status',
+                        body: {
+                            id: 'status',
+                            template: "#value#",
+                            data: {
+                                value: 'N/A'
+                            }
                         }
-                        ]
-                    },
-                    {
-                        width: 10
                     }
                 ]
             };
@@ -355,71 +300,46 @@
             return {
                 rows: [
                     this._ui_header(device),
-                    {
-                        cols: [{
-                            view: "fieldset",
-                            label: "Status:",
-                            minHeight: 250,
-                            minWidth: 50,
-                            body: {
-                                view: "textarea",
-                                id: "status",
-                                minHeight: 50,
-                                value: "Device is in UNKNOWN state"
-                            }
-                        },
-                            {view: "resizer"},
-                            TangoWebapp.ui.newScalarView(
-                                {
-                                    gravity: 4,
-                                    id: 'scalar-plot',
-                                    empty: true
-                                })
-                        ]
-                    },
-                    {view: "resizer"},
-                    {
-                        view: "tabview",
-                        gravity: 4,
-                        animate: false,
-                        fitBiggest: true,
-                        id: "attributes-tabview",
-                        cells: [
-                            scalar_tab()
-                        ]
-                    }
+                    {view:'resizer'},
+                    TangoWebapp.ui.newAttrsMonitorView({
+                        id:'attributes',
+                        gravity:4
+                    })
                 ]
             };
         },
         name: "device_monitor",
         $init: function (config) {
+            webix.assert(config.device !== undefined, "DeviceMonitor requires device to be defined!");
             webix.extend(config, this._ui(config.device));
 
             this.$ready.push(function () {
-                this._plottedAttributes = [];
-                this._monitoredAttributes = {};
-                this._monitoredDevices = {};
+                this.$$('attributes').$$('scalars').hideColumn('device_id');
+                this.$$('attributes').$$('scalars').hideColumn('remove');
 
-                webix.extend(this.$$('scalar'),webix.ProgressBar);
-                this.$$('scalar').showProgress({
-                    type: "icon"
+                this.$$('state').sync(this.$$('attributes').$$('scalars').data, function(){
+                    this.filter(function(obj){
+                        return obj.name === 'State'
+                    })
                 });
+                //
+                // this.$$('state').sync(this.$$('attributes').$$('scalars').data, function(){
+                //     this.filter(function(obj){
+                //         return obj.name === 'Status'
+                //     })
+                // });
 
-                if(config.device.id !== undefined)
                 this.loadAttributes(config.device)
                     .then(function () {
-                        this.start();
-                        return this.run();
-                    }.bind(this))
-                    .then(function () {
-                        this.$$('scalar').hideProgress();
+                        // this.start();
+                        // return this.run();
                     }.bind(this));
             }.bind(this));
 
             // this.$ready.push(this.start.mvc_bind(this));
         }
     }, webix.IdSpace, webix.EventSystem,
-        TangoWebappPlatform.mixin.DeviceSetter, TangoWebappPlatform.mixin.TabActivator, TangoWebappPlatform.mixin.Runnable,
+        TangoWebappPlatform.mixin.DeviceSetter, TangoWebappPlatform.mixin.TabActivator,
         webix.ui.layout);
 
     TangoWebapp.ui.newDeviceMonitorView = function (config) {
