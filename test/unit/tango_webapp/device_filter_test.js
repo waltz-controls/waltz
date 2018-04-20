@@ -26,7 +26,7 @@ new MVC.Test.Unit('device_filter', {
             value: ["sys/tg_test/0","sys/tg_test/1","some/*/*"]
         });
 
-        this.assert_each(["sys/tg_test*", "sys/tg_test*"], instance.getFamilyFilters("sys"));
+        this.assert_each(["sys/tg_test*"], instance.getFamilyFilters("sys"));
 
         var instance0 = new DeviceFilter({
             value: ["sys/tg_test/0","sys/tg_test/1","*/*/*"]

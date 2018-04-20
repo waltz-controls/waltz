@@ -78,6 +78,14 @@ new MVC.Test.Unit('user_context', {
         this.assert_null(store2.context);
     },
     test_widget_state:function(){
+        var context1 = TangoWebappPlatform.UserContext.create_as_existing({
+            user: "test_1",
+            tango_hosts: TestValues.tango_host,
+            device_filters: ['*/*/*'],
+            ext: Object.create(null)
+        });
+
+
         var state = new TangoWebappPlatform.WidgetState({
             id:'test_widget_state'
         });
@@ -88,6 +96,14 @@ new MVC.Test.Unit('user_context', {
         this.assert_each(["1", "2", "3"], state.getState());
     },
     test_widget_state_non_existing:function(){
+        var context1 = TangoWebappPlatform.UserContext.create_as_existing({
+            user: "test_1",
+            tango_hosts: TestValues.tango_host,
+            device_filters: ['*/*/*'],
+            ext: Object.create(null)
+        });
+
+
         var state = TangoWebappPlatform.WidgetState.find_one(Math.random());
 
         this.assert_null(state);
