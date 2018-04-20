@@ -45,12 +45,11 @@
                 });
 
                 others.forEach(function (attr) {
+                    //TODO optimize
                     setTimeout(function () {
-                        console.time('others');
-                        this.addAttribute(attr);
-                        console.timeEnd('others');
+                        this.$$('attributes').addAttribute(attr);
                     }.bind(this), 10);
-                }.bind(this))
+                }.bind(this));
 
                 console.timeEnd('loadAttributes');
             }.bind(this))
