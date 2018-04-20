@@ -18,11 +18,11 @@ TangoWebappPlatform.TangoDevice = TangoWebappPlatform.DataCollectionWrapper.exte
         },
         default_attributes: {
             //TODO use not selected as default id or similar - important is that it must be the same as in TangoHost
-            id: 'unknown', //host_id/name
-            name: 'unknown',
-            alias: 'unknown',
+            id: undefined, //host_id/name
+            name: undefined,
+            alias: undefined,
             host: {
-                id: 'unknown'
+                id: undefined
             },
             info: {}
         }
@@ -56,7 +56,7 @@ TangoWebappPlatform.TangoDevice = TangoWebappPlatform.DataCollectionWrapper.exte
         set_properties: function (v) {
             this.properties = v;
         },
-        set_display_name: function(v){
+        set_display_name: function (v) {
             this.display_name = v;
         },
         /**
@@ -80,7 +80,7 @@ TangoWebappPlatform.TangoDevice = TangoWebappPlatform.DataCollectionWrapper.exte
                 pipes: new webix.DataCollection(),
                 properties: new webix.DataCollection()
             }));
-            var sort = function(){
+            var sort = function () {
                 this.sort("#name#", "asc", "string");
             };
             this.attrs.waitData.then(sort.bind(this.attrs));
@@ -106,6 +106,7 @@ TangoWebappPlatform.TangoDevice = TangoWebappPlatform.DataCollectionWrapper.exte
                 return promise_info.then(function (infos) {
                     for (var i = 0; i < infos.length; ++i)
                         attributes[i].set_attributes({
+                            display_name:infos[i].label,
                             info: infos[i]
                         })
                     return attributes;
@@ -130,6 +131,29 @@ TangoWebappPlatform.TangoDevice = TangoWebappPlatform.DataCollectionWrapper.exte
                 .then(function (attributes) {
                     this.attrs.parse(attributes);
                     return attributes;
+                }.bind(this))
+                .fail(function (resp) {
+                    TangoWebappHelpers.error(resp);
+                    throw resp;
+                });
+        },
+        /**
+         * @param {string} name
+         * @returns {Promise}
+         */
+        fetchAttr: function (name) {
+            return this.toTangoRestApiRequest().attributes(name).get()
+                .then(function (resp) {
+                    return [TangoAttribute.create_as_existing(
+                        MVC.Object.extend(resp, {
+                            id: this.id + "/" + resp.name,
+                            device_id: this.id
+                        }))];
+                }.bind(this))
+                .then(this._attach_attrs_info())
+                .then(function (attributes) {
+                    this.attrs.parse(attributes);
+                    return attributes[0];
                 }.bind(this))
                 .fail(function (resp) {
                     TangoWebappHelpers.error(resp);
@@ -285,7 +309,7 @@ TangoWebappPlatform.TangoDevice = TangoWebappPlatform.DataCollectionWrapper.exte
             return this.toTangoRestApiRequest().pipes(name).put("", obj);
         }
     }
-);
+    );
 
 if (window['TangoDevice'] === undefined)
     TangoDevice = TangoWebappPlatform.TangoDevice;

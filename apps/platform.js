@@ -27,7 +27,7 @@ include(function () { //runs after prior includes are loaded
 
     include.models(
         "platform/data_collection_wrapper",
-        "platform/tango_webapp_storage", "platform/tango_remote_storage",
+        "platform/tango_webapp_storage", "platform/tango_remote_storage","platform/user_context_storage","platform/widget_state",
         "platform/tango_rest_api_request", "platform/tango_host", "platform/tango_device", "platform/tango_admin_device", "platform/tango_database",
         "platform/tango_command", "platform/tango_attribute", "platform/tango_pipe", "platform/tango_device_property",
         "platform/tango_rest_api",
@@ -36,7 +36,7 @@ include(function () { //runs after prior includes are loaded
     );
     include.controllers(
         "platform/login", "platform/main", "platform/user_context",
-        "platform/ui/top_toolbar", "platform/ui/bottom_toolbar"
+        "platform/ui/top_toolbar", "platform/ui/bottom_toolbar", "platform/ui/ui"
     );
     // include.views(
     // );

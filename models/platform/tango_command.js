@@ -10,6 +10,7 @@ TangoCommand = MVC.Model.extend('tango_command',
         attributes: {
             id: 'string',//host_id/device_id/name
             name: 'string',
+            display_name: 'string',
             info: 'object'
             //TODO history
         },
@@ -23,7 +24,8 @@ TangoCommand = MVC.Model.extend('tango_command',
          * @constructor
          */
         init: function (attrs) {
-            this._super(attrs)
+            attrs.display_name = attrs.display_name || attrs.name;
+            this._super(attrs);
         },
         /**
          *

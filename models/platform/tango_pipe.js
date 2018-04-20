@@ -9,7 +9,8 @@ TangoPipe = MVC.Model.extend('tango_pipe',
 
         attributes: {
             id: 'string', //host_id/device_id/name
-            name: 'string'
+            name: 'string',
+            display_name: 'string'
         },
         default_attributes: {}
     },
@@ -17,6 +18,15 @@ TangoPipe = MVC.Model.extend('tango_pipe',
     {
         _get_device_id: function () {
             return this.id.substr(0, this.id.lastIndexOf('/'));
+        },
+        /**
+         *
+         * @param attrs
+         * @constructor
+         */
+        init:function(attrs){
+            attrs.display_name = attrs.display_name || attrs.name;
+            this._super(attrs);
         },
         /**
          * @returns {webix.promise}

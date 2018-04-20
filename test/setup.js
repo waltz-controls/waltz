@@ -4,7 +4,8 @@ MVC.Console.log("Trying to load: test/setup.js");
 TestValues = {
     rest_url: 'http://localhost:10001',
     tango_host: 'localhost:10000',
-    test_device: 'sys/tg_test/1'
+    test_device: 'sys/tg_test/1',
+    database: 'sys/database/2'
 };
 
 PlatformContext = (function () {
@@ -12,10 +13,12 @@ PlatformContext = (function () {
     tango_hosts[TestValues.tango_host] = '';
 
     return new TangoWebappPlatform.PlatformContext({
+        //TODO this is overrided by the app when loaded prevent it
         UserContext: new TangoWebappPlatform.UserContext({
             user: 'test',
             tango_hosts: tango_hosts,
-            device_filters: ['*/*/*']
+            device_filters: ['*/*/*'],
+            ext: Object.create(null)
         })
     })
 })();

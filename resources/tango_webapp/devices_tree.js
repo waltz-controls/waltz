@@ -6,7 +6,7 @@
      */
     var tree_context_menu = {
         view: "contextmenu",
-        //autoheight: true,
+        id: "devices_tree_context_menu",
         data: [
             {id: 'open', value: 'Open'},
             {id: 'view', value: 'Monitor'},
@@ -15,11 +15,13 @@
         ],
         on: {
             onItemClick: function (id) {
-                var tree = this.getContext().obj;
+                var tree = this.config.master;
+                if(tree === undefined) TangoWebappHelpers.error("tree is undefined");
                 var item = tree.getItem(this.getContext().id);
                 var hostId = tree._get_host_id(item);
                 var name = tree._get_device_name(item);
                 var device_id = hostId + "/" + name;
+
                 OpenAjax.hub.publish("tango_webapp.device_" + id, {
                     data: {
                         id: device_id,
@@ -225,9 +227,37 @@
             on: {
                 onBeforeContextMenu: function (id, e, node) {
                     var item = this.getItem(id);
-                    return item.$level == 5;//member
+                    if(item.$level === 5){
+                        this.$$("devices_tree_context_menu").config.master = this;
+                        this.select(id);
+                        return true;
+                    }
+                    return false;
                 },
-                onItemClick: function (id, e, node) {
+                onItemDblClick:function(id){
+                    var item = this.getItem(id);
+                    if (!item) return false;//TODO or true
+
+                    var tango_host_id;
+                    var device_name;
+                    switch (item.$level) {
+                        case 5://member
+                            tango_host_id = this._get_host_id(item);
+                            device_name = this._get_device_name(item);
+
+                            PlatformApi.PlatformUIController().expandDeviceTree();
+                            break;
+                        default:
+                            TangoWebappHelpers.debug("device_tree#onItemDblClick " + id);
+                    }
+                },
+                /**
+                 * Happens before click events
+                 *
+                 * @param id
+                 * @return {boolean}
+                 */
+                onAfterSelect: function(id){
                     var item = this.getItem(id);
                     if (!item) return false;//TODO or true
 

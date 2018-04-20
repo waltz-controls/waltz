@@ -13,7 +13,7 @@ TangoWebapp.MainController = MVC.Controller.extend('main', {
     buildUI: function (platform_api) {
         var ui_builder = platform_api.ui_builder;
 
-        ui_builder.set_left_item({
+        ui_builder.add_left_sidebar_item({
             header: "<span class='webix_icon fa-sitemap'></span> Devices",
             body: {
                 context: platform_api.context,
@@ -21,20 +21,20 @@ TangoWebapp.MainController = MVC.Controller.extend('main', {
             }
         });
 
-        ui_builder.set_right_item({
-            header: "<span class='webix_icon fa-keyboard-o'></span> Device Test Panel",
-            width: 300,
-            collapsed: true,
-            body: {
-                context: platform_api.context,
-                view: 'test_device_panel',
-                id: 'test-device-panel'
-            }
-        });
+        ui_builder.add_left_sidebar_item(TangoWebapp.ui.newDeviceTree(platform_api.context));
+
+        ui_builder.set_right_item(TangoWebapp.ui.newDeviceControlPanel(platform_api.context));
 
         ui_builder.add_mainview_item(
             {
                 header: "<span class='webix_icon fa-dashboard'></span> Dashboard",
+                borderless: true,
+                body: TangoWebapp.ui.newStatefulAttrsMonitorView({id: 'configurable_monitor'})
+            });
+
+        ui_builder.add_mainview_item(
+            {
+                header: "<span class='webix_icon fa-gears'></span> Settings",
                 body: {
                     id: 'dashboard',
                     view: "dashboard"
@@ -107,5 +107,11 @@ TangoWebapp.MainController = MVC.Controller.extend('main', {
         }).then(function () {
             $$('devices-tree').updateRoot();
         }).fail(TangoWebappHelpers.error);
+    },
+    "tango_webapp.attr_add_to_monitor subscribe": function(event){
+        var attr = event.data;
+        var $$monitor = $$('configurable_monitor');
+        $$monitor.addAttribute(attr);
+        if(!$$monitor.isRunning()) $$monitor.start();
     }
 });

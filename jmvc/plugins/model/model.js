@@ -208,10 +208,13 @@ MVC.Model = MVC.Class.extend(
          *
          * @param {Object} attributes -- new instance's attributes
          * @param {Object} cbks -- callbacks. At least onSuccess must be provided
+         * @return {MVC.Model} instance
          */
         create                 : function (attributes, cbks) {
             var callbacks = this._clean_callbacks(cbks);
-            callbacks.onSuccess(this.create_as_existing(attributes));
+            var instance = this.create_as_existing(attributes);
+            callbacks.onSuccess(instance);
+            return instance;
         },
         /**
          * This method does not actually updates values and should not be called directly
@@ -224,6 +227,7 @@ MVC.Model = MVC.Class.extend(
         update                 : function (id, attributes, cbks) {
             var inst = this.find(id);
             if (!inst) throw "Instance[id=" + id + "] was not found!";
+            this.store.update(id, attributes);
             var callbacks = this._clean_callbacks(cbks);
             this.publish("update", {data: inst});
             callbacks.onSuccess(inst);
@@ -358,8 +362,8 @@ MVC.Model = MVC.Class.extend(
             if (!this.default_attributes[property])
                 this.default_attributes[property] = null;
         },
-        attributes             : {},
-        default_attributes     : {},
+        attributes             : Object.create(null),
+        default_attributes     : Object.create(null),
         /**
          * Used for converting callbacks to to seperate failure and succcess
          * @param {Object} callbacks
@@ -440,7 +444,7 @@ MVC.Model = MVC.Class.extend(
          */
         set_attributes   : function (attributes) {
             for (var key in attributes) {
-                if (attributes.hasOwnProperty(key))
+                if (attributes.hasOwnProperty === undefined || attributes.hasOwnProperty(key))
                     this._setAttribute(key, attributes[key]);
             }
             return attributes;
@@ -540,7 +544,7 @@ MVC.Model = MVC.Class.extend(
          * @return {Object}
          */
         attributes       : function () {
-            var attributes = {};
+            var attributes = Object.create(null);
             var cas = this.Class.attributes;
             for (var attr in cas) {
                 if (cas.hasOwnProperty(attr)) {
