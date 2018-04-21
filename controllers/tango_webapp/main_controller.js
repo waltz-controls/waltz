@@ -56,25 +56,19 @@ TangoWebapp.MainController = MVC.Controller.extend('main', {
             return device;
         });
     },
+    //TODO move to ui_controller
     "tango_webapp.device_open subscribe": function (event) {
         var promise = this._promise_device(event.data);
 
         promise.then(function (device) {
             if (!device.info.exported) throw "Device[" + device.id + "] is not exported";
 
-            var device_view_id = "view/" + device.id;
-            if (!$$(device_view_id)) {
-                $$("main-tabview").addView(
-                    TangoWebapp.ui.newDeviceView(
-                        {
-                            device: device,
-                            id: device_view_id
-                        })
-                );
-            }
-            $$(device_view_id).show();
+            var deviceTab =
+                PlatformApi.PlatformUIController().openDeviceViewTab(device);
 
-            $$(device_view_id).$$(event.data.tab).activate();
+            deviceTab.show();
+
+            deviceTab.$$(event.data.tab).activate();
         }).fail(TangoWebappHelpers.error);
     },
     "tango_webapp.device_view subscribe": function (event) {
@@ -83,18 +77,12 @@ TangoWebapp.MainController = MVC.Controller.extend('main', {
         promise.then(function (device) {
             if (!device.info.exported) throw "Device[" + device.id + "] is not exported";
 
-            var device_view_id = "monitor/" + device.id;
-            if (!$$(device_view_id)) {
-                $$("main-tabview").addView(
-                    TangoWebapp.ui.newDeviceMonitorView({
-                        device: device,
-                        id: device_view_id
-                    })
-                );
-            }
-            $$(device_view_id).show();
+            var deviceTab =
+                PlatformApi.PlatformUIController().openDeviceMonitorTab(device);
 
-            $$(device_view_id).activate();
+            deviceTab.show();
+
+            deviceTab.activate();
         }).fail(TangoWebappHelpers.error);
     },
     "tango_webapp.device_delete subscribe": function (event) {
