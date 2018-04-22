@@ -16,6 +16,12 @@
                 view: 'tabview',
                 tabbar: {
                     on: {
+                        "onItemClick":function(){
+                            var id = this.getParentView().getValue().split('/');
+                            id.shift();//remove prefix (view/ or monitor/)
+                            id = id.join('/');
+                            PlatformContext.devices.setCursor(id);
+                        },
                         "onBeforeTabClose": function () {
                             if (this.data.options.length === 1)
                                 PlatformApi.PlatformUIController().closeTangoHostTab(tango_host);
