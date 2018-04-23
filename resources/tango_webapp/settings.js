@@ -17,6 +17,7 @@
 
     var getting_started = {
         minWidth: 240,
+        width:320,
         minHeight: 240,
         rows: [
             {
@@ -72,7 +73,8 @@
             }.bind(this));
         },
         defaults: {
-            minWidth: 240,
+            minWidth: 120,
+            width:240,
             minHeight: 240,
             on: {
                 "platform_context.set_rest subscribe":function(event){
@@ -246,7 +248,8 @@
             }.bind(this));
         },
         defaults: {
-            minWidth: 240,
+            minWidth: 120,
+            width:240,
             minHeight: 240,
             on: {
                 "user_context_controller.found subscribe": function (event) {
@@ -343,7 +346,9 @@
             });
         },
         defaults: {
-            minWidth: 320,
+            minWidth: 240,
+            maxWidth: 320,
+            gravity:2,
             maxHeight: 480,
             on: {
                 "user_context_controller.found subscribe": function (event) {
@@ -423,8 +428,8 @@
             }.bind(this));
         },
         defaults: {
-            minWidth: 320,
-            maxHeight: 480,
+            minWidth: 360,
+            maxHeight: 400,
             on: {
                 "platform_api.ui.initialized subscribe": function (event) {
                     event.controller.$$('tango-host-info-value')
@@ -470,8 +475,8 @@
             }.bind(this));
         },
         defaults: {
-            minWidth: 320,
-            maxHeight: 480,
+            minWidth: 360,
+            maxHeight: 320,
             on: {
                 "platform_api.ui.initialized subscribe": function (event) {
                     event.controller.$$('tango-device-info-value')
@@ -531,24 +536,16 @@
                     {},
                     {
                         rows: [
-                            {},
                             {
                                 view: 'dashboard_tango_host_info',
                                 id: 'tango-host-info'
 
                             },
-                            {}
-                        ]
-                    },
-                    {},
-                    {
-                        rows: [
                             {},
                             {
                                 view: 'dashboard_device_info',
                                 id: "tango-device-info"
-                            },
-                            {}
+                            }
                         ]
                     },
                     {
