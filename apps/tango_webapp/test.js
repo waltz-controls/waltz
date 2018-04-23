@@ -9,6 +9,7 @@ include.unit_tests(
 include('../../test/setup');
 
 include.functional_tests(
+    'tango_webapp/critical_error_window',
     'tango_webapp/image_view',
     'tango_webapp/device_panel',
     'tango_webapp/device_tree',

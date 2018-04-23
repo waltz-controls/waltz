@@ -26,39 +26,10 @@ TangoWebappPlatform.TopToolbarController = MVC.Controller.extend('top_toolbar_co
                             template: "<a target='_blank' href='http://www.hzg.de'><span style='width: 240px'><img alt='Helmholtz-Zentrum Geesthacht' style='max-width: 100%; max-height: 100%' src='../../images/platform/hzg_rgb_mitzusatz_in_e_300dpi.png'></span></a>"
                         },
                         {
-                            gravity: 4
+                            // gravity: 4
                         },
                         {
-                            view: "text",
-                            id: "txtTangoRestApiHost",
-                            name: 'txtTangoRestApiHost',
-                            inputAlign: "right",
-                            required: true,
-                            width: 400
-                            // TODO suggest: top.rest_hosts
-                        },
-                        {
-                            view: "text",
-                            id: "txtTangoRestApiVersion",
-                            value: TangoWebappPlatform.consts.REST_API_VERSION,
-                            disabled: true, //TODO different versions support
-                            width: 50
-                        },
-                        {
-                            view: "button",
-                            id: "btnRefresh",
-                            type: "icon",
-                            icon: "refresh",
-                            width: 36,
-                            click: function () {
-                                var newRestUrl = $$('top-toolbar').$$('txtTangoRestApiHost').getValue();
-
-                                var tangoRestApi = new TangoRestApi({url: newRestUrl});
-                                PlatformContext.set_rest(tangoRestApi);
-                            },
-                            tooltip: "Refresh Tango rest api URL"
-                        },
-                        {
+                            align: 'right',
                             cols: [
                                 {
                                     type: 'icon',
@@ -68,7 +39,12 @@ TangoWebappPlatform.TopToolbarController = MVC.Controller.extend('top_toolbar_co
                                     tooltip: "#name#",
                                     icon: "user",
                                     align: "right",
-                                    width: 100
+                                    width: 100,
+                                    click:function(){
+                                        if($$('settings')){
+                                            $$('settings').show();
+                                        }
+                                    }
                                 },
                                 {
                                     view: "button",
@@ -102,8 +78,6 @@ TangoWebappPlatform.TopToolbarController = MVC.Controller.extend('top_toolbar_co
             $$("top-toolbar").$$("btnUsername").define('tooltip', context.user);
             $$("top-toolbar").$$("btnUsername").define('label', context.user);
             $$("top-toolbar").$$("btnUsername").refresh();
-
-            $$("top-toolbar").$$('txtTangoRestApiHost').setValue(context.rest_url);
         }
     }
 );

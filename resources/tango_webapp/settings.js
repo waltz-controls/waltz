@@ -31,6 +31,60 @@
     };
 
     /**
+     *
+     * @type {webix.protoUI}
+     */
+    var tango_rest_url =  webix.protoUI({
+        name:'tango_rest_url',
+        _ui:function(user_context){
+            return {
+                rows: [
+                    {
+                        type: 'header',
+                        height: 30,
+                        template: "<span class='webix_icon fa-server'></span><span class='webix_strong'> Tango REST API URL</span>"
+                    },
+                    {
+                        view: 'form',
+                        id: 'frm_tango_rest_url',
+                        elements: [
+                            {view: 'text', name: 'rest_url', value: ''},
+                            {
+                                view: 'button', type: 'form', label: 'Apply', click: function () {
+                                    var newRestUrl = this.getFormView().elements['rest_url'].getValue();
+
+                                    var tangoRestApi = new TangoRestApi({url: newRestUrl});
+                                    PlatformContext.set_rest(tangoRestApi);
+                                }
+                            }
+                        ]
+                    }
+                ]
+            }
+        },
+        $init:function(config){
+            webix.extend(config, this._ui());
+
+            this.$ready.push(function () {
+                 var context = PlatformContext.UserContext;
+
+                 this.$$('frm_tango_rest_url').elements['rest_url'].setValue(context.rest_url);
+            }.bind(this));
+        },
+        defaults: {
+            minWidth: 240,
+            minHeight: 240,
+            on: {
+                "platform_context.set_rest subscribe":function(event){
+                    var self = event.controller;
+                    self.$$('frm_tango_rest_url').elements['rest_url'].setValue(event.data.UserContext.rest_url);
+                }
+            }
+        }
+        }, TangoWebappPlatform.mixin.OpenAjaxListener, webix.IdSpace, webix.ui.layout);
+
+
+    /**
      * @type {webix.protoUI}
      */
     var server_wizard = webix.protoUI({
@@ -212,7 +266,7 @@
                 rows: [
                     {
                         type: 'header',
-                        template: "<span class='webix_icon fa-server'></span><span class='webix_strong'> TANGO hosts</span>",
+                        template: "<span class='webix_icon fa-server'></span><span class='webix_strong'> Tango hosts</span>",
                         height: 40
                     },
                     {
@@ -285,7 +339,7 @@
                     });
                 }
 
-                $$('dashboard').$$('tango_hosts').parse(data);
+                $$('settings').$$('tango_hosts').parse(data);
             });
         },
         defaults: {
@@ -304,10 +358,10 @@
                         });
                     }
 
-                    $$('dashboard').$$('tango_hosts').parse(data);
+                    $$('settings').$$('tango_hosts').parse(data);
                 },
                 "user_context_controller.add_tango_host subscribe": function (event) {
-                    $$('dashboard').$$('tango_hosts').add({
+                    $$('settings').$$('tango_hosts').add({
                         id: event.data
                     });
                     var rest = PlatformContext.rest;
@@ -321,13 +375,13 @@
                     });
                 },
                 "user_context_controller.delete_tango_host subscribe": function (event) {
-                    $$('dashboard').$$('tango_hosts').remove(event.data);
+                    $$('settings').$$('tango_hosts').remove(event.data);
 
                     //TODO do we need to remove tango_host from context here?
                 },
                 "user_context_controller.destroy subscribe": function () {
-                    $$('dashboard').$$('tango_hosts').clearAll();
-                    $$('dashboard').$$('tango_hosts').refresh();
+                    $$('settings').$$('tango_hosts').clearAll();
+                    $$('settings').$$('tango_hosts').refresh();
                 }
             }
         }
@@ -342,7 +396,7 @@
                     {
                         type: 'header',
                         height: 40,
-                        template: "<span class='webix_icon fa-database'></span><span class='webix_strong'> TANGO host info</span>"
+                        template: "<span class='webix_icon fa-database'></span><span class='webix_strong'> Tango host info</span>"
                     },
                     {
                         autoheight: true,
@@ -391,7 +445,7 @@
                     {
                         type: 'header',
                         height: 40,
-                        template: "<span class='webix_icon fa-microchip'></span><span class='webix_strong'> TANGO device info</span>"
+                        template: "<span class='webix_icon fa-microchip'></span><span class='webix_strong'> Tango device info</span>"
                     },
                     {
                         autoheight: true,
@@ -434,8 +488,8 @@
     /**
      * @type {webix.protoUI}
      */
-    var dashboard = webix.protoUI({
-        name: "dashboard",
+    var settings = webix.protoUI({
+        name: "settings",
         _ui: function () {
             return {
                 cols: [
@@ -445,7 +499,9 @@
                     {
                         rows: [
                             {},
-                            getting_started,
+                            {
+                                view: 'tango_rest_url'
+                            },
                             {
                                 height: 5
                             },

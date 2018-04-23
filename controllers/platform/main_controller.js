@@ -93,15 +93,7 @@ TangoWebappPlatform.MainController = MVC.Controller.extend('main', {
                 TangoWebappHelpers.log("Tango REST API host has been set to " + rest.url);
             })
             .fail(function (rest) {
-                TangoWebappHelpers.error("Tango REST API host has been set to " + rest.url);
-                webix.alert({
-                    title: "<span class='webix_icon fa-warning' style='color: red;'></span>",
-                    text: "<p class='webix_strong'>Failed to ping Tango REST API host!!!</p><p>Try to change it in the top toolbar!</p><p>Or double check username and password (logout and login)!</p><div style='height: 100px;'/>",
-                    type: 'alert-error',
-                    width: 480,
-                    height: 320
-                });
-
+                webix.ui(TangoWebapp.ui.newCriticalErrorWindow(rest)).show();
             })
     },
     /**

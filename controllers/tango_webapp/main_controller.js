@@ -36,8 +36,8 @@ TangoWebapp.MainController = MVC.Controller.extend('main', {
             {
                 header: "<span class='webix_icon fa-gears'></span> Settings",
                 body: {
-                    id: 'dashboard',
-                    view: "dashboard"
+                    id: 'settings',
+                    view: "settings"
                 }
             });
     },
