@@ -140,7 +140,6 @@
                         });
                 })
             })).then(function(filtered_members){
-                debugger
                 return Array.prototype.concat.apply([], filtered_members);//flatten an array of arrays
             });
         },
@@ -154,6 +153,7 @@
                 id: 'root',
                 value: context.rest.url,
                 open: true,
+                $css: 'rest_host',
                 data: []
             };
 

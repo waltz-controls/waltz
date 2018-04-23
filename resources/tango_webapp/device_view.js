@@ -21,19 +21,19 @@ TangoWebapp.ui.newDeviceView = function (config) {
             id   : config.id,
             cells: [
                 {
-                    header: "Properties",
+                    header: "<span class='tab_bold'>" + "Properties" + "</span>",
                     body: TangoWebapp.ui.newDevicePropertiesView(config.device)
                 },
                 {
-                    header: "Polling",
+                    header: "<span class='tab_bold'>" + "Polling" + "</span>",
                     body: TangoWebapp.ui.newDevicePollingView(config.device)
                 },
                 {
-                    header: "Events",
+                    header: "<span class='tab_bold'>" + "Events" + "</span>",
                     body: TangoWebapp.ui.newDeviceEventsView(config.device)
                 },
                 {
-                    header: "Attributes config",
+                    header: "<span class='tab_bold'>" + "Attributes config" + "</span>",
                     body: TangoWebapp.ui.newDeviceAttrConfigView(config.device)
                 },
                 //{
@@ -45,7 +45,7 @@ TangoWebapp.ui.newDeviceView = function (config) {
                 //    body  : TangoWebapp.ui.newDeviceAttrProps(config.device)
                 //},
                 {
-                    header: "Logging",
+                    header: "<span class='tab_bold'>" + "Logging" + "</span>",
                     body: TangoWebapp.ui.newDeviceLoggingView(config.device)
                 }
             ]

@@ -80,6 +80,15 @@
                 var device = PlatformContext.devices.getItem(this.device_id);
 
                 return device.toTangoRestApiRequest().attributes(this.name).put('/info?async=true', this.info);
+            },
+            /**
+             *
+             * @returns {'STATE'|'STATUS'|'SCALAR'|'SPECTRUM'|'IMAGE'}
+             */
+            getDataFormat:function(){
+                if(this.name === 'State') return 'STATE';
+                if(this.name === 'Status') return 'STATUS';
+                return this.info.data_format;
             }
         }
     );

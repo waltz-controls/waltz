@@ -3,7 +3,7 @@ include("platform");
 include.application('TangoWebapp', '0.3-rc9');
 
 include.css(
-    "highlight"
+    "tango_webapp"
     // "webix/codebase/skins/aircompact"
 );
 include.libs(

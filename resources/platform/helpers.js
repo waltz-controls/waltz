@@ -53,7 +53,6 @@ TangoWebappPlatform.helpers = {
         });
         webix.message({type: 'error', text: msg});
         $$('bottom-toolbar').switchLogBtnIcon('error');
-        debugger
     },
 
     /**

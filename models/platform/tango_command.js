@@ -25,6 +25,8 @@ TangoCommand = MVC.Model.extend('tango_command',
          */
         init: function (attrs) {
             attrs.display_name = attrs.display_name || attrs.name;
+            if(attrs.name === 'State' || attrs.name === 'Status') attrs.id = attrs.id + '_cmd'; //TODO may append _cmd multiple times
+
             this._super(attrs);
         },
         /**
@@ -39,6 +41,13 @@ TangoCommand = MVC.Model.extend('tango_command',
             var device = PlatformContext.devices.getItem(device_id);
 
             return device.executeCommand(this.name, argin);
+        },
+        /**
+         *
+         * @returns {'COMMAND'}
+         */
+        getDataFormat:function(){
+            return 'COMMAND';
         }
     }
 );

@@ -14,5 +14,13 @@ TangoDeviceProperty = MVC.Model.extend('tango_device_property',
         default_attributes: {}
     },
     /* @Prototype */
-    {}
+    {
+        /**
+         *
+         * @returns {'DEVICE_PROPERTY'}
+         */
+        getDataFormat: function () {
+            return 'DEVICE_PROPERTY';
+        }
+    }
 );

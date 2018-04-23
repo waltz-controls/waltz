@@ -49,6 +49,13 @@ TangoPipe = MVC.Model.extend('tango_pipe',
             var device = PlatformContext.devices.getItem(device_id);
 
             return device.writePipe(this.name, value);
+        },
+        /**
+         *
+         * @returns {'PIPE'}
+         */
+        getDataFormat:function(){
+            return 'PIPE';
         }
     }
 );
