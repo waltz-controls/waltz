@@ -1,0 +1,158 @@
+.webix_tree {
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+}
+
+.ALARM .webix_template {
+    background-color: lightcoral !important;
+    vertical-align: middle !important;
+    color: black !important;
+    font-weight: bolder !important;
+}
+
+.ON .webix_template {
+    background-color: palegreen !important;
+    vertical-align: middle !important;
+    color: black !important;
+    font-weight: bolder !important;
+}
+
+.STANDBY .webix_template {
+    background-color: lightskyblue !important;
+    vertical-align: middle !important;
+    color: black !important;
+    font-weight: bolder !important;
+}
+
+.RUNNING .webix_template {
+    background-color: limegreen !important;
+    vertical-align: middle !important;
+    color: black !important;
+    font-weight: bolder !important;
+}
+
+.UNKNOWN .webix_template {
+    background-color: lightgray !important;
+    vertical-align: middle !important;
+    color: black !important;
+    font-weight: bolder !important;
+}
+
+.tab_bold {
+    font-weight: bold;
+    /*vertical-align: middle;*/
+    /*text-align: center;*/
+    /*display: initial;*/
+    display: block;
+}
+
+.webix_icon.webix_tab_close {
+    /*padding: 0px;*/
+    /*margin-top: -15px;*/
+    display: table-cell;
+}
+
+.tab_img {
+    float: left;
+    margin-left: 3px;
+    /*display: table-cell;*/
+    /*vertical-align: middle;*/
+
+}
+
+/*[webix_tm_id|=root] > .webix_tree_folder_open:before {
+    content: "\f233";   *//*server*//*
+    font-family: FontAwesome;
+}
+
+[webix_tm_id|=root] > .webix_tree_folder_open {
+    background-image: none;
+}*/
+
+/* devices_tree */
+
+.rest_host > .webix_tree_folder_open:before, .rest_host > .webix_tree_folder:before {
+    content: "\f233";
+    font-family: FontAwesome;
+}
+.rest_host > .webix_tree_folder_open, .rest_host > .webix_tree_folder {
+    background-image: none;
+}
+
+.tango_host > .webix_tree_folder_open:before, .tango_host > .webix_tree_folder:before{
+    content: "\f1c0";
+    font-family: FontAwesome;
+}
+.tango_host > .webix_tree_folder_open, .tango_host > .webix_tree_folder{
+    background-image: none;
+}
+
+.webix_tree_folder_open:before{
+    content: "\f07c";
+    font-family: FontAwesome;
+}
+.webix_tree_folder_open{
+    background-image: none;
+}
+.webix_tree_folder:before{
+    content: "\f07b";
+    font-family: FontAwesome;
+}
+.webix_tree_folder{
+    background-image: none;
+}
+
+.webix_tree_file:before {
+    content: "\f15b";
+    font-family: FontAwesome;
+}
+.webix_tree_file {
+    background-image: none;
+}
+
+.member > .webix_tree_file:before {
+    content: "\f2db";
+    font-family: FontAwesome;
+}
+
+/* device_tree */
+
+.SCALAR > .webix_tree_file:before {
+    content: "\f1fa";
+    font-family: FontAwesome;
+}
+
+.SPECTRUM > .webix_tree_file:before {
+    content: "\f1fe";
+    font-family: FontAwesome;
+}
+
+.IMAGE > .webix_tree_file:before {
+    content: "\f03e";
+    font-family: FontAwesome;
+}
+
+.STATE > .webix_tree_file:before {
+    content: "\f0e4";
+    font-family: FontAwesome;
+}
+
+.STATUS > .webix_tree_file:before {
+    content: "\f0e4";
+    font-family: FontAwesome;
+}
+
+.COMMAND > .webix_tree_file:before {
+    content: "\f152";
+    font-family: FontAwesome;
+}
+
+.PIPE > .webix_tree_file:before {
+    content: "\f0f6";
+    font-family: FontAwesome;
+}
+
+
+/* TODO MORE STATES */

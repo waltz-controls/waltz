@@ -153,6 +153,7 @@
                 id: 'root',
                 value: context.rest.url,
                 open: true,
+                $css: 'rest_host',
                 data: []
             };
 

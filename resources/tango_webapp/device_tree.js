@@ -109,7 +109,8 @@
                             parent: id,
                             data: items.map(function(item){
                                 return MVC.Object.extend(item, {
-                                    value: item.display_name
+                                    value: item.display_name,
+                                    $css:  item.getDataFormat()
                                 })
                             })
                         })

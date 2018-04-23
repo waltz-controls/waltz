@@ -176,7 +176,7 @@
 
     var openScalarWindow = function(resp) {
         openTab.bind(this)({
-            header: "<span class='webix_icon fa-image'></span>[<span class='webix_strong'>" + this.device_id + '/' + this.name + "</span>]",
+            header: "<span class='webix_icon fa-at'></span>[<span class='webix_strong'>" + this.device_id + '/' + this.name + "</span>]",
             close: true,
             borderless: true,
             body: TangoWebapp.ui.newScalarView(webix.extend({id: this.id}, resp))
