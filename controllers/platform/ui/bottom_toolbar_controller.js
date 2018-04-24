@@ -120,7 +120,7 @@ TangoWebappPlatform.BottomToolbar = MVC.Controller.extend("bottom_toolbar_contro
 
         $$('main-log').log({
             type: 'error',
-            value: data.data.errors[0].description,
+            value: data.data.errors,
             timestamp: +new Date()
         });
         $$('bottom-toolbar').switchLogBtnIcon('error');

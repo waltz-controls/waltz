@@ -3,7 +3,7 @@
  * @author Igor Khokhriakov <igor.khokhriakov@hzg.de>
  * @since 4/24/18
  */
-TangoWebapp.UserAction = MVC.Model.extend('user_action',
+UserAction = TangoWebapp.UserAction = MVC.Model.extend('user_action',
     /** @Static */
     {
         attributes: {
@@ -115,16 +115,51 @@ TangoWebapp.UserAction = MVC.Model.extend('user_action',
                 }.bind(this))
                 .fail(this.failure.bind(this));
         },
+        /**
+         *
+         * @param {TangoDevice} device
+         * @returns {webix.promise}
+         */
+        readDeviceProperties: function (device) {
+            return device.fetchProperties()
+                .then(function (result) {
+                    var instance = new this({
+                        id: webix.uid(),
+                        value: ['<span class="webix_icon fa-user"></span>', 'Action: read_device_properties:', device.id, '; Properties:', result.length].join(' '),
+                        timestamp: +new Date()
+                    });
+                    this.publish('log', {data: instance});
+                    return result;
+                }.bind(this))
+                .fail(this.failure.bind(this));
+        },
+        /**
+         *
+         * @param {TangoDevice} device
+         * @param {prop:[]} values
+         * @returns {webix.promise}
+         */
+        writeDeviceProperties: function (device, props) {
+            return device.putProperties(props)
+                .then(function (result) {
+                    var instance = new this({
+                        id: webix.uid(),
+                        value: ['<span class="webix_icon fa-user"></span>', 'Action: write_device_properties:', device.id, '; Properties:', result.length].join(' '),
+                        timestamp: +new Date()
+                    });
+                    this.publish('log', {data: instance});
+                    return result;
+                }.bind(this))
+                .fail(this.failure.bind(this));
+        },
         //TODO open(load) tango host
         //TODO open(load) tango device
-        //TODO read(write) tango device property
         //TODO etc
         /**
          *
          * @param {Error} err
          */
         failure: function (err) {
-            debugger
             var instance = new this({
                 id: webix.uid(),
                 type: 'error',

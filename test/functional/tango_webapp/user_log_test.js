@@ -72,10 +72,6 @@ new Test.Functional('user_action_test', {
             .then(function (attr) {
                 return TangoWebapp.UserAction.writeAttribute(attr, "invalid argument");
             })
-            .fail(function (attr) {
-                debugger
-                TangoWebapp.UserAction.failure(attr);
-            })
     },
     test_write_non_existing_attribute:function(){
         PlatformContext.rest.fetchHost(TestValues.tango_host)
@@ -110,6 +106,31 @@ new Test.Functional('user_action_test', {
             })
             .then(function (cmd) {
                 return TangoWebapp.UserAction.executeCommand(cmd, 3.14);
+            })
+            .then(this.next_callback('write_attribute_action'))
+            .fail(function(){
+                debugger
+            })
+    },
+    test_read_write_device_properties:function(){
+        var device = PlatformContext.rest.fetchHost(TestValues.tango_host)
+            .then(function (host) {
+                return host.fetchDevice(TestValues.test_device);
+            });
+
+            device.then(function (device) {
+                return TangoWebapp.UserAction.readDeviceProperties(device);
+            })
+            .then(this.next_callback('write_attribute_action'))
+            .fail(function(){
+                debugger
+            })
+
+        device
+            .then(function (device) {
+                return TangoWebapp.UserAction.writeDeviceProperties(device, {
+                    my_new_prop: [1234]
+                });
             })
             .then(this.next_callback('write_attribute_action'))
             .fail(function(){

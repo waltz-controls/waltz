@@ -269,6 +269,20 @@ TangoWebappPlatform.TangoDevice = TangoWebappPlatform.DataCollectionWrapper.exte
         },
         /**
          *
+         * @param {string} name
+         * @returns {Promise}
+         */
+        fetchProperty: function (name) {
+            return this.toTangoRestApiRequest().properties(name).get().then(function (resp) {
+                var property = TangoDeviceProperty.create_as_existing(
+                        MVC.Object.extend(resp, this._get_extension(resp))
+                        );
+                this._update_item(property);
+                return property;
+            }.bind(this));
+        },
+        /**
+         *
          * @param cmd
          * @param arg
          * @return {webix.promise}
