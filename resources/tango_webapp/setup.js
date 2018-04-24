@@ -3,7 +3,7 @@ TangoWebapp.ui = {
         "critical_error_no_rest",
         "settings",
         "devices_tree","device_tree",
-        "plot", "test_device_panel",
+        "plot", "device_control_panel",
         "tango_host_view",
         "device_view", "device_properties_view", "device_polling_view", "device_events_view",
         "device_attributes_config_view", "device_logging_view",

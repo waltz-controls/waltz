@@ -19,11 +19,10 @@ include.plugins(
 
 include(function () { //runs after prior includes are loaded
     include.models(
-        // "data_base_device", "device", "dserver", "rest_api", "tango_host", "globals", "credentials",
-        "tango_webapp/device_filter"
+        "tango_webapp/device_filter", "tango_webapp/user_action"
     );
     include.controllers(
-        "tango_webapp/main"
+        "tango_webapp/main", "tango_webapp/user_action"
     );
     include.views(
         "views/main_log_item", "views/getting_started", "views/dev_panel_error_out",

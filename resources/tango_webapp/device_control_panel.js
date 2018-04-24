@@ -461,8 +461,8 @@
     /**
      * @type {webix.protoUI}
      */
-    var test_device_panel = webix.protoUI({
-        name: 'test_device_panel',
+    var device_control_panel = webix.protoUI({
+        name: 'device_control_panel',
         clearAll: function () {
             //TODO
             this.$$('commands').clearAll();
@@ -548,8 +548,8 @@
             collapsed: true,
             body: {
                 context: context,
-                view: 'test_device_panel',
-                id: 'test-device-panel'
+                view: 'device_control_panel',
+                id: 'device_control_panel'
             }
         };
     }

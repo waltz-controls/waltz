@@ -6,7 +6,7 @@
  * @type {UserContext}
  */
 TangoWebappPlatform.UserContext = MVC.Model.extend('user_context',
-    /* @Static */
+    /** @Static */
     {
         store_type: TangoWebappStorage,
         id: "user",
@@ -52,7 +52,7 @@ TangoWebappPlatform.UserContext = MVC.Model.extend('user_context',
             this.store = new store(this);
         }
     },
-    /* @Prototype */
+    /** @Prototype */
     {
         /**
          *

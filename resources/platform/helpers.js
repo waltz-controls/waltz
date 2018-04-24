@@ -36,7 +36,7 @@ TangoWebappPlatform.helpers = {
     log: function (msg) {
         console.log(msg);
         webix.message(msg);
-        $$('main-log').log({type: '', value: msg, timestamp: TangoWebappPlatform.consts.LOG_DATE_FORMATTER(new Date())});
+        $$('main-log').log({type: '', value: msg, timestamp: +new Date()});
     },
 
     /**
@@ -49,7 +49,7 @@ TangoWebappPlatform.helpers = {
         var id = $$('main-log').log({
             type: 'error',
             value: msg,
-            timestamp: TangoWebappPlatform.consts.LOG_DATE_FORMATTER(new Date())
+            timestamp: +new Date()
         });
         webix.message({type: 'error', text: msg});
         $$('bottom-toolbar').switchLogBtnIcon('error');
@@ -65,7 +65,7 @@ TangoWebappPlatform.helpers = {
             var id = $$('main-log').log({
                 type: '',
                 value: msg,
-                timestamp: TangoWebappPlatform.consts.LOG_DATE_FORMATTER(new Date())
+                timestamp: +new Date()
             });
         }
     }
