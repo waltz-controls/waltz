@@ -8,22 +8,32 @@
         _command: null,
         synchronize: function (device) {
             TangoWebappHelpers.debug("device[" + device.id + "]." + this._what + ".count=" + device[this._what].count());
-            if (!device[this._what].count()) {
+            if (device[this._what].count() === 0) {
                 this.showProgress({
                     type: "icon"
                 });
                 device[this._command]().then(function (items) {
-                    this.$$('list').data.importData(items);
+                    importData(this.$$('list'), device[this._what]);
                     this.hideProgress();
                 }.bind(this))
+            } else {
+                importData(this.$$('list'), device[this._what]);
+                this.elements.name.setValue('');//drop currently selected item
             }
-            this.$$('list').data.importData(device[this._what]);
-            this.elements.name.setValue('');//drop currently selected item
         },
         $init: function (config) {
             this._what = config.id;
             this._command = 'fetch' + MVC.String.classize(this._what);
         }
+    };
+
+    /**
+     *
+     * @return {Function}
+     */
+    var importData = function($$list, data) {
+            $$list.data.importData(data);
+            $$list.sort("#display_name#","asc","string");
     };
 
     /**
