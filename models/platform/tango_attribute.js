@@ -79,19 +79,7 @@
 
                 var values = {};
                 values[this.name] = value;
-                return device.putAttrValues(values).then(this._handle_resp.bind(this)).then(function(attr){
-                    if(attr.value !== value) {
-                        attr.add_errors([
-                            TangoWebappHelpers.newTangoError({
-                                reason: ['Write to ',attr.id,' has failed:'].join(''),
-                                description: ['request value(',value,') != response value (',attr.value,')'].join(''),
-                                severity: 'ERR',
-                                origin: 'tango_attribute.js#write'
-                            })]);
-                        throw attr;
-                    } else 
-                        return attr;
-                });
+                return device.putAttrValues(values).then(this._handle_resp.bind(this));
             },
             /**
              *

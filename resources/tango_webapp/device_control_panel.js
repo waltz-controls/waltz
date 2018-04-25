@@ -44,12 +44,13 @@
         _execute_command: function () {
             var command = this.$$('list').getSelectedItem();
             var argin = this.elements.argin.getValue();
-            command.execute(argin)
-                .fail(error_handler.bind(this))
+
+            UserAction.executeCommand(command, argin)
                 .then(function (resp) {
                     if (!resp.output) resp.output = "";
                     this.getTopParentView().$$('output').setValue(new View({url: 'views/dev_panel_command_out.ejs'}).render(resp));
-                }.bind(this));
+                }.bind(this))
+                .fail(error_handler.bind(this));
         },
         _ui: function () {
             return {
@@ -193,8 +194,14 @@
         }, resp)
     };
 
+    var attr_output_handler = function (resp) {
+        this.getTopParentView().$$('output').setValue(new View({url: 'views/dev_panel_attribute_out.ejs'}).render(resp));
+    };
+
     var error_handler = function (resp) {
-        this.getTopParentView().$$('output').setValue(new View({url: 'views/dev_panel_error_out.ejs'}).render(resp))
+        this.getTopParentView().$$('output').setValue(new View({url: 'views/dev_panel_error_out.ejs'}).render(resp));
+        //clear errors
+        resp.errors.length = 0;
     };
 
     /**
@@ -206,22 +213,19 @@
             var attribute = this.$$('list').getSelectedItem();
 
 
-            attribute.read()
-                .fail(error_handler.bind(this))
-                .then(function (resp) {
-                    this.getTopParentView().$$('output').setValue(new View({url: 'views/dev_panel_attribute_out.ejs'}).render(resp))
-                }.bind(this));
+            UserAction.readAttribute(attribute)
+                .then(attr_output_handler.bind(this))
+                .fail(error_handler.bind(this));
         },
         _write: function () {
             var attribute = this.$$('list').getSelectedItem();
 
             var v = this.elements.w_value.getValue();
 
-            attribute.write(v)
-                .fail(error_handler.bind(this))
-                .then(function (resp) {
-                    this.getTopParentView().$$('output').setValue(new View({url: 'views/dev_panel_attribute_out.ejs'}).render(resp))
-                }.bind(this));
+            UserAction.writeAttribute(attribute, v)
+                .then(attr_output_handler.bind(this))
+                .fail(error_handler.bind(this));
+
         },
         _plot: function () {
             var attribute = this.$$('list').getSelectedItem();
@@ -346,11 +350,11 @@
         _read: function () {
             var pipe = this.$$('list').getSelectedItem();
 
-            pipe.read()
-                .fail(error_handler.bind(this))
+            UserAction.readPipe(pipe)
                 .then(function (resp) {
                     this.getTopParentView().$$('output').setValue(new View({url: 'views/dev_panel_pipe_out.ejs'}).render(resp));
                 }.bind(this))
+                .fail(error_handler.bind(this));
 
         },
         _write: function () {
@@ -363,11 +367,11 @@
                 TangoWebappHelpers.error(e);
             }
 
-            pipe.write(input)
-                .fail(error_handler.bind(this))
+            UserAction.writePipe(pipe, input)
                 .then(function (resp) {
                     this.getTopParentView().$$('output').setValue(new View({url: 'views/dev_panel_pipe_out.ejs'}).render(resp));
                 }.bind(this))
+                .fail(error_handler.bind(this));
         },
         _ui: function () {
             return {

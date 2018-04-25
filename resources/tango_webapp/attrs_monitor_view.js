@@ -41,7 +41,14 @@
                         }
                     }
                 },
-                {}
+                {},
+                {
+                    view: "icon",
+                    id: "status",
+                    icon: "refresh",
+                    maxWidth: 20,
+                    align: "left"
+                }
             ]
         };
     };
@@ -314,10 +321,12 @@
         before_start:function(){
             this.$$('startStop').define("icon", "pause");
             this.$$('startStop').refresh();
+            webix.html.addCss( this.$$('status').getNode(), "fa-spin");
         },
         after_stop:function(){
             this.$$('startStop').define("icon", "play");
             this.$$('startStop').refresh();
+            webix.html.removeCss( this.$$('status').getNode(), "fa-spin");
         },
         /**
          *

@@ -4,6 +4,7 @@
  */
 TangoWebappPlatform.BottomToolbar = MVC.Controller.extend("bottom_toolbar_controller", {
     getUI: function () {
+        //TODO merge platform and tango_webapp and move this outside
         /**
          * @type {webix.protoUI}
          */
@@ -50,6 +51,22 @@ TangoWebappPlatform.BottomToolbar = MVC.Controller.extend("bottom_toolbar_contro
                         $$btnLog.getNode().getElementsByTagName("button")[0].firstChild.style.color = "#606060";
                     }
                 },
+                _user_log_popup:webix.ui({
+                    view: 'popup',
+                    id: 'user-log-popup',
+                    minHeight: 320,
+                    height: 768,
+                    minWidth: 320,
+                    width: 1024,
+                    body: {
+                        rows: [
+                            {
+                                view: 'logger',
+                                id: 'user-log'
+                            }
+                        ]
+                    }
+                }),
                 _log_popup: webix.ui({
                     view: 'popup',
                     id: 'log',
@@ -67,6 +84,7 @@ TangoWebappPlatform.BottomToolbar = MVC.Controller.extend("bottom_toolbar_contro
                     },
                     on: {
                         onHide: function () {
+                            debugger
                             $$('bottom-toolbar').switchLogBtnIcon();
                         }
                     }
@@ -84,11 +102,22 @@ TangoWebappPlatform.BottomToolbar = MVC.Controller.extend("bottom_toolbar_contro
                         //TODO rest api call result
                         {
                             view: "button",
+                            id: "btnUserLog",
+                            type: "icon",
+                            tooltip: "User actions log",
+                            //TODO add label
+                            icon: "commenting",
+                            width: 36,
+                            popup: 'user-log-popup',
+                            align: "right"
+                        },
+                        {
+                            view: "button",
                             id: "btnLog",
                             type: "icon",
                             tooltip: "Log console",
                             //TODO add label
-                            icon: "commenting",
+                            icon: "info-circle",
                             width: 36,
                             popup: 'log',
                             align: "right"

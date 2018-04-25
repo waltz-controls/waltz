@@ -45,13 +45,14 @@
             }
             f(collection.getItem(last), id)
         },
+
+        //TODO move to log_controller; log messages must be broadcasted via OpenAjax.hub
         /**
          *
          * @param msg
          */
         log: function (msg) {
             console.log(msg);
-            webix.message(msg);
             $$('main-log').log({type: '', value: msg, timestamp: +new Date()});
         },
 
