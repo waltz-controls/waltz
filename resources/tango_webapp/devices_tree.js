@@ -16,7 +16,6 @@
         on: {
             onItemClick: function (id) {
                 var tree = this.config.master;
-                if(tree === undefined) TangoWebappHelpers.error("tree is undefined");
                 var item = tree.getItem(this.getContext().id);
                 var hostId = tree._get_host_id(item);
                 var name = tree._get_device_name(item);
