@@ -15,17 +15,20 @@ UserAction = TangoWebapp.UserAction = MVC.Model.extend('user_action',
         default_attributes: {
             type: 'user_action'
         },
+        _get_user:function(){
+            return ['<span class="webix_icon fa-user"></span>',PlatformContext.UserContext.user,';'];
+        },
         _get_attr_value:function(attr){
             return [attr.info.data_format, '=', (attr.isScalar()) ? attr.value : '...']
         },
         _check_attr_invalid_quality_error:function(attr){
-            if(attr.quality !== 'ATTR_VALID') {
+            if(attr.quality === 'FAILURE') {
                 attr.add_errors([
                     TangoWebappHelpers.newTangoError({
-                        reason: 'Write attribute returned invalid quality',
-                        description: ['Attribute[', attr.id, '] quality is not ATTR_VALID:'].join(''),
+                        reason: 'Attribute has invalid quality',
+                        description: ['Attribute[', attr.display_name, '] quality is FAILURE!'].join(''),
                         severity: 'ERR',
-                        origin: ['user_action.js#readAttribute(', attr.name, ')'].join('')
+                        origin: attr.id
                     })]);
                 throw attr;
             }
@@ -35,9 +38,9 @@ UserAction = TangoWebapp.UserAction = MVC.Model.extend('user_action',
                 attr.add_errors([
                     TangoWebappHelpers.newTangoError({
                         reason: 'Write attribute has failed',
-                        description: ['Returned value[', attr.value, '] does not match argument[', arg, ']'].join(''),
+                        description: ['Returned value[', attr.display_name, '] does not match argument[', arg, ']'].join(''),
                         severity: 'ERR',
-                        origin: ['user_action.js#writeAttribute(', attr.name, ',', arg, ')'].join('')
+                        origin: attr.id
                     })]);
                 throw error;
             }
@@ -65,7 +68,7 @@ UserAction = TangoWebapp.UserAction = MVC.Model.extend('user_action',
                     function (result) {
                         var instance = new this({
                             id: webix.uid(),
-                            value: ['<span class="webix_icon fa-user"></span>', 'Action: read attribute:', result.id, '; Result:'].concat(this._get_attr_value(result)).join(' '),
+                            value: this._get_user().concat(['Action: read attribute:', result.id, '; Result:']).concat(this._get_attr_value(result)).join(' '),
                             timestamp: result.timestamp
                         });
                         this.publish('log', {data: instance});
@@ -89,7 +92,7 @@ UserAction = TangoWebapp.UserAction = MVC.Model.extend('user_action',
                 .then(function (result) {
                     var instance = new this({
                         id: webix.uid(),
-                        value: ['<span class="webix_icon fa-user"></span>', 'Action: write attribute[', result.id, '] Value:', result.value,'; Result:'].concat(this._get_attr_value(result)).join(' '),
+                        value: this._get_user().concat(['Action: write attribute[', result.id, '] Value:', result.value,'; Result:']).concat(this._get_attr_value(result)).join(' '),
                         timestamp: result.timestamp || +new Date()
                     });
                     this.publish('log', {data: instance});
@@ -109,7 +112,7 @@ UserAction = TangoWebapp.UserAction = MVC.Model.extend('user_action',
                 .then(function (result) {
                     var instance = new this({
                         id: webix.uid(),
-                        value: ['<span class="webix_icon fa-user"></span>', 'Action: execute command:', result.id, '; Input:', result.input, '; Ouput:', result.output].join(' '),
+                        value: this._get_user().concat(['Action: execute command:', result.id, '; Input:', result.input, '; Ouput:', result.output]).join(' '),
                         timestamp: +new Date()
                     });
                     this.publish('log', {data: instance});
@@ -127,7 +130,7 @@ UserAction = TangoWebapp.UserAction = MVC.Model.extend('user_action',
                 .then(function (result) {
                     var instance = new this({
                         id: webix.uid(),
-                        value: ['<span class="webix_icon fa-user"></span>', 'Action: read_pipe:', result.id, '; Size:', result.size].join(' '),
+                        value: this._get_user().concat(['Action: read_pipe:', result.id, '; Size:', result.size]).join(' '),
                         timestamp: result.timestamp
                     });
                     this.publish('log', {data: instance});
@@ -146,7 +149,7 @@ UserAction = TangoWebapp.UserAction = MVC.Model.extend('user_action',
                 .then(function (result) {
                     var instance = new this({
                         id: webix.uid(),
-                        value: ['<span class="webix_icon fa-user"></span>', 'Action: read_pipe:', result.id, '; Size:', result.size].join(' '),
+                        value: this._get_user().concat(['Action: read_pipe:', result.id, '; Size:', result.size]).join(' '),
                         timestamp: result.timestamp
                     });
                     this.publish('log', {data: instance});
@@ -164,7 +167,7 @@ UserAction = TangoWebapp.UserAction = MVC.Model.extend('user_action',
                 .then(function (result) {
                     var instance = new this({
                         id: webix.uid(),
-                        value: ['<span class="webix_icon fa-user"></span>', 'Action: read_device_properties:', device.id, '; Properties:', result.length].join(' '),
+                        value: this._get_user().concat(['Action: read_device_properties:', device.id, '; Properties:', result.length]).join(' '),
                         timestamp: +new Date()
                     });
                     this.publish('log', {data: instance});
@@ -183,7 +186,7 @@ UserAction = TangoWebapp.UserAction = MVC.Model.extend('user_action',
                 .then(function (result) {
                     var instance = new this({
                         id: webix.uid(),
-                        value: ['<span class="webix_icon fa-user"></span>', 'Action: write_device_properties:', device.id, '; Properties:', result.length].join(' '),
+                        value: this._get_user().concat(['Action: write_device_properties:', device.id, '; Properties:', result.length]).join(' '),
                         timestamp: +new Date()
                     });
                     this.publish('log', {data: instance});
@@ -202,7 +205,7 @@ UserAction = TangoWebapp.UserAction = MVC.Model.extend('user_action',
             var instance = new this({
                 id: webix.uid(),
                 type: 'error',
-                value: ['<span class="webix_icon fa-user"></span>', 'User action has failed:\n'].concat(err.errors).join(' '), //TODO errors - errors objects
+                value: this._get_user().concat(['User action has failed:\n']).concat(err.errors).join(' '), //TODO errors - errors objects
                 timestamp: err.timestamp || +new Date()
             });
             this.publish('log', {data: instance});

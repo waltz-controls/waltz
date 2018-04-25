@@ -84,7 +84,6 @@ TangoWebappPlatform.BottomToolbar = MVC.Controller.extend("bottom_toolbar_contro
                     },
                     on: {
                         onHide: function () {
-                            debugger
                             $$('bottom-toolbar').switchLogBtnIcon();
                         }
                     }

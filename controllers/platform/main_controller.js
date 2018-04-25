@@ -90,7 +90,7 @@ TangoWebappPlatform.MainController = MVC.Controller.extend('main', {
 
         rest.isAlive()
             .then(function (rest) {
-                TangoWebappHelpers.log("Tango REST API host has been set to " + rest.url);
+                TangoWebappHelpers.log("TangoWebapp has been loaded!");
             })
             .fail(function (rest) {
                 webix.ui(TangoWebapp.ui.newCriticalErrorWindow(rest)).show();
