@@ -168,7 +168,6 @@
 
     //TODO send Open Ajax event and handle it in main_controller
     var openSpectrumWindow = function (resp) {
-        this.value = resp;
         var device = PlatformContext.devices.getItem(this.device_id);
         openTab.bind(this)({
             header: "<span class='webix_icon fa-area-chart'></span>[<span class='webix_strong'>" + device.display_name + '/' + this.display_name + "</span>]",
