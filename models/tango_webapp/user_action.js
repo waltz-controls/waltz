@@ -103,6 +103,23 @@ UserAction = TangoWebapp.UserAction = MVC.Model.extend('user_action',
         },
         /**
          *
+         * @param {TangoAttribute} attr
+         */
+        updateAttributeInfo:function(attr){
+            return attr.putInfo()
+                .then(function(/*async*/){
+                    var instance = new this({
+                        id: webix.uid(),
+                        value: this._get_user().concat(['Action: update attribute info[', attr.id, ']']).join(' '),
+                        timestamp: +new Date()
+                    });
+                    this.publish('log', {data: instance});
+                    return attr;
+                }.bind(this))
+                .fail(this.failure.bind(this));
+        },
+        /**
+         *
          * @param {TangoCommand} cmd
          * @param {any} argin
          * @returns {webix.promise}
@@ -178,7 +195,7 @@ UserAction = TangoWebapp.UserAction = MVC.Model.extend('user_action',
         /**
          *
          * @param {TangoDevice} device
-         * @param {prop:[]} values
+         * @param {prop:[]} props
          * @returns {webix.promise}
          */
         writeDeviceProperties: function (device, props) {

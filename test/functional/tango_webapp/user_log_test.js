@@ -58,6 +58,34 @@ new Test.Functional('user_action_test', {
             })
             .then(this.next_callback('write_attribute_action'))
     },
+    test_real_attribute_update_info_action:function(){
+        PlatformContext.rest.fetchHost(TestValues.tango_host)
+            .then(function (host) {
+                return host.fetchDevice(TestValues.test_device);
+            })
+            .then(function (device) {
+                return device.fetchAttr('long_scalar_w');
+            })
+            .then(function (attr) {
+                attr.info.label = "Long Scalar W";
+                return TangoWebapp.UserAction.updateAttributeInfo(attr);
+            })
+            .then(this.next_callback('write_attribute_action'))
+    },
+    test_real_attribute_update_info_action_fail:function(){
+        PlatformContext.rest.fetchHost(TestValues.tango_host)
+            .then(function (host) {
+                return host.fetchDevice(TestValues.test_device);
+            })
+            .then(function (device) {
+                return device.fetchAttr('boolean_spectrum');
+            })
+            .then(function (attr) {
+                attr.info.label = "XXX";
+                return TangoWebapp.UserAction.updateAttributeInfo(attr);
+            })
+            .then(this.next_callback('write_attribute_action'))
+    },
     write_attribute_action:function(){
         debugger
     },
