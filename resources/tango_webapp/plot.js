@@ -145,6 +145,8 @@
             _newPlot: function (config) {
                 this._traces = [];
                 Plotly.newPlot(this.getNode(), [], {
+                    width: this.$width,
+                    height: this.$height,
                     showlegend: true
                 });
             },

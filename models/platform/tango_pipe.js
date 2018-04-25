@@ -32,11 +32,12 @@ TangoPipe = MVC.Model.extend('tango_pipe',
          * @returns {webix.promise}
          */
         read: function () {
-            var device_id = this._get_device_id();
+            var device = PlatformContext.devices.getItem(this.device_id);
 
-            var device = PlatformContext.devices.getItem(device_id);
-
-            return device.readPipe(this.name);
+            return device.readPipe(this.name).then(function(resp){
+                this.update_attributes(resp);
+                return this;
+            }.bind(this));
         },
         /**
          *
@@ -44,11 +45,12 @@ TangoPipe = MVC.Model.extend('tango_pipe',
          * @returns {webix.promise}
          */
         write: function (value) {
-            var device_id = this._get_device_id();
+            var device = PlatformContext.devices.getItem(this.device_id);
 
-            var device = PlatformContext.devices.getItem(device_id);
-
-            return device.writePipe(this.name, value);
+            return device.writePipe(this.name, value).then(function(resp){
+                this.update_attributes(resp);
+                return this;
+            }.bind(this));
         },
         /**
          *

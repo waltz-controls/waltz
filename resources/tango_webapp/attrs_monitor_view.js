@@ -41,7 +41,14 @@
                         }
                     }
                 },
-                {}
+                {},
+                {
+                    view: "icon",
+                    id: "status",
+                    icon: "refresh",
+                    maxWidth: 20,
+                    align: "left"
+                }
             ]
         };
     };
@@ -311,13 +318,17 @@
 
             this._update_plot();
         },
-        before_start:function(){
-            this.$$('startStop').define("icon", "pause");
+        _update_start_stop_icon:function(icon){
+            this.$$('startStop').define("icon", icon);
             this.$$('startStop').refresh();
         },
+        before_start:function(){
+            this._update_start_stop_icon("pause");
+            webix.html.addCss( this.$$('status').getNode(), "fa-spin");
+        },
         after_stop:function(){
-            this.$$('startStop').define("icon", "play");
-            this.$$('startStop').refresh();
+            this._update_start_stop_icon("play");
+            webix.html.removeCss( this.$$('status').getNode(), "fa-spin");
         },
         /**
          *

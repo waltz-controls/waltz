@@ -5,7 +5,7 @@
  * @class
  */
 DeviceFilter = MVC.Model.extend('device_filter',
-    /* @Static */
+    /** @Static */
     {
         store_type: TangoWebappStorage,
         id: "user",
@@ -17,7 +17,7 @@ DeviceFilter = MVC.Model.extend('device_filter',
             user: "default"
         }
     },
-    /* @Prototype */
+    /** @Prototype */
     {
         domain_filter:[],
         family_filter:[],

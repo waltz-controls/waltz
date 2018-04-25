@@ -167,15 +167,14 @@
                         delta_val: info.alarms.delta_val
                     })
                 }.bind(top));
-            }).then(TangoWebappHelpers.log.bind(null, "Attribute configuration has been refreshed"))
+            }).then(TangoWebappHelpers.log.bind(null, ["Device[",device.id,"] attributes configuration has been updated"].join('')))
                 .fail(TangoWebappHelpers.error);
         },
         apply: function () {
             var top = this.getTopParentView();
 
             TangoWebappHelpers.iterate(top._device.attrs, function (attr) {
-                attr.putInfo()
-                    .then(TangoWebappHelpers.log.bind(null, "Attribute[" + attr.name + "] configuration has been updated"))
+                UserAction.updateAttributeInfo(attr)
                     .then(function () {
                         OpenAjax.hub.publish("tango_webapp.device_view.update_attr_config", {data: attr.info})
                     })

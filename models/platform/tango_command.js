@@ -9,9 +9,12 @@ TangoCommand = MVC.Model.extend('tango_command',
 
         attributes: {
             id: 'string',//host_id/device_id/name
+            device_id: 'string',
             name: 'string',
             display_name: 'string',
-            info: 'object'
+            info: 'object',
+            input: 'any',
+            output: 'any'
             //TODO history
         },
         default_attributes: {}
@@ -36,11 +39,15 @@ TangoCommand = MVC.Model.extend('tango_command',
          * @returns {webix.promise}
          */
         execute: function (argin) {
-            var device_id = this.id.substr(0, this.id.lastIndexOf('/'));
+            var device = PlatformContext.devices.getItem(this.device_id);
 
-            var device = PlatformContext.devices.getItem(device_id);
-
-            return device.executeCommand(this.name, argin);
+            this.update_attributes({
+                input: argin
+            });
+            return device.executeCommand(this.name, argin).then(function(resp){
+                this.update_attributes(resp);
+                return this;
+            }.bind(this));
         },
         /**
          *

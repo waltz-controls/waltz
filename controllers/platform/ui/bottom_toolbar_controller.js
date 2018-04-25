@@ -4,6 +4,7 @@
  */
 TangoWebappPlatform.BottomToolbar = MVC.Controller.extend("bottom_toolbar_controller", {
     getUI: function () {
+        //TODO merge platform and tango_webapp and move this outside
         /**
          * @type {webix.protoUI}
          */
@@ -21,8 +22,7 @@ TangoWebappPlatform.BottomToolbar = MVC.Controller.extend("bottom_toolbar_contro
             name: "logger",
             $init: function (config) {
                 webix.extend(config, this._getUI());
-
-                this._view = new View({url: config.ejs});
+                this._view = new View({url: this.defaults.ejs});
             },
             log: function (item) {
                 if (item.type === 'error') item.$css = {"background-color": "lightcoral"};
@@ -36,7 +36,8 @@ TangoWebappPlatform.BottomToolbar = MVC.Controller.extend("bottom_toolbar_contro
             defaults: {
                 type: {
                     height: Infinity
-                }
+                },
+                ejs: 'views/main_log_item.ejs'
             }
         }, webix.IdSpace, webix.ui.list);
 
@@ -50,6 +51,22 @@ TangoWebappPlatform.BottomToolbar = MVC.Controller.extend("bottom_toolbar_contro
                         $$btnLog.getNode().getElementsByTagName("button")[0].firstChild.style.color = "#606060";
                     }
                 },
+                _user_log_popup:webix.ui({
+                    view: 'popup',
+                    id: 'user-log-popup',
+                    minHeight: 320,
+                    height: 768,
+                    minWidth: 320,
+                    width: 1024,
+                    body: {
+                        rows: [
+                            {
+                                view: 'logger',
+                                id: 'user-log'
+                            }
+                        ]
+                    }
+                }),
                 _log_popup: webix.ui({
                     view: 'popup',
                     id: 'log',
@@ -61,8 +78,7 @@ TangoWebappPlatform.BottomToolbar = MVC.Controller.extend("bottom_toolbar_contro
                         rows: [
                             {
                                 view: 'logger',
-                                id: 'main-log',
-                                ejs: 'views/main_log_item.ejs'
+                                id: 'main-log'
                             }
                         ]
                     },
@@ -85,11 +101,22 @@ TangoWebappPlatform.BottomToolbar = MVC.Controller.extend("bottom_toolbar_contro
                         //TODO rest api call result
                         {
                             view: "button",
+                            id: "btnUserLog",
+                            type: "icon",
+                            tooltip: "User actions log",
+                            //TODO add label
+                            icon: "commenting",
+                            width: 36,
+                            popup: 'user-log-popup',
+                            align: "right"
+                        },
+                        {
+                            view: "button",
                             id: "btnLog",
                             type: "icon",
                             tooltip: "Log console",
                             //TODO add label
-                            icon: "commenting",
+                            icon: "info-circle",
                             width: 36,
                             popup: 'log',
                             align: "right"
@@ -119,10 +146,10 @@ TangoWebappPlatform.BottomToolbar = MVC.Controller.extend("bottom_toolbar_contro
     "tango_webapp.rest_failure subscribe": function (data) {
         $$('bottom-toolbar').$$('rest-url').parse(this._toMsg(data.data, "FAILED"));
 
-        var id = $$('main-log').log({
+        $$('main-log').log({
             type: 'error',
-            value: data.data.errors[0].description,
-            timestamp: TangoWebappPlatform.consts.LOG_DATE_FORMATTER(new Date())
+            value: data.data.errors,
+            timestamp: +new Date()
         });
         $$('bottom-toolbar').switchLogBtnIcon('error');
     },

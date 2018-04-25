@@ -5,13 +5,13 @@ new Test.Functional('test_device_panel', {
             id: 'device-panel-test-window',
             height: 480,
             body: {
-                view: 'test_device_panel',
-                id: 'device-panel-test',
+                view: 'device_control_panel',
+                id: 'device_control_panel_test',
                 context: PlatformContext
             }
         }).show();
 
-        this.assert_not($$('device-panel-test').isEnabled());
+        this.assert_not($$('device_control_panel_test').isEnabled());
     },
     test_bind_request: function () {
         PlatformContext.rest.fetchHost(TestValues.tango_host)
@@ -22,7 +22,7 @@ new Test.Functional('test_device_panel', {
     },
     bind_request: function (device) {
         PlatformContext.devices.setCursor(device.id);
-        this.assert($$('device-panel-test').isEnabled());
+        this.assert($$('device_control_panel_test').isEnabled());
         // this.assert_equal(30,$$('device-panel-test').$$('commands').$$('list').count());
     },
     test_bind_other: function () {
@@ -34,11 +34,11 @@ new Test.Functional('test_device_panel', {
     },
     bind_other: function (device) {
         PlatformContext.devices.setCursor(device.id);
-        this.assert($$('device-panel-test').isEnabled());
+        this.assert($$('device_control_panel_test').isEnabled());
         // this.assert_equal(100,$$('device-panel-test').$$('commands').$$('list').count());
     },
     test_close: function () {
         $$('device-panel-test-window').destructor();
-        this.assert_not($$('device-panel-test'));
+        this.assert_not($$('device_control_panel_test'));
     }
 });

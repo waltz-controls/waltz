@@ -44,12 +44,13 @@
         _execute_command: function () {
             var command = this.$$('list').getSelectedItem();
             var argin = this.elements.argin.getValue();
-            command.execute(argin)
-                .fail(error_handler.bind(this))
+
+            UserAction.executeCommand(command, argin)
                 .then(function (resp) {
                     if (!resp.output) resp.output = "";
                     this.getTopParentView().$$('output').setValue(new View({url: 'views/dev_panel_command_out.ejs'}).render(resp));
-                }.bind(this));
+                }.bind(this))
+                .fail(error_handler.bind(this));
         },
         _ui: function () {
             return {
@@ -155,7 +156,9 @@
     var openTab = function (view, resp) {
         var $$tab = $$(this.id);
         if (!$$tab) {
-            $$("main-tabview").addView(view);
+            var device = PlatformContext.devices.getItem(this.device_id);
+            PlatformApi.PlatformUIController().openTangoHostTab(device.host, view);
+
             $$tab = $$(this.id);
         }
 
@@ -165,9 +168,9 @@
 
     //TODO send Open Ajax event and handle it in main_controller
     var openSpectrumWindow = function (resp) {
-        this.value = resp;
+        var device = PlatformContext.devices.getItem(this.device_id);
         openTab.bind(this)({
-            header: "<span class='webix_icon fa-area-chart'></span>[<span class='webix_strong'>" + this.device_id + '/' + this.name + "</span>]",
+            header: "<span class='webix_icon fa-area-chart'></span>[<span class='webix_strong'>" + device.display_name + '/' + this.display_name + "</span>]",
             close: true,
             borderless: true,
             body: TangoWebapp.ui.newSpectrumView(this)
@@ -176,8 +179,9 @@
 
     //TODO send Open Ajax event and handle it in main_controller
     var openImageWindow = function (resp) {
+        var device = PlatformContext.devices.getItem(this.device_id);
         openTab.bind(this)({
-            header: "<span class='webix_icon fa-image'></span>[<span class='webix_strong'>" + this.device_id + '/' + this.name + "</span>]",
+            header: "<span class='webix_icon fa-image'></span>[<span class='webix_strong'>" + device.display_name + '/' + this.display_name + "</span>]",
             close: true,
             borderless: true,
             body: TangoWebapp.ui.newImageView(webix.extend({id: this.id}, resp))
@@ -185,16 +189,23 @@
     };
 
     var openScalarWindow = function(resp) {
+        var device = PlatformContext.devices.getItem(this.device_id);
         openTab.bind(this)({
-            header: "<span class='webix_icon fa-at'></span>[<span class='webix_strong'>" + this.device_id + '/' + this.name + "</span>]",
+            header: "<span class='webix_icon fa-at'></span>[<span class='webix_strong'>" + device.display_name + '/' + this.display_name + "</span>]",
             close: true,
             borderless: true,
             body: TangoWebapp.ui.newScalarView(webix.extend({id: this.id}, resp))
         }, resp)
     };
 
+    var attr_output_handler = function (resp) {
+        this.getTopParentView().$$('output').setValue(new View({url: 'views/dev_panel_attribute_out.ejs'}).render(resp));
+    };
+
     var error_handler = function (resp) {
-        this.getTopParentView().$$('output').setValue(new View({url: 'views/dev_panel_error_out.ejs'}).render(resp))
+        this.getTopParentView().$$('output').setValue(new View({url: 'views/dev_panel_error_out.ejs'}).render(resp));
+        //clear errors
+        resp.errors.length = 0;
     };
 
     /**
@@ -206,22 +217,19 @@
             var attribute = this.$$('list').getSelectedItem();
 
 
-            attribute.read()
-                .fail(error_handler.bind(this))
-                .then(function (resp) {
-                    this.getTopParentView().$$('output').setValue(new View({url: 'views/dev_panel_attribute_out.ejs'}).render(resp))
-                }.bind(this));
+            UserAction.readAttribute(attribute)
+                .then(attr_output_handler.bind(this))
+                .fail(error_handler.bind(this));
         },
         _write: function () {
             var attribute = this.$$('list').getSelectedItem();
 
             var v = this.elements.w_value.getValue();
 
-            attribute.write(v)
-                .fail(error_handler.bind(this))
-                .then(function (resp) {
-                    this.getTopParentView().$$('output').setValue(new View({url: 'views/dev_panel_attribute_out.ejs'}).render(resp))
-                }.bind(this));
+            UserAction.writeAttribute(attribute, v)
+                .then(attr_output_handler.bind(this))
+                .fail(error_handler.bind(this));
+
         },
         _plot: function () {
             var attribute = this.$$('list').getSelectedItem();
@@ -346,11 +354,11 @@
         _read: function () {
             var pipe = this.$$('list').getSelectedItem();
 
-            pipe.read()
-                .fail(error_handler.bind(this))
+            UserAction.readPipe(pipe)
                 .then(function (resp) {
                     this.getTopParentView().$$('output').setValue(new View({url: 'views/dev_panel_pipe_out.ejs'}).render(resp));
                 }.bind(this))
+                .fail(error_handler.bind(this));
 
         },
         _write: function () {
@@ -363,11 +371,11 @@
                 TangoWebappHelpers.error(e);
             }
 
-            pipe.write(input)
-                .fail(error_handler.bind(this))
+            UserAction.writePipe(pipe, input)
                 .then(function (resp) {
                     this.getTopParentView().$$('output').setValue(new View({url: 'views/dev_panel_pipe_out.ejs'}).render(resp));
                 }.bind(this))
+                .fail(error_handler.bind(this));
         },
         _ui: function () {
             return {
@@ -461,8 +469,8 @@
     /**
      * @type {webix.protoUI}
      */
-    var test_device_panel = webix.protoUI({
-        name: 'test_device_panel',
+    var device_control_panel = webix.protoUI({
+        name: 'device_control_panel',
         clearAll: function () {
             //TODO
             this.$$('commands').clearAll();
@@ -548,8 +556,8 @@
             collapsed: true,
             body: {
                 context: context,
-                view: 'test_device_panel',
-                id: 'test-device-panel'
+                view: 'device_control_panel',
+                id: 'device_control_panel'
             }
         };
     }

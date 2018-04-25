@@ -91,6 +91,14 @@ TangoWebappPlatform.TangoRestApiRequest = MVC.Model.extend('tango_rest_api_reque
         },
         /**
          *
+         * @param {} resp
+         */
+        add_errors:function(resp){
+            resp.errors = resp.errors.map(function(error){ return TangoWebappHelpers.newTangoError(error)});
+            this._super(resp.errors);
+        },
+        /**
+         *
          * @param resp
          * @returns {*}
          * @private
@@ -101,7 +109,7 @@ TangoWebappPlatform.TangoRestApiRequest = MVC.Model.extend('tango_rest_api_reque
                 json = resp.json();
 
                 if (json.quality === 'FAILURE') {
-                    this.add_errors(json.errors);
+                    this.add_errors(json);
                     this.failure = json;
                     OpenAjax.hub.publish("tango_webapp.rest_failure", {data: this});
                     throw json;
@@ -122,7 +130,6 @@ TangoWebappPlatform.TangoRestApiRequest = MVC.Model.extend('tango_rest_api_reque
             try {
                 json = JSON.parse(resp.responseText);
             } catch (e) {
-                console.log(e);
                 json = {
                     errors: [
                         {
@@ -136,7 +143,7 @@ TangoWebappPlatform.TangoRestApiRequest = MVC.Model.extend('tango_rest_api_reque
                     timestamp: +new Date()
                 }
             }
-            this.add_errors(json.errors);
+            this.add_errors(json);
             this.failure = json;
             OpenAjax.hub.publish("tango_webapp.rest_failure", {data: this});
             throw json;
@@ -172,8 +179,9 @@ TangoWebappPlatform.TangoRestApiRequest = MVC.Model.extend('tango_rest_api_reque
         /**
          * @returns {TangoRestApiRequest}
          */
-        properties: function () {
-            this.url += '/properties';
+        properties: function (name) {
+            this.url += '/properties/';
+            if (name) this.url += name;
             return this;
         },
 

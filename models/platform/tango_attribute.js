@@ -1,11 +1,7 @@
+/**
+ * @module TangoAttribute
+ */
 (function () {
-    var handle_resp = function (resp) {
-        var result = resp[0];
-        if (result.quality === 'FAILURE' || result.errors)
-            throw result;
-        else return result;
-    };
-
     /**
      * Model tango_attribute
      *
@@ -51,13 +47,27 @@
                 this._super(attrs);
             },
             /**
+             *
+             * @return {boolean}
+             */
+            isScalar:function(){
+                return this.info.data_format === 'SCALAR';
+            },
+            _handle_resp : function (resp) {
+                var result = resp[0];
+                this.update_attributes(result);
+                if (!this.valid())
+                    throw this;
+                else return this;
+            },
+            /**
              * @returns {webix.promise}
              */
             read: function () {
                 var device = PlatformContext.devices.getItem(this.device_id);
 
 
-                return device.fetchAttrValues([this.name]).then(handle_resp);
+                return device.fetchAttrValues([this.name]).then(this._handle_resp.bind(this));
             },
             /**
              *
@@ -69,7 +79,7 @@
 
                 var values = {};
                 values[this.name] = value;
-                return device.putAttrValues(values).then(handle_resp);
+                return device.putAttrValues(values).then(this._handle_resp.bind(this));
             },
             /**
              *
