@@ -156,7 +156,9 @@
     var openTab = function (view, resp) {
         var $$tab = $$(this.id);
         if (!$$tab) {
-            $$("main-tabview").addView(view);
+            var device = PlatformContext.devices.getItem(this.device_id);
+            PlatformApi.PlatformUIController().openTangoHostTab(device.host, view);
+
             $$tab = $$(this.id);
         }
 
@@ -167,8 +169,9 @@
     //TODO send Open Ajax event and handle it in main_controller
     var openSpectrumWindow = function (resp) {
         this.value = resp;
+        var device = PlatformContext.devices.getItem(this.device_id);
         openTab.bind(this)({
-            header: "<span class='webix_icon fa-area-chart'></span>[<span class='webix_strong'>" + this.device_id + '/' + this.name + "</span>]",
+            header: "<span class='webix_icon fa-area-chart'></span>[<span class='webix_strong'>" + device.display_name + '/' + this.display_name + "</span>]",
             close: true,
             borderless: true,
             body: TangoWebapp.ui.newSpectrumView(this)
@@ -177,8 +180,9 @@
 
     //TODO send Open Ajax event and handle it in main_controller
     var openImageWindow = function (resp) {
+        var device = PlatformContext.devices.getItem(this.device_id);
         openTab.bind(this)({
-            header: "<span class='webix_icon fa-image'></span>[<span class='webix_strong'>" + this.device_id + '/' + this.name + "</span>]",
+            header: "<span class='webix_icon fa-image'></span>[<span class='webix_strong'>" + device.display_name + '/' + this.display_name + "</span>]",
             close: true,
             borderless: true,
             body: TangoWebapp.ui.newImageView(webix.extend({id: this.id}, resp))
@@ -186,8 +190,9 @@
     };
 
     var openScalarWindow = function(resp) {
+        var device = PlatformContext.devices.getItem(this.device_id);
         openTab.bind(this)({
-            header: "<span class='webix_icon fa-at'></span>[<span class='webix_strong'>" + this.device_id + '/' + this.name + "</span>]",
+            header: "<span class='webix_icon fa-at'></span>[<span class='webix_strong'>" + device.display_name + '/' + this.display_name + "</span>]",
             close: true,
             borderless: true,
             body: TangoWebapp.ui.newScalarView(webix.extend({id: this.id}, resp))
