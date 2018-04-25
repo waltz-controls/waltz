@@ -6,7 +6,7 @@
      *
      * @return {} toolbar
      */
-    newToolbar = function(){
+    var newToolbar = function(){
         return {
             view: "toolbar",
             height: 40,
@@ -53,7 +53,7 @@
         };
     };
 
-    newScalarsPlot = function(){
+    var newScalarsPlot = function(){
         return {
             view: 'fieldset',
             label: "Scalar plot",
@@ -177,7 +177,7 @@
         }
     }, webix.EventSystem, webix.OverlayBox, webix.ui.datatable);
 
-    newScalars = function(){
+    var newScalars = function(){
         return {
             view: 'scalars',
             id: 'scalars',
@@ -203,7 +203,7 @@
         };
     };
 
-    newAttributes = function(){
+    var newAttributes = function(){
         return {
             view: 'tabview',
             gravity: 2,
