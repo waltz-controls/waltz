@@ -79,6 +79,24 @@ UserAction = TangoWebapp.UserAction = MVC.Model.extend('user_action',
         /**
          *
          * @param {TangoAttribute} attr
+         */
+        readAttributeHistory:function(attr){
+            return attr.fetchHistory().then(
+                function (result) {
+                    var instance = new this({
+                        id: webix.uid(),
+                        value: this._get_user().concat(['Action: read attribute history:', result.id, '; History length:', result.history.length]).join(' '),
+                        timestamp: result.timestamp
+                    });
+                    this.publish('log', {data: instance});
+                    return result;
+                }.bind(this))
+                .fail(this.failure.bind(this));
+        },
+        /**
+         *
+         *
+         * @param {TangoAttribute} attr
          * @param {any} arg
          * @returns {webix.promise}
          */

@@ -4,7 +4,7 @@
 (function () {
     /**
      *
-     * @return {} toolbar
+     * @return {webix.config} toolbar
      */
     var newToolbar = function(){
         return {

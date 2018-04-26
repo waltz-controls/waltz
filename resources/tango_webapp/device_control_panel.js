@@ -1,5 +1,34 @@
 /** @module TestDevicePanel */
 (function () {
+    var attr_info_values = ['label','writable','data_format','data_type','max_dim_x','max_dim_y','unit','standard_unit',
+        'display_unit','format','min_value','max_value'];
+
+    /**
+     *
+     * @type {webix.config}
+     */
+    var attr_info_datatable = {
+        id: 'attribute_info',
+        view: 'datatable',
+        header:false,
+        columns:[
+            {id:'info' },
+            {id:'value', fillspace: true}
+        ],
+        on:{
+            onBindApply:function(attr){
+                if(!attr) return false;
+                var info = [];
+                info.push({info:'Name', value: attr.name});
+                attr_info_values.forEach(function(el){
+                    info.push({info:MVC.String.classize(el), value: attr.info[el]})
+                });
+                this.clearAll();
+                this.parse(info);
+            }
+        }
+    };
+
     /**
      * @type {webix.ui.config}
      */
@@ -235,20 +264,31 @@
             var attribute = this.$$('list').getSelectedItem();
 
             if (attribute.info.data_format === "SPECTRUM") {
-                attribute.read()
-                    .fail(error_handler.bind(this))
-                    .then(openSpectrumWindow.bind(attribute));
+                UserAction.readAttribute(attribute)
+                    .then(openSpectrumWindow.bind(attribute))
+                    .fail(error_handler.bind(this));
             } else if (attribute.info.data_format === "IMAGE") {
-                attribute.read()
-                    .fail(error_handler.bind(this))
-                    .then(openImageWindow.bind(attribute));
+                UserAction.readAttribute(attribute)
+                    .then(openImageWindow.bind(attribute))
+                    .fail(error_handler.bind(this));
             } else if (attribute.info.data_format === "SCALAR") {
-                attribute.read()
-                    .fail(error_handler.bind(this))
-                    .then(openScalarWindow.bind(attribute));
+                UserAction.readAttribute(attribute)
+                    .then(openScalarWindow.bind(attribute))
+                    .fail(error_handler.bind(this));
             } else {
                 TangoWebappHelpers.error("Unsupported data format: " + attribute.info.data_format);
             }
+        },
+        _plot_history:function(){
+            var attribute = this.$$('list').getSelectedItem();
+
+            UserAction.readAttributeHistory(attribute)
+                .then(openScalarWindow.bind(attribute))
+                .then(function(){
+                    debugger
+                    //TODO update plot with history
+                })
+                .fail(error_handler.bind(this));
         },
         _ui: function () {
             return {
@@ -268,14 +308,7 @@
                         validate: webix.rules.isNotEmpty,
                         invalidMessage: 'Attribute must be selected from the list'
                     },
-                    {
-                        view: 'text',
-                        name: 'w_value'
-                    },
-                    {
-                        view: "textarea",
-                        name: "info"
-                    },
+                    attr_info_datatable,
                     {
                         cols: [
                             {
@@ -291,18 +324,6 @@
                             },
                             {
                                 view: 'button',
-                                name: 'btnWrite',
-                                disabled: true,
-                                value: 'Write',
-                                click: function () {
-                                    var form = this.getFormView();
-                                    if (form.validate()) {
-                                        form._write();
-                                    }
-                                }
-                            },
-                            {
-                                view: 'button',
                                 name: 'btnPlot',
                                 disabled: true,
                                 value: 'Plot',
@@ -312,7 +333,39 @@
                                         form._plot();
                                     }
                                 }
+                            },
+                            {
+                                view: 'button',
+                                name: 'btnPlotHist',
+                                disabled: true,
+                                value: 'Plot.Hist',
+                                click: function () {
+                                    var form = this.getFormView();
+                                    if (form.validate()) {
+                                        form._plot_history();
+                                    }
+                                }
                             }]
+                    },
+                    {
+                        cols:[
+                            {
+                                view: 'text',
+                                name: 'w_value'
+                            },
+                            {
+                                view: 'button',
+                                name: 'btnWrite',
+                                disabled: true,
+                                value: 'Write',
+                                click: function () {
+                                    var form = this.getFormView();
+                                    if (form.validate()) {
+                                        form._write();
+                                    }
+                                }
+                            }
+                        ]
                     }
                 ]
             }
@@ -321,7 +374,8 @@
             webix.extend(config, this._ui());
 
             this.$ready.push(function () {
-                this.bind(this.$$('list'))
+                this.bind(this.$$('list'));
+                this.$$('attribute_info').bind(this.$$('list'));
             }.bind(this));
         },
         defaults: {
@@ -335,8 +389,10 @@
                     } catch (e) {
                         info = "Failed to parse attribute.info: " + e;
                     }
-                    this.elements.info.setValue(info);
                     this.elements['btnPlot'].enable();
+                    if(obj.isScalar()){
+                        this.elements['btnPlotHist'].enable();
+                    }
                     if (obj.info.writable.includes("WRITE"))
                         this.elements['btnWrite'].enable();
                     else

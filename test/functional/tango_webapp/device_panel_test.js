@@ -3,7 +3,7 @@ new Test.Functional('test_device_panel', {
         webix.ui({
             view: 'window',
             id: 'device-panel-test-window',
-            height: 480,
+            height: 768,
             body: {
                 view: 'device_control_panel',
                 id: 'device_control_panel_test',
