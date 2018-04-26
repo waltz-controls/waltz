@@ -186,7 +186,6 @@
                     var node = this.getNode();
                     webix.ui({
                         view: "contextmenu",
-                        id: config.id + "_menu",
                         data: [
                             "Clear"
                         ],
