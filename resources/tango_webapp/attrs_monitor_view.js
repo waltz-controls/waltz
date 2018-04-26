@@ -14,7 +14,7 @@
                 {
                     view: "icon",
                     id: "status",
-                    icon: "grav",
+                    icon: "repeat",
                     maxWidth: 20,
                     align: "right"
                 },
