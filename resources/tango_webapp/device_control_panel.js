@@ -1,6 +1,7 @@
 /** @module TestDevicePanel */
 (function () {
-    var attr_info_values = ['label','writable','data_format','data_type','max_dim_x','max_dim_y','unit','standard_unit',
+    var attr_info_values = [
+        'label','writable','data_format','data_type','max_dim_x','max_dim_y','unit','standard_unit',
         'display_unit','format','min_value','max_value'];
 
     /**
@@ -8,7 +9,7 @@
      * @type {webix.config}
      */
     var attr_info_datatable = {
-        id: 'attribute_info',
+        id: 'info',
         view: 'datatable',
         header:false,
         columns:[
@@ -25,6 +26,57 @@
                 });
                 this.clearAll();
                 this.parse(info);
+            }
+        }
+    };
+
+    var commands_info_datatable = {
+        view: 'form',
+        id: 'info',
+        elements:[{
+            cols: [{
+                view:'fieldset',
+                label: 'Input',
+                body:{
+                    rows:[
+                        {
+                            view: 'label',
+                            name:'in_type'
+                        },
+                        {
+                            view: 'textarea',
+                            name:'in_type_desc'
+                        }
+                    ]
+                }
+            },
+                {
+                    view:'fieldset',
+                    label: 'Output',
+                    body:{
+                        rows:[
+                            {
+                                view: 'label',
+                                name:'out_type'
+                            },
+                            {
+                                view: 'textarea',
+                                name:'out_type_desc'
+                            }
+                        ]
+                    }
+                }]
+        }
+        ],
+        on:{
+            /**
+             *
+             * @param {TangoCommand} cmd
+             * @returns {boolean}
+             */
+            onBindApply:function(cmd){
+                if(!cmd) return false;
+                this.setValues(cmd.info);
             }
         }
     };
@@ -89,6 +141,7 @@
                         view: 'list',
                         id: 'list',
                         select: true,
+                        gravity: 2,
                         template: "#display_name#"
                     },
                     {
@@ -99,29 +152,12 @@
                         validate: webix.rules.isNotEmpty,
                         invalidMessage: 'Command must be selected from the list'
                     },
+                    commands_info_datatable,
                     {
                         view: 'text',
                         name: 'argin',
                         placeholder: 'Input e.g. 3.14 or [3.14, 2.87] etc'
                         //TODO argin converter
-                    },
-                    {
-                        cols: [
-                            {
-                                view: 'text',
-                                name: 'info.in_type',
-                                label: 'Argin: ',
-                                labelWidth: 50,
-                                tooltip: '' //set when onBindRequest
-                            },
-                            {
-                                view: 'text',
-                                name: 'info.out_type',
-                                label: 'Argout:',
-                                labelWidth: 50,
-                                tooltip: '' //set when onBindRequest
-                            }
-                        ]
                     },
                     {
                         view: 'button',
@@ -140,7 +176,8 @@
         $init: function (config) {
             webix.extend(config, this._ui());
             this.$ready.push(function () {
-                this.bind(this.$$('list'))
+                this.bind(this.$$('list'));
+                this.$$('info').bind(this.$$('list'));
             }.bind(this));
         },
         defaults: {
@@ -151,9 +188,6 @@
                     if (!command) return;
 
                     this.clearValidation();
-
-                    this.elements['info.in_type'].define('tooltip', command.info.in_type_desc);
-                    this.elements['info.out_type'].define('tooltip', command.info.out_type_desc);
 
                     if (command.info.in_type !== 'DevVoid') {
                         this.elements.argin.define({
@@ -377,7 +411,7 @@
 
             this.$ready.push(function () {
                 this.bind(this.$$('list'));
-                this.$$('attribute_info').bind(this.$$('list'));
+                this.$$('info').bind(this.$$('list'));
             }.bind(this));
         },
         defaults: {
