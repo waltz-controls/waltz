@@ -24,7 +24,6 @@
                 attr_info_values.forEach(function(el){
                     info.push({info:MVC.String.classize(el), value: attr.info[el]})
                 });
-                this.clearAll();
                 this.parse(info);
             }
         }
@@ -89,6 +88,7 @@
         _command: null,
         synchronize: function (device) {
             TangoWebappHelpers.debug("device[" + device.id + "]." + this._what + ".count=" + device[this._what].count());
+            this.$$('list').unselect();
             if (device[this._what].count() === 0) {
                 this.showProgress({
                     type: "icon"
@@ -317,10 +317,13 @@
             var attribute = this.$$('list').getSelectedItem();
 
             UserAction.readAttributeHistory(attribute)
+                .then(function(attr){
+                    attr.value = attr.history.pop();
+                    return attr;
+                })
                 .then(openScalarWindow.bind(attribute))
                 .then(function(){
                     var $$plot = $$(attribute.id);
-                    $$plot.clear();
                     $$plot.updateMulti(attribute.history);
                 })
                 .fail(error_handler.bind(this));
@@ -552,6 +555,7 @@
                 top.$$('commands').synchronize(device);
                 //TODO rename MVC.Class.attributes to anything
                 top.$$('attrs').synchronize(device);
+                top.$$('attrs').$$('info').clearAll();
                 top.$$('pipes').synchronize(device);
                 top.enable();
             }
