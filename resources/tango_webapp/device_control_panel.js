@@ -285,8 +285,9 @@
             UserAction.readAttributeHistory(attribute)
                 .then(openScalarWindow.bind(attribute))
                 .then(function(){
-                    debugger
-                    //TODO update plot with history
+                    var $$plot = $$(attribute.id);
+                    $$plot.clear();
+                    $$plot.updateMulti(attribute.history);
                 })
                 .fail(error_handler.bind(this));
         },
@@ -350,10 +351,6 @@
                     {
                         cols:[
                             {
-                                view: 'text',
-                                name: 'w_value'
-                            },
-                            {
                                 view: 'button',
                                 name: 'btnWrite',
                                 disabled: true,
@@ -364,6 +361,11 @@
                                         form._write();
                                     }
                                 }
+                            },{
+                                view: 'text',
+                                name: 'w_value',
+                                placeholder: 'attribute value',
+                                gravity:2
                             }
                         ]
                     }
