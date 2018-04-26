@@ -11,6 +11,13 @@
             view: "toolbar",
             height: 40,
             cols: [
+                {
+                    view: "icon",
+                    id: "status",
+                    icon: "repeat",
+                    maxWidth: 20,
+                    align: "right"
+                },
                 {view: "counter", id: "refresh", step: 100, value: 1000, min: 100, max: 100000, width: 90},
                 {
                     view: "button",
@@ -41,14 +48,7 @@
                         }
                     }
                 },
-                {},
-                {
-                    view: "icon",
-                    id: "status",
-                    icon: "refresh",
-                    maxWidth: 20,
-                    align: "left"
-                }
+                {}
             ]
         };
     };
