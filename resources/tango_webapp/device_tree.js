@@ -99,6 +99,7 @@
 
                     var info = this._get_device_info(obj.info);
 
+                    this.clearAll();
                     this.parse({
                         id: 'root',
                         open:true,

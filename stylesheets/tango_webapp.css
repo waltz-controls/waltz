@@ -154,6 +154,13 @@
     font-family: FontAwesome;
 }
 
+.INFO > .webix_tree_file:before {
+    content: "\f111";
+    font-family: FontAwesome;
+    font-size: xx-small;
+}
+
+
 .info_folder > .webix_tree_folder_open:before, .info_folder > .webix_tree_folder:before {
     content: "\f05a";
     font-family: FontAwesome;
