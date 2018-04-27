@@ -71,6 +71,21 @@
             },
             /**
              *
+             * @returns {webix.promise}
+             */
+            fetchHistory:function(){
+                var device = PlatformContext.devices.getItem(this.device_id);
+                return device.toTangoRestApiRequest().attributes(this.name).get('/history')
+                    .then(function(resp){
+                        this.update_attributes({
+                            history: resp,
+                            timestamp: +new Date()
+                        });
+                        return this;
+                    }.bind(this));
+            },
+            /**
+             *
              * @param value
              * @returns {webix.promise}
              */

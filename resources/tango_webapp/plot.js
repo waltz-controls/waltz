@@ -124,23 +124,45 @@
                 });
             },
             /**
+             * Updates this plot with single data item
              *
              * @param {{timestamp: int, value: data}} data
              */
             update: function (data) {
-                var date = new Date(data.timestamp);
+                this.updateMulti([data]);
+            },
+            /**
+             * Updates this plot with multiple data items
+             *
+             * @param {[{timestamp: int, value: data}]} data
+             */
+            updateMulti:function(data){
                 Plotly.extendTraces(this.getNode(), {
-                    x: [[date]],
-                    y: [[data.value]]
+                    x: [data.map(function(el){ return new Date(el.timestamp)})],
+                    y: [data.map(function(el){ return el.value;})]
                 }, [0]);
                 //TODO check if required
                 this._relayout({
-                    title: "Data acquired @ " + date,
+                    title: "Data acquired @ " + new Date(data.pop().timestamp),
                     autosize: false,
                     width: this.$width,
                     height: this.$height,
                     margin: margins
                 });
+            },
+            clear:function(){
+                Plotly.deleteTraces(this.getNode(), this._traces.map(function(el, ndx){ return ndx;}));
+                this._traces.forEach(function(trace){
+                    Plotly.addTraces(this.getNode(), {
+                        x: [],
+                        y: [],
+                        name : trace
+                    });
+                }.bind(this));
+                Plotly.relayout(this.getNode(),
+                    {
+                        title: ""
+                    });
             },
             _newPlot: function (config) {
                 this._traces = [];
@@ -164,25 +186,13 @@
                     var node = this.getNode();
                     webix.ui({
                         view: "contextmenu",
-                        id: config.id + "_menu",
                         data: [
                             "Clear"
                         ],
                         master: node, //  ID of a DIV container
                         on: {
                             onItemClick: function (id) {
-                                Plotly.deleteTraces(node, self._traces.map(function(el, ndx){ return ndx;}));
-                                self._traces.forEach(function(trace){
-                                    Plotly.addTraces(node, {
-                                        x: [],
-                                        y: [],
-                                        name : trace
-                                    });
-                                });
-                                Plotly.relayout(node,
-                                    {
-                                        title: ""
-                                    });
+                                self.clear();
                             }
                         }
                     });

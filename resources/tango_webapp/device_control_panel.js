@@ -1,5 +1,85 @@
 /** @module TestDevicePanel */
 (function () {
+    var attr_info_values = [
+        'label','writable','data_format','data_type','max_dim_x','max_dim_y','unit','standard_unit',
+        'display_unit','format','min_value','max_value'];
+
+    /**
+     *
+     * @type {webix.config}
+     */
+    var attr_info_datatable = {
+        id: 'info',
+        view: 'datatable',
+        header:false,
+        columns:[
+            {id:'info' },
+            {id:'value', fillspace: true}
+        ],
+        on:{
+            onBindApply:function(attr){
+                if(!attr) return false;
+                var info = [];
+                info.push({info:'Name', value: attr.name});
+                attr_info_values.forEach(function(el){
+                    info.push({info:MVC.String.classize(el), value: attr.info[el]})
+                });
+                this.parse(info);
+            }
+        }
+    };
+
+    var commands_info_datatable = {
+        view: 'form',
+        id: 'info',
+        elements:[{
+            cols: [{
+                view:'fieldset',
+                label: 'Input',
+                body:{
+                    rows:[
+                        {
+                            view: 'label',
+                            name:'in_type'
+                        },
+                        {
+                            view: 'textarea',
+                            name:'in_type_desc'
+                        }
+                    ]
+                }
+            },
+                {
+                    view:'fieldset',
+                    label: 'Output',
+                    body:{
+                        rows:[
+                            {
+                                view: 'label',
+                                name:'out_type'
+                            },
+                            {
+                                view: 'textarea',
+                                name:'out_type_desc'
+                            }
+                        ]
+                    }
+                }]
+        }
+        ],
+        on:{
+            /**
+             *
+             * @param {TangoCommand} cmd
+             * @returns {boolean}
+             */
+            onBindApply:function(cmd){
+                if(!cmd) return false;
+                this.setValues(cmd.info);
+            }
+        }
+    };
+
     /**
      * @type {webix.ui.config}
      */
@@ -8,6 +88,7 @@
         _command: null,
         synchronize: function (device) {
             TangoWebappHelpers.debug("device[" + device.id + "]." + this._what + ".count=" + device[this._what].count());
+            this.$$('list').unselect();
             if (device[this._what].count() === 0) {
                 this.showProgress({
                     type: "icon"
@@ -60,6 +141,7 @@
                         view: 'list',
                         id: 'list',
                         select: true,
+                        gravity: 2,
                         template: "#display_name#"
                     },
                     {
@@ -70,29 +152,12 @@
                         validate: webix.rules.isNotEmpty,
                         invalidMessage: 'Command must be selected from the list'
                     },
+                    commands_info_datatable,
                     {
                         view: 'text',
                         name: 'argin',
                         placeholder: 'Input e.g. 3.14 or [3.14, 2.87] etc'
                         //TODO argin converter
-                    },
-                    {
-                        cols: [
-                            {
-                                view: 'text',
-                                name: 'info.in_type',
-                                label: 'Argin: ',
-                                labelWidth: 50,
-                                tooltip: '' //set when onBindRequest
-                            },
-                            {
-                                view: 'text',
-                                name: 'info.out_type',
-                                label: 'Argout:',
-                                labelWidth: 50,
-                                tooltip: '' //set when onBindRequest
-                            }
-                        ]
                     },
                     {
                         view: 'button',
@@ -111,7 +176,8 @@
         $init: function (config) {
             webix.extend(config, this._ui());
             this.$ready.push(function () {
-                this.bind(this.$$('list'))
+                this.bind(this.$$('list'));
+                this.$$('info').bind(this.$$('list'));
             }.bind(this));
         },
         defaults: {
@@ -122,9 +188,6 @@
                     if (!command) return;
 
                     this.clearValidation();
-
-                    this.elements['info.in_type'].define('tooltip', command.info.in_type_desc);
-                    this.elements['info.out_type'].define('tooltip', command.info.out_type_desc);
 
                     if (command.info.in_type !== 'DevVoid') {
                         this.elements.argin.define({
@@ -235,20 +298,35 @@
             var attribute = this.$$('list').getSelectedItem();
 
             if (attribute.info.data_format === "SPECTRUM") {
-                attribute.read()
-                    .fail(error_handler.bind(this))
-                    .then(openSpectrumWindow.bind(attribute));
+                UserAction.readAttribute(attribute)
+                    .then(openSpectrumWindow.bind(attribute))
+                    .fail(error_handler.bind(this));
             } else if (attribute.info.data_format === "IMAGE") {
-                attribute.read()
-                    .fail(error_handler.bind(this))
-                    .then(openImageWindow.bind(attribute));
+                UserAction.readAttribute(attribute)
+                    .then(openImageWindow.bind(attribute))
+                    .fail(error_handler.bind(this));
             } else if (attribute.info.data_format === "SCALAR") {
-                attribute.read()
-                    .fail(error_handler.bind(this))
-                    .then(openScalarWindow.bind(attribute));
+                UserAction.readAttribute(attribute)
+                    .then(openScalarWindow.bind(attribute))
+                    .fail(error_handler.bind(this));
             } else {
                 TangoWebappHelpers.error("Unsupported data format: " + attribute.info.data_format);
             }
+        },
+        _plot_history:function(){
+            var attribute = this.$$('list').getSelectedItem();
+
+            UserAction.readAttributeHistory(attribute)
+                .then(function(attr){
+                    attr.value = attr.history.pop();
+                    return attr;
+                })
+                .then(openScalarWindow.bind(attribute))
+                .then(function(){
+                    var $$plot = $$(attribute.id);
+                    $$plot.updateMulti(attribute.history);
+                })
+                .fail(error_handler.bind(this));
         },
         _ui: function () {
             return {
@@ -268,14 +346,7 @@
                         validate: webix.rules.isNotEmpty,
                         invalidMessage: 'Attribute must be selected from the list'
                     },
-                    {
-                        view: 'text',
-                        name: 'w_value'
-                    },
-                    {
-                        view: "textarea",
-                        name: "info"
-                    },
+                    attr_info_datatable,
                     {
                         cols: [
                             {
@@ -291,18 +362,6 @@
                             },
                             {
                                 view: 'button',
-                                name: 'btnWrite',
-                                disabled: true,
-                                value: 'Write',
-                                click: function () {
-                                    var form = this.getFormView();
-                                    if (form.validate()) {
-                                        form._write();
-                                    }
-                                }
-                            },
-                            {
-                                view: 'button',
                                 name: 'btnPlot',
                                 disabled: true,
                                 value: 'Plot',
@@ -312,7 +371,40 @@
                                         form._plot();
                                     }
                                 }
+                            },
+                            {
+                                view: 'button',
+                                name: 'btnPlotHist',
+                                disabled: true,
+                                value: 'Plot.Hist',
+                                click: function () {
+                                    var form = this.getFormView();
+                                    if (form.validate()) {
+                                        form._plot_history();
+                                    }
+                                }
                             }]
+                    },
+                    {
+                        cols:[
+                            {
+                                view: 'button',
+                                name: 'btnWrite',
+                                disabled: true,
+                                value: 'Write',
+                                click: function () {
+                                    var form = this.getFormView();
+                                    if (form.validate()) {
+                                        form._write();
+                                    }
+                                }
+                            },{
+                                view: 'text',
+                                name: 'w_value',
+                                placeholder: 'attribute value',
+                                gravity:2
+                            }
+                        ]
                     }
                 ]
             }
@@ -321,7 +413,8 @@
             webix.extend(config, this._ui());
 
             this.$ready.push(function () {
-                this.bind(this.$$('list'))
+                this.bind(this.$$('list'));
+                this.$$('info').bind(this.$$('list'));
             }.bind(this));
         },
         defaults: {
@@ -335,8 +428,10 @@
                     } catch (e) {
                         info = "Failed to parse attribute.info: " + e;
                     }
-                    this.elements.info.setValue(info);
                     this.elements['btnPlot'].enable();
+                    if(obj.isScalar()){
+                        this.elements['btnPlotHist'].enable();
+                    }
                     if (obj.info.writable.includes("WRITE"))
                         this.elements['btnWrite'].enable();
                     else
@@ -460,6 +555,7 @@
                 top.$$('commands').synchronize(device);
                 //TODO rename MVC.Class.attributes to anything
                 top.$$('attrs').synchronize(device);
+                top.$$('attrs').$$('info').clearAll();
                 top.$$('pipes').synchronize(device);
                 top.enable();
             }
