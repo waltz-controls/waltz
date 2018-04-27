@@ -6,10 +6,10 @@
     var header = "<span class='webix_icon fa-microchip'></span> Device: ";
 
     var device_info = [
-        "exported",
         "name",
         "admin",
         "device_class",
+        "exported",
         "host",
         "idl",
         "pid",
@@ -50,17 +50,29 @@
         },
         _update_header: function (device) {
             $$("device_tree").config.header = webix.template(function () {
-                return header + device.alias + "(" + device.name + ")";
+                return header + device.display_name;
             });
             $$("device_tree").refresh();
         },
-        _get_device_info:function(info){
+        /**
+         *
+         * @param {TangoDevice} device
+         * @returns {Array}
+         * @private
+         */
+        _get_device_info:function(device){
             var result = [];
+
+            result.push({
+                id: 'alias',
+                value: "Display name : " + device.display_name,
+                $css:  'INFO'
+            });
 
             device_info.forEach(function(item){
                 result.push({
                     id: item,
-                    value: MVC.String.classize(item) + " : " + info[item],
+                    value: MVC.String.classize(item) + " : " + device.info[item],
                     $css:  'INFO'
                 })
             });
@@ -97,7 +109,7 @@
 
                     this._update_header(obj);
 
-                    var info = this._get_device_info(obj.info);
+                    var info = this._get_device_info(obj);
 
                     this.clearAll();
                     this.parse({
