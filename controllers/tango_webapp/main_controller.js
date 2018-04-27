@@ -57,7 +57,7 @@ TangoWebapp.MainController = MVC.Controller.extend('main', {
         });
     },
     //TODO move to ui_controller
-    "tango_webapp.device_open subscribe": function (event) {
+    "tango_webapp.device_configure subscribe": function (event) {
         var promise = this._promise_device(event.data);
 
         promise.then(function (device) {
