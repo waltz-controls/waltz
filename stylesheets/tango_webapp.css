@@ -154,5 +154,12 @@
     font-family: FontAwesome;
 }
 
+.info_folder > .webix_tree_folder_open:before, .info_folder > .webix_tree_folder:before {
+    content: "\f05a";
+    font-family: FontAwesome;
+}
+.info_folder > .webix_tree_folder_open, .info_folder > .webix_tree_folder {
+    background-image: none;
+}
 
 /* TODO MORE STATES */

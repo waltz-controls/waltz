@@ -60,8 +60,8 @@
             device_info.forEach(function(item){
                 result.push({
                     id: item,
-                    value: MVC.String.classize(item) + " : " + info[item]
-                    //TODO type
+                    value: MVC.String.classize(item) + " : " + info[item],
+                    $css:  'INFO'
                 })
             });
 
@@ -70,6 +70,9 @@
         defaults: {
             select: true,
             on: {
+                onBeforeSelect:function(id){
+                    return id !== 'info' && this.getItem(id).$parent !== 'info';
+                },
                 onAfterSelect:function(id){
                     if(id === 'attrs' || id === 'commands' || id === 'pipes') return;
                     OpenAjax.hub.publish("tango_webapp.item_selected", {
@@ -104,7 +107,8 @@
                                 id:'info',
                                 value: 'info',
                                 open: true,
-                                data: info
+                                data: info,
+                                $css:  'info_folder'
                             },
                             {
                                 id: 'attrs',
