@@ -5,6 +5,18 @@
 (function () {
     var header = "<span class='webix_icon fa-microchip'></span> Device: ";
 
+    var device_info = [
+        "name",
+        "admin",
+        "device_class",
+        "exported",
+        "host",
+        "idl",
+        "pid",
+        "started_at",
+        "stopped_at"
+    ];
+
     var context_menu = {
         view: "contextmenu",
         //autoheight: true,
@@ -38,13 +50,41 @@
         },
         _update_header: function (device) {
             $$("device_tree").config.header = webix.template(function () {
-                return header + device.alias + "(" + device.name + ")";
+                return header + device.display_name;
             });
             $$("device_tree").refresh();
+        },
+        /**
+         *
+         * @param {TangoDevice} device
+         * @returns {Array}
+         * @private
+         */
+        _get_device_info:function(device){
+            var result = [];
+
+            result.push({
+                id: 'alias',
+                value: "Display name : " + device.display_name,
+                $css:  'INFO'
+            });
+
+            device_info.forEach(function(item){
+                result.push({
+                    id: item,
+                    value: MVC.String.classize(item) + " : " + device.info[item],
+                    $css:  'INFO'
+                })
+            });
+
+            return result;
         },
         defaults: {
             select: true,
             on: {
+                onBeforeSelect:function(id){
+                    return id !== 'info' && this.getItem(id).$parent !== 'info';
+                },
                 onAfterSelect:function(id){
                     if(id === 'attrs' || id === 'commands' || id === 'pipes') return;
                     OpenAjax.hub.publish("tango_webapp.item_selected", {
@@ -69,11 +109,20 @@
 
                     this._update_header(obj);
 
+                    var info = this._get_device_info(obj);
+
                     this.clearAll();
                     this.parse({
                         id: 'root',
                         open:true,
                         data: [
+                            {
+                                id:'info',
+                                value: 'info',
+                                open: true,
+                                data: info,
+                                $css:  'info_folder'
+                            },
                             {
                                 id: 'attrs',
                                 value: 'attributes',
@@ -102,6 +151,7 @@
                     });
                 },
                 onDataRequest: function (id) {
+                    if(id === 'info') return true;
                     var item = this.getItem(id);
                     if(item.$level !== 1) return false;
                     item.device['fetch' + MVC.String.classize(id)]().then(function(items){

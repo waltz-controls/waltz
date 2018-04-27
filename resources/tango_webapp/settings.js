@@ -17,6 +17,7 @@
 
     var getting_started = {
         minWidth: 240,
+        width:320,
         minHeight: 240,
         rows: [
             {
@@ -73,7 +74,6 @@
         },
         defaults: {
             minWidth: 240,
-            minHeight: 240,
             on: {
                 "platform_context.set_rest subscribe":function(event){
                     var self = event.controller;
@@ -246,8 +246,6 @@
             }.bind(this));
         },
         defaults: {
-            minWidth: 240,
-            minHeight: 240,
             on: {
                 "user_context_controller.found subscribe": function (event) {
                     event.controller.$$('value').setValue(event.data.device_filters.join('\n'))
@@ -343,8 +341,7 @@
             });
         },
         defaults: {
-            minWidth: 320,
-            maxHeight: 480,
+            minWidth: 240,
             on: {
                 "user_context_controller.found subscribe": function (event) {
                     var data = [];
@@ -423,8 +420,7 @@
             }.bind(this));
         },
         defaults: {
-            minWidth: 320,
-            maxHeight: 480,
+            minWidth: 240,
             on: {
                 "platform_api.ui.initialized subscribe": function (event) {
                     event.controller.$$('tango-host-info-value')
@@ -470,8 +466,6 @@
             }.bind(this));
         },
         defaults: {
-            minWidth: 320,
-            maxHeight: 480,
             on: {
                 "platform_api.ui.initialized subscribe": function (event) {
                     event.controller.$$('tango-device-info-value')
@@ -494,16 +488,17 @@
             return {
                 cols: [
                     {
-                        minWidth: 20
+                        minWidth: 5
                     },
                     {
+                        gravity:3,
                         rows: [
                             {},
                             {
                                 view: 'tango_rest_url'
                             },
                             {
-                                height: 5
+                                minHeight: 5
                             },
                             {
                                 id: 'dashboard-device-filters',
@@ -514,13 +509,16 @@
                     },
                     {},
                     {
+                        gravity:3,
                         rows: [
                             {},
                             {
                                 view: 'dashboard_tango_hosts',
                                 id: 'dashboard-tango-hosts'
                             },
-                            {},
+                            {
+                                minHeight: 5
+                            },
                             {
                                 view: 'server_wizard',
                                 id: 'dashboard-server-wizard'
@@ -530,29 +528,20 @@
                     },
                     {},
                     {
+                        gravity: 3,
                         rows: [
                             {},
                             {
+
                                 view: 'dashboard_tango_host_info',
                                 id: 'tango-host-info'
+                            },
+                            {}
+                        ]
 
-                            },
-                            {}
-                        ]
-                    },
-                    {},
-                    {
-                        rows: [
-                            {},
-                            {
-                                view: 'dashboard_device_info',
-                                id: "tango-device-info"
-                            },
-                            {}
-                        ]
                     },
                     {
-                        minWidth: 20
+                        minWidth: 5
                     }
                 ]
             };
