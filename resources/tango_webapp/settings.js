@@ -73,9 +73,7 @@
             }.bind(this));
         },
         defaults: {
-            minWidth: 120,
-            width:240,
-            minHeight: 240,
+            gravity:2,
             on: {
                 "platform_context.set_rest subscribe":function(event){
                     var self = event.controller;
@@ -248,9 +246,7 @@
             }.bind(this));
         },
         defaults: {
-            minWidth: 120,
-            width:240,
-            minHeight: 240,
+            gravity:2,
             on: {
                 "user_context_controller.found subscribe": function (event) {
                     event.controller.$$('value').setValue(event.data.device_filters.join('\n'))
@@ -346,10 +342,7 @@
             });
         },
         defaults: {
-            minWidth: 240,
-            maxWidth: 320,
             gravity:2,
-            maxHeight: 480,
             on: {
                 "user_context_controller.found subscribe": function (event) {
                     var data = [];
@@ -428,8 +421,7 @@
             }.bind(this));
         },
         defaults: {
-            minWidth: 360,
-            maxHeight: 400,
+            gravity:2,
             on: {
                 "platform_api.ui.initialized subscribe": function (event) {
                     event.controller.$$('tango-host-info-value')
@@ -475,8 +467,7 @@
             }.bind(this));
         },
         defaults: {
-            minWidth: 360,
-            maxHeight: 320,
+            gravity:2,
             on: {
                 "platform_api.ui.initialized subscribe": function (event) {
                     event.controller.$$('tango-device-info-value')
