@@ -5,6 +5,18 @@
 (function () {
     var header = "<span class='webix_icon fa-microchip'></span> Device: ";
 
+    var device_info = [
+        "exported",
+        "name",
+        "admin",
+        "device_class",
+        "host",
+        "idl",
+        "pid",
+        "started_at",
+        "stopped_at"
+    ];
+
     var context_menu = {
         view: "contextmenu",
         //autoheight: true,
@@ -42,6 +54,19 @@
             });
             $$("device_tree").refresh();
         },
+        _get_device_info:function(info){
+            var result = [];
+
+            device_info.forEach(function(item){
+                result.push({
+                    id: item,
+                    value: MVC.String.classize(item) + " : " + info[item]
+                    //TODO type
+                })
+            });
+
+            return result;
+        },
         defaults: {
             select: true,
             on: {
@@ -69,11 +94,18 @@
 
                     this._update_header(obj);
 
-                    this.clearAll();
+                    var info = this._get_device_info(obj.info);
+
                     this.parse({
                         id: 'root',
                         open:true,
                         data: [
+                            {
+                                id:'info',
+                                value: 'info',
+                                open: true,
+                                data: info
+                            },
                             {
                                 id: 'attrs',
                                 value: 'attributes',
@@ -102,6 +134,7 @@
                     });
                 },
                 onDataRequest: function (id) {
+                    if(id === 'info') return true;
                     var item = this.getItem(id);
                     if(item.$level !== 1) return false;
                     item.device['fetch' + MVC.String.classize(id)]().then(function(items){

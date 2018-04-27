@@ -485,7 +485,7 @@
             return {
                 cols: [
                     {
-                        minWidth: 20
+                        minWidth: 5
                     },
                     {
                         gravity:3,
@@ -495,7 +495,7 @@
                                 view: 'tango_rest_url'
                             },
                             {
-                                height: 5
+                                minHeight: 5
                             },
                             {
                                 id: 'dashboard-device-filters',
@@ -513,7 +513,9 @@
                                 view: 'dashboard_tango_hosts',
                                 id: 'dashboard-tango-hosts'
                             },
-                            {},
+                            {
+                                minHeight: 5
+                            },
                             {
                                 view: 'server_wizard',
                                 id: 'dashboard-server-wizard'
@@ -525,20 +527,18 @@
                     {
                         gravity: 3,
                         rows: [
-                            {
-                                view: 'dashboard_tango_host_info',
-                                id: 'tango-host-info'
-
-                            },
                             {},
                             {
-                                view: 'dashboard_device_info',
-                                id: "tango-device-info"
-                            }
+
+                                view: 'dashboard_tango_host_info',
+                                id: 'tango-host-info'
+                            },
+                            {}
                         ]
+
                     },
                     {
-                        minWidth: 20
+                        minWidth: 5
                     }
                 ]
             };
