@@ -73,6 +73,7 @@
             }.bind(this));
         },
         defaults: {
+            minWidth: 240,
             on: {
                 "platform_context.set_rest subscribe":function(event){
                     var self = event.controller;
@@ -340,6 +341,7 @@
             });
         },
         defaults: {
+            minWidth: 240,
             on: {
                 "user_context_controller.found subscribe": function (event) {
                     var data = [];
@@ -418,6 +420,7 @@
             }.bind(this));
         },
         defaults: {
+            minWidth: 240,
             on: {
                 "platform_api.ui.initialized subscribe": function (event) {
                     event.controller.$$('tango-host-info-value')
