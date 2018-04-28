@@ -24,6 +24,7 @@
                 attr_info_values.forEach(function(el){
                     info.push({info:MVC.String.classize(el), value: attr.info[el]})
                 });
+                this.clearAll();
                 this.parse(info);
             }
         }
