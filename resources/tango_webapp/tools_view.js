@@ -34,9 +34,23 @@
         }
     }, webix.ui.layout);
 
-    TangoWebapp.ui.newScriptingConsoleView = function(config){
+    TangoWebapp.ui.newToolsView = function(config){
         return webix.extend({
-            view: 'scripting_console'
+            view: 'tabview',
+            cells: [
+                {
+                    header: "<span class='webix_icon fa-pencil-square-o'></span> Scripting",
+                    body: {
+                        view: 'scripting_console'
+                    }
+                },
+                {
+                    header: "<span class='webix_icon fa-terminal'></span> Terminal",
+                    body: {
+                        template: 'terminal'
+                    }
+                }
+            ]
         }, config);
     }
 })();
