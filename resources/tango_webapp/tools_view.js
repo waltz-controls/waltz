@@ -14,7 +14,16 @@
             return {
                 rows:[
                     {
-                        template: 'toolbar'
+                        view: 'toolbar',
+                        maxHeight: 40,
+                        cols:[
+                            {
+                                view: 'richselect',
+                                id:'select_script',
+                                options: []
+                            },
+                            {}
+                        ]
                     },
                     {
                         gravity: 4,
@@ -31,10 +40,16 @@
         },
         $init: function(config){
             webix.extend(config, this._ui());
+
+            this.$ready.push(function(){
+                this.$$('select-list').sync(UserScript.store._data)
+
+            }.bind(this));
         }
-    }, webix.ui.layout);
+    }, webix.IdSpace, webix.ui.layout);
 
     TangoWebapp.ui.newToolsView = function(config){
+        config = config || {};
         return webix.extend({
             view: 'tabview',
             cells: [
