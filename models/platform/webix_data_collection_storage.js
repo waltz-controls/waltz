@@ -13,7 +13,13 @@ var WebixDataCollectionStorage = MVC.Class.extend(
          */
         init: function (klass) {
             this.storing_class = klass;
-            this._data = new webix.DataCollection();
+            this._data = (function () {
+                if (MVC.Browser.Rhino) //TODO :( get rid off Nashorn
+                    return {};
+                else return new webix.DataCollection({
+                    defaultData: klass.default_attributes
+                });
+            })();
         },
         /**
          *
