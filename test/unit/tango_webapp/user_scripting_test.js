@@ -22,33 +22,38 @@ new MVC.Test.Unit('user_scripting', {
         instance.execute().then(this.next_callback('success'));
 
     },
-    success:function(result){
-        this.assert_equal(5, result);
+    success:function(res){
+        this.assert_equal(5, res);
     },
     test_execute_failed: function () {
         var instance = new UserScript({
             name: 'test_script',
-            code: 'window.alert("Ouch!");'//window is undefined -> ReferenceError
+            code: 'return PlatformContext.rest.fetchHost()'//window is undefined -> ReferenceError
         });
 
         instance.execute().fail(this.next_callback('failure'));
-
-
     },
-    failure:function(err){
-        this.assert(err === 'ReferenceError: window is not defined');
+    /**
+     *
+     * @param {UserScript} script
+     */
+    failure:function(script){
+        this.assert_equal('host is undefined', script.errors[0].message);
     },
     test_execute_ajax: function () {
         var instance = new UserScript({
             name: 'test_script',
-            code: 'PlatformContext.rest.fetchTangoHost()'
+            code: 'return PlatformContext.rest.fetchHost("'+TestValues.tango_host+'")'
         });
 
-        instance.execute().then(this.next_callback('success_ajax'));
-
-
+        instance.execute().then(this.next_callback('success_ajax'))
+            .fail(function(){debugger});
     },
-    success_ajax:function(resp){
-        resp.then(function (value) { debugger })
+    /**
+     *
+     * @param {TangoHost} host
+     */
+    success_ajax:function(host){
+        this.assert_equal(TestValues.tango_host, host.id)
     }
 });
