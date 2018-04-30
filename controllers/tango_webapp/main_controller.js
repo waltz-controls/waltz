@@ -34,9 +34,9 @@ TangoWebapp.MainController = MVC.Controller.extend('main', {
 
         ui_builder.add_mainview_item(
             {
-                header: "<span class='webix_icon fa-wrench'></span> Tools",
+                header: "<span class='webix_icon fa-pencil-square-o'></span> Scripting",
                 borderless: true,
-                body: TangoWebapp.ui.newToolsView({id: 'scripting_console'})
+                body: TangoWebapp.ui.newScriptingConsoleView({id: 'scripting_console'})
             });
 
         ui_builder.add_mainview_item(

@@ -160,24 +160,10 @@
         }
     }, webix.IdSpace, webix.ui.layout);
 
-    TangoWebapp.ui.newToolsView = function(config){
+    TangoWebapp.ui.newScriptingConsoleView = function(config){
         config = config || {};
         return webix.extend({
-            view: 'tabview',
-            cells: [
-                {
-                    header: "<span class='webix_icon fa-pencil-square-o'></span> Scripting",
-                    body: {
-                        view: 'scripting_console'
-                    }
-                },
-                {
-                    header: "<span class='webix_icon fa-terminal'></span> Terminal",
-                    body: {
-                        template: 'terminal'
-                    }
-                }
-            ]
+            view: 'scripting_console'
         }, config);
     }
 })();
