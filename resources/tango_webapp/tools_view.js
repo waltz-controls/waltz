@@ -8,6 +8,32 @@
     /**
      * @type {webix.protoUI}
      */
+    var codemirror_textarea = webix.protoUI({
+        name: "codemirror_textarea",
+        editor: null,
+        getValue: function () {
+            return this.editor.getValue();
+        },
+        setValue: function (value) {
+            if(!value || typeof value !== 'string') return;
+            this.editor.setValue(value);
+        },
+        $init:function(){
+            this.$ready.push(function(){
+                this.attachEvent('onAfterRender',function(){this.editor = CodeMirror.fromTextArea(this.getInputNode());}.bind(this));
+
+            }.bind(this));
+        },
+        defaults: {
+            on: {
+                // onAfterRender:
+            }
+        }
+    }, webix.ui.textarea);
+
+    /**
+     * @type {webix.protoUI}
+     */
     var scripting_console = webix.protoUI({
         name: 'scripting_console',
         execute:function () {
@@ -45,7 +71,7 @@
                                 view: 'combo',
                                 id:'select_script',
                                 placeholder: 'type to filter',
-                                label: 'Select script:',
+                                label: 'Script:',
                                 suggest:{
                                     filter:function(item, value){
                                         return item.name.indexOf(value) > -1;
@@ -69,9 +95,9 @@
                     {
                         gravity: 4,
                         view: 'fieldset',
-                        label: 'Script',
+                        label: 'Script code',
                         body: {
-                            view: 'textarea',
+                            view: 'codemirror_textarea',
                             id:'script_code',
                             on: {
                                 onBindApply:function(script){
@@ -86,10 +112,12 @@
                         view: 'toolbar',
                         cols: [
                             {
-                                maxWidth:150,
+                                maxWidth:250,
                                 view: 'text',
                                 id: 'script_name',
                                 placeholder:'script name',
+                                label: 'Script name:',
+                                labelWidth: 100,
                                 on: {
                                     onBindApply:function(script){
                                         if(!script) return;
