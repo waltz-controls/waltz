@@ -29,7 +29,6 @@ var WebixDataCollectionStorage = MVC.Class.extend(
         create: function (obj) {
             if(obj.Class.id !== 'id') obj.id = obj[obj.Class.id];
             obj[obj.Class.id] = this._data.add(obj);
-            webix.assert(obj.id === obj[obj.Class.id], "Id does not match");
         },
         /**
          * Updates stored instance

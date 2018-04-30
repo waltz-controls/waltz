@@ -32,7 +32,7 @@ UserScript = TangoWebapp.UserScript = MVC.Model.extend('user_script',
         execute:function(){
             var result = webix.promise.defer();
             try {
-                result.resolve(this.func.call(PlatformContext));
+                result.resolve(this.func.apply(PlatformApi));
             } catch (e) {
                 this.errors.push(e);
                 result.reject(this);
