@@ -1,4 +1,5 @@
 include.unit_tests(
+    'tango_webapp/user_scripting',
     'tango_webapp/device_filter'
     // 'test_database',
     // 'test_device',
