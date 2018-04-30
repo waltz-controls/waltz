@@ -15,7 +15,7 @@ new MVC.Test.Unit('user_scripting', {
     },
     test_execute: function () {
         var instance = new UserScript({
-            name: 'test_script',
+            name: 'test_script_1',
             code: 'return 2 + 3;'
         });
 
@@ -27,7 +27,7 @@ new MVC.Test.Unit('user_scripting', {
     },
     test_execute_failed: function () {
         var instance = new UserScript({
-            name: 'test_script',
+            name: 'test_script_2',
             code: 'return PlatformContext.rest.fetchHost()'//window is undefined -> ReferenceError
         });
 
@@ -42,7 +42,7 @@ new MVC.Test.Unit('user_scripting', {
     },
     test_execute_ajax: function () {
         var instance = new UserScript({
-            name: 'test_script',
+            name: 'test_script_3',
             code: 'return PlatformContext.rest.fetchHost("'+TestValues.tango_host+'")'
         });
 

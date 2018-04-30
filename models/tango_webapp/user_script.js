@@ -10,7 +10,8 @@ UserScript = TangoWebapp.UserScript = MVC.Model.extend('user_script',
         id: 'name',
         attributes:{
             name: 'string',
-            code: 'function'
+            code: 'string',
+            func: 'function'
         },
         default_attributes: {
             
@@ -20,11 +21,8 @@ UserScript = TangoWebapp.UserScript = MVC.Model.extend('user_script',
     {
         
         set_code:function(v){
-            if(typeof v === 'function') this.code = v;
-            else {
-                v  = "'use strict';" + v;
-                this.code = new Function(v);
-            }
+            this.code = v;
+            this.func = new Function("'use strict';" + v);
         },
         /**
          * executes this script
@@ -34,7 +32,7 @@ UserScript = TangoWebapp.UserScript = MVC.Model.extend('user_script',
         execute:function(){
             var result = webix.promise.defer();
             try {
-                result.resolve(this.code.call(PlatformContext));
+                result.resolve(this.func.call(PlatformContext));
             } catch (e) {
                 this.errors.push(e);
                 result.reject(this);
