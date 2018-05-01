@@ -158,10 +158,11 @@
                         this.parse({
                             parent: id,
                             data: items.map(function(item){
-                                return MVC.Object.extend(item, {
+                                return {
+                                    id: item.id,
                                     value: item.display_name,
                                     $css:  item.getDataFormat()
-                                })
+                                }
                             })
                         })
                     }.bind(this));
