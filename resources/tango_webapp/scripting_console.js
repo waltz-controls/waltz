@@ -21,7 +21,11 @@
         $init: function () {
             this.$ready.push(function () {
                 this.attachEvent('onAfterRender', function () {
-                    // console.time('CodeMirror render');
+                    if(MVC.env().match(/development|test/)) console.time('CodeMirror render');
+                    var value;
+                    if(this.editor != null){
+                        value = this.editor.getValue();
+                    }
                     this.editor = CodeMirror.fromTextArea(this.getInputNode(),{
                         extraKeys: {"Ctrl-Space": "autocomplete"},
                         lineNumbers: true,
@@ -29,9 +33,8 @@
                         lineWrapping: true
                     });
 
-                    if(UserScript.store._data.getCursor() != null)
-                        this.setValue(UserScript.store._data.getItem(UserScript.store._data.getCursor()).code);
-                    // console.timeEnd('CodeMirror render');
+                    this.setValue(value);
+                    if(MVC.env().match(/development|test/)) console.timeEnd('CodeMirror render');
                     // ~ 20ms
                 }.bind(this));
 
