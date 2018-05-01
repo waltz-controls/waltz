@@ -56,6 +56,11 @@
             $$('main-log').log({type: '', value: msg, timestamp: +new Date()});
         },
 
+        logWithPopup: function (msg) {
+            TangoWebappHelpers.log(msg);
+            webix.message(msg);
+        },
+
         /**
          *
          * @param msg

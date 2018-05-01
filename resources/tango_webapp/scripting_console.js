@@ -21,15 +21,15 @@
         $init: function () {
             this.$ready.push(function () {
                 this.attachEvent('onAfterRender', function () {
-                    this.editor = CodeMirror.fromTextArea(this.getInputNode());
+                    this.editor = CodeMirror.fromTextArea(this.getInputNode(),{
+                        lineNumbers: true,
+                        gutter: true,
+                        lineWrapping: true,
+                        value: ''
+                    });
                 }.bind(this));
 
             }.bind(this));
-        },
-        defaults: {
-            on: {
-                // onAfterRender:
-            }
         }
     }, webix.ui.textarea);
 
@@ -61,7 +61,8 @@
                 icon: 'save',
                 click: function () {
                     this.getTopParentView().save();
-                }
+                },
+                hotkey: 'ctrl+s'
             }
         ]
     };
@@ -102,6 +103,28 @@
     };
 
     /**
+     *
+     * @type {webix.config}
+     */
+    var lower_toolbar = {
+        maxHeight: 30,
+        view: 'toolbar',
+        cols: [
+            {
+                maxWidth: 30,
+                view: 'button',
+                type: "iconButton",
+                icon: 'play',
+                click: function () {
+                    this.getTopParentView().execute();
+                },
+                hotkey: 'ctrl+enter'
+            },
+            {}
+        ]
+    };
+
+    /**
      * @type {webix.protoUI}
      */
     var scripting_console = webix.protoUI({
@@ -110,6 +133,8 @@
          * @return {UserScript}
          */
         save:function(){
+            if(!this.isVisible() || this.$destructed) return;
+
             //TODO validate
             var name = this.$$('script_name').getValue();
             var code = this.$$('script_code').getValue();
@@ -125,9 +150,13 @@
             else
                 script.update_attributes(attrs);
 
+            TangoWebappHelpers.logWithPopup("Script " + script.name + " is saved!" );
+
             return script;
         },
         execute: function () {
+            if(!this.isVisible() || this.$destructed) return;
+
             var script = this.save();
             
             //TODO UserAction
@@ -149,6 +178,7 @@
                 });
         },
         _ui: function () {
+
 
             return {
                 rows: [
@@ -174,22 +204,7 @@
                     {
                         view: 'resizer'
                     },
-                    {
-                        maxHeight: 30,
-                        view: 'toolbar',
-                        cols: [
-                            {
-                                maxWidth: 30,
-                                view: 'button',
-                                type: "iconButton",
-                                icon: 'play',
-                                click: function () {
-                                    this.getTopParentView().execute();
-                                }
-                            },
-                            {}
-                        ]
-                    },
+                    lower_toolbar,
                     {
                         view: 'fieldset',
                         label: 'Output',
