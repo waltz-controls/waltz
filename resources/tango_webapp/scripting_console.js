@@ -23,6 +23,7 @@
                 this.attachEvent('onAfterRender', function () {
                     // console.time('CodeMirror render');
                     this.editor = CodeMirror.fromTextArea(this.getInputNode(),{
+                        extraKeys: {"Ctrl-Space": "autocomplete"},
                         lineNumbers: true,
                         gutter: true,
                         lineWrapping: true
@@ -49,12 +50,18 @@
                 maxWidth: 380,
                 view: 'text',
                 id: 'script_name',
+                name: 'script_name',
                 placeholder: 'script name',
                 label: 'Script name:',
                 labelWidth: 100,
+                validate:webix.rules.isNotEmpty,
+                invalidMessage:"Script name can not be empty",
                 on: {
                     onBindApply: function (script) {
-                        if (!script || script.id === undefined) return false;
+                        if (!script || script.id === undefined) {
+                            this.setValue(''); //reset this value after script removal
+                            return false;
+                        }
                         this.setValue(script.name);
                     },
                     /**
@@ -68,6 +75,7 @@
             },
             {
                 maxWidth: 30,
+                maxHeight: 30,
                 view: 'button',
                 type: "iconButton",
                 icon: 'save',
@@ -79,6 +87,7 @@
             },
             {
                 maxWidth: 30,
+                maxHeight: 30,
                 view: 'button',
                 type: "iconButton",
                 icon: 'trash',
@@ -172,9 +181,8 @@
         save:function(){
             if(!this.isVisible() || this.$destructed) return;
 
-            //TODO validate
+            if(!this.$$('script_name').validate()) return null;
             var name = this.$$('script_name').getValue().trim();
-            if(!name) return;
             var code = this.$$('script_code').getValue();
 
             var script = UserScript.find_one(name);
@@ -196,8 +204,8 @@
          * @return {UserScript}
          */
         remove:function(){
+            if(!this.$$('script_name').validate()) return null;
             var name = this.$$('script_name').getValue().trim();
-            if(!name) return;
 
             var script = UserScript.find_one(name);
             script.destroy();
@@ -207,7 +215,7 @@
             if(!this.isVisible() || this.$destructed) return;
 
             var script = this.save();
-            
+            if(script == null) return;
             //TODO UserAction
             var $$output = this.$$('output');
             $$output.showProgress({
@@ -301,6 +309,7 @@
          */
         save:function(){
             var script = webix.ui.scripting_console.prototype.save.apply(this, arguments);
+            if(script == null) return null;
             var state = Object.create(null);
             state[script.name] = script.code;
             this.state.updateState(state);
@@ -312,6 +321,7 @@
          */
         remove:function(){
             var script = webix.ui.scripting_console.prototype.remove.apply(this, arguments);
+            if(script == null) return null;
             var data = this.state.getState();
             delete data[script.name];
             this.state.setState(data);
