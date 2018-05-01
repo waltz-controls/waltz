@@ -65,4 +65,5 @@ This requires jjs to be in the $PATH (is shipped with OpenJDK8 and later)
 
 * [JavaScriptMVC-1.5.x](https://bitbucket.org/Ingvord/javascriptmvc-1.5.x) is used for MVC implementation
 * [Webix](http://webix.com) is used for UI
+* [CodeMirror](https://codemirror.net/) is used for scripting console
 * [Plotly](https://plot.ly/javascript/) is used to display plots and images
