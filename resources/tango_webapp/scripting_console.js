@@ -21,12 +21,17 @@
         $init: function () {
             this.$ready.push(function () {
                 this.attachEvent('onAfterRender', function () {
+                    // console.time('CodeMirror render');
                     this.editor = CodeMirror.fromTextArea(this.getInputNode(),{
                         lineNumbers: true,
                         gutter: true,
-                        lineWrapping: true,
-                        value: ''
+                        lineWrapping: true
                     });
+
+                    if(UserScript.store._data.getCursor() != null)
+                        this.setValue(UserScript.store._data.getItem(UserScript.store._data.getCursor()).code);
+                    // console.timeEnd('CodeMirror render');
+                    // ~ 20ms
                 }.bind(this));
 
             }.bind(this));
@@ -164,7 +169,8 @@
             $$output.showProgress({
                 type: "icon"
             });
-            script.execute()
+
+            UserAction.executeUserScript(script)
                 .then(function (result) {
                     //TODO OK NOK etc
 

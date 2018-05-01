@@ -229,6 +229,22 @@ UserAction = TangoWebapp.UserAction = MVC.Model.extend('user_action',
                 }.bind(this))
                 .fail(this.failure.bind(this));
         },
+        /**
+         *
+         * @param {UserScript} script
+         */
+        executeUserScript:function(script){
+            return script.execute().then(function (result) {
+                var instance = new this({
+                    id: webix.uid(),
+                    value: this._get_user().concat(['Action: execute_script:', script.name]).join(' '),
+                    timestamp: +new Date()
+                });
+                this.publish('log', {data: instance});
+                return result;
+            }.bind(this))
+                .fail(this.failure.bind(this));
+        },
         //TODO open(load) tango host
         //TODO open(load) tango device
         //TODO etc
