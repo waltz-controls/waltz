@@ -14,6 +14,7 @@
     <property name="env.REST_API_VERSION" value="rc4"/>
     <property name="env.TANGO_HOST" value="localhost"/>
     <property name="env.TANGO_PORT" value="10000"/>
+    <property name="env.VERSION" value="development"/>
 
     <target name="test">
         <echo>Running unit tests...</echo>
@@ -31,6 +32,7 @@
                 <filter token="REST_API_VERSION" value="'${env.REST_API_VERSION}'"/>
                 <filter token="TANGO_HOST" value="'${env.TANGO_HOST}'"/>
                 <filter token="TANGO_PORT" value="${env.TANGO_PORT}"/>
+                <filter token="VERSION" value="'${env.VERSION}'"/>
             </filterset>
         </copy>
     </target>
