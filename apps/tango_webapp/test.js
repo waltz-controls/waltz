@@ -1,4 +1,5 @@
 include.unit_tests(
+    'tango_webapp/user_scripting',
     'tango_webapp/device_filter'
     // 'test_database',
     // 'test_device',
@@ -9,6 +10,7 @@ include.unit_tests(
 include('../../test/setup');
 
 include.functional_tests(
+    'tango_webapp/scripting_console',
     'tango_webapp/user_log',
     'tango_webapp/critical_error_window',
     'tango_webapp/image_view',

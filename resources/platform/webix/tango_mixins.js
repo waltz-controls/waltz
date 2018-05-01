@@ -69,5 +69,26 @@ TangoWebappPlatform.mixin = {
             if(this.after_stop !== undefined && typeof this.after_stop === 'function')
                 this.after_stop();
         }
+    },
+    /**
+     *
+     * @type {webix.mixin}
+     */
+    Stateful: {
+        state: null,
+
+        $init:function(config){
+            config.state_class = config.state_class || TangoWebappPlatform.WidgetState;
+            this.$ready.push(function(){
+                this.state = this.config.state_class.find_one(this.config.id);
+                if(this.state !== null) {
+                    this.restoreState(this.state);
+                    TangoWebappHelpers.log("Widget["+this.config.id+"] state is restored.");
+                } else
+                    this.state = new this.config.state_class({
+                        id: this.config.id
+                    })
+            }.bind(this));
+        }
     }
 };

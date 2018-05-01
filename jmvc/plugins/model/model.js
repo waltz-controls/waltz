@@ -170,6 +170,9 @@ MVC.Model = MVC.Class.extend(
             }
             var callbacks = this._clean_callbacks(cbks);
             var attributes = this.store.find_one(id, callbacks);
+            if(attributes != null && attributes.Class){
+                return attributes;
+            }
             if(attributes != null) {
                 var inst = this.create_as_existing(attributes);
                 if (inst) callbacks.onSuccess(inst);
