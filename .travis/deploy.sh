@@ -6,6 +6,7 @@ export REST_API_PORT=8080;
 export REST_API_VERSION="rc4";
 export TANGO_HOST="ip-172-31-30-179";
 export TANGO_PORT=10000;
+export VERSION=$TRAVIS_BRANCH
 
 ./jmvcc jmvc/clean
 

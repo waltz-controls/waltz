@@ -91,6 +91,7 @@ TangoWebappPlatform.MainController = MVC.Controller.extend('main', {
         rest.isAlive()
             .then(function (rest) {
                 TangoWebappHelpers.log("TangoWebapp has been loaded!");
+                TangoWebappHelpers.log("TangoWebapp version=" + TangoWebappPlatform.consts.VERSION);
             })
             .fail(function (rest) {
                 webix.ui(TangoWebapp.ui.newCriticalErrorWindow(rest)).show();
