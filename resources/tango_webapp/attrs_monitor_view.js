@@ -578,23 +578,13 @@
         stopPlot:function(item){
             webix.ui.attrs_monitor.prototype.stopPlot.apply(this, arguments);
             this.state.updateState(item.id, false);
-        },
-        $init:function(config){
-            this.$ready.push(function(){
-                this.state = AttrsMonitorState.find_one(this.config.id);
-                if(this.state !== null)
-                    this.restoreState(this.state);
-                else
-                    this.state = new AttrsMonitorState({
-                        id: this.config.id
-                    })
-            }.bind(this));
         }
-    },attrs_monitor_view);
+    },TangoWebappPlatform.mixin.Stateful, attrs_monitor_view);
 
     TangoWebapp.ui.newStatefulAttrsMonitorView = function (config) {
         return webix.extend(config, {
-            view: "stateful_attrs_monitor"
+            view: "stateful_attrs_monitor",
+            state_class: AttrsMonitorState
         });
     }
 })();

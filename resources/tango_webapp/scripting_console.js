@@ -130,6 +130,20 @@
     };
 
     /**
+     *
+     * @type {webix.config}
+     */
+    var output = {
+        view: 'fieldset',
+        label: 'Script output',
+        body: {
+            view: 'textarea',
+            readonly: true,
+            id: 'output'
+        }
+    };
+
+    /**
      * @type {webix.protoUI}
      */
     var scripting_console = webix.protoUI({
@@ -184,8 +198,6 @@
                 });
         },
         _ui: function () {
-
-
             return {
                 rows: [
                     {
@@ -211,15 +223,7 @@
                         view: 'resizer'
                     },
                     lower_toolbar,
-                    {
-                        view: 'fieldset',
-                        label: 'Output',
-                        body: {
-                            view: 'textarea',
-                            readonly: true,
-                            id: 'output'
-                        }
-                    }
+                    output
                 ]
             }
         },
@@ -241,5 +245,43 @@
         return webix.extend({
             view: 'scripting_console'
         }, config);
-    }
+    };
+
+    /**
+     * @type {webix.protoUI}
+     */
+    var stateful_scripting_console = webix.protoUI({
+        name:'stateful_scripting_console',
+        /**
+         *
+         * @param {WidgetState} state
+         */
+        restoreState:function(state){
+            var data = state.getState();
+            for(var script in data){
+                UserScript.create_as_existing({
+                    name: script,
+                    code: data[script]
+                })
+            }
+        },
+        /**
+         * Overrides attrs_monitor_view.addAttribute by adding state update
+         *
+         */
+        save:function(){
+            var script = webix.ui.scripting_console.prototype.save.apply(this, arguments);
+            var state = Object.create(null);
+            state[script.name] = script.code;
+            this.state.updateState(state);
+            return script;
+        }
+    }, TangoWebappPlatform.mixin.Stateful, scripting_console);
+
+    TangoWebapp.ui.newStatefulScriptingConsoleView = function (config) {
+        config = config || {};
+        return webix.extend({
+            view: 'stateful_scripting_console'
+        }, config);
+    };
 })();
