@@ -19,10 +19,13 @@ UserScript = TangoWebapp.UserScript = MVC.Model.extend('user_script',
     },
     /** @Prototype */
     {
-        
+        /**
+         *
+         * @param {string} v
+         */
         set_code:function(v){
-            this.code = v;
-            this.func = new Function("'use strict';" + v);
+            this.code = v.trim();
+            this.func = new Function("'use strict';" + this.code);
         },
         /**
          * executes this script
