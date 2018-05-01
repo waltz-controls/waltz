@@ -8,7 +8,7 @@
         view: "contextmenu",
         id: "devices_tree_context_menu",
         data: [
-            {id: 'open', value: 'Configure'},
+            {id: 'configure', value: 'Configure'},
             {id: 'view', value: 'Monitor'},
             {$template: 'Separator'},
             {id: 'delete', value: 'Delete'}
