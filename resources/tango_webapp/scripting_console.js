@@ -110,7 +110,7 @@
      */
     var script_code = {
         view: 'fieldset',
-        label: 'Script code',
+        label: 'Script code (JavaScript)',
         body: {
             view: 'codemirror_textarea',
             id: 'script_code',
