@@ -54,8 +54,15 @@
                 labelWidth: 100,
                 on: {
                     onBindApply: function (script) {
-                        if (!script) return;
+                        if (!script || script.id === undefined) return false;
                         this.setValue(script.name);
+                    },
+                    /**
+                     * Work-around [object Object] in this field
+                     */
+                    onBindRequest:function(){
+                        if(typeof this.data.value === 'object')
+                            this.data.value = '';
                     }
                 }
             },
@@ -67,7 +74,17 @@
                 click: function () {
                     this.getTopParentView().save();
                 },
-                hotkey: 'ctrl+s'
+                hotkey: 'ctrl+s',
+                tooltip: 'Hotkey: ctrl+s'
+            },
+            {
+                maxWidth: 30,
+                view: 'button',
+                type: "iconButton",
+                icon: 'trash',
+                click: function () {
+                    this.getTopParentView().remove();
+                }
             }
         ]
     };
@@ -84,7 +101,7 @@
             id: 'script_code',
             on: {
                 onBindApply: function (script) {
-                    if (!script) return;
+                    if (!script  || script.id === undefined) return false;
                     this.setValue(script.code);
                 }
             }
@@ -123,7 +140,8 @@
                 click: function () {
                     this.getTopParentView().execute();
                 },
-                hotkey: 'ctrl+enter'
+                hotkey: 'ctrl+enter',
+                tooltip: 'Hotkey: ctrl+enter'
             },
             {}
         ]
@@ -155,7 +173,8 @@
             if(!this.isVisible() || this.$destructed) return;
 
             //TODO validate
-            var name = this.$$('script_name').getValue();
+            var name = this.$$('script_name').getValue().trim();
+            if(!name) return;
             var code = this.$$('script_code').getValue();
 
             var script = UserScript.find_one(name);
@@ -171,6 +190,17 @@
 
             TangoWebappHelpers.logWithPopup("Script " + script.name + " is saved!" );
 
+            return script;
+        },
+        /**
+         * @return {UserScript}
+         */
+        remove:function(){
+            var name = this.$$('script_name').getValue().trim();
+            if(!name) return;
+
+            var script = UserScript.find_one(name);
+            script.destroy();
             return script;
         },
         execute: function () {
@@ -266,7 +296,7 @@
             }
         },
         /**
-         * Overrides attrs_monitor_view.addAttribute by adding state update
+         * Overrides scripting_console.save by adding state update
          *
          */
         save:function(){
@@ -274,6 +304,17 @@
             var state = Object.create(null);
             state[script.name] = script.code;
             this.state.updateState(state);
+            return script;
+        },
+        /**
+         * Overrides scripting_console.delete by adding state update
+         *
+         */
+        remove:function(){
+            var script = webix.ui.scripting_console.prototype.remove.apply(this, arguments);
+            var data = this.state.getState();
+            delete data[script.name];
+            this.state.setState(data);
             return script;
         }
     }, TangoWebappPlatform.mixin.Stateful, scripting_console);
