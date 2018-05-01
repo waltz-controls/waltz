@@ -36,6 +36,9 @@
                 }.bind(this));
 
             }.bind(this));
+        },
+        defaults: {
+            tooltip: 'Autocomplete: ctrl+space'
         }
     }, webix.ui.textarea);
 
