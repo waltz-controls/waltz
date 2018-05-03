@@ -17,8 +17,11 @@ TangoWebappPlatform.UIController = MVC.Controller.extend("platform_ui_controller
             $$("main-tabview").addView(
                 TangoWebapp.ui.newTangoHostTab(tango_host, device_tab)
             );
-        else
-            $$('view/' + tango_host.id).addView(device_tab);
+        else {
+            if(!$$(device_tab.body.id))
+                $$('view/' + tango_host.id).addView(device_tab);
+
+        }
         $$('view/' + tango_host.id).show();
 
         return $$('view/' + tango_host.id);
