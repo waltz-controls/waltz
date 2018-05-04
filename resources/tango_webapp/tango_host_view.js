@@ -15,6 +15,7 @@
                 id: 'view/' + tango_host.id,
                 view: 'tabview',
                 tabbar: {
+                    tabMinWidth: TangoWebappPlatform.consts.NAME_COLUMN_WIDTH,
                     on: {
                         "onItemClick":function(){
                             var id = this.getParentView().getValue().split('/');
