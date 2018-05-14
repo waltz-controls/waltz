@@ -107,5 +107,35 @@ new MVC.Test.Unit('user_context', {
         var state = TangoWebappPlatform.WidgetState.find_one(Math.random());
 
         this.assert_null(state);
+    },
+    test_external_user_context:function(){
+        var TestStorageClass = TangoRemoteStorage.extend('test_remote_storage',{
+            url:'/user-context/cache'
+        },{});
+
+        var storage = new TestStorageClass();
+        var found = storage.find_one('test');
+
+        this.assert_null(found);
+    },
+    test_external_user_context_post_get:function(){
+        var TestStorageClass = TangoRemoteStorage.extend('test_remote_storage',{
+            url:'/user-context/cache'
+        },{});
+
+        var storage = new TestStorageClass();
+        storage.update("test",{
+            id: 'test',
+            value: 1234
+        });
+
+        var found = storage.find_one('test');
+
+        this.assert_not_null(found);
+
+        storage.destroy("test");
+
+        var found = storage.find_one('test');
+        this.assert_null(found);
     }
 });
