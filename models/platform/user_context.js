@@ -8,7 +8,7 @@
 TangoWebappPlatform.UserContext = MVC.Model.extend('user_context',
     /** @Static */
     {
-        store_type: TangoWebappStorage,
+        store_type: TangoRemoteStorage,
         id: "user",
         attributes: {
             user: 'string',
@@ -41,15 +41,6 @@ TangoWebappPlatform.UserContext = MVC.Model.extend('user_context',
                 });
             }
             return result;
-        },
-        /**
-         *
-         *
-         * @param store
-         */
-        set_store_type:function(store){
-            this.store_type = store;
-            this.store = new store(this);
         }
     },
     /** @Prototype */

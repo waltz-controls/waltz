@@ -5,3 +5,4 @@ REST_API_VERSION = "rc4";
 TANGO_HOST = "localhost";
 TANGO_PORT = 10000;
 VERSION = "development";
+USER_CONTEXT_URL = MVC.mvc_root + "/../apps/platform/user_context.jsp";

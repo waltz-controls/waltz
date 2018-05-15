@@ -17,6 +17,7 @@ TangoWebappPlatform.consts = {
     TANGO_HOST: /*@*/TANGO_HOST/*@*/,
     TANGO_PORT: /*@*/TANGO_PORT/*@*/,
     VERSION:/*@*/VERSION/*@*/,
+    USER_CONTEXT_URL:/*@*/USER_CONTEXT_URL/*@*/,
     NAME_COLUMN_WIDTH: 250,
     TABS_DELIMITER_HEIGHT: 3,
     DATABASE: 'sys/database/2',

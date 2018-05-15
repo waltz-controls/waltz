@@ -6,7 +6,7 @@
 TangoRemoteStorage = MVC.Class.extend('tango_remote_storage',
     /* @Static */
     {
-        url: MVC.mvc_root + "/../apps/platform/user_context.jsp"
+        url: TangoWebappPlatform.consts.USER_CONTEXT_URL
     },
     /* @Prototype */
     {
