@@ -15,6 +15,7 @@
     <property name="env.TANGO_HOST" value="localhost"/>
     <property name="env.TANGO_PORT" value="10000"/>
     <property name="env.VERSION" value="development"/>
+    <property name="env.USER_CONTEXT_URL" value="MVC.mvc_root + '/../apps/platform/user_context.jsp'"/>
 
     <target name="test">
         <echo>Running unit tests...</echo>
@@ -33,6 +34,7 @@
                 <filter token="TANGO_HOST" value="'${env.TANGO_HOST}'"/>
                 <filter token="TANGO_PORT" value="${env.TANGO_PORT}"/>
                 <filter token="VERSION" value="'${env.VERSION}'"/>
+                <filter token="USER_CONTEXT_URL" value="${env.USER_CONTEXT_URL}"/>
             </filterset>
         </copy>
     </target>

@@ -62,7 +62,6 @@ TangoWebappPlatform.MainController = MVC.Controller.extend('main', {
                 x.withCredentials = true;
                 headers["Authorization"] = "Basic " + btoa("tango-cs:tango");
             });
-            TangoWebappPlatform.UserContext.set_store_type(TangoWebappPlatform.DummyStore);
             return TangoWebappPlatform.UserContext.find_one("tango-cs");
         }
     },
