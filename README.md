@@ -61,6 +61,14 @@ $> REST_API_PROTOCOL=[http|https] REST_API_HOST=[localhost] REST_API_PORT=[10001
 
 This requires jjs to be in the $PATH (is shipped with OpenJDK8 and later)
 
+## Resources
+
+### Videos
+
+[1] [UI and features presentation](https://vimeo.com/268669625)
+
+[2] [Tech stack presentation: TangoWebapp + Tango REST + Tango Controls](https://rutube.ru/video/00d518e2aa8958b891430fbdf24f270a/)
+
 ## Implementation details ##
 
 * [JavaScriptMVC-1.5.x](https://bitbucket.org/Ingvord/javascriptmvc-1.5.x) is used for MVC implementation
