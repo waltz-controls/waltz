@@ -259,7 +259,7 @@
                 plotIndex: this._plotIndex++
             });
 
-            $$plot.addTrace(item.label, [item.timestamp], [item.value], item.plotIndex);
+            $$plot.addTrace(item.device_id + "/" + item.label, [item.timestamp], [item.value], item.plotIndex);
         },
         /**
          *
