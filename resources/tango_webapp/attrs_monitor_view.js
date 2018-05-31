@@ -259,7 +259,8 @@
                 plotIndex: this._plotIndex++
             });
 
-            $$plot.addTrace(item.device_id + "/" + item.label, [item.timestamp], [item.value], item.plotIndex);
+            var device = PlatformContext.devices.getItem(item.device_id);
+            $$plot.addTrace(device.display_name + "/" + item.label, [item.timestamp], [item.value], item.plotIndex);
         },
         /**
          *
