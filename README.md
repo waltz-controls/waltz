@@ -39,10 +39,10 @@ This project is an attempt to implement Tango Controls Roadmap Feature Request #
 
 To run the live demo click on the image 
 
-[![](https://github.com/tango-controls/tango-webapp/wiki/images/live.png)](http://ec2-35-156-104-8.eu-central-1.compute.amazonaws.com:8080/master/)
-
 User: tango-cs
 Pass: tango
+
+[![](https://github.com/tango-controls/tango-webapp/wiki/images/live.png)](http://ec2-35-156-104-8.eu-central-1.compute.amazonaws.com:8080/master/)
 
 ## Requirements ##
 
