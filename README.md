@@ -23,19 +23,19 @@ This project is an attempt to implement Tango Controls Roadmap Feature Request #
 
 ## SonarCloud
 
-![Quality gate](https://sonarcloud.io/api/project_badges/measure?project=org.tango-controls%3ATangoWebapp&metric=alert_status)
+[![Quality gate](https://sonarcloud.io/api/project_badges/measure?project=org.tango-controls%3ATangoWebapp&metric=alert_status)](https://sonarcloud.io/dashboard?id=org.tango-controls%3ATangoWebapp)
 
-![Lines Of Code](https://sonarcloud.io/api/project_badges/measure?project=org.tango-controls%3ATangoWebapp&metric=ncloc)
-![Technical debt](https://sonarcloud.io/api/project_badges/measure?project=org.tango-controls%3ATangoWebapp&metric=sqale_index)
-![Duplicate lines](https://sonarcloud.io/api/project_badges/measure?project=org.tango-controls%3ATangoWebapp&metric=duplicated_lines_density)
+[![Maintainability](https://sonarcloud.io/api/project_badges/measure?project=org.tango-controls%3ATangoWebapp&metric=sqale_rating)](https://sonarcloud.io/dashboard?id=org.tango-controls%3ATangoWebapp)
+[![Reliability](https://sonarcloud.io/api/project_badges/measure?project=org.tango-controls%3ATangoWebapp&metric=reliability_rating)](https://sonarcloud.io/dashboard?id=org.tango-controls%3ATangoWebapp)
+[![Security](https://sonarcloud.io/api/project_badges/measure?project=org.tango-controls%3ATangoWebapp&metric=security_rating)](https://sonarcloud.io/dashboard?id=org.tango-controls%3ATangoWebapp)
 
-![Maintainability](https://sonarcloud.io/api/project_badges/measure?project=org.tango-controls%3ATangoWebapp&metric=sqale_rating)
-![Reliability](https://sonarcloud.io/api/project_badges/measure?project=org.tango-controls%3ATangoWebapp&metric=reliability_rating)
-![Security](https://sonarcloud.io/api/project_badges/measure?project=org.tango-controls%3ATangoWebapp&metric=security_rating)
+[![Lines Of Code](https://sonarcloud.io/api/project_badges/measure?project=org.tango-controls%3ATangoWebapp&metric=ncloc)](https://sonarcloud.io/dashboard?id=org.tango-controls%3ATangoWebapp)
+[![Technical debt](https://sonarcloud.io/api/project_badges/measure?project=org.tango-controls%3ATangoWebapp&metric=sqale_index)](https://sonarcloud.io/dashboard?id=org.tango-controls%3ATangoWebapp)
+[![Duplicate lines](https://sonarcloud.io/api/project_badges/measure?project=org.tango-controls%3ATangoWebapp&metric=duplicated_lines_density)](https://sonarcloud.io/dashboard?id=org.tango-controls%3ATangoWebapp)
 
-![Bugs](https://sonarcloud.io/api/project_badges/measure?project=org.tango-controls%3ATangoWebapp&metric=bugs)
-![Vulnerabilities](https://sonarcloud.io/api/project_badges/measure?project=org.tango-controls%3ATangoWebapp&metric=vulnerabilities)
-![Code smells](https://sonarcloud.io/api/project_badges/measure?project=org.tango-controls%3ATangoWebapp&metric=code_smells)
+[![Bugs](https://sonarcloud.io/api/project_badges/measure?project=org.tango-controls%3ATangoWebapp&metric=bugs)](https://sonarcloud.io/dashboard?id=org.tango-controls%3ATangoWebapp)
+[![Vulnerabilities](https://sonarcloud.io/api/project_badges/measure?project=org.tango-controls%3ATangoWebapp&metric=vulnerabilities)](https://sonarcloud.io/dashboard?id=org.tango-controls%3ATangoWebapp)
+[![Code smells](https://sonarcloud.io/api/project_badges/measure?project=org.tango-controls%3ATangoWebapp&metric=code_smells)](https://sonarcloud.io/dashboard?id=org.tango-controls%3ATangoWebapp)
 
 
 ## Live demo
