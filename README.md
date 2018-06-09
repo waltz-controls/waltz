@@ -1,10 +1,8 @@
 ![](https://github.com/tango-controls/tango-webapp/wiki/images/applejack_120.png) 
 
-BOUNTY:
+THE BOUNTY HAS ENDED -- THE NEW PROJECT NAME WILL BE: *Waltz*
 
-A new name for the TangoWebapp project!!! 
-
-Suggest your name here: [link](http://ec2-35-156-104-8.eu-central-1.compute.amazonaws.com:8080/bounty/)
+Other options and final votes can be found [here](http://ec2-35-156-104-8.eu-central-1.compute.amazonaws.com:8080/bounty/)
 
 
 
