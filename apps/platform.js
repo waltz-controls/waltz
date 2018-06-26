@@ -3,6 +3,9 @@
  * @namespace
  */
 TangoWebappPlatform = {};
+TangoWebapp={
+    ui:{}
+};
 
 include(function () { //runs after prior includes are loaded
     include.plugins(
