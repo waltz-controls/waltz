@@ -13,8 +13,8 @@ MVCOptions = {
         print("Compressed to 'apps/my_app/production.js'.");
 
         MVCOptions.compress.apply(null,
-            MyApp.ui._webix_files.map(function (webix_file) {
-                return 'resources/my_app/' + webix_file + '.js';
+            TangoWebappPlatform.ui._webix_files.map(function (webix_file) {
+                return 'resources/webix_widgets/' + webix_file + '.js';
             }).concat(['apps/my_app/webix.js']));
 
         print("Compressed to 'apps/my_app/webix.js'.");
