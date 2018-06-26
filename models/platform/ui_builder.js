@@ -15,7 +15,9 @@ UIBuilder = MVC.Model.extend('ui_builder',
         _ui: null,
         init: function () {
             this._ui = {
-                main: []
+                _top: { maxHeight: 5 },
+                main: [],
+                _bottom: { maxHeight: 5 }
             };
         },
         _enable_left_sidebar: function () {
