@@ -31,6 +31,6 @@ include(function(){ //runs after prior includes are loaded
 
     //webix widgets
     include.resources(
-        "my_app/setup"
+        "webix_widgets/setup"
     );
 });
