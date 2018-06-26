@@ -24,8 +24,8 @@ include(function () { //runs after prior includes are loaded
         "tango_webapp/main", "tango_webapp/user_action"
     );
     include.views(
-        "views/main_log_item", "views/getting_started", "views/dev_panel_error_out",
-        "views/device_info", "views/dev_panel_command_out", "views/dev_panel_attribute_info", "views/dev_panel_attribute_out", "views/dev_panel_pipe_out"
+        "views/dev_panel_error_out",
+        "views/dev_panel_command_out", "views/dev_panel_attribute_info", "views/dev_panel_attribute_out", "views/dev_panel_pipe_out"
     );
     //webix widgets
     include.resources(
