@@ -27,6 +27,14 @@ TangoWebapp.MainController = MVC.Controller.extend('main', {
 
         ui_builder.set_right_item(TangoWebapp.ui.newDeviceControlPanel(platform_api.context));
 
+        //add this
+        ui_builder.add_mainview_item(
+            {
+                header: "<span class='webix_icon fa-dashboard'></span> My Dashboard",
+                borderless: true,
+                body: newMyDashboard({id: 'my_dashboard'})
+            });
+        
         ui_builder.add_mainview_item(
             {
                 header: "<span class='webix_icon fa-dashboard'></span> Dashboard",
