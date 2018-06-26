@@ -9,8 +9,8 @@ TangoWebapp.TopToolbarController = MVC.Controller.extend('top_toolbar_controller
     },
     /* @Prototype */
     {
-        "user_context.create.as_existing subscribe": function (event) {
-            var context = event.data;
+        "platform_api.ui.initialized subscribe": function (event) {
+            var context = event.data.context.UserContext;
 
             $$("top-toolbar").$$("btnUsername").define('tooltip', context.user);
             $$("top-toolbar").$$("btnUsername").define('label', context.user);
