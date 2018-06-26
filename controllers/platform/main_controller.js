@@ -20,11 +20,11 @@ TangoWebappPlatform.MainController = MVC.Controller.extend('main', {
             id: 'main',
             type: 'space',
             rows: [
-                TangoWebappPlatform.TopToolbarController.getUI(),
+                TangoWebapp.ui.newTopToolbar(),
                 {
                     id: "content"
                 },
-                TangoWebappPlatform.BottomToolbar.getUI()
+                TangoWebapp.ui.newBottomToolbar()
             ]
         });
         webix.ui.fullScreen();

@@ -21,7 +21,7 @@ include(function () { //runs after prior includes are loaded
         "tango_webapp/device_filter", "tango_webapp/user_action", "tango_webapp/user_script"
     );
     include.controllers(
-        "tango_webapp/main", "tango_webapp/user_action"
+        "tango_webapp/main", "tango_webapp/user_action", "tango_webapp/top_toolbar", "tango_webapp/bottom_toolbar"
     );
     include.views(
         "views/dev_panel_error_out",

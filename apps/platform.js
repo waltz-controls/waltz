@@ -39,7 +39,7 @@ include(function () { //runs after prior includes are loaded
     );
     include.controllers(
         "platform/login", "platform/main", "platform/user_context",
-        "platform/ui/top_toolbar", "platform/ui/bottom_toolbar", "platform/ui/ui"
+        "platform/ui/ui"
     );
     include.views(
         "views/main_log_item"
