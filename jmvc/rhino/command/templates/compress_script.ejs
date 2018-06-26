@@ -11,11 +11,14 @@ MVCOptions = {
         print("<<<<<< Compiler output end.");
         MVCOptions.remove('apps/<%= application_name %>/collected.js');
         print("Compressed to 'apps/<%= application_name %>/production.js'.");
-        load('jmvc/rhino/documentation/setup.js');
-        
-        var app = new MVC.Doc.Application(total, "<%= application_name %>");
-        app.generate();
-        print("Generated docs.");
+
+        MVCOptions.compress.apply(null,
+            TangoWebappPlatform.ui._webix_files.map(function (webix_file) {
+            return 'resources/webix_widgets/' + webix_file + '.js';
+        }).concat(['apps/<%= application_name %>/webix.js']));
+
+        print("Compressed to 'apps/<%= application_name %>/webix.js'.");
+
         quit();
     },
     env: "compress"
