@@ -3,9 +3,6 @@
  * @namespace
  */
 TangoWebappPlatform = {};
-TangoWebapp={
-    ui:{}
-};
 
 include.plugins(
     "controller", "view", "model"

@@ -29,6 +29,6 @@ include(function () { //runs after prior includes are loaded
     );
     //webix widgets
     include.resources(
-        "tango_webapp/setup"
+        "webix_widgets/setup"
     );
 });
