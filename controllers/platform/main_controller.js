@@ -14,21 +14,6 @@ TangoWebappPlatform.MainController = MVC.Controller.extend('main', {
         //override date formatter
         TangoWebappPlatform.consts.LOG_DATE_FORMATTER = webix.Date.dateToStr("%c");
         
-        //draw ui
-        webix.ui({
-            view: 'layout',
-            id: 'main',
-            type: 'space',
-            rows: [
-                TangoWebappPlatform.TopToolbarController.getUI(),
-                {
-                    id: "content"
-                },
-                TangoWebappPlatform.BottomToolbar.getUI()
-            ]
-        });
-        webix.ui.fullScreen();
-
         var user_ctx = this.load_user_context();
 
         TangoWebappHelpers.debug(user_ctx.toString());

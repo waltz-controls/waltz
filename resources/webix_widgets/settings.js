@@ -15,22 +15,6 @@
         }
     }, webix.ui.textarea);
 
-    var getting_started = {
-        minWidth: 240,
-        width:320,
-        minHeight: 240,
-        rows: [
-            {
-                type: 'header',
-                height: 30,
-                template: "<span class='webix_strong'>Getting started</span>"
-            },
-            {
-                template: new View({url: 'views/getting_started.ejs'}).render()
-            }
-        ]
-    };
-
     /**
      *
      * @type {webix.protoUI}
@@ -428,51 +412,6 @@
                 },
                 "platform_context.destroy subscribe": function (event) {
                     event.controller.$$('tango-host-info-value').unbind()
-                }
-            }
-        }
-    }, TangoWebappPlatform.mixin.OpenAjaxListener, webix.IdSpace, webix.ui.layout);
-
-    var dashboard_device_info = webix.protoUI({
-        name: 'dashboard_device_info',
-        _ui: function () {
-            return {
-                rows: [
-                    {
-                        type: 'header',
-                        height: 40,
-                        template: "<span class='webix_icon fa-microchip'></span><span class='webix_strong'> Tango device info</span>"
-                    },
-                    {
-                        autoheight: true,
-                        id: "tango-device-info-value",
-                        template: function (obj, $view) {
-                            if (obj.Class === undefined) return "Please choose TANGO device in the tree to view the info";
-                            try {
-                                return new View({url: 'views/device_info.ejs'}).render(obj.info);
-                            } catch (e) {
-                                return "Failed to parse device info: " + e;
-                            }
-                        }
-                    }
-                ]
-            };
-        },
-        $init: function (config) {
-            webix.extend(config, this._ui());
-
-            this.$ready.push(function () {
-                this.$$('tango-device-info-value').bind(PlatformContext.devices);
-            }.bind(this));
-        },
-        defaults: {
-            on: {
-                "platform_api.ui.initialized subscribe": function (event) {
-                    event.controller.$$('tango-device-info-value')
-                        .bind(event.data.context.devices)
-                },
-                "platform_context.destroy subscribe": function (event) {
-                    event.controller.$$('tango-device-info-value').unbind()
                 }
             }
         }

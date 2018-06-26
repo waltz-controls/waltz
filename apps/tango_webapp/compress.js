@@ -13,15 +13,10 @@ MVCOptions = {
         print("Compressed to 'apps/tango_webapp/production.js'.");
 
         MVCOptions.compress.apply(null,
-            TangoWebapp.ui._webix_files.map(function (webix_file) {
-                return 'resources/tango_webapp/' + webix_file + '.js';
+            TangoWebappPlatform.ui._webix_files.map(function (webix_file) {
+                return 'resources/webix_widgets/' + webix_file + '.js';
             }).concat(['apps/tango_webapp/webix.js']));
 
-        //load('jmvc/rhino/documentation/setup.js');
-        //
-        //var app = new MVC.Doc.Application(total, "tango_webapp");
-        //app.generate();
-        //print("Generated docs.");
         print("Compressed to 'apps/tango_webapp/webix.js'.");
         quit();
     },

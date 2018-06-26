@@ -22,6 +22,7 @@ print("               apps/"+data.application_name);
 render_to("apps/"+data.application_name+"/compress.js", "jmvc/rhino/command/templates/compress_script.ejs", data);
 
 render_to("apps/"+data.application_name+"/index.html", "jmvc/rhino/command/templates/index_html.ejs", data);
+render_to("apps/"+data.application_name+"/compress.html", "jmvc/rhino/command/templates/compress_html.ejs", data);
 render_to("apps/"+data.application_name+"/run_unit.js", "jmvc/rhino/command/templates/unit_script.ejs", data);
 
 render_to("apps/"+data.application_name+"/test.js", "jmvc/rhino/command/templates/test.ejs", data);

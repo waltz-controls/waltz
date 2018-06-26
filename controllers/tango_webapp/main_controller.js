@@ -13,6 +13,8 @@ TangoWebapp.MainController = MVC.Controller.extend('main', {
     buildUI: function (platform_api) {
         var ui_builder = platform_api.ui_builder;
 
+        ui_builder.set_top_toolbar(TangoWebapp.ui.newTopToolbar());
+
         ui_builder.add_left_sidebar_item({
             header: "<span class='webix_icon fa-sitemap'></span> Devices",
             body: {
@@ -47,6 +49,8 @@ TangoWebapp.MainController = MVC.Controller.extend('main', {
                     view: "settings"
                 }
             });
+
+        ui_builder.set_bottom_toolbar(TangoWebapp.ui.newBottomToolbar());
     },
     initialize:function(platform_api){
         OpenAjax.hub.publish("platform_api.ui.initialized", {data: platform_api});

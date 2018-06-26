@@ -43,6 +43,20 @@ UIBuilder = MVC.Model.extend('ui_builder',
         add_mainview_item: function (item) {
             this._ui['main'].push(item);
         },
+        /**
+         *
+         * @param {webix.config} top_toolbar
+         */
+        set_top_toolbar:function(top_toolbar){
+            this._ui._top = top_toolbar;
+        },
+        /**
+         *
+         * @param {webix.config} bottom_toolbar
+         */
+        set_bottom_toolbar:function(bottom_toolbar){
+            this._ui._bottom = bottom_toolbar;
+        },
         _build: function (what) {
             if (this['_set_' + what + '_item']) return this._ui[what];
             else
@@ -98,7 +112,16 @@ UIBuilder = MVC.Model.extend('ui_builder',
 
             webix.html.remove(document.getElementById('ajax-loader'));
 
-            webix.ui(ui, $$('content'));
+            webix.ui({
+                view: 'layout',
+                id: 'main',
+                type: 'space',
+                rows: [
+                    this._ui._top,
+                    ui,
+                    this._ui._bottom
+                ]
+            });
             webix.ui.fullScreen();
         }
     }

@@ -1,6 +1,6 @@
-TangoWebapp.ui = {
+TangoWebappPlatform.ui = {
     _webix_files: [
-        "critical_error_no_rest",
+        "critical_error_no_rest", "toolbar",
         "settings",
         "devices_tree","device_tree",
         "plot", "device_control_panel",
@@ -14,6 +14,6 @@ TangoWebapp.ui = {
 if (MVC.Browser.Rhino)
     print("Skipping webix for Rhino");
 else if (MVC.env() === 'production') {
-    include.add(include.add_defaults('../../apps/tango_webapp/webix')); //this file is created during compression
+    include.add(include.add_defaults('../../apps/'+MVC.app_name+'/webix')); //this file is created during compression
 } else
-    include.apply(include, TangoWebapp.ui._webix_files);
+    include.apply(include, TangoWebappPlatform.ui._webix_files);
