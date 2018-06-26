@@ -3,6 +3,9 @@
  * @namespace
  */
 TangoWebappPlatform = {};
+TangoWebapp = {
+    ui : {}
+};
 
 include.plugins(
     "controller", "view", "model"
@@ -39,12 +42,11 @@ include(function () { //runs after prior includes are loaded
         "platform/ui/ui"
     );
     include.views(
-        "views/main_log_item"
+        "views/main_log_item", "views/dev_panel_error_out",
+        "views/dev_panel_command_out", "views/dev_panel_attribute_info", "views/dev_panel_attribute_out", "views/dev_panel_pipe_out"
     );
 
     if (include.get_env().match(/test/)) {
-
-
         include.unit_tests(
             "platform/tango_rest_api_request",
             "platform/tango_device", "platform/tango_database",
