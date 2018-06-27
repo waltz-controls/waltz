@@ -64,10 +64,12 @@
         /**
          *
          * @param msg
+         * @param reason
          */
-        //TODO process reason
         error: function (msg, reason) {
             console.error(msg);
+            if(reason) console.error(reason);
+            //TODO process reason
             $$('main-log').log({
                 type: 'error',
                 value: msg.errors ? msg.errors.join('<hr/>') : msg,
