@@ -73,7 +73,7 @@
                 value: msg.errors ? msg.errors.join('<hr/>') : msg,
                 timestamp: +new Date()
             });
-            webix.message({type: 'error', text: 'An error has occurred! See log...'});
+            webix.message({type: 'error', text: msg.errors ? 'An error has occurred! See log...' : msg});
             //TODO bind
             if($$('bottom-toolbar')) $$('bottom-toolbar').switchLogBtnIcon('error');
         },
