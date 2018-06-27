@@ -74,7 +74,8 @@
                 timestamp: +new Date()
             });
             webix.message({type: 'error', text: 'An error has occurred! See log...'});
-            $$('bottom-toolbar').switchLogBtnIcon('error');
+            //TODO bind
+            if($$('bottom-toolbar')) $$('bottom-toolbar').switchLogBtnIcon('error');
         },
 
         /**
