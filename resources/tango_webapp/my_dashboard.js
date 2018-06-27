@@ -39,12 +39,13 @@
             },
             //NEW CODE HERE!!!
             run:function(){
+                var $$plot = $$(this).$$('mydashboard.plot');
                 //note this.
                 this.attr.then(function(attr){
                     return attr.read();
                 })
                     .then(function(value){
-                        $$('mydashboard.plot').update(value)
+                        $$plot.update(value)
                     })
                     .fail(function(err){
                         TangoWebappHelpers.error("Could not read attribute", err);
@@ -71,7 +72,7 @@
                 }.bind(this));//very important to bind function to a proper this object
             }
         }
-    , TangoWebappPlatform.mixin.Runnable, webix.ui.layout);
+    , TangoWebappPlatform.mixin.Runnable, webix.IdSpace, webix.ui.layout);
 
     newMyDashboard = function(config){
         return webix.extend({
