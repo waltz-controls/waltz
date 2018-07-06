@@ -44,7 +44,6 @@ MVC.Store = MVC.Class.extend(
      * @return {Array}
      */
     find : function(f){
-        if(typeof f !== 'function') return [this.find_one(f)];
         var instances = [];
         for(var id in this._data){
             var inst = this._data[id];

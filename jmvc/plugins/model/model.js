@@ -186,9 +186,9 @@ MVC.Model = MVC.Class.extend(
          * @param {Function|string} f -- filter function or 'all'
          * @return {Array}
          */
+        //TODO update doc -- f is an id
         find:function(f){
-            if(f == 'all') f = 0;
-            return this.store.find(f)
+            return this.store.find_one(f)
         },
         /**
          * Finds all instances that satisfies filter function or all, if no filter function is provided
