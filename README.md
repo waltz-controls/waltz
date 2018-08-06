@@ -1,10 +1,3 @@
-THE BOUNTY HAS ENDED -- THE NEW PROJECT NAME WILL BE: *Waltz*
-
-Other options and final votes can be found [here](http://ec2-35-156-104-8.eu-central-1.compute.amazonaws.com:8080/bounty/)
-
-
-
-
 [![logo](http://www.tango-controls.org/static/tango/img/logo_tangocontrols.png)](http://www.tango-controls.org)
 
 [![Codacy Badge](https://api.codacy.com/project/badge/Grade/512287ad5da94ac7af157a94eec80c5a)](https://www.codacy.com/app/tango-controls/tango-webapp?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=tango-controls/tango-webapp&amp;utm_campaign=Badge_Grade)
