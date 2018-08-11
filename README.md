@@ -68,6 +68,10 @@ This requires jjs to be in the $PATH (is shipped with OpenJDK8 and later)
 
 ## Resources
 
+### Documentation
+
+[Waltz docs](https://waltz-docs.readthedocs.io/en/latest/?badge=latest)
+
 ### Videos
 
 [1] [UI and features presentation](https://vimeo.com/268669625)
