@@ -1,7 +1,7 @@
 /**
  * Model tango_device
  *
- * @typedef {TangoWebappPlatform.TangoDevice} TangoDevice
+ * @class
  * @property {string} id - host_id/name
  * @property {string} name - host_id/name
  * @property {string} alias - host_id/name
@@ -10,10 +10,9 @@
  * @property {[]} attrs - host_id/name
  * @property {[]} commands - host_id/name
  * @property {[]} pipes - host_id/name
- * @class
- * @extends TangoWebappPlatform.DataCollectionWrapper
+ * @extends DataCollectionWrapper
  */
-TangoWebappPlatform.TangoDevice = TangoWebappPlatform.DataCollectionWrapper.extend('tango_device',
+TangoDevice = DataCollectionWrapper.extend('tango_device',
     /** @lends TangoDevice */
     {
         attributes: {
@@ -396,6 +395,3 @@ TangoWebappPlatform.TangoDevice = TangoWebappPlatform.DataCollectionWrapper.exte
         }
     }
     );
-
-if (window['TangoDevice'] === undefined)
-    TangoDevice = TangoWebappPlatform.TangoDevice;
