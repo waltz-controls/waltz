@@ -1,13 +1,23 @@
 /**
  * Model tango_device
  *
- * @type {TangoDevice}
+ * @typedef {TangoWebappPlatform.TangoDevice} TangoDevice
+ * @property {string} id - host_id/name
+ * @property {string} name - host_id/name
+ * @property {string} alias - host_id/name
+ * @property {TangoHost} host - host_id/name
+ * @property {Object} info - host_id/name
+ * @property {[]} attrs - host_id/name
+ * @property {[]} commands - host_id/name
+ * @property {[]} pipes - host_id/name
+ * @class
+ * @extends TangoWebappPlatform.DataCollectionWrapper
  */
 TangoWebappPlatform.TangoDevice = TangoWebappPlatform.DataCollectionWrapper.extend('tango_device',
-    /** @Static */
+    /** @lends TangoDevice */
     {
         attributes: {
-            id: 'string', //host_id/name
+            id: 'string',
             name: 'string',
             alias: 'string',
             host: 'TangoHost',
@@ -27,17 +37,33 @@ TangoWebappPlatform.TangoDevice = TangoWebappPlatform.DataCollectionWrapper.exte
             info: {}
         }
     },
-    /** @Prototype */
+    /** @lends TangoDevice.prototype */
     {
+        /**
+         *
+         * @private
+         */
+        admin: null,
+        /**
+         *
+         * @param v
+         * @private
+         */
         set_admin: function (v) {
             this.admin = v;
         },
+        /**
+         *
+         * @param v
+         * @private
+         */
         set_host: function (v) {
             this.host = v;
         },
         /**
          *
          * @param v
+         * @private
          */
         set_attrs: function (v) {
             this.attrs = v;
@@ -45,6 +71,7 @@ TangoWebappPlatform.TangoDevice = TangoWebappPlatform.DataCollectionWrapper.exte
         /**
          *
          * @param v
+         * @private
          */
         set_commands: function (v) {
             this.commands = v;
@@ -52,16 +79,23 @@ TangoWebappPlatform.TangoDevice = TangoWebappPlatform.DataCollectionWrapper.exte
         /**
          *
          * @param v
+         * @private
          */
         set_properties: function (v) {
             this.properties = v;
         },
+        /**
+         *
+         * @param v
+         * @private
+         */
         set_display_name: function (v) {
             this.display_name = v;
         },
         /**
          *
          * @param v
+         * @private
          */
         set_pipes: function (v) {
             this.pipes = v;
@@ -89,6 +123,8 @@ TangoWebappPlatform.TangoDevice = TangoWebappPlatform.DataCollectionWrapper.exte
         /**
          *
          * @param attrs
+         * @constructs
+         * @override
          */
         init: function (attrs) {
             //we can not just set these properties here i.e. this.attrs = ...
@@ -216,6 +252,7 @@ TangoWebappPlatform.TangoDevice = TangoWebappPlatform.DataCollectionWrapper.exte
             }.bind(this));
         },
         /**
+         *
          * @returns {Promise}
          */
         fetchPipes: function () {
@@ -229,6 +266,7 @@ TangoWebappPlatform.TangoDevice = TangoWebappPlatform.DataCollectionWrapper.exte
             }.bind(this));
         },
         /**
+         *
          * @returns {Promise}
          */
         fetchPipe: function (name) {
@@ -240,6 +278,7 @@ TangoWebappPlatform.TangoDevice = TangoWebappPlatform.DataCollectionWrapper.exte
             }.bind(this));
         },
         /**
+         *
          * @returns {webix.promise}
          */
         fetchAdmin: function () {
@@ -333,6 +372,7 @@ TangoWebappPlatform.TangoDevice = TangoWebappPlatform.DataCollectionWrapper.exte
         },
         /**
          *
+         * @return {TangoRestApiRequest}
          */
         toTangoRestApiRequest: function () {
             return this.host.rest.request().hosts(this.host.toUrl()).devices(this.name);
