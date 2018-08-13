@@ -1,10 +1,14 @@
 /**
  * Model tango_pipe
- *
+ * @class
  * @type {TangoPipe}
+ * @property {string} id
+ * @property {string} name
+ * @property {string} display_name
+ * @extends MVC.Model
  */
 TangoPipe = MVC.Model.extend('tango_pipe',
-    /** @Static */
+    /** @lends  TangoPipe */
     {
 
         attributes: {
@@ -14,7 +18,7 @@ TangoPipe = MVC.Model.extend('tango_pipe',
         },
         default_attributes: {}
     },
-    /** @Prototype */
+    /** @lends  TangoPipe.prototype */
     {
         _get_device_id: function () {
             return this.id.substr(0, this.id.lastIndexOf('/'));
@@ -22,7 +26,7 @@ TangoPipe = MVC.Model.extend('tango_pipe',
         /**
          *
          * @param attrs
-         * @constructor
+         * @constructs
          */
         init:function(attrs){
             attrs.display_name = attrs.display_name || attrs.name;

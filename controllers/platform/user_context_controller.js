@@ -3,7 +3,7 @@ TangoWebappPlatform.UserContextController = MVC.Controller.extend("user_context_
     /**
      * Defines global var UserContextController
      *
-     * @constructor
+     * @constructs
      * @param user_context
      */
     init: function (user_context) {

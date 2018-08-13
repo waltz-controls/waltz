@@ -1,10 +1,12 @@
 /**
  * Model tango_admin_device
- *
+ * @class
  * @type {TangoAdminDevice}
+ * @property {TangoDevice} device
+ * @extends MVC.Model
  */
 TangoAdminDevice = MVC.Model.extend('tango_admin_device',
-    /* @Static */
+    /** @lends  TangoAdminDevice */
     {
 
         attributes: {
@@ -12,7 +14,7 @@ TangoAdminDevice = MVC.Model.extend('tango_admin_device',
         },
         default_attributes: {}
     },
-    /* @Prototype */
+    /** @lends  TangoAdminDevice.prototype */
     {
         /**
          *

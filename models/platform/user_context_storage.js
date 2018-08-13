@@ -1,21 +1,29 @@
 /**
  * UserContext adaptor for StoreType
- *
+ * @class
  * @type {UserContextStore}
+ * @extends MVC.Class
  */
 TangoWebappPlatform.UserContextStore = MVC.Class.extend(
-    /* @Prototype */
+    /** @lends  TangoWebappPlatform.UserContextStore.prototype */
     {
+        /** @member {subscriptions} */
         subscriptions:[],
+        /**
+         * @param event
+         */
         onUserContextCreated:function(event){
             this.context = event.data;
         },
+        /**
+         * @param event
+         */
         onUserContextDestroyed:function (event) {
             if(this.context === event.data)
                 this.context = null;
         },
         /**
-         *
+         * @constructs
          * @param {Object} klass
          */
         init: function (klass) {
@@ -44,7 +52,6 @@ TangoWebappPlatform.UserContextStore = MVC.Class.extend(
         },
         /**
          * WARNING!!! This function may corrupt data see TODO
-         *
          * @param {MVC.Model} obj
          */
         create: function (obj) {
@@ -52,7 +59,6 @@ TangoWebappPlatform.UserContextStore = MVC.Class.extend(
             this.context.ext[id] = obj.attributes();
         },
         /**
-         *
          * @param {Object} id
          * @param {Object} attrs
          */
@@ -64,7 +70,6 @@ TangoWebappPlatform.UserContextStore = MVC.Class.extend(
             this.context.update_attributes(context_attrs);
         },
         /**
-         *
          * @param {Object} id
          */
         destroy: function (id) {

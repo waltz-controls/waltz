@@ -4,11 +4,16 @@
 (function () {
     /**
      * Model tango_attribute
-     *
+     * @class
      * @type {TangoAttribute}
+     * @property {string} id - //host_id/device_id/name
+     * @property {string} name
+     * @property {string} device_id
+     * @property {string} display_name
+     * @extends MVC.Model
      */
     TangoAttribute = MVC.Model.extend('tango_attribute',
-        /** @Static */
+        /** @lends  TangoAttribute */
         {
 
             attributes: {
@@ -20,7 +25,6 @@
             },
             default_attributes: {},
             /**
-             *
              * @param id
              * @return {{tango_host: string, tango_port: number, device: string, name: string}}
              */
@@ -35,19 +39,17 @@
                 }
             }
         },
-        /** @Prototype */
+        /** @lends  TangoAttribute.prototype */
         {
             /**
-             *
              * @param attrs
-             * @constructor
+             * @constructs
              */
             init:function(attrs){
                 attrs.display_name = attrs.display_name || attrs.name;
                 this._super(attrs);
             },
             /**
-             *
              * @return {boolean}
              */
             isScalar:function(){
@@ -70,7 +72,6 @@
                 return device.fetchAttrValues([this.name]).then(this._handle_resp.bind(this));
             },
             /**
-             *
              * @returns {webix.promise}
              */
             fetchHistory:function(){
@@ -85,7 +86,6 @@
                     }.bind(this));
             },
             /**
-             *
              * @param value
              * @returns {webix.promise}
              */
@@ -97,7 +97,6 @@
                 return device.putAttrValues(values).then(this._handle_resp.bind(this));
             },
             /**
-             *
              * @returns {*|webix.promise}
              */
             //TODO extract AttributeInfo (aka MVC.Model.JSON) and move this method there
@@ -107,7 +106,6 @@
                 return device.toTangoRestApiRequest().attributes(this.name).put('/info?async=true', this.info);
             },
             /**
-             *
              * @returns {'STATE'|'STATUS'|'SCALAR'|'SPECTRUM'|'IMAGE'}
              */
             getDataFormat:function(){

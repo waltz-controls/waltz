@@ -3,7 +3,6 @@
  */
 (function () {
     /**
-     *
      * @return {webix.config} toolbar
      */
     var newToolbar = function(){
@@ -63,9 +62,8 @@
             })
         }
     };
-
-
     /**
+     * @class [scalars]
      * @type {webix.protoUI}
      */
     var scalars = webix.protoUI({
@@ -144,7 +142,7 @@
             this.hideOverlay();
         },
         /**
-         * @param
+         * @param attrs
          */
         update: function (attrs) {
             this.parse(attrs);
@@ -176,7 +174,9 @@
             }
         }
     }, webix.EventSystem, webix.OverlayBox, webix.ui.datatable);
-
+    /**
+     *
+     */
     var newScalars = function(){
         return {
             view: 'scalars',
@@ -202,7 +202,9 @@
             }
         };
     };
-
+    /**
+     *
+     */
     var newAttributes = function(){
         return {
             view: 'tabview',
@@ -218,6 +220,7 @@
     };
 
     /**
+     * @class [attrs_monitor_view]
      * @type {webix.protoUI}
      */
     var attrs_monitor_view = webix.protoUI({
@@ -241,13 +244,16 @@
                 });
             }
         },
+
+        /**
+        *  @param id
+        */
         removeItem:function(id){
             this._monitored.remove(id);
             if(this.$$('scalars').exists(id))
                 this.$$('scalars').remove(id);
         },
         /**
-         *
          * @param {} item
          */
         startPlot:function(item){
@@ -263,7 +269,6 @@
             $$plot.addTrace(device.display_name + "/" + item.label, [item.timestamp], [item.value], item.plotIndex);
         },
         /**
-         *
          * @param item
          */
         stopPlot:function(item){
@@ -306,7 +311,7 @@
             );
         },
         /**
-         *
+         *  @param attrs
          */
         update: function (attrs) {
             attrs.forEach(function (attr) {
@@ -323,16 +328,21 @@
             this.$$('startStop').define("icon", icon);
             this.$$('startStop').refresh();
         },
+        /**
+         *
+        */
         before_start:function(){
             this._update_start_stop_icon("pause");
             webix.html.addCss( this.$$('status').getNode(), "fa-spin");
         },
+        /**
+         *
+         */
         after_stop:function(){
             this._update_start_stop_icon("play");
             webix.html.removeCss( this.$$('status').getNode(), "fa-spin");
         },
         /**
-         *
          * @return {[]}
          * @private
          */
@@ -353,6 +363,9 @@
             }
             return result;
         },
+        /**
+        *
+        */
         run: function () {
             var attrs_to_update = this._get_attrs_to_update();
 
@@ -379,7 +392,6 @@
             }
         },
         /**
-         *
          * @param {[]}  scalars
          */
         parseScalars:function(scalars){
@@ -403,7 +415,6 @@
             this._devices[device.id] = device;
         },
         /**
-         *
          * @param {TangoAttribute} attr
          * @return boolean
          */
@@ -424,7 +435,6 @@
             return true;
         },
         /**
-         *
          * @param {TangoAttribute} attr
          */
         removeAttribute:function(attr){
@@ -475,15 +485,25 @@
         TangoWebappPlatform.mixin.Runnable, TangoWebappPlatform.mixin.OpenAjaxListener,
         webix.EventSystem, webix.IdSpace,
         webix.ui.layout);
-
+    /**
+     * @param context
+     */
     TangoWebapp.ui.newAttrsMonitorView = function (context) {
         return webix.extend(context, {
             view: "attrs_monitor"
         });
     };
-
+    /**
+    * @type {AttrsMonitorState}
+    * @class
+    * @extends TangoWebappPlatform.WidgetState
+    */
     var AttrsMonitorState = TangoWebappPlatform.WidgetState.extend(
         {
+            /**
+             * @param attrs
+             * @constructs
+             */
             init:function(attrs){
                 attrs.data = attrs.data || Object.create(null);
                 this._super(attrs);
@@ -497,6 +517,10 @@
                     result.push(id);
                 return result;
             },
+            /**
+             * @param id
+             * @param plotted
+             */
             updateState:function(id, plotted){
                 var item = Object.create(null);
                 item[id] = plotted;
@@ -506,12 +530,12 @@
         );
 
     /**
+     * @class [stateful_attrs_monitor]
      * @type {webix.protoUI}
      */
     var stateful_attrs_monitor = webix.protoUI({
         name:'stateful_attrs_monitor',
         /**
-         *
          * @param {AttrsMonitorState} state atributes' names
          */
         restoreState:function(state){
@@ -558,7 +582,6 @@
         },
         /**
          * Overrides attrs_monitor_view.addAttribute by adding state update
-         *
          * @param {TangoAttribute} attr
          */
         addAttribute:function(attr){
@@ -566,22 +589,34 @@
                 this.state.updateState(attr.id, false);
             }
         },
+        /**
+         * @param id
+         */
         removeItem:function (id) {
             webix.ui.attrs_monitor.prototype.removeItem.apply(this, arguments);
             var state = this.state.getState();
             delete state[id];
             this.state.setState(state);
         },
+        /**
+         * @param item
+         */
         startPlot:function(item){
             webix.ui.attrs_monitor.prototype.startPlot.apply(this, arguments);
             this.state.updateState(item.id, true);
         },
+        /**
+         * @param item
+         */
         stopPlot:function(item){
             webix.ui.attrs_monitor.prototype.stopPlot.apply(this, arguments);
             this.state.updateState(item.id, false);
         }
     },TangoWebappPlatform.mixin.Stateful, attrs_monitor_view);
 
+    /**
+     * @param config
+     */
     TangoWebapp.ui.newStatefulAttrsMonitorView = function (config) {
         return webix.extend(config, {
             view: "stateful_attrs_monitor",

@@ -1,11 +1,13 @@
 /**
  * Model device_filter
- *
- * @type {DeviceFilter}
  * @class
+ * @type {DeviceFilter}
+ * @property {string} user
+ * @property {string[]} value
+ * @extends MVC.Model
  */
 DeviceFilter = MVC.Model.extend('device_filter',
-    /** @Static */
+    /** @lends  DeviceFilter */
     {
         store_type: TangoWebappStorage,
         id: "user",
@@ -17,12 +19,18 @@ DeviceFilter = MVC.Model.extend('device_filter',
             user: "default"
         }
     },
-    /** @Prototype */
+    /** @lends  DeviceFilter.prototype */
     {
+        /** @member {domain_filter} */
         domain_filter:[],
+        /** @member {family_filter} */
         family_filter:[],
+        /** @member {member_filter} */
         member_filter:[],
-
+        /**
+         * @param params
+         * @constructs
+         */
         init: function(params){
             this._super(params);
 
@@ -46,9 +54,15 @@ DeviceFilter = MVC.Model.extend('device_filter',
             this.Class.store.create(this);
             console.log(["Created new DeviceFilter[user=",this.user,", value=",this.value,"]"].join(''));
         },
+        /**
+         *
+         */
         getDomainFilters: function(){
             return this.domain_filter;
         },
+        /**
+         * @param domain
+         */
         getFamilyFilters: function (domain) {
             return this.family_filter.filter(function(it){
                 return it.startsWith(domain) || it.startsWith("*");
@@ -58,6 +72,10 @@ DeviceFilter = MVC.Model.extend('device_filter',
                 return result;
             })
         },
+        /**
+         * @param domain
+         * @param family
+         */
         getMemberFilters:function(domain, family){
             return this.member_filter.filter(function(it){
                 //TODO use regex here

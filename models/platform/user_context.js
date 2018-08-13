@@ -2,11 +2,17 @@
  * Model user_context
  *
  * Contains associated with this user data e.g. rest_url, tango_hosts, device filters
- *
+ * @class
  * @type {UserContext}
+ * @property {string} user
+ * @property {string} rest_url
+ * @property {{}} tango_hosts
+ * @property {string[]} device_filters
+ * @property {Object} ext
+ * @extends MVC.Model
  */
 TangoWebappPlatform.UserContext = MVC.Model.extend('user_context',
-    /** @Static */
+    /** @lends  TangoWebappPlatform.UserContext */
     {
         store_type: TangoRemoteStorage,
         id: "user",
@@ -22,9 +28,7 @@ TangoWebappPlatform.UserContext = MVC.Model.extend('user_context',
         },
         /**
          * WARNING!!! Due to limitations of TangoWebapp storage this method always returns new instance
-         *
          * @param id
-         *
          * @returns {UserContext} found or newly created with default values
          */
         find_one: function (id) {
@@ -43,13 +47,11 @@ TangoWebappPlatform.UserContext = MVC.Model.extend('user_context',
             return result;
         }
     },
-    /** @Prototype */
+    /** @lends  TangoWebappPlatform.UserContext.prototype */
     {
         /**
-         *
          * @param attrs
-         *
-         * @constructor
+         * @constructs
          */
         init: function (attrs) {
             this._super(attrs);
@@ -61,21 +63,25 @@ TangoWebappPlatform.UserContext = MVC.Model.extend('user_context',
         },
         /**
          * Stores this instance in localStorage
-         *
          * Sets this.Class.current to null
-         *
          */
         destroy: function () {
             this.save();
             this.Class.store.destroy(this[this.Class.id]);
             this.publish("destroy", {data:this});
         },
+        /**
+         *
+         */
         toDeviceFilter: function () {
             return new DeviceFilter({
                 user: this.user,
                 value: this.device_filters
             });
         },
+        /**
+         *
+         */
         toString: function () {
             var tango_hosts = [];
 

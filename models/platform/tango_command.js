@@ -1,10 +1,18 @@
 /**
  * Model tango_command
- *
+ * @class
  * @type {TangoCommand}
+ * @property {string} id
+ * @property {string} device_id
+ * @property {string} name
+ * @property {string} display_name
+ * @property {string} info
+ * @property {string} input
+ * @property {string} output
+ * @extends MVC.Model
  */
 TangoCommand = MVC.Model.extend('tango_command',
-    /** @Static */
+    /** @lends  TangoCommand */
     {
 
         attributes: {
@@ -19,12 +27,12 @@ TangoCommand = MVC.Model.extend('tango_command',
         },
         default_attributes: {}
     },
-    /** @Prototype */
+    /** @lends  TangoCommand.prototype */
     {
         /**
          *
          * @param attrs
-         * @constructor
+         * @constructs
          */
         init: function (attrs) {
             attrs.display_name = attrs.display_name || attrs.name;

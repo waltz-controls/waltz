@@ -2,9 +2,15 @@
  *
  * @author Igor Khokhriakov <igor.khokhriakov@hzg.de>
  * @since 4/30/18
+ * @class
+ * @type {UserScript}
+ * @property {string} name
+ * @property {string} code
+ * @property {function} func
+ * @extends MVC.Model
  */
 UserScript = TangoWebapp.UserScript = MVC.Model.extend('user_script',
-    /** @Static */
+    /** @lends  UserScript */
     {
         store_type: WebixDataCollectionStorage,
         id: 'name',
@@ -17,10 +23,9 @@ UserScript = TangoWebapp.UserScript = MVC.Model.extend('user_script',
             
         }
     },
-    /** @Prototype */
+    /** @lends  UserScript.prototype */
     {
         /**
-         *
          * @param {string} v
          */
         set_code:function(v){
@@ -29,7 +34,6 @@ UserScript = TangoWebapp.UserScript = MVC.Model.extend('user_script',
         },
         /**
          * executes this script
-         *
          * @return {Promise}
          */
         execute:function(){

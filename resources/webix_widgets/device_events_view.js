@@ -1,5 +1,11 @@
-/** @module DeviceEventsView */
+/**
+ * @module DeviceEventsView
+ */
 (function () {
+    /**
+     * @class
+     * @type {webix.protoUI}
+     */
     webix.protoUI({
         _change: {},
         _archive: {},

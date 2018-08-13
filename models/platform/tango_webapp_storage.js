@@ -1,13 +1,14 @@
 /**
  * Model tango_webapp_storage
- *
+ * @class
  * @type {TangoWebappStorage}
+ * @extends MVC.Class
  */
 TangoWebappStorage = MVC.Class.extend(
-    /* @prototype */
+    /** @lends  TangoWebappStorage.prototype */
     {
         /**
-         *
+         * @constructs
          * @param {Object} klass
          */
         init: function (klass) {
@@ -32,6 +33,10 @@ TangoWebappStorage = MVC.Class.extend(
             var id = obj[obj.Class.id];
             this.update(id, obj.attributes());
         },
+        /**
+         * @param id
+         * @param attrs
+         */
         update: function (id, attrs) {
             var data = JSON.parse(localStorage.getItem(this.key));
             data[id] = attrs;

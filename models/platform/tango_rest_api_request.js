@@ -1,5 +1,10 @@
+/**
+* @class
+* @type {DummyStore}
+* @extends MVC.Class
+*/
 TangoWebappPlatform.DummyStore = MVC.Class.extend(
-    /* @prototype */
+    /** @lends  TangoWebappPlatform.DummyStore.prototype */
     {
         /**
          *
@@ -52,11 +57,17 @@ TangoWebappPlatform.DummyStore = MVC.Class.extend(
 
 /**
  * Model tango_rest_api
- *
+ * @class
  * @type {TangoRestApiRequest}
+ * @property {number} id
+ * @property {string} url
+ * @property {string} type
+ * @property {Object} result
+ * @property {Object} failure
+ * @extends MVC.Model
  */
 TangoWebappPlatform.TangoRestApiRequest = MVC.Model.extend('tango_rest_api_request',
-    /* @Static */
+    /** @lends  TangoWebappPlatform.TangoRestApiRequest */
     {
         _id: 1,
         attributes: {
@@ -70,6 +81,9 @@ TangoWebappPlatform.TangoRestApiRequest = MVC.Model.extend('tango_rest_api_reque
             result: null,
             failure: null
         },
+        /**
+         * @constructs
+         */
         init:function(){
             this._super();
             //do not store requests in production
@@ -79,11 +93,18 @@ TangoWebappPlatform.TangoRestApiRequest = MVC.Model.extend('tango_rest_api_reque
             }
         }
     },
-    /* @Prototype */
+    /** @lends  TangoWebappPlatform.TangoRestApiRequest.prototype */
     {
         //promise factory
+        /** @member {promise} */
         promise: null,
+        /** @member {transport} */
         transport: null,
+
+        /**
+         * @param attrs
+         * @constructs
+         */
         init: function (params) {
             this._super(MVC.Object.extend(params, {id: this.Class._id++}));
             this.transport = webix.ajax;

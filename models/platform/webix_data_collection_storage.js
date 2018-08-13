@@ -1,14 +1,15 @@
 /**
  * MVC store adaptor for webix.DataCollection
- *
+ * @class
  * @type {WebixDataCollectionStorage}
+ * @extends MVC.Class
  */
 var WebixDataCollectionStorage = MVC.Class.extend(
-    /* @prototype */
+    /** @lends  WebixDataCollectionStorage.prototype */
     {
         _data: null,
         /**
-         *
+         * @constructs
          * @param {Object} klass
          */
         init: function (klass) {
@@ -29,7 +30,6 @@ var WebixDataCollectionStorage = MVC.Class.extend(
             return this._data.getItem(id);
         },
         /**
-         *
          * @param {Object} obj
          */
         create: function (obj) {
@@ -38,7 +38,6 @@ var WebixDataCollectionStorage = MVC.Class.extend(
         },
         /**
          * Updates stored instance
-         *
          * @param id
          * @param attrs
          */
@@ -46,7 +45,6 @@ var WebixDataCollectionStorage = MVC.Class.extend(
             this._data.updateItem(id, attrs);
         },
         /**
-         *
          * @param {Object} id
          */
         destroy: function (id) {

@@ -1,10 +1,13 @@
 /**
  * Model application_context
- *
+ * @class
  * @type {PlatformContext}
+ * @property {string} id
+ * @property {UserContext} UserContext
+ * @extends MVC.Model
  */
 TangoWebappPlatform.PlatformContext = MVC.Model.extend('platform_context',
-    /* @Static */
+    /** @lends  TangoWebappPlatform.PlatformContext */
     {
         attributes: {
             id: 'string',
@@ -50,17 +53,19 @@ TangoWebappPlatform.PlatformContext = MVC.Model.extend('platform_context',
             });
         }
     },
-    /* @Prototype */
+    /** @lends  TangoWebappPlatform.PlatformContext.prototype */
     {
         //TODO association
+        /** @member {UserContext} */
         UserContext: null,
+        /** @member {rest} */
         rest: null,
+        /** @member {tango_hosts} */
         tango_hosts: null,
+        /** @member {devices} */
         devices: null,
         /**
-         *
          * @param {UserContext} v
-         *
          * @event {OpenAjax} platform_context.set_user_context
          */
         set_UserContext: function (v) {
@@ -68,9 +73,7 @@ TangoWebappPlatform.PlatformContext = MVC.Model.extend('platform_context',
             this.publish("set_user_context", {data: this});
         },
         /**
-         *
          * @param {TangoRestApi} v - new rest api
-         *
          * @event {OpenAjax} platform_context.set_rest
          */
         set_rest: function (v) {
@@ -88,9 +91,8 @@ TangoWebappPlatform.PlatformContext = MVC.Model.extend('platform_context',
         //TODO jmvc attributes clashes with tango attributes
         //attributes: null,
         /**
-         *
          * @param attrs
-         * @constructor
+         * @constructs
          */
         init: function (attrs) {
             this.tango_hosts = new webix.DataCollection({
@@ -108,7 +110,6 @@ TangoWebappPlatform.PlatformContext = MVC.Model.extend('platform_context',
         },
         /**
          * Destroys this instance
-         *
          * @event {OpenAjax} platform_context.destroy
          */
         destroy: function () {

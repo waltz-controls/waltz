@@ -1,9 +1,17 @@
 /**
- *
+ * Model tango_host
+ * @class
  * @type {TangoHost}
+ * @property {string} host
+ * @property {number} port
+ * @property {string} name
+ * @property {string} id
+ * @property {string[]} info
+ * @property {boolean} is_alive
+ * @extends MVC.Model
  */
 TangoWebappPlatform.TangoHost = MVC.Model.extend("tango_host",
-    /** @Static */
+    /** @lends  TangoWebappPlatform.TangoHost */
     {
         attributes: {
             host: "string",
@@ -22,13 +30,21 @@ TangoWebappPlatform.TangoHost = MVC.Model.extend("tango_host",
             is_alive: false
         }
     },
-    /** @Prototype */
+    /** @lends  TangoWebappPlatform.TangoHost.prototype */
     {
+        /** @member {rest} */
         rest: null,
+        /** @member {database} */
         database: null,
+        /**
+         * @return {string} host + "/" + port
+         */
         toString: function () {
             return this.id;
         },
+        /**
+         * @return {string} device
+         */
         toUrl: function () {
             return this.host + "/" + this.port;
         },

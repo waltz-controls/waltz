@@ -130,7 +130,7 @@ MockDevice = Device.extend(
         },
         /**
          *
-         * @constructor
+         * @constructs
          * @param name
          */
         init              : function () {

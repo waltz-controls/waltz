@@ -1,10 +1,14 @@
 /**
  * Model platform_api
- *
- * @type {PlatformApi}
+ * @class
+ * @type id
+ * @property {string} name
+ * @property {UIBuilder} ui_builder
+ * @property {PlatformContext} context
+ * @extends MVC.Model
  */
 TangoWebappPlatform.PlatformApi = MVC.Model.extend('platform_api',
-    /* @Static */
+    /** @lends  TangoWebappPlatform.PlatformApi */
     {
         associations:{
             has: ['UIBuilder']
@@ -18,22 +22,22 @@ TangoWebappPlatform.PlatformApi = MVC.Model.extend('platform_api',
             id:'singleton'
         }
     },
-    /* @Prototype */
+    /** @lends  TangoWebappPlatform.PlatformApi.prototype */
     {
         /**
-         *
          * @return {UserContext}
          */
         user_context:function(){
             return this.context.UserContext;
         },
         /**
-         *
          * @return {UserContextController}
          */
         UserContextController:function(){
             return new TangoWebappPlatform.UserContextController(this.user_context());
         },
+        /**
+         */
         PlatformUIController:function(){
             return new TangoWebappPlatform.UIController();
         }

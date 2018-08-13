@@ -1,10 +1,13 @@
 /**
  * Model widget_state
- *
+ * @class
  * @type {WidgetState}
+ * @property {string} id
+ * @property {Object} data
+ * @extends MVC.Model
  */
 TangoWebappPlatform.WidgetState = MVC.Model.extend('widget_state',
-    /* @Static */
+    /** @lends  TangoWebappPlatform.WidgetState */
     {
         store_type: TangoWebappPlatform.UserContextStore,
         attributes: {
@@ -13,12 +16,11 @@ TangoWebappPlatform.WidgetState = MVC.Model.extend('widget_state',
         },
         default_attributes: {}
     },
-    /* @Prototype */
+    /** @lends  TangoWebappPlatform.WidgetState.prototype */
     {
         /**
-         *
          * @param attrs
-         * @constructor
+         * @constructs
          */
         init:function(attrs){
             attrs.data = attrs.data || Object.create(null);
@@ -33,7 +35,6 @@ TangoWebappPlatform.WidgetState = MVC.Model.extend('widget_state',
         },
         /**
          * Sets new state
-         *
          * @param {Object} state
          */
         setState:function(state){
@@ -43,7 +44,6 @@ TangoWebappPlatform.WidgetState = MVC.Model.extend('widget_state',
         },
         /**
          * Updates existing state
-         *
          * @param {Object} state
          */
         updateState:function(state){

@@ -1,11 +1,12 @@
-/** @module TestDevicePanel */
+/**
+ * @module TestDevicePanel
+ */
 (function () {
     var attr_info_values = [
         'label','writable','data_format','data_type','max_dim_x','max_dim_y','unit','standard_unit',
         'display_unit','format','min_value','max_value'];
 
     /**
-     *
      * @type {webix.config}
      */
     var attr_info_datatable = {
@@ -17,6 +18,9 @@
             {id:'value', fillspace: true}
         ],
         on:{
+            /**
+             * @param attr
+             */
             onBindApply:function(attr){
                 if(!attr) return false;
                 var info = [];
@@ -70,7 +74,6 @@
         ],
         on:{
             /**
-             *
              * @param {TangoCommand} cmd
              * @returns {boolean}
              */
@@ -82,6 +85,7 @@
     };
 
     /**
+     * @class
      * @type {webix.ui.config}
      */
     var synchronizer = {
@@ -110,7 +114,6 @@
     };
 
     /**
-     *
      * @return {Function}
      */
     var importData = function($$list, data) {
@@ -119,6 +122,7 @@
     };
 
     /**
+     * @class [test_device_commands]
      * @type {webix.protoUI}
      */
     var test_device_commands = webix.protoUI({
@@ -215,7 +219,10 @@
             }
         }
     };
-
+    /**
+     * @param view
+     * @param resp
+     */
     //TODO make instance functions
     var openTab = function (view, resp) {
         var $$tab = $$(this.id);
@@ -231,6 +238,9 @@
     };
 
     //TODO send Open Ajax event and handle it in main_controller
+    /**
+     * @param resp
+     */
     var openSpectrumWindow = function (resp) {
         var device = PlatformContext.devices.getItem(this.device_id);
         openTab.bind(this)({
@@ -242,6 +252,9 @@
     };
 
     //TODO send Open Ajax event and handle it in main_controller
+    /**
+     * @param resp
+     */
     var openImageWindow = function (resp) {
         var device = PlatformContext.devices.getItem(this.device_id);
         openTab.bind(this)({
@@ -251,7 +264,9 @@
             body: TangoWebapp.ui.newImageView(webix.extend({id: this.id}, resp))
         }, resp);
     };
-
+    /**
+     * @param resp
+     */
     var openScalarWindow = function(resp) {
         var device = PlatformContext.devices.getItem(this.device_id);
         openTab.bind(this)({
@@ -261,11 +276,15 @@
             body: TangoWebapp.ui.newScalarView(webix.extend({id: this.id}, resp))
         }, resp)
     };
-
+    /**
+     * @param resp
+     */
     var attr_output_handler = function (resp) {
         this.getTopParentView().$$('output').setValue(new View({url: 'views/dev_panel_attribute_out.ejs'}).render(resp));
     };
-
+    /**
+     * @param resp
+     */
     var error_handler = function (resp) {
         this.getTopParentView().$$('output').setValue(new View({url: 'views/dev_panel_error_out.ejs'}).render(resp));
         //clear errors
@@ -273,14 +292,13 @@
     };
 
     /**
+     * @class
      * @type {webix.protoUI}
      */
     var test_device_attributes = webix.protoUI({
         name: 'device_panel_attributes',
         _read: function () {
             var attribute = this.$$('list').getSelectedItem();
-
-
             UserAction.readAttribute(attribute)
                 .then(attr_output_handler.bind(this))
                 .fail(error_handler.bind(this));
@@ -443,6 +461,7 @@
     }, synchronizer, webix.ProgressBar, webix.IdSpace, webix.ui.form);
 
     /**
+     * @class
      * @type {webix.protoUI}
      */
     var test_device_pipes = webix.protoUI({
@@ -534,7 +553,6 @@
     }, synchronizer, webix.ProgressBar, webix.IdSpace, webix.ui.form);
 
     /**
-     *
      * @type {webix.ui.config}
      */
     var device_panel_header = {
@@ -564,6 +582,7 @@
     };
 
     /**
+     * @class
      * @type {webix.protoUI}
      */
     var device_control_panel = webix.protoUI({
@@ -645,7 +664,9 @@
         }
     }, TangoWebappPlatform.mixin.OpenAjaxListener, webix.IdSpace, webix.ui.layout);
 
-
+    /**
+     * @param context
+    */
     TangoWebapp.ui.newDeviceControlPanel = function (context) {
         return {
             header: "<span class='webix_icon fa-keyboard-o'></span> Device Control Panel",

@@ -1,14 +1,15 @@
 /**
  * Model tango_remote_storage
- *
+ * @class
  * @type {TangoRemoteStorage}
+ * @extends MVC.Class
  */
 TangoRemoteStorage = MVC.Class.extend('tango_remote_storage',
-    /* @Static */
+    /** @lends  TangoRemoteStorage */
     {
         url: TangoWebappPlatform.consts.USER_CONTEXT_URL
     },
-    /* @Prototype */
+    /** @lends  TangoRemoteStorage.prototype */
     {
         /**
          *
@@ -49,7 +50,7 @@ TangoRemoteStorage = MVC.Class.extend('tango_remote_storage',
         /**
          *
          * @param klass
-         * @constructor
+         * @constructs
          */
         init:function(klass){
             this.storing_class = klass;

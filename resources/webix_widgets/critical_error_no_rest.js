@@ -4,7 +4,7 @@
 (function(){
 
     /**
-     *
+     * @param rest
      * @return {webix.config}
      */
     TangoWebapp.ui.newCriticalErrorWindow = function(rest){

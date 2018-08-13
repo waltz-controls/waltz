@@ -2,9 +2,16 @@
  *
  * @author Igor Khokhriakov <igor.khokhriakov@hzg.de>
  * @since 4/24/18
+ * @class
+ * @type {UserAction}
+ * @property {number} id
+ * @property {string} type
+ * @property {string} value
+ * @property {number} timestamp
+ * @extends MVC.Model
  */
 UserAction = TangoWebapp.UserAction = MVC.Model.extend('user_action',
-    /** @Static */
+    /** @lends  UserAction */
     {
         attributes: {
             id: 'number',
@@ -45,6 +52,9 @@ UserAction = TangoWebapp.UserAction = MVC.Model.extend('user_action',
                 throw error;
             }
         },
+        /**
+         * @constructs
+         */
         init: function () {
             this._super();
             //do not store requests in production
@@ -54,7 +64,6 @@ UserAction = TangoWebapp.UserAction = MVC.Model.extend('user_action',
             }
         },
         /**
-         *
          * @param {TangoAttribute} attr
          * @returns {webix.promise}
          */
@@ -77,7 +86,6 @@ UserAction = TangoWebapp.UserAction = MVC.Model.extend('user_action',
                 .fail(this.failure.bind(this));
         },
         /**
-         *
          * @param {TangoAttribute} attr
          */
         readAttributeHistory:function(attr){
@@ -94,8 +102,6 @@ UserAction = TangoWebapp.UserAction = MVC.Model.extend('user_action',
                 .fail(this.failure.bind(this));
         },
         /**
-         *
-         *
          * @param {TangoAttribute} attr
          * @param {any} arg
          * @returns {webix.promise}
@@ -120,7 +126,6 @@ UserAction = TangoWebapp.UserAction = MVC.Model.extend('user_action',
 
         },
         /**
-         *
          * @param {TangoAttribute} attr
          */
         updateAttributeInfo:function(attr){
@@ -137,7 +142,6 @@ UserAction = TangoWebapp.UserAction = MVC.Model.extend('user_action',
                 .fail(this.failure.bind(this));
         },
         /**
-         *
          * @param {TangoCommand} cmd
          * @param {any} argin
          * @returns {webix.promise}
@@ -156,7 +160,6 @@ UserAction = TangoWebapp.UserAction = MVC.Model.extend('user_action',
                 .fail(this.failure.bind(this));
         },
         /**
-         *
          * @param {TangoPipe} pipe
          * @returns {webix.promise}
          */
@@ -174,7 +177,6 @@ UserAction = TangoWebapp.UserAction = MVC.Model.extend('user_action',
                 .fail(this.failure.bind(this));
         },
         /**
-         *
          * @param {TangoPipe} pipe
          * @param {any} data
          * @returns {webix.promise}
@@ -193,7 +195,6 @@ UserAction = TangoWebapp.UserAction = MVC.Model.extend('user_action',
                 .fail(this.failure.bind(this));
         },
         /**
-         *
          * @param {TangoDevice} device
          * @returns {webix.promise}
          */
@@ -211,7 +212,6 @@ UserAction = TangoWebapp.UserAction = MVC.Model.extend('user_action',
                 .fail(this.failure.bind(this));
         },
         /**
-         *
          * @param {TangoDevice} device
          * @param {prop:[]} props
          * @returns {webix.promise}
@@ -230,7 +230,6 @@ UserAction = TangoWebapp.UserAction = MVC.Model.extend('user_action',
                 .fail(this.failure.bind(this));
         },
         /**
-         *
          * @param {UserScript} script
          */
         executeUserScript:function(script){
@@ -249,7 +248,6 @@ UserAction = TangoWebapp.UserAction = MVC.Model.extend('user_action',
         //TODO open(load) tango device
         //TODO etc
         /**
-         *
          * @param {*} err
          */
         failure: function (err) {
@@ -263,5 +261,5 @@ UserAction = TangoWebapp.UserAction = MVC.Model.extend('user_action',
             throw err;
         }
     },
-    /** @Prototype */
+    /** @lends  UserAction.prototype */
     {});

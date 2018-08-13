@@ -1,10 +1,14 @@
 /**
  * Model tango_database
- *
+ * @class
  * @type {TangoDatabase}
+ * @property {string} id
+ * @property {string[]} info
+ * @property {TangoDevice} device
+ * @extends MVC.Model
  */
 TangoWebappPlatform.TangoDatabase = MVC.Model.extend('tango_database',
-    /* @Static */
+    /** @lends  TangoWebappPlatform.TangoDatabase */
     {
 
         attributes: {
@@ -16,7 +20,7 @@ TangoWebappPlatform.TangoDatabase = MVC.Model.extend('tango_database',
 
 
     },
-    /* @Prototype */
+    /** @lends  TangoWebappPlatform.TangoDatabase.prototype */
     {
         /**
          *

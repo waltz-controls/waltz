@@ -1,3 +1,6 @@
+/**
+ * @module DeviceAttributesConfigView
+ */
 (function () {
     var update_attr_info = function (info) {
         var attr = TangoAttribute.find_one(info.masterId);
@@ -142,10 +145,14 @@
     };
 
     /**
+     * @class [attr_config_view]
      * @type {webix.protoUI}
      */
     var attr_config_view = webix.protoUI({
         _attr_infos: null,
+        /**
+         *
+         */
         refresh: function () {
             var top = this.getTopParentView();
 
@@ -170,6 +177,9 @@
             }).then(TangoWebappHelpers.log.bind(null, ["Device[",device.id,"] attributes configuration has been updated"].join('')))
                 .fail(TangoWebappHelpers.error);
         },
+        /**
+         *
+         */
         apply: function () {
             var top = this.getTopParentView();
 
@@ -267,7 +277,9 @@
         },
         name: "device_attr_config"
     }, webix.IdSpace, TangoWebappPlatform.mixin.TabActivator, TangoWebappPlatform.mixin.DeviceSetter, webix.ui.layout);
-
+    /**
+     * @param device
+     */
     TangoWebapp.ui.newDeviceAttrConfigView = function (device) {
         return {
             view: "device_attr_config",

@@ -2,6 +2,7 @@
  * Model data_collection_wrapper
  *
  * @class
+ * @extends MVC.Model
  */
 DataCollectionWrapper = MVC.Model.extend(
     /** @lends  DataCollectionWrapper.prototype */

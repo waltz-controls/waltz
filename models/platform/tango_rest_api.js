@@ -1,10 +1,12 @@
 /**
  * Model tango_rest_api
- *
+ * @class
  * @type {TangoRestApi}
+ * @property {string} url
+ * @extends MVC.Model
  */
 TangoWebappPlatform.TangoRestApi = MVC.Model.extend('tango_rest_api',
-    /** @Static */
+    /** @lends  TangoWebappPlatform.TangoRestApi */
     {
         _api_version: 'rc4',
         id: "url",
@@ -13,13 +15,15 @@ TangoWebappPlatform.TangoRestApi = MVC.Model.extend('tango_rest_api',
         },
         default_attributes: {}
     },
-    /** @Prototype */
+    /** @lends  TangoWebappPlatform.TangoRestApi.prototype */
     {
+        /** @member {promise} */
         promise: null,
+        /** @member {req_ids} */
         req_ids: null,
         /**
          *
-         * @constructor
+         * @constructs
          * @param params
          */
         init: function (params) {

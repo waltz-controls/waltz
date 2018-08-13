@@ -1,7 +1,8 @@
 /**
 * Main controller
-*
 * @type {Login.MainController}
+* @class
+ *
 */
 Login.MainController = MVC.Controller.extend('main',{
     _ui: function(){
@@ -69,9 +70,9 @@ Login.MainController = MVC.Controller.extend('main',{
             ]
         };
     },
+
     /**
     * This is the main entry point of the application. This function is invoked after jmvc has been completely initialized.
-    *
     * @param {Object} params
     */
     load: function(params){

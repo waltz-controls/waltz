@@ -1,18 +1,22 @@
 /**
  * Model ui_builder
- *
+ * @class
  * @type {UIBuilder}
+ * @extends MVC.Model
  */
 UIBuilder = MVC.Model.extend('ui_builder',
-    /* @Static */
+    /** @lends  UIBuilder */
     {
 
         attributes: {},
         default_attributes: {}
     },
-    /* @Prototype */
+    /** @lends  UIBuilder.prototype */
     {
         _ui: null,
+        /**
+         * @constructs
+        */
         init: function () {
             this._ui = {
                 _top: { maxHeight: 5 },
@@ -20,16 +24,23 @@ UIBuilder = MVC.Model.extend('ui_builder',
                 _bottom: { maxHeight: 5 }
             };
         },
+
         _enable_left_sidebar: function () {
             this._ui['left'] = [];
         },
         _enable_right_sidebar: function () {
             this._ui['right'] = [];
         },
+        /**
+         * @param item
+         */
         add_left_sidebar_item: function (item) {
             if (!this._ui.hasOwnProperty('left')) this._enable_left_sidebar();
             this._ui['left'].push(item);
         },
+        /**
+         * @param item
+         */
         set_left_item: function (item) {
             this._set_left_item = true;
             this._ui['left'] = item;
@@ -38,10 +49,16 @@ UIBuilder = MVC.Model.extend('ui_builder',
             if (!this._ui.hasOwnProperty('right')) this._enable_right_sidebar();
             this._ui['right'].push(item);
         },
+        /**
+         * @param item
+         */
         set_right_item: function (item) {
             this._set_right_item = true;
             this._ui['right'] = item;
         },
+        /**
+         * @param item
+         */
         add_mainview_item: function (item) {
             this._ui['main'].push(item);
         },
@@ -77,6 +94,9 @@ UIBuilder = MVC.Model.extend('ui_builder',
                     }
                 };
         },
+        /**
+         *
+         */
         build: function () {
             var ui = {
                 view: 'accordion',
