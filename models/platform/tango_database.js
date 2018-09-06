@@ -58,6 +58,16 @@ TangoWebappPlatform.TangoDatabase = MVC.Model.extend('tango_database',
         },
         /**
          *
+         * @return {PromiseLike<T> | Promise<T>}
+         */
+        getDeviceAliasList:function(){
+            return this.device.executeCommand("DbGetDeviceAliasList", "*")
+                .then(function(resp){
+                    return resp.output;
+                })
+        },
+        /**
+         *
          * @param svalue
          */
         addDevice: function (svalue) {

@@ -8,6 +8,10 @@
  * @property {string} id
  * @property {string[]} info
  * @property {boolean} is_alive
+ * @property {TangoDeviceAlias[]} aliases
+ * @property {TangoDomain[]} domains
+ * @property {TangoFamily[]} families
+ * @property {TangoMember[]} members
  * @extends MVC.Model
  */
 TangoWebappPlatform.TangoHost = MVC.Model.extend("tango_host",
@@ -19,7 +23,11 @@ TangoWebappPlatform.TangoHost = MVC.Model.extend("tango_host",
             name: "string",
             id: "string", //host:port
             info: "string[]",
-            is_alive: 'boolean'
+            is_alive: 'boolean',
+            aliases: 'TangoDeviceAlias[]',
+            domains: 'TangoDomain[]',
+            families: 'TangoFamily[]',
+            members: 'TangoMember[]'
         },
         default_attributes: {
             id: 'not selected',
@@ -41,6 +49,16 @@ TangoWebappPlatform.TangoHost = MVC.Model.extend("tango_host",
          */
         toString: function () {
             return this.id;
+        },
+        /**
+         *
+         * @param attrs
+         * @constructs
+         */
+        init:function (attrs) {
+            this._super(attrs);
+
+            this.aliases = new webix.DataCollection();
         },
         /**
          * @return {string} device
@@ -84,6 +102,7 @@ TangoWebappPlatform.TangoHost = MVC.Model.extend("tango_host",
          * @return {Promise} database
          */
         fetchDatabase: function () {
+            if(this.database != null) return webix.promise.resolve(this.database);
             return this.rest.request().hosts(this.toUrl()).devices(this.name).get()
                 .then(function (resp) {
                         //jmvc fails to set "attributes" due to already existing function in the model
@@ -115,6 +134,24 @@ TangoWebappPlatform.TangoHost = MVC.Model.extend("tango_host",
                     OpenAjax.hub.publish("tango_webapp.database_loaded", {data: this.database});
                     return this.database;
                 }.bind(this));
+        },
+        /**
+         *
+         * @return {Promise<TangoDeviceAlias[]>}
+         */
+        fetchAliases:function(){
+            return this.fetchDatabase()
+                .then(function(db){
+                    return db.getDeviceAliasList();
+                })
+                .then(function(aliases){
+                    debugger
+                    var aliases = TangoWebappPlatform.TangoDeviceAlias.create_many_as_existing(aliases.map(function(it){
+                        return {value: it};
+                    }));
+                    this.aliases.parse(aliases);
+                    return aliases;
+                }.bind(this))
         }
     }
 );
