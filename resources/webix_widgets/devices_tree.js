@@ -17,18 +17,14 @@
             onItemClick: function (id) {
                 var tree = this.config.master;
                 var item = tree.getItem(this.getContext().id);
-                var hostId = tree._get_host_id(item);
-                var name = tree._get_device_name(item);
-                var device_id = hostId + "/" + name;
 
-                OpenAjax.hub.publish("tango_webapp.device_" + id, {
-                    data: {
-                        id: device_id,
-                        host_id: hostId,
-                        name: name,
-                        tab: 'device-properties'
-                    }
-                });
+                item._value.fetchDevice().then(function(device){
+                    OpenAjax.hub.publish("tango_webapp.device_" + id, {
+                        data: {
+                            device: device
+                        }
+                    });
+                })
             }
         }
     };
@@ -62,9 +58,6 @@
             });
             var item = this.getItem(id);
 
-            var tango_host_id = this._get_host_id(item);
-            var tango_host = PlatformContext.tango_hosts.getItem(tango_host_id);
-
             var self = this;
             switch (item.$level) {
                 case 1://root
@@ -72,7 +65,7 @@
                         self.hideProgress();
                     });
                 case 2://tango_host
-                    return this._expand_tango_host(tango_host).then(function(domains){
+                    return this._expand_tango_host(item._value).then(function(domains){
                         self.parse({
                             parent: id,
                             data: domains
@@ -80,11 +73,19 @@
                         self.hideProgress();
                     });
                 case 3://domain or aliases
-                    return this._expand_domain(tango_host, item._value).then(function(families){
+                    if(item._value === 'aliases')
+                        return this._expand_aliases(this.getItem(item.$parent)._value).then(function(aliases){
+                            self.parse({
+                                parent: id,
+                                data: aliases
+                            });
+                            self.hideProgress();
+                        });
+                    else return this._expand_domain(item._value).then(function(families){
                         self.parse({
                             parent: id,
                             data: families
-                        })
+                        });
                         self.hideProgress();
                     });
                 case 4://family
@@ -143,7 +144,14 @@
                 return Array.prototype.concat.apply([], filtered_domains); //flatten an array of arrays
             });
         },
-
+        _expand_aliases:function(tango_host){
+            return tango_host.fetchAliases()
+                .then(function(aliases){
+                    return aliases.map(function(it){
+                        return {value: it.value, _value: it, isAlias: true, $css: 'member'};
+                    });
+                });
+        },
         /**
          *
          * @param tango_host
@@ -151,15 +159,7 @@
          * @return {Promise}
          * @private
          */
-        _expand_domain:function(tango_host, domain){
-            if(domain === 'aliases')
-                return tango_host.fetchAliases()
-                    .then(function(aliases){
-                        return aliases.map(function(it){
-                            return {value: it.value, _value: it, isAlias: true, $css: 'member'};
-                        });
-                    });
-
+        _expand_domain:function(domain){
             var filter = PlatformContext.UserContext.toDeviceFilter();
             return webix.promise.all(filter.getFamilyFilters(domain.value).map(function (it) {
                 return domain.fetchFamilies(it)
@@ -215,38 +215,6 @@
         },
         /**
          *
-         * @param item
-         * @private
-         */
-        _get_host_id: function (item) {
-            switch (item.$level) {
-                case 5://member
-                    (item = this.getItem(item.$parent));
-                case 4://family
-                    (item = this.getItem(item.$parent));
-                case 3://domain
-                    return this.getItem(item.$parent).id;
-                case 2://tango_host
-                    return item.id;
-                case 1:
-                    return 'root';
-                default:
-                    TangoWebappPlatform.helpers.debug("_get_host_id called for wrong item: " + item.id);
-            }
-        },
-        /**
-         *
-         * @param item
-         * @private
-         */
-        _get_device_name: function (item) {
-            var member = item._value;
-            var family = this.getItem(item.$parent)._value;
-            var domain = this.getItem(this.getItem(item.$parent).$parent)._value;
-            return [domain, family, member].join('/');
-        },
-        /**
-         *
          * @param {PlatformContext} context [optional - will use global PlatformContext instead]
          */
         updateRoot: function (context) {
@@ -275,7 +243,7 @@
             on: {
                 onBeforeContextMenu: function (id, e, node) {
                     var item = this.getItem(id);
-                    if(item.isAlias || item.$level === 5){
+                    if(item.isAlias || item.isMember){
                         this.$$("devices_tree_context_menu").config.master = this;
                         this.select(id);
                         return true;
@@ -286,17 +254,8 @@
                     var item = this.getItem(id);
                     if (!item) return false;//TODO or true
 
-                    var tango_host_id;
-                    var device_name;
-                    switch (item.$level) {
-                        case 5://member
-                            tango_host_id = this._get_host_id(item);
-                            device_name = this._get_device_name(item);
-
-                            PlatformApi.PlatformUIController().expandDeviceTree();
-                            break;
-                        default:
-                            TangoWebappHelpers.debug("device_tree#onItemDblClick " + id);
+                    if(item.isAlias || item.isMember){
+                        PlatformApi.PlatformUIController().expandDeviceTree();
                     }
                 },
                 /**
