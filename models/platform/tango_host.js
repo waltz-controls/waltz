@@ -56,9 +56,16 @@ TangoWebappPlatform.TangoHost = MVC.Model.extend("tango_host",
          * @constructs
          */
         init:function (attrs) {
+            MVC.Object.extend(attrs, {
+                aliases: new webix.DataCollection(),
+                domains: new webix.DataCollection(),
+                families: new webix.DataCollection(),
+                members: new webix.DataCollection()
+            });
+
             this._super(attrs);
 
-            this.aliases = new webix.DataCollection();
+
         },
         /**
          * @return {string} device
@@ -145,12 +152,38 @@ TangoWebappPlatform.TangoHost = MVC.Model.extend("tango_host",
                     return db.getDeviceAliasList();
                 })
                 .then(function(aliases){
-                    debugger
+                    var tango_host = this;
                     var aliases = TangoWebappPlatform.TangoDeviceAlias.create_many_as_existing(aliases.map(function(it){
-                        return {value: it};
+                        return {
+                            value: it,
+                            host: tango_host
+                        };
                     }));
                     this.aliases.parse(aliases);
                     return aliases;
+                }.bind(this))
+        },
+        /**
+         *
+         * @param filter
+         * @return {Promise<TangoDomain>}
+         */
+        fetchDomains:function(filter){
+            return this.fetchDatabase()
+                .then(function(db){
+                    return db.getDeviceDomainList(filter || '*');
+                })
+                .then(function(domains){
+                    var tango_host = this;
+                    var domains = TangoWebappPlatform.TangoDomain.create_many_as_existing(domains.output.map(function(it){
+                        return {
+                            value: it,
+                            host: tango_host
+                        }
+                    }));
+
+                    this.domains.parse(domains);
+                    return domains;
                 }.bind(this))
         }
     }

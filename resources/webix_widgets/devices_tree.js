@@ -79,7 +79,7 @@
                         });
                         self.hideProgress();
                     });
-                case 3://domain
+                case 3://domain or aliases
                     return this._expand_domain(tango_host, item._value).then(function(families){
                         self.parse({
                             parent: id,
@@ -88,32 +88,11 @@
                         self.hideProgress();
                     });
                 case 4://family
-                    return this._expand_family(tango_host,this.getItem(item.$parent)._value,item._value).then(function(members){
+                    return this._expand_family(item._value).then(function(members){
                         self.parse({
                             parent: id,
                             data: members
                         });
-                        //load device aliases sequentially if there are too many members
-                        if(members.length > 10 ){
-                            members.forEach(function(member){
-                                tango_host.fetchDatabase().then(function(db){
-                                    var device_name = [self.getItem(item.$parent)._value,item._value, member._value].join("/");
-
-                                    return db.getDeviceAlias(device_name)
-
-                                }).then(function (alias) {
-                                    member.value = alias;
-                                    self.parse({
-                                        parent: id,
-                                        data: [
-                                            member
-                                        ]
-                                    })
-                                    self.hideProgress();
-                                })
-                            })
-                        }
-
                     }, function (err) {
                         debugger
                     });
@@ -128,6 +107,7 @@
                 data.data.push({
                     id: it.id,
                     value: it.id,
+                    _value: it,
                     //TODO bind host node data to context.devices
                     webix_kids: it.is_alive,
                     $css: 'tango_host'
@@ -147,19 +127,17 @@
          */
         _expand_tango_host:function(tango_host){
             var filter = PlatformContext.UserContext.toDeviceFilter();
-            var db = tango_host.fetchDatabase();
             return webix.promise.all(filter.getDomainFilters().map(function (it) {
-                return db
+                return tango_host.fetchDomains(it)
                     .fail(function () {
                         //TODO throw exception/OpenAjax event
                         return [];
                     })
-                    .then(function (db) {
-                        return db.getDeviceDomainList(it)
-                    }).then(function (resp) {
-                        return resp.output.map(function (el) {
-                            return {value: el, _value: el, webix_kids: true, $css: 'domain'};
-                        });
+                    .then(function (resp) {
+                        return [{value: 'aliases', _value: 'aliases', webix_kids: true, $css: 'domain'}]
+                            .concat(resp.map(function (el) {
+                            return {value: el.value, _value: el, isDomain: true, webix_kids: true, $css: 'domain'};
+                        }));
                     });
             })).then(function(filtered_domains){
                 return Array.prototype.concat.apply([], filtered_domains); //flatten an array of arrays
@@ -169,20 +147,25 @@
         /**
          *
          * @param tango_host
-         * @param domain
+         * @param {TangoDomain} domain
          * @return {Promise}
          * @private
          */
         _expand_domain:function(tango_host, domain){
+            if(domain === 'aliases')
+                return tango_host.fetchAliases()
+                    .then(function(aliases){
+                        return aliases.map(function(it){
+                            return {value: it.value, _value: it, isAlias: true, $css: 'member'};
+                        });
+                    });
+
             var filter = PlatformContext.UserContext.toDeviceFilter();
-            var db = tango_host.fetchDatabase();
-            return webix.promise.all(filter.getFamilyFilters(domain).map(function (it) {
-                return db
-                    .then(function (db) {
-                        return db.getDeviceFamilyList(it);
-                    }).then(function (resp) {
-                        return resp.output.map(function (el) {
-                            return {value: el, _value: el, webix_kids: true, $css: 'family'};
+            return webix.promise.all(filter.getFamilyFilters(domain.value).map(function (it) {
+                return domain.fetchFamilies(it)
+                    .then(function (resp) {
+                        return resp.map(function (el) {
+                            return {value: el.value, _value: el, webix_kids: true, $css: 'family'};
                         });
                     })
             })).then(function(filtered_families){
@@ -191,43 +174,24 @@
         },
         /**
          *
-         * @param tango_host
-         * @param domain
          * @param family
          * @return {Promise}
          * @private
          */
-        _expand_family: function(tango_host, domain, family){
+        _expand_family: function(family){
             var filter = PlatformContext.UserContext.toDeviceFilter();
-            var db = tango_host.fetchDatabase();
-            return webix.promise.all(filter.getMemberFilters(domain, family).map(function (it) {
-                return db.then(function (db) {
-                    return db.getDeviceMemberList(it)
+            return webix.promise.all(filter.getMemberFilters(family.domain.value, family.value).map(function (it) {
+                return family.fetchMembers(it)
                         .then(function (resp) {
-                            var count = 0;
-
-                            if(resp.output.length > 10){
-                                return resp.output.map(function(member){
+                                return resp.map(function(member){
                                     return {
                                         $css: 'member',
-                                        value: member,
-                                        _value: member
+                                        value: member.value,
+                                        _value: member,
+                                        isMember: true
                                     }
                                 });
-                            } else {
-                                return webix.promise.all(resp.output.map(function (member) {
-                                    //TODO extract helper
-                                    var device_name = [domain, family, member].join("/");
-
-                                    return  {
-                                                $css: 'member',
-                                                value: member,
-                                                _value: member
-                                            }
-                                }));
-                            }
                         });
-                })
             })).then(function(filtered_members){
                 return Array.prototype.concat.apply([], filtered_members);//flatten an array of arrays
             });
@@ -293,7 +257,7 @@
 
             this.parse([data]);
 
-            this.populateTree('root');
+            // this.populateTree('root');
         },
         $init: function (config) {
             var context = config.context;
@@ -311,7 +275,7 @@
             on: {
                 onBeforeContextMenu: function (id, e, node) {
                     var item = this.getItem(id);
-                    if(item.$level === 5){
+                    if(item.isAlias || item.$level === 5){
                         this.$$("devices_tree_context_menu").config.master = this;
                         this.select(id);
                         return true;
@@ -344,27 +308,19 @@
                 onAfterSelect: function(id){
                     var item = this.getItem(id);
                     if (!item) return false;//TODO or true
-
-                    var tango_host_id;
-                    var tango_host;
-                    var device_name;
                     switch (item.$level) {
                         case 2://tango host
-                        case 3://domain
-                        case 4://family
-                            tango_host_id = this._get_host_id(item);
-                            PlatformContext.tango_hosts.setCursor(tango_host_id);
+                            PlatformContext.tango_hosts.setCursor(item._value.id);
                             break;
+                        case 3://domain
+                        case 4://family or alias
                         case 5://member
-                            tango_host_id = this._get_host_id(item);
-                            device_name = this._get_device_name(item);
-
-                            PlatformContext.tango_hosts.setCursor(tango_host_id);
-
-                            tango_host = PlatformContext.tango_hosts.getItem(tango_host_id);
-                            tango_host.fetchDevice(device_name).then(function (device) {
-                                PlatformContext.devices.setCursor(device.id);
-                            });
+                            PlatformContext.tango_hosts.setCursor(item._value.host.id);
+                            if(item.isAlias || item.isMember) {
+                                item._value.fetchDevice().then(function (device) {
+                                    PlatformContext.devices.setCursor(device.id);
+                                });
+                            }
                             break;
                         default:
                             TangoWebappHelpers.debug("device_tree#clickOnItem " + id);

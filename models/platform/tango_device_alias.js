@@ -15,7 +15,10 @@ TangoWebappPlatform.TangoDeviceAlias = MVC.Model.extend('tango_device_alias',
     },
     /** @lends  TangoWebappPlatform.TangoDeviceAlias.prototype */
     {
-
+        host: null,
+        set_host:function(v){
+            this.host = v;
+        },
         /**
          *
          * @param attrs
@@ -27,8 +30,23 @@ TangoWebappPlatform.TangoDeviceAlias = MVC.Model.extend('tango_device_alias',
             });
             this._super(attrs)
         },
+        /**
+         *
+         * @return {Promise<TangoDevice>}
+         */
         fetchDevice:function(){
-            //TODO
+            if(this.device != null) return webix.promise.resolve(this.device);
+            return this.host.fetchDatabase()
+                .then(function(db){
+                    return db.getAliasDevice(this.value);
+                }.bind(this))
+                .then(function(device_name){
+                    return this.host.fetchDevice(device_name);
+                }.bind(this))
+                .then(function(device){
+                    this.device = device;
+                    return device;
+                }.bind(this))
         }
     }
     );

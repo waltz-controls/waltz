@@ -22,5 +22,15 @@ new MVC.Test.Unit('tango_database', {
             .then(function (aliases) {
                 debugger
             })
+    },
+    test_getDomains: function () {
+        var api = new TangoRestApi({url: TestValues.rest_url});
+        api.fetchHost(TestValues.tango_host)
+            .then(function (host) {
+                return host.fetchDomains();
+            })
+            .then(function (domains) {
+                debugger
+            })
     }
 });
