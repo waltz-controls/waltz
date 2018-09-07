@@ -1,6 +1,5 @@
 /**
  * Model tango_database
- * @class
  * @type {TangoDatabase}
  * @property {string} id
  * @property {string[]} info

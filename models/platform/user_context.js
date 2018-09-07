@@ -1,9 +1,10 @@
+
 /**
  * Model user_context
  *
  * Contains associated with this user data e.g. rest_url, tango_hosts, device filters
- * @class
- * @type {UserContext}
+ * @namespace {TangoWebappPlatform}
+ * @name {UserContext}
  * @property {string} user
  * @property {string} rest_url
  * @property {{}} tango_hosts

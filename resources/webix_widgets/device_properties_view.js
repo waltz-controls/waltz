@@ -1,13 +1,25 @@
-/** @module DevicePropertiesView */
+/** @module DevicePropertiesView
+ *  @memberof ui
+ */
 (function () {
-    var device_properties = webix.protoUI({
+    /**
+     * Extends {@link https://docs.webix.com/api__refs__ui.layout.html webix.ui.layout}
+     * @property {String} name
+     * @memberof ui.DevicePropertiesView
+     * @namespace device_properties
+     */
+    var device_properties = webix.protoUI(
+        /** @lends device_properties */
+        {
         name: "device_properties",
+        /** @memberof ui.DevicePropertiesView.device_properties */
         refresh: function () {
             var deviceProperties = this.getTopParentView();
             var dtable = deviceProperties.$$('device_properties_data');
             dtable.clearAll();
             dtable.parse(deviceProperties._device.fetchProperties());
         },
+        /** @memberof ui.DevicePropertiesView.device_properties */
         apply: function () {
             var data = {};
 
@@ -20,6 +32,7 @@
             UserAction.writeDeviceProperties(this.getTopParentView()._device, data)
                 .fail(TangoWebappHelpers.error);
         },
+        /** @memberof ui.DevicePropertiesView.device_properties */
         addNewProperty: function () {
             var form = this.getTopParentView().$$('frmNewProperty');
             if (!form.validate()) {
@@ -30,6 +43,7 @@
 
             form.save();
         },
+        /** @memberof ui.DevicePropertiesView.device_properties */
         remove: function () {
             var deviceProperties = this.getTopParentView();
             var dtable = deviceProperties.$$('device_properties_data');
@@ -109,6 +123,10 @@
                 ]
             }
         },
+        /**
+         * @memberof ui.DevicePropertiesView.device_properties
+         * @constructor
+         */
         $init: function (config) {
             webix.extend(config, this._ui());
             this.$ready.push(function () {
@@ -119,7 +137,10 @@
             }.bind(this));
         }
     }, webix.IdSpace, webix.EventSystem, TangoWebappPlatform.mixin.DeviceSetter, TangoWebappPlatform.mixin.TabActivator, webix.ui.layout);
-
+    /**
+     * @param device
+     * @memberof ui.DevicePropertiesView
+     */
     TangoWebapp.ui.newDevicePropertiesView = function (device) {
         return {
             device: device,

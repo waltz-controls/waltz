@@ -1,9 +1,12 @@
 /**
- *
- * @namespace
+ * @namespace TangoWebappPlatform
  */
 TangoWebappPlatform = {};
+
 TangoWebapp = {
+    /**
+     * @namespace ui
+     */
     ui : {}
 };
 

@@ -1,18 +1,17 @@
 /**
  * Model tango_remote_storage
- * @class
- * @type {TangoRemoteStorage}
+ * @namespace {TangoWebappPlatform}
+ * @memberof TangoWebappPlatform
  * @extends MVC.Class
  */
 TangoRemoteStorage = MVC.Class.extend('tango_remote_storage',
-    /** @lends  TangoRemoteStorage */
+    /** @lends  TangoWebappPlatform.TangoRemoteStorage */
     {
         url: TangoWebappPlatform.consts.USER_CONTEXT_URL
     },
-    /** @lends  TangoRemoteStorage.prototype */
+    /** @lends  TangoWebappPlatform.TangoRemoteStorage.prototype */
     {
         /**
-         *
          * @private
          */
         _request_get:function(id){
@@ -24,7 +23,6 @@ TangoRemoteStorage = MVC.Class.extend('tango_remote_storage',
                 throw "Failed to load data from server"
         },
         /**
-         *
          * @param id
          * @param data
          * @private
@@ -48,7 +46,6 @@ TangoRemoteStorage = MVC.Class.extend('tango_remote_storage',
                 return webix.ajax();
         },
         /**
-         *
          * @param klass
          * @constructs
          */
@@ -56,7 +53,6 @@ TangoRemoteStorage = MVC.Class.extend('tango_remote_storage',
             this.storing_class = klass;
         },
         /**
-         *
          * @param {String} id
          * @return {Object} JSON or null
          */
@@ -73,7 +69,6 @@ TangoRemoteStorage = MVC.Class.extend('tango_remote_storage',
             return [this.find_one(f)];
         },
         /**
-         *
          * @param {Object} obj
          */
         create: function (obj) {
@@ -81,7 +76,6 @@ TangoRemoteStorage = MVC.Class.extend('tango_remote_storage',
             this.update(id, obj.attributes());
         },
         /**
-         *
          * @param id
          * @param attrs
          * @return {*}
@@ -90,7 +84,6 @@ TangoRemoteStorage = MVC.Class.extend('tango_remote_storage',
             return this._request_post(id, btoa(JSON.stringify(attrs)));
         },
         /**
-         *
          * @param {Object} id
          */
         destroy: function (id) {

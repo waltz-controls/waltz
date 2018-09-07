@@ -1,8 +1,7 @@
 /**
  * Model platform_api
- * @class
- * @type id
- * @property {string} name
+ * @namespace {TangoWebappPlatform}
+ * @property {string} id
  * @property {UIBuilder} ui_builder
  * @property {PlatformContext} context
  * @extends MVC.Model

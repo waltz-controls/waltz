@@ -1,11 +1,11 @@
 /**
  * Model data_collection_wrapper
- *
- * @class
+ * @namespace {TangoWebappPlatform}
+ * @memberof TangoWebappPlatform
  * @extends MVC.Model
  */
 DataCollectionWrapper = MVC.Model.extend(
-    /** @lends  DataCollectionWrapper.prototype */
+    /** @lends  TangoWebappPlatform.DataCollectionWrapper.prototype */
     {
         /**
          * @instance

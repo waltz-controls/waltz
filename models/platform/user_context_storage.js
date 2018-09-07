@@ -1,7 +1,7 @@
+
 /**
  * UserContext adaptor for StoreType
- * @class
- * @type {UserContextStore}
+ * @namespace {TangoWebappPlatform}
  * @extends MVC.Class
  */
 TangoWebappPlatform.UserContextStore = MVC.Class.extend(
@@ -35,7 +35,6 @@ TangoWebappPlatform.UserContextStore = MVC.Class.extend(
             );
         },
         /**
-         *
          * @param {Object} id
          */
         find_one: function (id) {

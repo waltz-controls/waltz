@@ -1,12 +1,12 @@
-/**
- * @module TangoHostView
+/** @module TangoHostView
+ * @memberof ui
  */
 (function () {
     /**
-     *
      * @param tango_host
      * @param tab
      * @returns {{header: string, body: {id: string, view: string, cells: *[]}}}
+     * @memberof ui.TangoHostView
      */
     TangoWebapp.ui.newTangoHostTab = function (tango_host, tab) {
         return {

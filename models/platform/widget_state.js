@@ -1,7 +1,6 @@
 /**
  * Model widget_state
- * @class
- * @type {WidgetState}
+ * @namespace {TangoWebappPlatform}
  * @property {string} id
  * @property {Object} data
  * @extends MVC.Model

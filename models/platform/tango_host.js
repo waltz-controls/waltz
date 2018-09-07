@@ -1,7 +1,5 @@
 /**
  * Model tango_host
- * @class
- * @type {TangoHost}
  * @property {string} host
  * @property {number} port
  * @property {string} name
@@ -50,8 +48,8 @@ TangoWebappPlatform.TangoHost = MVC.Model.extend("tango_host",
         },
         /**
          *
+         * Fires event to OpenAjax
          * @event {OpenAjax} tango_webapp.device_loaded
-         *
          * @param name
          * @return {Promise} device
          */
@@ -79,7 +77,7 @@ TangoWebappPlatform.TangoHost = MVC.Model.extend("tango_host",
                 }.bind(this));
         },
         /**
-         *
+         * Fires event to OpenAjax
          * @event {OpenAjax} tango_webapp.database_loaded
          * @return {Promise} database
          */

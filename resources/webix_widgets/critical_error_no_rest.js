@@ -1,11 +1,13 @@
 /**
- * @module CriticalErrorNoRest
+ * @namespace CriticalErrorNoRest
+ * @memberof ui
  */
 (function(){
-
     /**
      * @param rest
      * @return {webix.config}
+     *
+     * @memberof ui.CriticalErrorNoRest
      */
     TangoWebapp.ui.newCriticalErrorWindow = function(rest){
         return {

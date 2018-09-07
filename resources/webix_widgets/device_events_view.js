@@ -1,12 +1,15 @@
-/**
- * @module DeviceEventsView
+/** @module DeviceEventsView
+ *  @memberof ui
  */
 (function () {
-    /**
-     * @class
-     * @type {webix.protoUI}
+    /** Extends {@link https://docs.webix.com/api__refs__ui.layout.html webix.ui.layout}
+     * @property {String} name
+     * @memberof ui.DeviceEventsView
+     * @namespace device_events_view
      */
-    webix.protoUI({
+    var device_events_view = webix.protoUI(
+        /** @lends  device_events_view */
+        {
         _change: {},
         _archive: {},
         _periodic: {},
@@ -44,6 +47,9 @@
                     }.bind(top));
                 }).fail(TangoWebappHelpers.error);
         },
+        /**
+        * @memberof ui.DeviceEventsView.device_events_view
+        */
         apply: function () {
             var top = this.getTopParentView();
 
@@ -175,6 +181,10 @@
             }
         },
         name: "device_events",
+        /**
+         * @constructor
+         * @memberof ui.DeviceEventsView.device_events_view
+         */
         $init: function (config) {
             webix.extend(config, this._ui());
 
@@ -188,6 +198,10 @@
         }
     }, webix.IdSpace, TangoWebappPlatform.mixin.TabActivator, TangoWebappPlatform.mixin.DeviceSetter, webix.ui.layout);
 
+    /**
+     * @param device
+     * @memberof ui.DeviceEventsView
+     */
     TangoWebapp.ui.newDeviceEventsView = function (device) {
         return {
             device: device,

@@ -1,11 +1,11 @@
 /**
  * MVC store adaptor for webix.DataCollection
- * @class
- * @type {WebixDataCollectionStorage}
+ * @namespace {TangoWebappPlatform}
+ * @memberof TangoWebappPlatform
  * @extends MVC.Class
  */
 var WebixDataCollectionStorage = MVC.Class.extend(
-    /** @lends  WebixDataCollectionStorage.prototype */
+    /** @lends  TangoWebappPlatform.WebixDataCollectionStorage.prototype */
     {
         _data: null,
         /**
@@ -23,7 +23,6 @@ var WebixDataCollectionStorage = MVC.Class.extend(
             })();
         },
         /**
-         *
          * @param {Object} id
          */
         find_one: function (id) {

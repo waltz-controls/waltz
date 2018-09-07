@@ -1,7 +1,7 @@
+
 /**
  * Model tango_rest_api
- * @class
- * @type {TangoRestApi}
+ * @name {TangoRestApi}
  * @property {string} url
  * @extends MVC.Model
  */
@@ -42,10 +42,9 @@ TangoWebappPlatform.TangoRestApi = MVC.Model.extend('tango_rest_api',
             return request;
         },
         /**
-         *
+         * Fires event to OpenAjax
          * @param {string} host - host
          * @param {int} port - port
-         *
          * @event {OpenAjax} tango_webapp.rest_api.fetch_host
          * @return {Promise}
          */
@@ -72,7 +71,7 @@ TangoWebappPlatform.TangoRestApi = MVC.Model.extend('tango_rest_api',
                 }.bind(this));
         },
         /**
-         *
+         * Fires event to OpenAjax
          * @event {OpenAjax} tango_rest_api.is_alive
          * @event {OpenAjax} tango_rest_api.is_not_alive
          * @return {Promise}

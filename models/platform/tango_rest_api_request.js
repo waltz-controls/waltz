@@ -1,32 +1,27 @@
 /**
-* @class
-* @type {DummyStore}
+* @namespace {TangoWebappPlatform}
 * @extends MVC.Class
 */
 TangoWebappPlatform.DummyStore = MVC.Class.extend(
     /** @lends  TangoWebappPlatform.DummyStore.prototype */
     {
         /**
-         *
          * @param {Object} id
          */
         find_one: function(id){
             return null;
         },
         /**
-         *
          * @param {Object} obj
          */
         create: function(obj){
         },
         /**
-         *
          * @param {Object} id
          */
         destroy: function(id){
         },
         /**
-         * 
          * @param id
          * @param obj
          */
@@ -57,8 +52,7 @@ TangoWebappPlatform.DummyStore = MVC.Class.extend(
 
 /**
  * Model tango_rest_api
- * @class
- * @type {TangoRestApiRequest}
+ * @class [TangoRestApiRequest]
  * @property {number} id
  * @property {string} url
  * @property {string} type
@@ -111,7 +105,6 @@ TangoWebappPlatform.TangoRestApiRequest = MVC.Model.extend('tango_rest_api_reque
             this.promise = webix.promise;
         },
         /**
-         *
          * @param {} resp
          */
         add_errors:function(resp){
@@ -119,7 +112,6 @@ TangoWebappPlatform.TangoRestApiRequest = MVC.Model.extend('tango_rest_api_reque
             this._super(resp.errors);
         },
         /**
-         *
          * @param resp
          * @returns {*}
          * @private
@@ -142,7 +134,6 @@ TangoWebappPlatform.TangoRestApiRequest = MVC.Model.extend('tango_rest_api_reque
         },
 
         /**
-         *
          * @param resp
          * @private
          */
@@ -179,7 +170,6 @@ TangoWebappPlatform.TangoRestApiRequest = MVC.Model.extend('tango_rest_api_reque
             // }
         },
         /**
-         *
          * @returns {TangoRestApiRequest}
          */
         hosts: function (host) {
@@ -216,7 +206,6 @@ TangoWebappPlatform.TangoRestApiRequest = MVC.Model.extend('tango_rest_api_reque
         },
 
         /**
-         *
          * @param name
          * @returns {TangoRestApiRequest}
          */
@@ -228,7 +217,6 @@ TangoWebappPlatform.TangoRestApiRequest = MVC.Model.extend('tango_rest_api_reque
         },
 
         /**
-         *
          * @param name
          * @returns {TangoRestApiRequest}
          */
@@ -240,7 +228,7 @@ TangoWebappPlatform.TangoRestApiRequest = MVC.Model.extend('tango_rest_api_reque
         },
 
         /**
-         *
+         * Fires event to OpenAjax
          * @event {OpenAjax} tango_webapp.rest_success
          * @event {OpenAjax} tango_webapp.rest_failure
          * @returns {webix.promise}
@@ -251,7 +239,7 @@ TangoWebappPlatform.TangoRestApiRequest = MVC.Model.extend('tango_rest_api_reque
 
 
         /**
-         *
+         * Fires event to OpenAjax
          * @event {OpenAjax} tango_webapp.rest_success
          * @event {OpenAjax} tango_webapp.rest_failure
          * @returns {webix.promise}
@@ -266,7 +254,7 @@ TangoWebappPlatform.TangoRestApiRequest = MVC.Model.extend('tango_rest_api_reque
         },
 
         /**
-         *
+         * Fires event to OpenAjax
          * @event {OpenAjax} tango_webapp.rest_success
          * @event {OpenAjax} tango_webapp.rest_failure
          * @returns {webix.promise}
@@ -283,7 +271,7 @@ TangoWebappPlatform.TangoRestApiRequest = MVC.Model.extend('tango_rest_api_reque
         },
 
         /**
-         *
+         * Fires event to OpenAjax
          * @event {OpenAjax} tango_webapp.rest_success
          * @event {OpenAjax} tango_webapp.rest_failure
          * @returns {webix.promise}

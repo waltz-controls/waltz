@@ -1,8 +1,10 @@
-/** @module DevicesTree*/
+/** @module DevicesTree
+ *  @memberof ui
+ */
 (function () {
     /**
-     *
-     * @type {webix.ui.config}
+     * @constant
+     * @memberof ui.DevicesTree
      */
     var tree_context_menu = {
         view: "contextmenu",
@@ -32,11 +34,16 @@
             }
         }
     };
-
     /**
-     * @type {webix.protoUI}
+     * Extends {@link https://docs.webix.com/api__refs__ui.tree.html webix.ui.tree}
+     * @property {String} name
+     * @property devices_filter
+     * @memberof ui.DevicesTree
+     * @namespace tree
      */
-    var tree = webix.protoUI({
+    var tree = webix.protoUI(
+        /** @lends  tree.prototype */
+        {
         devices_filter: null,
         name: 'devices_tree_tree',
         /**
@@ -143,7 +150,6 @@
             });
         },
         /**
-         *
          * @param context
          * @private
          */
@@ -188,7 +194,6 @@
             }
         },
         /**
-         *
          * @param item
          * @private
          */
@@ -199,7 +204,7 @@
             return [domain, family, member].join('/');
         },
         /**
-         *
+         * @memberof ui.DevicesTree.tree
          * @param {PlatformContext} context [optional - will use global PlatformContext instead]
          */
         updateRoot: function (context) {
@@ -210,6 +215,10 @@
 
             this.parse([data]);
         },
+        /**
+         * @memberof ui.DevicesTree.tree
+         * @constructor
+         */
         $init: function (config) {
             var context = config.context;
 
@@ -224,6 +233,10 @@
             type: 'lineTree',
             select: true,
             on: {
+                /**
+                 * Event listener.
+                 * @memberof ui.DevicesTree.tree
+                 */
                 onBeforeContextMenu: function (id, e, node) {
                     var item = this.getItem(id);
                     if(item.$level === 5){
@@ -233,6 +246,10 @@
                     }
                     return false;
                 },
+                /**
+                 * Event listener.
+                 * @memberof ui.DevicesTree.tree
+                 */
                 onItemDblClick:function(id){
                     var item = this.getItem(id);
                     if (!item) return false;//TODO or true
@@ -251,10 +268,10 @@
                     }
                 },
                 /**
-                 * Happens before click events
-                 *
+                 * Event listener.Happens before click events
                  * @param id
                  * @return {boolean}
+                 * @memberof ui.DevicesTree.tree
                  */
                 onAfterSelect: function(id){
                     var item = this.getItem(id);
@@ -285,6 +302,10 @@
                             TangoWebappHelpers.debug("device_tree#clickOnItem " + id);
                     }
                 },
+                /**
+                 * Event listener.
+                 * @memberof ui.DevicesTree.tree
+                 */
                 onDataRequest: function (id, cbk, url) {
                     var item = this.getItem(id);
 
@@ -374,11 +395,15 @@
         }
     }, TangoWebappPlatform.mixin.OpenAjaxListener, webix.IdSpace, webix.EventSystem, webix.ui.tree);
 
-
-    /**
-     * @type {webix.protoUI}
-     */
-    var devices_tree = webix.protoUI({
+/**
+ * Extends {@link https://docs.webix.com/api__refs__ui.layout.html webix.ui.layout}
+ * @property {String} name
+ * @memberof ui.DevicesTree
+ * @namespace devices_tree
+ */
+    var devices_tree = webix.protoUI(
+    /** @lends  devices_tree.prototype */
+    {
         name: 'devices_tree',
         _ui: function (config) {
             return {
@@ -405,6 +430,10 @@
                 ]
             };
         },
+        /**
+         * @memberof ui.DevicesTree.devices_tree
+         * @constructor
+         */
         $init: function (config) {
             webix.extend(config, this._ui(config));
         }

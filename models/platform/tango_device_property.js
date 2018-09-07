@@ -1,7 +1,7 @@
 /**
  * Model tango_device_property
- * @class
- * @type {TangoDeviceProperty}
+ * @namespace {TangoWebappPlatform}
+ * @memberof TangoWebappPlatform
  * @property {string} id
  * @property {string} name
  * @property {string} device_id
@@ -9,7 +9,7 @@
  * @extends MVC.Model
  */
 TangoDeviceProperty = MVC.Model.extend('tango_device_property',
-    /** @lends  TangoDeviceProperty */
+    /** @lends  TangoWebappPlatform.TangoDeviceProperty */
     {
 
         attributes: {
@@ -20,7 +20,7 @@ TangoDeviceProperty = MVC.Model.extend('tango_device_property',
         },
         default_attributes: {}
     },
-    /** @lends  TangoDeviceProperty.prototype */
+    /** @lends  TangoWebappPlatform.TangoDeviceProperty.prototype */
     {
         /**
          *
