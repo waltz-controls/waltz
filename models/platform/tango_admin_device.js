@@ -1,9 +1,10 @@
 /**
  * Model tango_admin_device
+ *
+ * Extends {@link https://jmvc-15x.github.io/docs/classes/MVC.Model.html MVC.Model}
  * @namespace {TangoWebappPlatform}
  * @memberof TangoWebappPlatform
  * @property {TangoDevice} device
- * @extends MVC.Model
  */
 TangoAdminDevice = MVC.Model.extend('tango_admin_device',
     /** @lends  TangoWebappPlatform.TangoAdminDevice */

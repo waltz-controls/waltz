@@ -2,13 +2,14 @@
 (function () {
     /**
      * Model tango_attribute
+     *
+     * Extends {@link https://jmvc-15x.github.io/docs/classes/MVC.Model.html MVC.Model}
      * @namespace {TangoWebappPlatform}
      * @memberof TangoWebappPlatform
      * @property {string} id - //host_id/device_id/name
      * @property {string} name
      * @property {string} device_id
      * @property {string} display_name
-     * @extends MVC.Model
      */
     TangoAttribute = MVC.Model.extend('tango_attribute',
         /** @lends  TangoWebappPlatform.TangoAttribute */

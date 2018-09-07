@@ -1,9 +1,10 @@
 /**
  * Model application_context
+ *
+ * Extends {@link https://jmvc-15x.github.io/docs/classes/MVC.Model.html MVC.Model}
  * @namespace {TangoWebappPlatform}
  * @property {string} id
  * @property {UserContext} UserContext
- * @extends MVC.Model
  */
 TangoWebappPlatform.PlatformContext = MVC.Model.extend('platform_context',
     /** @lends  TangoWebappPlatform.PlatformContext */

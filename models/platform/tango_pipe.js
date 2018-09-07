@@ -1,11 +1,12 @@
 /**
  * Model tango_pipe
+ *
+ * Extends {@link https://jmvc-15x.github.io/docs/classes/MVC.Model.html MVC.Model}
  * @namespace {TangoWebappPlatform}
  * @memberof TangoWebappPlatform
  * @property {string} id
  * @property {string} name
  * @property {string} display_name
- * @extends MVC.Model
  */
 TangoPipe = MVC.Model.extend('tango_pipe',
     /** @lends  TangoWebappPlatform.TangoPipe */

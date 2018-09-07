@@ -1,5 +1,7 @@
 /**
  * Model tango_command
+ *
+ * Extends {@link https://jmvc-15x.github.io/docs/classes/MVC.Model.html MVC.Model}
  * @namespace {TangoWebappPlatform}
  * @memberof TangoWebappPlatform
  * @property {string} id
@@ -9,7 +11,6 @@
  * @property {string} info
  * @property {string} input
  * @property {string} output
- * @extends MVC.Model
  */
 TangoCommand = MVC.Model.extend('tango_command',
     /** @lends  TangoWebappPlatform.TangoCommand */

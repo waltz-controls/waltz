@@ -1,8 +1,9 @@
 /**
  * Model tango_webapp_storage
+ *
+ * Extends {@link https://jmvc-15x.github.io/docs/classes/MVC.Class.html MVC.Class}
  * @namespace {TangoWebappPlatform}
  * @memberof TangoWebappPlatform
- * @extends MVC.Class
  */
 TangoWebappStorage = MVC.Class.extend(
     /** @lends  TangoWebappPlatform.TangoWebappStorage.prototype */

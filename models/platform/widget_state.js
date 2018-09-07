@@ -1,9 +1,10 @@
 /**
  * Model widget_state
+ *
+ * Extends {@link https://jmvc-15x.github.io/docs/classes/MVC.Model.html MVC.Model}
  * @namespace {TangoWebappPlatform}
  * @property {string} id
  * @property {Object} data
- * @extends MVC.Model
  */
 TangoWebappPlatform.WidgetState = MVC.Model.extend('widget_state',
     /** @lends  TangoWebappPlatform.WidgetState */

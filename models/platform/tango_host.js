@@ -1,12 +1,13 @@
 /**
  * Model tango_host
+ *
+ * Extends {@link https://jmvc-15x.github.io/docs/classes/MVC.Model.html MVC.Model}
  * @property {string} host
  * @property {number} port
  * @property {string} name
  * @property {string} id
  * @property {string[]} info
  * @property {boolean} is_alive
- * @extends MVC.Model
  */
 TangoWebappPlatform.TangoHost = MVC.Model.extend("tango_host",
     /** @lends  TangoWebappPlatform.TangoHost */

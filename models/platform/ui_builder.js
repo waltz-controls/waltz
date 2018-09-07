@@ -1,8 +1,9 @@
 /**
  * Model ui_builder
+ *
+ * Extends {@link https://jmvc-15x.github.io/docs/classes/MVC.Model.html MVC.Model}
  * @namespace {TangoWebappPlatform}
  * @memberof TangoWebappPlatform
- * @extends MVC.Model
  */
 UIBuilder = MVC.Model.extend('ui_builder',
     /** @lends  TangoWebappPlatform.UIBuilder */

@@ -1,9 +1,10 @@
 
 /**
  * Model tango_rest_api
+ *
+ * Extends {@link https://jmvc-15x.github.io/docs/classes/MVC.Model.html MVC.Model}
  * @name {TangoRestApi}
  * @property {string} url
- * @extends MVC.Model
  */
 TangoWebappPlatform.TangoRestApi = MVC.Model.extend('tango_rest_api',
     /** @lends  TangoWebappPlatform.TangoRestApi */

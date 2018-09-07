@@ -52,13 +52,14 @@ TangoWebappPlatform.DummyStore = MVC.Class.extend(
 
 /**
  * Model tango_rest_api
+ *
+ * Extends {@link https://jmvc-15x.github.io/docs/classes/MVC.Model.html MVC.Model}
  * @class [TangoRestApiRequest]
  * @property {number} id
  * @property {string} url
  * @property {string} type
  * @property {Object} result
  * @property {Object} failure
- * @extends MVC.Model
  */
 TangoWebappPlatform.TangoRestApiRequest = MVC.Model.extend('tango_rest_api_request',
     /** @lends  TangoWebappPlatform.TangoRestApiRequest */

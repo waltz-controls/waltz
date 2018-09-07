@@ -1,7 +1,8 @@
 /**
  * UserContext adaptor for StoreType
+ *
+ * Extends {@link https://jmvc-15x.github.io/docs/classes/MVC.Class.html MVC.Class}
  * @namespace {TangoWebappPlatform}
- * @extends MVC.Class
  */
 TangoWebappPlatform.UserContextStore = MVC.Class.extend(
     /** @lends  TangoWebappPlatform.UserContextStore.prototype */
