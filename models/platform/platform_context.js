@@ -112,8 +112,9 @@ TangoWebappPlatform.PlatformContext = MVC.Model.extend('platform_context',
         },
         /**
          * Destroys this instance
-         * @event {OpenAjax} platform_context.destroy
+         *
          * Fires event to OpenAjax
+         * @event {OpenAjax} platform_context.destroy
          */
         destroy: function () {
             this._super();
