@@ -1,4 +1,3 @@
-
 /**
  * Model user_context
  *

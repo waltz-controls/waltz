@@ -13,7 +13,7 @@
  * @property {[]} pipes - host_id/name
  * @extends DataCollectionWrapper
  */
-TangoDevice = TangoWebappPlatform.TangoDevice = DataCollectionWrapper.extend('tango_device',
+TangoDevice = TangoWebappPlatform.TangoDevice = TangoWebappPlatform.DataCollectionWrapper.extend('tango_device',
     /** @lends TangoWebappPlatform.TangoDevice */
     {
         attributes: {

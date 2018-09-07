@@ -1,4 +1,3 @@
-
 /**
  * UserContext adaptor for StoreType
  * @namespace {TangoWebappPlatform}
