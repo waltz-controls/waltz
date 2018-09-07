@@ -72,6 +72,17 @@ TangoWebappPlatform.UserContext = MVC.Model.extend('user_context',
         },
         /**
          *
+         * @return {Array}
+         */
+        getTangoHosts:function(){
+            var result = [];
+            for(var tango_host in this.tango_hosts){
+                result.push(tango_host);
+            }
+            return result;
+        },
+        /**
+         *
          */
         toDeviceFilter: function () {
             return new DeviceFilter({

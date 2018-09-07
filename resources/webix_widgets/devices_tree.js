@@ -1,5 +1,7 @@
 /** @module DevicesTree*/
 (function () {
+    var kDevicesTreeBackendURL = "/devices-tree/get";
+
     /**
      *
      * @type {webix.ui.config}
@@ -36,6 +38,8 @@
         devices_filter: null,
         name: 'devices_tree_tree',
         populateTree:function(id){
+            var filter = PlatformContext.UserContext.toDeviceFilter();
+            if(filter.isUniversal()) return;
             function r(localId) {
                 for (var id = this.getFirstChildId(localId); id; id = this.getNextSiblingId(id)) {
                     this.loadTree(id).then(function (localId) {
@@ -43,8 +47,8 @@
                     }.bind(this, id));
                 }
             };
-            r.bind(this)(id);
 
+            this.loadTree(id).then(r.bind(this, id));
         },
         /**
          * loads children of the id
@@ -61,7 +65,11 @@
             var self = this;
             switch (item.$level) {
                 case 1://root
-                    return this._expand_root().then(function(){
+                    return this._expand_root().then(function(hosts){
+                        self.parse({
+                            parent: id,
+                            data: hosts.data
+                        });
                         self.hideProgress();
                     });
                 case 2://tango_host
@@ -94,9 +102,14 @@
                             parent: id,
                             data: members
                         });
+                        self.hideProgress();
                     }, function (err) {
+                        self.hideProgress();
                         debugger
                     });
+                default:
+                    self.hideProgress();
+                    return webix.promise.resolve();
             }
         },
         _expand_root:function(){
@@ -115,9 +128,7 @@
                 });
             });
 
-            return new webix.promise(function(){
-                this.parse(data);
-            }.bind(this));
+            return webix.promise.resolve(data);
         },
         /**
          *
@@ -202,16 +213,15 @@
          * @private
          */
         _get_data: function (context) {
-            var data = {
-                id: 'root',
-                value: context.rest.url,
-                open: true,
-                webix_kids: true,
-                $css: 'rest_host',
-                data: []
-            };
-
-            return data;
+            return context.UserContext.getTangoHosts().map(function(it){
+                return {
+                    id: it,
+                    value: it,
+                    webix_kids: true,
+                    $css: 'tango_host',
+                    data: []
+                };
+            });
         },
         /**
          *
@@ -221,19 +231,22 @@
             var context = context || PlatformContext;
             this.clearAll();
 
-            var data = this._get_data(context);
-
-            this.parse([data]);
-
-            // this.populateTree('root');
+            this.load(kDevicesTreeBackendURL + "?" +
+                context.UserContext.getTangoHosts().map(function(it){
+                    return "v=" + it;
+                }).join('&'))
+                .fail(function(){
+                    debugger
+                    this.parse(this._get_data(context));
+                }.bind(this));
         },
         $init: function (config) {
             var context = config.context;
 
-            var data = this._get_data(context);
-            webix.extend(config, {
-                data: [data]
-            });
+            // var data = this._get_data(context);
+            // webix.extend(config, {
+            //     data: [data]
+            // });
 
             webix.ui(tree_context_menu).attachTo(this);
         },
@@ -296,18 +309,20 @@
                         value: user_context.device_filters
                     });
                 },
-                "user_context_controller.add_tango_host subscribe": function (event) {
+                "tango_webapp.database_loaded subscribe": function (event) {
+                    var db = event.data;
                     event.controller.parse({
                         parent: 'root',
                         data: [{
-                            id: event.data,
-                            value: event.data,
+                            id: db.device.host.id,
+                            value: db.device.host.id,
+                            _value: db.device.host,
                             $css: 'tango_host',
                             webix_kids: true
                         }
                         ]
                     });
-                    event.controller.populateTree(event.data);
+                    event.controller.populateTree(db.device.host.id);
                 },
                 "user_context_controller.delete_tango_host subscribe": function (event) {
                     event.controller.remove(event.data);

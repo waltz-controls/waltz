@@ -55,6 +55,12 @@ DeviceFilter = MVC.Model.extend('device_filter',
             console.log(["Created new DeviceFilter[user=",this.user,", value=",this.value,"]"].join(''));
         },
         /**
+         * @return {boolean} true if this filter
+         */
+        isUniversal:function(){
+            return this.value.length === 1 && this.value[0] === '*/*/*';
+        },
+        /**
          *
          */
         getDomainFilters: function(){
