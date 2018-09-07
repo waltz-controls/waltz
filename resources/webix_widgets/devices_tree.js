@@ -59,6 +59,7 @@
             return webix.promise.all(filter.getDomainFilters().map(function (it) {
                 return db
                     .fail(function () {
+                        //TODO throw exception/OpenAjax event
                         return [];
                     })
                     .then(function (db) {

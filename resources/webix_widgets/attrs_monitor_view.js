@@ -3,6 +3,27 @@
  * @memberof ui
  */
 (function () {
+    webix.editors.attr_value_editor =  webix.extend({
+            getValue:function(){
+                var value = this.getInputNode(this.node).value;
+
+                var attr = TangoAttribute.find_one(this.row);
+
+                if(attr.info.writable.indexOf('WRITE') != -1)
+                    attr.write(value)
+                        .then(function(){
+                            debugger
+                        })
+                        .fail(function(){
+                            debugger
+                        });
+
+                return value;
+            }
+    }, webix.editors.text);
+
+
+
     /**
      * @function
      * @return {webix.config} toolbar
@@ -81,6 +102,7 @@
         name: 'scalars',
         _config: function () {
             return {
+                editable: true,
                 scheme: {
                     value: NaN,
                     quality: 'N/A',
@@ -111,7 +133,7 @@
                         width: TangoWebappPlatform.consts.NAME_COLUMN_WIDTH,
                         sort: "string"
                     },
-                    {id: "value", header: "Value", width: 200},
+                    {id: "value", header: "Value", width: 200, editor: "attr_value_editor"},
                     {
                         id: "stream", header: "", width: 30, template: function (obj) {
                             if (obj.plotted)
