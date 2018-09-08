@@ -62,42 +62,44 @@
             });
             var item = this.getItem(id);
 
+            var tango_host = TangoHost.find_one(this._get_tango_host_id(item));
+
             var self = this;
             switch (item.$level) {
-                case 1://root
-                    return this._expand_root().then(function(hosts){
-                        self.parse({
-                            parent: id,
-                            data: hosts.data
-                        });
-                        self.hideProgress();
-                    });
-                case 2://tango_host
-                    return this._expand_tango_host(item._value).then(function(domains){
+                // case 1://root
+                //     return this._expand_root().then(function(hosts){
+                //         self.parse({
+                //             parent: id,
+                //             data: hosts.data
+                //         });
+                //         self.hideProgress();
+                //     });
+                case 1://tango_host
+                    return this._expand_tango_host(tango_host).then(function(domains){
                         self.parse({
                             parent: id,
                             data: domains
                         });
                         self.hideProgress();
                     });
-                case 3://domain or aliases
+                case 2://domain or aliases
                     if(item._value === 'aliases')
-                        return this._expand_aliases(this.getItem(item.$parent)._value).then(function(aliases){
+                        return this._expand_aliases(tango_host).then(function(aliases){
                             self.parse({
                                 parent: id,
                                 data: aliases
                             });
                             self.hideProgress();
                         });
-                    else return this._expand_domain(item._value).then(function(families){
+                    else return this._expand_domain(tango_host, item.value).then(function(families){
                         self.parse({
                             parent: id,
                             data: families
                         });
                         self.hideProgress();
                     });
-                case 4://family
-                    return this._expand_family(item._value).then(function(members){
+                case 3://family
+                    return this._expand_family(tango_host, this.getItem(item.$parent).value, item.value).then(function(members){
                         self.parse({
                             parent: id,
                             data: members
@@ -159,28 +161,34 @@
             return tango_host.fetchAliases()
                 .then(function(aliases){
                     return aliases.map(function(it){
-                        return {value: it.value, _value: it, isAlias: true, $css: 'member'};
+                        return {value: it.value, device_name: undefined, isAlias: true, $css: 'member'};
                     });
+                })
+                .fail(function(){
+                    return [];
                 });
         },
         /**
          *
          * @param tango_host
-         * @param {TangoDomain} domain
+         * @param {string} domain
          * @return {Promise}
          * @private
          */
-        _expand_domain:function(domain){
+        _expand_domain:function(tango_host, domain){
             var filter = PlatformContext.UserContext.toDeviceFilter();
-            return webix.promise.all(filter.getFamilyFilters(domain.value).map(function (it) {
-                return domain.fetchFamilies(it)
+
+            return webix.promise.all(filter.getFamilyFilters(domain).map(function (it) {
+                return tango_host.fetchFamilies(it)
                     .then(function (resp) {
                         return resp.map(function (el) {
-                            return {value: el.value, _value: el, webix_kids: true, $css: 'family'};
+                            return {value: el.value, webix_kids: true, $css: 'family'};
                         });
                     })
             })).then(function(filtered_families){
                 return Array.prototype.concat.apply([], filtered_families);//flatten an array of arrays
+            }).catch(function(){
+                return [];
             });
         },
         /**
@@ -189,22 +197,24 @@
          * @return {Promise}
          * @private
          */
-        _expand_family: function(family){
+        _expand_family: function(tango_host, domain, family){
             var filter = PlatformContext.UserContext.toDeviceFilter();
-            return webix.promise.all(filter.getMemberFilters(family.domain.value, family.value).map(function (it) {
-                return family.fetchMembers(it)
+            return webix.promise.all(filter.getMemberFilters(domain, family).map(function (it) {
+                return tango_host.fetchMembers(it)
                         .then(function (resp) {
                                 return resp.map(function(member){
                                     return {
                                         $css: 'member',
                                         value: member.value,
-                                        _value: member,
+                                        device_name: [domain,family,member.value].join('/'),
                                         isMember: true
                                     }
                                 });
                         });
             })).then(function(filtered_members){
                 return Array.prototype.concat.apply([], filtered_members);//flatten an array of arrays
+            }).catch(function(){
+                return [];
             });
         },
         /**
@@ -236,7 +246,6 @@
                     return "v=" + it;
                 }).join('&'))
                 .fail(function(){
-                    debugger
                     this.parse(this._get_data(context));
                 }.bind(this));
         },
@@ -249,6 +258,12 @@
             // });
 
             webix.ui(tree_context_menu).attachTo(this);
+        },
+        _get_tango_host_id:function(item){
+            while(item.$css !== 'tango_host'){
+                item = this.getItem(item.$parent)
+            }
+            return item.id;
         },
         defaults: {
             type: 'lineTree',
@@ -280,22 +295,27 @@
                 onAfterSelect: function(id){
                     var item = this.getItem(id);
                     if (!item) return false;//TODO or true
-                    switch (item.$level) {
-                        case 2://tango host
-                            PlatformContext.tango_hosts.setCursor(item._value.id);
-                            break;
-                        case 3://domain
-                        case 4://family or alias
-                        case 5://member
-                            PlatformContext.tango_hosts.setCursor(item._value.host.id);
-                            if(item.isAlias || item.isMember) {
-                                item._value.fetchDevice().then(function (device) {
-                                    PlatformContext.devices.setCursor(device.id);
-                                });
-                            }
-                            break;
-                        default:
-                            TangoWebappHelpers.debug("device_tree#clickOnItem " + id);
+                    var tango_host = TangoHost.find_one(this._get_tango_host_id(item));
+                    PlatformContext.tango_hosts.setCursor(tango_host.id);
+                    if((item.isAlias && item.device_name !== undefined) || item.isMember) {
+                        tango_host.fetchDevice(item.device_name)
+                              .then(function (device) {
+                                  PlatformContext.devices.setCursor(device.id);
+                              });
+                    }
+                    else if(item.isAlias && item.device_name === undefined){
+                        tango_host
+                            .fetchDatabase()
+                            .then(function(db){
+                                return db.getAliasDevice(item.value);
+                            })
+                            .then(function(device_name){
+                                item.device_name = device_name;
+                                return tango_host.fetchDevice(device_name);
+                            })
+                            .then(function (device) {
+                                PlatformContext.devices.setCursor(device.id);
+                            });
                     }
                 },
                 onDataRequest: function (id, cbk, url) {
@@ -309,20 +329,16 @@
                         value: user_context.device_filters
                     });
                 },
-                "tango_webapp.database_loaded subscribe": function (event) {
-                    var db = event.data;
-                    event.controller.parse({
-                        parent: 'root',
-                        data: [{
-                            id: db.device.host.id,
-                            value: db.device.host.id,
-                            _value: db.device.host,
-                            $css: 'tango_host',
-                            webix_kids: true
-                        }
-                        ]
-                    });
-                    event.controller.populateTree(db.device.host.id);
+                "user_context_controller.add_tango_host subscribe": function (event) {
+                    event.controller.load(kDevicesTreeBackendURL + "?v=" + event.data)
+                        .fail(function(){
+                            this.parse([{
+                                id: event.data,
+                                value: event.data,
+                                $css: 'tango_host',
+                                webix_kids: true
+                            }])
+                        }.bind(event.controller))
                 },
                 "user_context_controller.delete_tango_host subscribe": function (event) {
                     event.controller.remove(event.data);

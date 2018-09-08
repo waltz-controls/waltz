@@ -81,6 +81,8 @@ TangoWebappPlatform.TangoHost = MVC.Model.extend("tango_host",
          * @return {Promise} device
          */
         fetchDevice: function (name) {
+            var device;
+            if((device = TangoWebappPlatform.TangoDevice.find_one(this.id + "/" + name)) !== null) return webix.promise.resolve(device);
             return this.fetchDatabase()
                 .then(function (db) {
                     return webix.promise.all(
@@ -184,6 +186,56 @@ TangoWebappPlatform.TangoHost = MVC.Model.extend("tango_host",
 
                     this.domains.parse(domains);
                     return domains;
+                }.bind(this))
+        },
+        /**
+         *
+         * @param filter
+         * @return {Promise<TangoFamily>}
+         */
+        fetchFamilies:function(filter){
+            return this.fetchDatabase()
+                .then(function(db){
+                    return db.getDeviceFamilyList(filter);
+                }.bind(this))
+                .then(function(families){
+                    var tango_host = this.host;
+                    var tango_domain = this;
+                    var families = TangoWebappPlatform.TangoFamily.create_many_as_existing(families.output.map(function(it){
+                        return {
+                            value: it,
+                            host: tango_host,
+                            domain: tango_domain
+                        }
+                    }));
+
+                    this.families.parse(families);
+                    return families;
+                }.bind(this))
+        },
+        /**
+         *
+         * @param filter
+         * @return {Promise<TangoMember>}
+         */
+        fetchMembers:function(filter){
+            return this.fetchDatabase()
+                .then(function(db){
+                    return db.getDeviceMemberList(filter);
+                }.bind(this))
+                .then(function(members){
+                    var tango_host = this.host;
+                    var tango_family = this;
+                    var members = TangoWebappPlatform.TangoMember.create_many_as_existing(members.output.map(function(it){
+                        return {
+                            value: it,
+                            host: tango_host,
+                            family: tango_family
+                        }
+                    }));
+
+                    this.members.parse(members);
+                    return members;
                 }.bind(this))
         }
     }
