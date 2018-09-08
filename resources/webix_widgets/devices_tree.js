@@ -176,7 +176,10 @@
             this.load(kDevicesTreeBackendURL + "?" +
                 context.UserContext.getTangoHosts().map(function(it){
                     return "v=" + it;
-                }).join('&'))
+                }).concat(
+                context.UserContext.device_filters.map(function(it){
+                    return "f=" + it;
+                })).join('&'))
                 .fail(function(){
                     this.parse(this._get_data(context));
                 }.bind(this));
@@ -311,7 +314,10 @@
                     });
                 },
                 "user_context_controller.add_tango_host subscribe": function (event) {
-                    event.controller.load(kDevicesTreeBackendURL + "?v=" + event.data)
+                    event.controller.load(kDevicesTreeBackendURL + "?v=" + event.data + '&' +
+                        PlatformContext.UserContext.device_filters.map(function(it){
+                            return "f=" + it;
+                        }).join('&'))
                         .fail(function(){
                             this.parse([{
                                 id: event.data,
