@@ -37,19 +37,6 @@
     var tree = webix.protoUI({
         devices_filter: null,
         name: 'devices_tree_tree',
-        populateTree:function(id){
-            var filter = PlatformContext.UserContext.toDeviceFilter();
-            if(filter.isUniversal()) return;
-            function r(localId) {
-                for (var id = this.getFirstChildId(localId); id; id = this.getNextSiblingId(id)) {
-                    this.loadTree(id).then(function (localId) {
-                        r.bind(this)(localId);
-                    }.bind(this, id));
-                }
-            };
-
-            this.loadTree(id).then(r.bind(this, id));
-        },
         /**
          * loads children of the id
          *
@@ -57,62 +44,7 @@
          * @return {Promise}
          */
         loadTree: function(id){
-            this.showProgress({
-                type: "icon"
-            });
-            var item = this.getItem(id);
 
-            var tango_host = TangoHost.find_one(this._get_tango_host_id(item));
-
-            var self = this;
-            switch (item.$level) {
-                // case 1://root
-                //     return this._expand_root().then(function(hosts){
-                //         self.parse({
-                //             parent: id,
-                //             data: hosts.data
-                //         });
-                //         self.hideProgress();
-                //     });
-                case 1://tango_host
-                    return this._expand_tango_host(tango_host).then(function(domains){
-                        self.parse({
-                            parent: id,
-                            data: domains
-                        });
-                        self.hideProgress();
-                    });
-                case 2://domain or aliases
-                    if(item._value === 'aliases')
-                        return this._expand_aliases(tango_host).then(function(aliases){
-                            self.parse({
-                                parent: id,
-                                data: aliases
-                            });
-                            self.hideProgress();
-                        });
-                    else return this._expand_domain(tango_host, item.value).then(function(families){
-                        self.parse({
-                            parent: id,
-                            data: families
-                        });
-                        self.hideProgress();
-                    });
-                case 3://family
-                    return this._expand_family(tango_host, this.getItem(item.$parent).value, item.value).then(function(members){
-                        self.parse({
-                            parent: id,
-                            data: members
-                        });
-                        self.hideProgress();
-                    }, function (err) {
-                        self.hideProgress();
-                        debugger
-                    });
-                default:
-                    self.hideProgress();
-                    return webix.promise.resolve();
-            }
         },
         _expand_root:function(){
             var data = {
@@ -319,7 +251,56 @@
                     }
                 },
                 onDataRequest: function (id, cbk, url) {
-                    this.loadTree(id);
+                    this.showProgress({
+                        type: "icon"
+                    });
+                    var item = this.getItem(id);
+
+                    var tango_host = TangoHost.find_one(this._get_tango_host_id(item));
+
+                    var self = this;
+                    switch (item.$level) {
+                        case 1://tango_host
+                            this._expand_tango_host(tango_host).then(function(domains){
+                                self.parse({
+                                    parent: id,
+                                    data: domains
+                                });
+                                self.hideProgress();
+                            });
+                            break;
+                        case 2://domain or aliases
+                            if(item._value === 'aliases')
+                                this._expand_aliases(tango_host).then(function(aliases){
+                                    self.parse({
+                                        parent: id,
+                                        data: aliases
+                                    });
+                                    self.hideProgress();
+                                });
+                            else this._expand_domain(tango_host, item.value).then(function(families){
+                                self.parse({
+                                    parent: id,
+                                    data: families
+                                });
+                                self.hideProgress();
+                            });
+                            break;
+                        case 3://family
+                            this._expand_family(tango_host, this.getItem(item.$parent).value, item.value).then(function(members){
+                                self.parse({
+                                    parent: id,
+                                    data: members
+                                });
+                                self.hideProgress();
+                            }, function (err) {
+                                self.hideProgress();
+                                debugger
+                            });
+                            break;
+                        default:
+                            self.hideProgress();
+                    }
                     return false;//block further execution
                 },
                 "user_context_controller.found subscribe": function (event) {
