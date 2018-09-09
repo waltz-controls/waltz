@@ -8,6 +8,11 @@
  * @property {string} id
  * @property {string[]} info
  * @property {boolean} is_alive
+ * @property {TangoDeviceAlias[]} aliases
+ * @property {TangoDomain[]} domains
+ * @property {TangoFamily[]} families
+ * @property {TangoMember[]} members
+ * @extends MVC.Model
  */
 TangoWebappPlatform.TangoHost = MVC.Model.extend("tango_host",
     /** @lends  TangoWebappPlatform.TangoHost */
@@ -18,7 +23,11 @@ TangoWebappPlatform.TangoHost = MVC.Model.extend("tango_host",
             name: "string",
             id: "string", //host:port
             info: "string[]",
-            is_alive: 'boolean'
+            is_alive: 'boolean',
+            aliases: 'TangoDeviceAlias[]',
+            domains: 'TangoDomain[]',
+            families: 'TangoFamily[]',
+            members: 'TangoMember[]'
         },
         default_attributes: {
             id: 'not selected',
@@ -42,6 +51,23 @@ TangoWebappPlatform.TangoHost = MVC.Model.extend("tango_host",
             return this.id;
         },
         /**
+         *
+         * @param attrs
+         * @constructs
+         */
+        init:function (attrs) {
+            MVC.Object.extend(attrs, {
+                aliases: new webix.DataCollection(),
+                domains: new webix.DataCollection(),
+                families: new webix.DataCollection(),
+                members: new webix.DataCollection()
+            });
+
+            this._super(attrs);
+
+
+        },
+        /**
          * @return {string} device
          */
         toUrl: function () {
@@ -51,10 +77,13 @@ TangoWebappPlatform.TangoHost = MVC.Model.extend("tango_host",
          *
          * Fires event to OpenAjax
          * @event {OpenAjax} tango_webapp.device_loaded
+         *
          * @param name
          * @return {Promise} device
          */
         fetchDevice: function (name) {
+            var device;
+            if((device = TangoWebappPlatform.TangoDevice.find_one(this.id + "/" + name)) !== null) return webix.promise.resolve(device);
             return this.fetchDatabase()
                 .then(function (db) {
                     return webix.promise.all(
@@ -83,6 +112,7 @@ TangoWebappPlatform.TangoHost = MVC.Model.extend("tango_host",
          * @return {Promise} database
          */
         fetchDatabase: function () {
+            if(this.database != null) return webix.promise.resolve(this.database);
             return this.rest.request().hosts(this.toUrl()).devices(this.name).get()
                 .then(function (resp) {
                         //jmvc fails to set "attributes" due to already existing function in the model
@@ -114,6 +144,100 @@ TangoWebappPlatform.TangoHost = MVC.Model.extend("tango_host",
                     OpenAjax.hub.publish("tango_webapp.database_loaded", {data: this.database});
                     return this.database;
                 }.bind(this));
+        },
+        /**
+         *
+         * @return {Promise<TangoDeviceAlias[]>}
+         */
+        fetchAliases:function(){
+            return this.fetchDatabase()
+                .then(function(db){
+                    return db.getDeviceAliasList();
+                })
+                .then(function(aliases){
+                    var tango_host = this;
+                    var aliases = TangoWebappPlatform.TangoDeviceAlias.create_many_as_existing(aliases.map(function(it){
+                        return {
+                            value: it,
+                            host: tango_host
+                        };
+                    }));
+                    this.aliases.parse(aliases);
+                    return aliases;
+                }.bind(this))
+        },
+        /**
+         *
+         * @param filter
+         * @return {Promise<TangoDomain>}
+         */
+        fetchDomains:function(filter){
+            return this.fetchDatabase()
+                .then(function(db){
+                    return db.getDeviceDomainList(filter || '*');
+                })
+                .then(function(domains){
+                    var tango_host = this;
+                    var domains = TangoWebappPlatform.TangoDomain.create_many_as_existing(domains.output.map(function(it){
+                        return {
+                            value: it,
+                            host: tango_host
+                        }
+                    }));
+
+                    this.domains.parse(domains);
+                    return domains;
+                }.bind(this))
+        },
+        /**
+         *
+         * @param filter
+         * @return {Promise<TangoFamily>}
+         */
+        fetchFamilies:function(filter){
+            return this.fetchDatabase()
+                .then(function(db){
+                    return db.getDeviceFamilyList(filter);
+                }.bind(this))
+                .then(function(families){
+                    var tango_host = this.host;
+                    var tango_domain = this;
+                    var families = TangoWebappPlatform.TangoFamily.create_many_as_existing(families.output.map(function(it){
+                        return {
+                            value: it,
+                            host: tango_host,
+                            domain: tango_domain
+                        }
+                    }));
+
+                    this.families.parse(families);
+                    return families;
+                }.bind(this))
+        },
+        /**
+         *
+         * @param filter
+         * @return {Promise<TangoMember>}
+         */
+        fetchMembers:function(filter){
+            return this.fetchDatabase()
+                .then(function(db){
+                    return db.getDeviceMemberList(filter);
+                }.bind(this))
+                .then(function(members){
+                    var tango_host = this.host;
+                    var tango_family = this;
+                    var members = TangoWebappPlatform.TangoMember.create_many_as_existing(members.output.map(function(it){
+                        return {
+                            value: it,
+                            host: tango_host,
+                            family: tango_family
+                        }
+                    }));
+
+                    this.members.parse(members);
+                    return members;
+                }.bind(this))
         }
     }
 );

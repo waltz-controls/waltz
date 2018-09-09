@@ -55,23 +55,10 @@ TangoWebapp.MainController = MVC.Controller.extend('main', {
     initialize:function(platform_api){
         OpenAjax.hub.publish("platform_api.ui.initialized", {data: platform_api});
     },
-    _promise_device: function (data) {
-        var promise;
-        var id = data.id;
-        if (PlatformContext.devices.exists(id))
-            promise = webix.promise.resolve(PlatformContext.devices.getItem(id));
-        else
-            promise = PlatformContext.tango_hosts.getItem(data.host_id).fetchDevice(data.name);
-        return promise.then(function (device) {
-            PlatformContext.devices.setCursor(device.id);
-            return device;
-        });
-    },
     //TODO move to ui_controller
     "tango_webapp.device_configure subscribe": function (event) {
-        var promise = this._promise_device(event.data);
+        var device = event.data.device;
 
-        promise.then(function (device) {
             if (!device.info.exported) throw "Device[" + device.id + "] is not exported";
 
             var deviceTab =
@@ -80,12 +67,10 @@ TangoWebapp.MainController = MVC.Controller.extend('main', {
             deviceTab.show();
 
             deviceTab.$$(event.data.tab).activate();
-        }).fail(TangoWebappHelpers.error);
     },
     "tango_webapp.device_view subscribe": function (event) {
-        var promise = this._promise_device(event.data);
+        var device = event.data.device;
 
-        promise.then(function (device) {
             if (!device.info.exported) throw "Device[" + device.id + "] is not exported";
 
             var deviceTab =
@@ -94,14 +79,12 @@ TangoWebapp.MainController = MVC.Controller.extend('main', {
             deviceTab.show();
 
             deviceTab.activate();
-        }).fail(TangoWebappHelpers.error);
     },
     "tango_webapp.device_delete subscribe": function (event) {
-        var promise = this._promise_device(event.data);
+        var device = event.data.device;
 
-        promise.then(function (device) {
-            return device.host.fetchDatabase();
-        }).then(function (db) {
+        return device.host.fetchDatabase()
+        .then(function (db) {
             return db.deleteDevice(event.data.name);
         }).then(function () {
             $$('devices-tree').updateRoot();
