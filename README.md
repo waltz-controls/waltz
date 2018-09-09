@@ -4,7 +4,7 @@
 [![codebeat badge](https://codebeat.co/badges/23388ba2-feda-479d-a8c8-abf68eb7b01a)](https://codebeat.co/projects/github-com-tango-controls-tango-webapp-master)
 [![Build Status](https://travis-ci.org/tango-controls/waltz.svg?branch=master)](https://travis-ci.org/tango-controls/waltz)
 
-[![Docs](https://img.shields.io/badge/Generated-Docs-green.svg)](https://tango-controls.github.io/tango-webapp/)
+[![Docs](https://img.shields.io/badge/Generated-Docs-green.svg)](https://tango-controls.github.io/waltz/)
 
 [![release](https://img.shields.io/github/release/tango-controls/tango-webapp.svg?style=flat)](https://github.com/tango-controls/tango-webapp/releases/latest)
 
