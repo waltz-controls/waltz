@@ -67,13 +67,14 @@ $> REST_API_PROTOCOL=[http|https] REST_API_HOST=[localhost] REST_API_PORT=[10001
 
 This requires jjs to be in the $PATH (is shipped with OpenJDK8 and later)
 
-## Resources
-
-### Documentation
+## Documentation
 
 [WaltzPlatform API reference](https://tango-controls.github.io/waltz/)
 
 [Waltz docs](https://waltz-docs.readthedocs.io/en/latest/?badge=latest)
+
+
+## Resources
 
 ### Videos
 
@@ -85,7 +86,7 @@ This requires jjs to be in the $PATH (is shipped with OpenJDK8 and later)
 
 [1] [TangoWebapp Insights, 32 Tango Users meeting, 2018](https://www.slideshare.net/IgorKhokhryakov/tangowebapp-insights)
 
-## Implementation details ##
+## Implementation details
 
 * [JavaScriptMVC-1.5.x](https://bitbucket.org/Ingvord/javascriptmvc-1.5.x) is used for MVC implementation
 * [Webix](http://webix.com) is used for UI
