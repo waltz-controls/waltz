@@ -71,6 +71,8 @@ This requires jjs to be in the $PATH (is shipped with OpenJDK8 and later)
 
 ### Documentation
 
+[WaltzPlatform API reference](https://tango-controls.github.io/waltz/)
+
 [Waltz docs](https://waltz-docs.readthedocs.io/en/latest/?badge=latest)
 
 ### Videos
