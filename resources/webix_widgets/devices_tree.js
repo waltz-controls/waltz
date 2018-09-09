@@ -26,7 +26,9 @@
                 var tree = this.config.master;
                 var item = tree.getItem(this.getContext().id);
 
-                item._value.fetchDevice().then(function(device){
+                var tango_host = TangoHost.find_one(tree._get_tango_host_id(item));
+
+                tango_host.fetchDevice(item.device_name).then(function(device){
                     OpenAjax.hub.publish("tango_webapp.device_" + id, {
                         data: {
                             device: device
