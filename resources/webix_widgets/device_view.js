@@ -1,7 +1,23 @@
-webix.protoUI({
+/** @module DeviceView
+ *  @memberof ui
+ */
+(function () {
+    /**
+     * Extends {@link https://docs.webix.com/api__refs__ui.tabview.html webix.ui.tabview}
+     * @property {String} name
+     * @memberof ui.DeviceView
+     * @namespace device_view
+     */
+ var device_view = webix.protoUI(
+        /** @lends  device_view.prototype */
+        {
     _device : null,
     name: "device_view",
-    $init   : function (config) {
+    /**
+     * @constructor
+     * @memberof ui.DeviceView.device_view
+     */
+    $init: function (config) {
         this._device = config.device;
 
         //set header Device [...]
@@ -10,7 +26,10 @@ webix.protoUI({
         animate: false
     }
 }, webix.IdSpace, webix.ui.tabview);
-
+    /**
+     * @param device
+     * @memberof ui.DeviceView
+     */
 TangoWebapp.ui.newDeviceView = function (config) {
     return {
         header: "<span class='webix_icon fa-microchip'></span>[<span class='webix_strong'>" + config.device.display_name + "</span>]",
@@ -52,3 +71,4 @@ TangoWebapp.ui.newDeviceView = function (config) {
         }
     };
 };
+})();

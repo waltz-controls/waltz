@@ -1,7 +1,0 @@
-/**
- * @module TangoWebappPlatform
- */
-/**
- * @namespace
- */
-TangoWebappPlatform = {};

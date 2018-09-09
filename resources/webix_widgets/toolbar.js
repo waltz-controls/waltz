@@ -1,11 +1,16 @@
-/**
- * @module Toolbar
+/** @module Toolbar
+ *  @memberof ui
  */
 (function(){
     /**
-     * @type {webix.protoUI}
+     * Extends {@link https://docs.webix.com/api__refs__ui.list.html webix.ui.list}
+     * @property {String} name
+     * @memberof ui.Toolbar
+     * @namespace logger
      */
-    var logger = webix.protoUI({
+    var logger = webix.protoUI(
+        /** @lends logger.prototype */
+        {
         _view: null,
         _limit: 125,
         _getUI: function () {
@@ -17,10 +22,18 @@
             }
         },
         name: "logger",
+        /**
+         * @constructor
+         * @memberof ui.Toolbar.logger
+         */
         $init: function (config) {
             webix.extend(config, this._getUI());
             this._view = new View({url: this.defaults.ejs});
         },
+            /**
+             * @param item
+             * @memberof ui.Toolbar.logger
+             */
         log: function (item) {
             if (item.type === 'error') item.$css = {"background-color": "lightcoral"};
             item.adjusted = true;
@@ -39,9 +52,13 @@
     }, webix.IdSpace, webix.ui.list);
 
     /**
-     * @type {webix.protoUI}
+     * Extends {@link https://docs.webix.com/api__refs__ui.toolbar.html webix.ui.toolbar}
+     * @property {String} name
+     * @memberof ui.Toolbar
      */
-    var top_toolbar = webix.protoUI({
+    var top_toolbar = webix.protoUI(
+        /** @lends top_toolbar.prototype*/
+        {
         name: 'top_toolbar',
         defaults: {
             height: 32,
@@ -105,6 +122,9 @@
         }
     }, webix.IdSpace, webix.ui.toolbar);
 
+    /**
+     * @memberof ui.Toolbar
+     */
     TangoWebapp.ui.newTopToolbar = function(){
         return {
             view: 'top_toolbar',
@@ -113,10 +133,18 @@
     };
 
     /**
-     * @type {webix.protoUI}
+     * Extends {@link https://docs.webix.com/api__refs__ui.toolbar.html webix.ui.toolbar}
+     * @property {String} name
+     * @memberof ui.Toolbar
+     * @namespace bottom_toolbar
      */
-    var bottom_toolbar = webix.protoUI({
+    var bottom_toolbar = webix.protoUI(
+        /** @lends bottom_toolbar.prototype */
+        {
             name: "bottom_toolbar",
+            /**
+             * @memberof ui.Toolbar.bottom_toolbar
+             */
             switchLogBtnIcon: function (type) {
                 var $$btnLog = this.$$("btnLog");
                 if (type === 'error') {
@@ -206,7 +234,9 @@
             }
         },
         webix.IdSpace, webix.ui.toolbar);
-
+    /**
+     * @memberof ui.Toolbar
+     */
     TangoWebapp.ui.newBottomToolbar = function(){
         return {
             view: "bottom_toolbar",

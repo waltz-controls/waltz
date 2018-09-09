@@ -1,19 +1,18 @@
-/**
- * @module TangoAttribute
- */
+
 (function () {
     /**
      * Model tango_attribute
-     * @class
-     * @type {TangoAttribute}
+     *
+     * Extends {@link https://jmvc-15x.github.io/docs/classes/MVC.Model.html MVC.Model}
+     * @namespace {TangoWebappPlatform}
+     * @memberof TangoWebappPlatform
      * @property {string} id - //host_id/device_id/name
      * @property {string} name
      * @property {string} device_id
      * @property {string} display_name
-     * @extends MVC.Model
      */
     TangoAttribute = MVC.Model.extend('tango_attribute',
-        /** @lends  TangoAttribute */
+        /** @lends  TangoWebappPlatform.TangoAttribute */
         {
 
             attributes: {
@@ -39,7 +38,7 @@
                 }
             }
         },
-        /** @lends  TangoAttribute.prototype */
+        /** @lends  TangoWebappPlatform.TangoAttribute.prototype */
         {
             /**
              * @param attrs
@@ -67,8 +66,6 @@
              */
             read: function () {
                 var device = PlatformContext.devices.getItem(this.device_id);
-
-
                 return device.fetchAttrValues([this.name]).then(this._handle_resp.bind(this));
             },
             /**
@@ -102,7 +99,6 @@
             //TODO extract AttributeInfo (aka MVC.Model.JSON) and move this method there
             putInfo: function () {
                 var device = PlatformContext.devices.getItem(this.device_id);
-
                 return device.toTangoRestApiRequest().attributes(this.name).put('/info?async=true', this.info);
             },
             /**

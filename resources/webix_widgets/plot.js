@@ -1,5 +1,11 @@
-/** @module Plot */
+/** @module Plot
+ *  @memberof ui
+ */
 (function () {
+    /**
+     * @constant
+     * @memberof ui.Plot
+     */
     var margins = {
         l: 50,
         r: 50,
@@ -9,13 +15,19 @@
     };
 
     /**
-     * @type {webix.protoUI}
+     * @extends webix.ui.view
+     * @property {String} name
+     * @property {String} value
+     * @memberof ui.Plot
+     * @namespace image_plot
      */
-    var image_plot = webix.protoUI({
+    var image_plot = webix.protoUI(
+        /** @lends image_plot*/
+        {
         value: "",
         name: "image",
         /**
-         *
+         * @memberof ui.Plot.image_plot
          * @param {data:[], width:int, height:int} value
          */
         update: function (resp) {
@@ -37,6 +49,10 @@
             Plotly.relayout(this.getNode(), layout);
             Plotly.restyle(this.getNode(), 'z', [data]);
         },
+        /**
+         * @memberof ui.Plot.image_plot
+         * @constructor
+         */
         $init: function (config) {
             this.$ready.push(function () {
                 Plotly.newPlot(this.getNode(), [{
@@ -46,7 +62,10 @@
             });
         }
     }, webix.IdSpace, webix.ui.view);
-
+    /**
+     * @param config
+     * @memberof ui.Plot
+     */
     TangoWebapp.ui.newImageView = function (config) {
         return webix.extend({
             view: "image"
@@ -54,9 +73,14 @@
     };
 
     /**
-     * @type {webix.protoUI}
+     * @class [scalar_plot]
+     * @property {String} name
+     * @extends webix.ui.view
+     * @memberof ui.Plot
+     * @namespace scalar_plot
      */
     var scalar_plot = webix.protoUI(
+        /** @lends scalar_plot*/
         {
             name: 'scalar',
             _traces: null,
@@ -64,11 +88,11 @@
                 Plotly.relayout(this.getNode(), layout);
             },
             /**
-             *
              * @param trace name
              * @param {[]} x timestamps
              * @param {[]} y values
              * @param {int} ndx
+             * @memberof ui.Plot.scalar_plot
              */
             addTrace: function (trace, x, y, ndx) {
                 Plotly.addTraces(this.getNode(), {
@@ -87,8 +111,8 @@
                 });
             },
             /**
-             *
              * @param {int} ndx same as used in addTrace
+             * @memberof ui.Plot.scalar_plot
              */
             deleteTrace: function (ndx) {
                 Plotly.deleteTraces(this.getNode(), [ndx]);
@@ -101,10 +125,10 @@
                 });
             },
             /**
-             *
              * @param {[]} traces an array of traces indices
              * @param {[]} times
              * @param {[]} data an array of data arrays
+             * @memberof ui.Plot.scalar_plot
              */
             updateTraces: function (traces, times, data) {
                 Plotly.extendTraces(this.getNode(), {
@@ -125,16 +149,16 @@
             },
             /**
              * Updates this plot with single data item
-             *
              * @param {{timestamp: int, value: data}} data
+             * @memberof ui.Plot.scalar_plot
              */
             update: function (data) {
                 this.updateMulti([data]);
             },
             /**
              * Updates this plot with multiple data items
-             *
              * @param {[{timestamp: int, value: data}]} data
+             * @memberof ui.Plot.scalar_plot
              */
             updateMulti:function(data){
                 Plotly.extendTraces(this.getNode(), {
@@ -150,6 +174,9 @@
                     margin: margins
                 });
             },
+            /**
+             * @memberof ui.Plot.scalar_plot
+             */
             clear:function(){
                 Plotly.deleteTraces(this.getNode(), this._traces.map(function(el, ndx){ return ndx;}));
                 this._traces.forEach(function(trace){
@@ -172,6 +199,10 @@
                     showlegend: true
                 });
             },
+            /**
+             * @memberof ui.Plot.scalar_plot
+             * @constructor
+             */
             $init: function (config) {
                 // webix.extend(config, this._ui(config));
                 this.$ready.push(this._newPlot.bind(this, config));
@@ -199,10 +230,9 @@
                 }.bind(this));
             }
         }, webix.IdSpace, webix.ui.view);
-
     /**
-     *
      * @param {TangoAttribute} config
+     * @memberof ui.Plot
      */
     TangoWebapp.ui.newScalarView = function (config) {
         return webix.extend({
@@ -211,10 +241,18 @@
     };
 
     /**
-     * @type {webix.protoUI}
+     * Extends {@link https://docs.webix.com/api__refs__ui.list.html webix.ui.list}
+     * @property {String} name
+     * @memberof ui.Plot
+     * @namespace spectrum_text
      */
-    var spectrum_text = webix.protoUI({
+    var spectrum_text = webix.protoUI(
+        /** @lends spectrum_text*/
+        {
         name: 'spectrum_text',
+        /**
+         * @memberof ui.Plot.spectrum_text
+         */
         update: function (data) {
             this.clearAll();
             this.parse(data.value);
@@ -222,11 +260,18 @@
     }, webix.ui.list);
 
     /**
-     * @type {webix.protoUI}
+     * @property {String} name
+     * @extends webix.ui.view
+     * @memberof ui.Plot
+     * @namespace spectrum_plot
      */
     var spectrum_plot = webix.protoUI(
+        /** @lends spectrum_plot*/
         {
             name: 'spectrum',
+            /**
+             * @memberof ui.Plot.spectrum_plot
+             */
             update: function (data) {
                 var layout = {
                     title: "Data acquired @ " + new Date(data.timestamp),
@@ -239,6 +284,10 @@
                 Plotly.relayout(this.getNode(), layout);
                 Plotly.restyle(this.getNode(), 'y', [data.value]);
             },
+            /**
+             * @constructor
+             * @memberof ui.Plot.spectrum_plot
+             */
             $init: function (config) {
                 // webix.extend(config, this._ui(config));
                 this.$ready.push(function () {
@@ -252,8 +301,8 @@
         }, webix.IdSpace, webix.ui.view);
 
     /**
-     *
      * @param {TangoAttribute} config
+     * @memberof ui.Plot
      */
     TangoWebapp.ui.newSpectrumView = function (config) {
         if (config.info.data_type === 'DevString') {

@@ -1,14 +1,15 @@
 /**
  * Model tango_pipe
- * @class
- * @type {TangoPipe}
+ *
+ * Extends {@link https://jmvc-15x.github.io/docs/classes/MVC.Model.html MVC.Model}
+ * @namespace {TangoWebappPlatform}
+ * @memberof TangoWebappPlatform
  * @property {string} id
  * @property {string} name
  * @property {string} display_name
- * @extends MVC.Model
  */
 TangoPipe = MVC.Model.extend('tango_pipe',
-    /** @lends  TangoPipe */
+    /** @lends  TangoWebappPlatform.TangoPipe */
     {
 
         attributes: {
@@ -18,13 +19,12 @@ TangoPipe = MVC.Model.extend('tango_pipe',
         },
         default_attributes: {}
     },
-    /** @lends  TangoPipe.prototype */
+    /** @lends  TangoWebappPlatform.TangoPipe.prototype */
     {
         _get_device_id: function () {
             return this.id.substr(0, this.id.lastIndexOf('/'));
         },
         /**
-         *
          * @param attrs
          * @constructs
          */
@@ -44,7 +44,6 @@ TangoPipe = MVC.Model.extend('tango_pipe',
             }.bind(this));
         },
         /**
-         *
          * @param {Object} value
          * @returns {webix.promise}
          */
@@ -57,7 +56,6 @@ TangoPipe = MVC.Model.extend('tango_pipe',
             }.bind(this));
         },
         /**
-         *
          * @returns {'PIPE'}
          */
         getDataFormat:function(){

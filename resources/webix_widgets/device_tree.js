@@ -1,10 +1,16 @@
-/**
- *
- * @module DeviceTree
+/** @module DeviceTree
+ *  @memberof ui
  */
 (function () {
+    /**
+     * @constant
+     * @memberof ui.DeviceTree
+     */
     var header = "<span class='webix_icon fa-microchip'></span> Device: ";
-
+    /**
+     * @constant
+     * @memberof ui.DeviceTree
+     */
     var device_info = [
         "name",
         "admin",
@@ -16,7 +22,10 @@
         "started_at",
         "stopped_at"
     ];
-
+    /**
+     * @constant
+     * @memberof ui.DeviceTree
+     */
     var context_menu = {
         view: "contextmenu",
         //autoheight: true,
@@ -37,10 +46,19 @@
     };
 
     /**
-     * @type {webix.protoUI}
+     * Extends {@link https://docs.webix.com/api__refs__ui.tree.html webix.ui.tree}
+     * @property {String} name
+     * @memberof ui.DeviceTree
+     * @namespace device_tree
      */
-    var device_tree = webix.protoUI({
+    var device_tree = webix.protoUI(
+        /** @lends  device_tree.prototype */
+        {
         name: 'device_tree',
+        /**
+         * @constructor
+         * @memberof ui.DeviceTree.device_tree
+         */
         $init: function (config) {
             this.$ready.push(function () {
                 this.bind(config.context.devices)
@@ -171,7 +189,10 @@
             }
         }
     }, webix.IdSpace, webix.ui.tree);
-
+    /**
+     * @param context
+     * @memberof ui.DeviceTree
+     */
     TangoWebapp.ui.newDeviceTree = function (context) {
         return {
             header: header,

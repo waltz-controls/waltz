@@ -1,10 +1,16 @@
-/** @module DevicesTree*/
+/** @module DevicesTree
+ *  @memberof ui
+ */
 (function () {
+    /**
+     * @constant
+     * @memberof ui.DevicesTree
+     */
     var kDevicesTreeBackendURL = "/devices-tree/get";
 
     /**
-     *
-     * @type {webix.ui.config}
+     * @constant
+     * @memberof ui.DevicesTree
      */
     var tree_context_menu = {
         view: "contextmenu",
@@ -32,42 +38,21 @@
     };
 
     /**
-     * @type {webix.protoUI}
+     * Extends {@link https://docs.webix.com/api__refs__ui.tree.html webix.ui.tree}
+     * @property {String} name
+     * @property devices_filter
+     * @memberof ui.DevicesTree
+     * @namespace tree
      */
-    var tree = webix.protoUI({
+    var tree = webix.protoUI(
+        /** @lends  tree.prototype */
+        {
         devices_filter: null,
         name: 'devices_tree_tree',
         /**
-         * loads children of the id
-         *
-         * @param id
-         * @return {Promise}
-         */
-        loadTree: function(id){
-
-        },
-        _expand_root:function(){
-            var data = {
-                parent: 'root',
-                data: []
-            };
-            TangoWebappHelpers.iterate(this.config.context.tango_hosts, function (it) {
-                data.data.push({
-                    id: it.id,
-                    value: it.id,
-                    _value: it,
-                    //TODO bind host node data to context.devices
-                    webix_kids: it.is_alive,
-                    $css: 'tango_host'
-                });
-            });
-
-            return webix.promise.resolve(data);
-        },
-        /**
          *
          * @param tango_host
-         * @param id
+         * @param {TangoHost} tango_host
          * @return {Promise} an array of domains
          * @private
          */
@@ -89,6 +74,13 @@
                 return Array.prototype.concat.apply([], filtered_domains); //flatten an array of arrays
             });
         },
+        /**
+         *
+         * @param tango_host
+         * @param {TangoHost} tango_host
+         * @return {Promise} an array of domains
+         * @private
+         */
         _expand_aliases:function(tango_host){
             return tango_host.fetchAliases()
                 .then(function(aliases){
@@ -102,7 +94,7 @@
         },
         /**
          *
-         * @param tango_host
+         * @param {TangoHost} tango_host
          * @param {string} domain
          * @return {Promise}
          * @private
@@ -125,7 +117,9 @@
         },
         /**
          *
-         * @param family
+         * @param {TangoHost} tango_host
+         * @param {string} domain
+         * @param {string} family
          * @return {Promise}
          * @private
          */
@@ -151,7 +145,7 @@
         },
         /**
          *
-         * @param context
+         * @param {PlatformContext} context
          * @private
          */
         _get_data: function (context) {
@@ -166,7 +160,7 @@
             });
         },
         /**
-         *
+         * @memberof ui.DevicesTree.tree
          * @param {PlatformContext} context [optional - will use global PlatformContext instead]
          */
         updateRoot: function (context) {
@@ -184,6 +178,10 @@
                     this.parse(this._get_data(context));
                 }.bind(this));
         },
+        /**
+         * @memberof ui.DevicesTree.tree
+         * @constructor
+         */
         $init: function (config) {
             var context = config.context;
 
@@ -204,6 +202,10 @@
             type: 'lineTree',
             select: true,
             on: {
+                /**
+                 * Event listener.
+                 * @memberof ui.DevicesTree.tree
+                 */
                 onBeforeContextMenu: function (id, e, node) {
                     var item = this.getItem(id);
                     if(item.isAlias || item.isMember){
@@ -213,6 +215,10 @@
                     }
                     return false;
                 },
+                /**
+                 * Event listener.
+                 * @memberof ui.DevicesTree.tree
+                 */
                 onItemDblClick:function(id){
                     var item = this.getItem(id);
                     if (!item) return false;//TODO or true
@@ -222,10 +228,10 @@
                     }
                 },
                 /**
-                 * Happens before click events
-                 *
+                 * Event listener.Happens before click events
                  * @param id
                  * @return {boolean}
+                 * @memberof ui.DevicesTree.tree
                  */
                 onAfterSelect: function(id){
                     var item = this.getItem(id);
@@ -253,6 +259,10 @@
                             });
                     }
                 },
+                /**
+                 * Event listener.
+                 * @memberof ui.DevicesTree.tree
+                 */
                 onDataRequest: function (id, cbk, url) {
                     this.showProgress({
                         type: "icon"
@@ -340,11 +350,15 @@
         }
     }, TangoWebappPlatform.mixin.OpenAjaxListener, webix.ProgressBar, webix.IdSpace, webix.EventSystem, webix.ui.tree);
 
-
     /**
-     * @type {webix.protoUI}
+     * Extends {@link https://docs.webix.com/api__refs__ui.layout.html webix.ui.layout}
+     * @property {String} name
+     * @memberof ui.DevicesTree
+     * @namespace devices_tree
      */
-    var devices_tree = webix.protoUI({
+    var devices_tree = webix.protoUI(
+    /** @lends  devices_tree.prototype */
+    {
         name: 'devices_tree',
         _ui: function (config) {
             return {
@@ -371,6 +385,10 @@
                 ]
             };
         },
+        /**
+         * @memberof ui.DevicesTree.devices_tree
+         * @constructor
+         */
         $init: function (config) {
             webix.extend(config, this._ui(config));
         }

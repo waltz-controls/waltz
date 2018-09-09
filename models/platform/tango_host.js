@@ -1,7 +1,7 @@
 /**
  * Model tango_host
- * @class
- * @type {TangoHost}
+ *
+ * Extends {@link https://jmvc-15x.github.io/docs/classes/MVC.Model.html MVC.Model}
  * @property {string} host
  * @property {number} port
  * @property {string} name
@@ -75,6 +75,7 @@ TangoWebappPlatform.TangoHost = MVC.Model.extend("tango_host",
         },
         /**
          *
+         * Fires event to OpenAjax
          * @event {OpenAjax} tango_webapp.device_loaded
          *
          * @param name
@@ -106,7 +107,7 @@ TangoWebappPlatform.TangoHost = MVC.Model.extend("tango_host",
                 }.bind(this));
         },
         /**
-         *
+         * Fires event to OpenAjax
          * @event {OpenAjax} tango_webapp.database_loaded
          * @return {Promise} database
          */

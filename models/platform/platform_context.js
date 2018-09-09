@@ -1,10 +1,10 @@
 /**
  * Model application_context
- * @class
- * @type {PlatformContext}
+ *
+ * Extends {@link https://jmvc-15x.github.io/docs/classes/MVC.Model.html MVC.Model}
+ * @namespace {TangoWebappPlatform}
  * @property {string} id
  * @property {UserContext} UserContext
- * @extends MVC.Model
  */
 TangoWebappPlatform.PlatformContext = MVC.Model.extend('platform_context',
     /** @lends  TangoWebappPlatform.PlatformContext */
@@ -17,8 +17,8 @@ TangoWebappPlatform.PlatformContext = MVC.Model.extend('platform_context',
             id: 'singleton'
         },
         /**
-         *
          * @param {Object} attrs - must have rest:TangoRestApi and user_context:UserContext
+         * @fires platform_context.create
          */
         create: function (attrs) {
             //TODO make this return value
@@ -65,14 +65,16 @@ TangoWebappPlatform.PlatformContext = MVC.Model.extend('platform_context',
         /** @member {devices} */
         devices: null,
         /**
-         * @param {UserContext} v
+         * Fires event to OpenAjax
          * @event {OpenAjax} platform_context.set_user_context
+         * @param {UserContext} v
          */
         set_UserContext: function (v) {
             this.UserContext = v;
             this.publish("set_user_context", {data: this});
         },
         /**
+         * Fires event to OpenAjax
          * @param {TangoRestApi} v - new rest api
          * @event {OpenAjax} platform_context.set_rest
          */
@@ -110,6 +112,8 @@ TangoWebappPlatform.PlatformContext = MVC.Model.extend('platform_context',
         },
         /**
          * Destroys this instance
+         *
+         * Fires event to OpenAjax
          * @event {OpenAjax} platform_context.destroy
          */
         destroy: function () {

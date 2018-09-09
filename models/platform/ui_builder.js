@@ -1,22 +1,23 @@
 /**
  * Model ui_builder
- * @class
- * @type {UIBuilder}
- * @extends MVC.Model
+ *
+ * Extends {@link https://jmvc-15x.github.io/docs/classes/MVC.Model.html MVC.Model}
+ * @namespace {TangoWebappPlatform}
+ * @memberof TangoWebappPlatform
  */
 UIBuilder = MVC.Model.extend('ui_builder',
-    /** @lends  UIBuilder */
+    /** @lends  TangoWebappPlatform.UIBuilder */
     {
 
         attributes: {},
         default_attributes: {}
     },
-    /** @lends  UIBuilder.prototype */
+    /** @lends  TangoWebappPlatform.UIBuilder.prototype */
     {
         _ui: null,
         /**
          * @constructs
-        */
+         */
         init: function () {
             this._ui = {
                 _top: { maxHeight: 5 },
@@ -45,6 +46,9 @@ UIBuilder = MVC.Model.extend('ui_builder',
             this._set_left_item = true;
             this._ui['left'] = item;
         },
+        /**
+         * @param item
+         */
         add_right_sidebar_item: function (item) {
             if (!this._ui.hasOwnProperty('right')) this._enable_right_sidebar();
             this._ui['right'].push(item);
@@ -63,14 +67,12 @@ UIBuilder = MVC.Model.extend('ui_builder',
             this._ui['main'].push(item);
         },
         /**
-         *
          * @param {webix.config} top_toolbar
          */
         set_top_toolbar:function(top_toolbar){
             this._ui._top = top_toolbar;
         },
         /**
-         *
          * @param {webix.config} bottom_toolbar
          */
         set_bottom_toolbar:function(bottom_toolbar){

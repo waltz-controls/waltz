@@ -2,14 +2,15 @@
  * Model user_context
  *
  * Contains associated with this user data e.g. rest_url, tango_hosts, device filters
- * @class
- * @type {UserContext}
+ *
+ * Extends {@link https://jmvc-15x.github.io/docs/classes/MVC.Model.html MVC.Model}
+ * @namespace {TangoWebappPlatform}
+ * @name {UserContext}
  * @property {string} user
  * @property {string} rest_url
  * @property {{}} tango_hosts
  * @property {string[]} device_filters
  * @property {Object} ext
- * @extends MVC.Model
  */
 TangoWebappPlatform.UserContext = MVC.Model.extend('user_context',
     /** @lends  TangoWebappPlatform.UserContext */

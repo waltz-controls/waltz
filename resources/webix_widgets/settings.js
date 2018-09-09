@@ -1,25 +1,39 @@
-//isolate this component
+//TODO isolate this component
+/** @module Settings
+ * @memberof ui
+ */
 (function () {
     /**
-     * @type {webix.protoUI}
+     * Extends {@link https://docs.webix.com/api__refs__ui.textarea.html webix.ui.textarea}
+     * @property {String} name
+     * @memberof ui.Settings
+     * @namespace textarea0
      */
-    var textarea0 = webix.protoUI({
+    var textarea0 = webix.protoUI(
+        /** @lends textarea0*/
+        {
         name: "textarea0",
         $cssName: "textarea",
+            /** @memberof ui.Settings.textarea0 */
         getValue: function () {
             var rv = webix.ui.textarea.prototype.getValue.call(this);
             return rv.split('\n');
         },
+            /** @memberof ui.Settings.textarea0 */
         setValue: function (value) {
             webix.ui.textarea.prototype.setValue.call(this, value.join('\n'));
         }
     }, webix.ui.textarea);
 
     /**
-     *
-     * @type {webix.protoUI}
+     * Extends {@link https://docs.webix.com/api__refs__ui.layout.html webix.ui.layout}
+     * @property {String} name
+     * @memberof ui.Settings
+     * @namespace tango_rest_url
      */
-    var tango_rest_url =  webix.protoUI({
+    var tango_rest_url =  webix.protoUI(
+        /** @lends tango_rest_url.prototype*/
+        {
         name:'tango_rest_url',
         _ui:function(user_context){
             return {
@@ -47,6 +61,10 @@
                 ]
             }
         },
+        /**
+         * @memberof ui.Settings.tango_rest_url
+         * @constructor
+         */
         $init:function(config){
             webix.extend(config, this._ui());
 
@@ -67,16 +85,19 @@
         }
         }, TangoWebappPlatform.mixin.OpenAjaxListener, webix.IdSpace, webix.ui.layout);
 
-
     /**
-     * @type {webix.protoUI}
+     * Extends {@link https://docs.webix.com/api__refs__ui.layout.html webix.ui.layout}
+     * @class [server_wizard]
+     * @property {String} name
+     * @memberof ui.Settings
+     * @namespace server_wizard
      */
-    var server_wizard = webix.protoUI({
+    var server_wizard = webix.protoUI(
+        /** @lends server_wizard.prototype */
+        {
         name: 'server_wizard',
         /**
-         *
          * @param {Object} data
-         *
          * @private
          */
         _create_devices: function (data) {
@@ -174,6 +195,10 @@
                 ]
             };
         },
+            /**
+             * @memberof ui.Settings.server_wizard
+             * @constructor
+             */
         $init: function (config) {
             webix.extend(config, this._ui());
 
@@ -186,9 +211,15 @@
 
     //defining such variables helps navigating this component in IDE
     /**
-     * @type {webix.protoUI}
+     * Extends {@link https://docs.webix.com/api__refs__ui.layout.html webix.ui.layout}
+     * @class [dashboard_device_filters]
+     * @property {String} name
+     * @memberof ui.Settings
+     * @namespace dashboard_device_filters
      */
-    var dashboard_device_filters = webix.protoUI({
+    var dashboard_device_filters = webix.protoUI(
+        /** @lends dashboard_device_filters.prototype */
+        {
         name: 'dashboard_device_filters',
         _ui: function () {
             return {
@@ -222,6 +253,10 @@
                 ]
             };
         },
+            /**
+             * @memberof ui.Settings.dashboard_device_filters
+             * @constructor
+             */
         $init: function (config) {
             webix.extend(config, this._ui());
 
@@ -239,9 +274,14 @@
     }, TangoWebappPlatform.mixin.OpenAjaxListener, webix.IdSpace, webix.ui.layout);
 
     /**
-     * @type {webix.protoUI}
+     * Extends {@link https://docs.webix.com/api__refs__ui.layout.html webix.ui.layout}
+     * @property {String} name
+     * @memberof ui.Settings
+     * @namespace dashboard_tango_hosts
      */
-    var dashboard_tango_hosts = webix.protoUI({
+    var dashboard_tango_hosts = webix.protoUI(
+        /** @lends dashboard_tango_hosts.prototype*/
+        {
         name: 'dashboard_tango_hosts',
         _ui: function () {
             return {
@@ -306,6 +346,10 @@
                 ]
             };
         },
+            /**
+             * @memberof ui.Settings.dashboard_tango_hosts
+             * @constructor
+             */
         $init: function (config) {
             webix.extend(config, this._ui());
 
@@ -368,8 +412,15 @@
         }
     }, TangoWebappPlatform.mixin.OpenAjaxListener, webix.ui.layout);
 
-
-    var dashboard_tango_host_info = webix.protoUI({
+    /**
+     * Extends {@link https://docs.webix.com/api__refs__ui.layout.html webix.ui.layout}
+     * @property {String} name
+     * @memberof ui.Settings
+     * @namespace dashboard_tango_host_info
+     */
+    var dashboard_tango_host_info = webix.protoUI(
+        /** @lends dashboard_tango_host_info.prototype*/
+        {
         name: 'dashboard_tango_host_info',
         _ui: function () {
             return {
@@ -395,6 +446,10 @@
                 ]
             }
         },
+            /**
+             * @memberof ui.Settings.dashboard_tango_host_info
+             * @constructor
+             */
         $init: function (config) {
             webix.extend(config, this._ui());
 
@@ -419,9 +474,14 @@
 
     //TODO remove dashboard- from ids
     /**
-     * @type {webix.protoUI}
+     * Extends {@link https://docs.webix.com/api__refs__ui.layout.html webix.ui.layout}
+     * @property {String} name
+     * @memberof ui.Settings
+     * @namespace settings
      */
-    var settings = webix.protoUI({
+    var settings = webix.protoUI(
+        /** @lends settings*/
+        {
         name: "settings",
         _ui: function () {
             return {
@@ -485,6 +545,10 @@
                 ]
             };
         },
+        /**
+         * @memberof ui.Settings.settings
+         * @constructor
+         */
         $init: function (config) {
             webix.extend(config, this._ui());
         }

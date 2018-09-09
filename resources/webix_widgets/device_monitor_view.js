@@ -1,22 +1,38 @@
-/** @module DeviceMonitorView */
+/** @module DeviceMonitorView
+ *  @memberof ui
+ */
 (function () {
     /**
-     * @type {webix.protoUI}
+     * Extends {@link https://docs.webix.com/api__refs__ui.template.html webix.ui.template}
+     * @property {string} name
+     * @memberof  ui.DeviceMonitorView
+     * @namespace device_monitor_header
      */
-    var device_monitor_header = webix.protoUI({
+    var device_monitor_header = webix.protoUI(
+        /** @lends  device_monitor_header */
+        {
         _last_state: "UNKNOWN",
         name: "device_monitor_header",
+        /**
+         * @param values
+         * @param force
+         * @memberof  ui.DeviceMonitorView.device_monitor_header
+         */
         setValues: function (values, force) {
             webix.html.removeCss(this.getNode(), this._last_state, true);
             webix.html.addCss(this.getNode(), this._last_state = values.value, true);
             webix.ui.template.prototype.setValues.call(this, values, force);
         }
     }, webix.ui.template);
-
     /**
-     * @type {webix.protoUI}
+     * Extends {@link https://docs.webix.com/api__refs__ui.layout.html webix.ui.layout}
+     * @property {String} name
+     * @memberof  ui.DeviceMonitorView
+     * @namespace device_monitor
      */
-    var device_monitor = webix.protoUI({
+    var device_monitor = webix.protoUI(
+        /** @lends  device_monitor */
+        {
         _add_scalars: function(scalars){
             this.$$('attributes').parseScalars(scalars);
             this.$$('attributes').addDevice(this.config.device);
@@ -27,8 +43,8 @@
         },
         /**
          * Loads device attributes
-         *
          * @param {TangoDevice} device
+         * @memberof  ui.DeviceMonitorView.device_monitor
          */
         loadAttributes: function (device) {
             console.time('loadAttributes')
@@ -98,6 +114,10 @@
             };
         },
         name: "device_monitor",
+        /**
+         * @memberof  ui.DeviceMonitorView.device_monitor
+         * @constructor
+         */
         $init: function (config) {
             webix.assert(config.device !== undefined, "DeviceMonitor requires device to be defined!");
             webix.extend(config, this._ui(config.device));
@@ -128,6 +148,10 @@
         TangoWebappPlatform.mixin.DeviceSetter, TangoWebappPlatform.mixin.TabActivator,
         webix.ui.layout);
 
+    /**
+     * @param config
+     * @memberof  ui.DeviceMonitorView
+     */
     TangoWebapp.ui.newDeviceMonitorView = function (config) {
         return {
             header: "<span class='webix_icon fa-eye'></span>[<span class='webix_strong'>" + config.device.display_name + "</span>]",

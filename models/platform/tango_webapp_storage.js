@@ -1,11 +1,12 @@
 /**
  * Model tango_webapp_storage
- * @class
- * @type {TangoWebappStorage}
- * @extends MVC.Class
+ *
+ * Extends {@link https://jmvc-15x.github.io/docs/classes/MVC.Class.html MVC.Class}
+ * @namespace {TangoWebappPlatform}
+ * @memberof TangoWebappPlatform
  */
 TangoWebappStorage = MVC.Class.extend(
-    /** @lends  TangoWebappStorage.prototype */
+    /** @lends  TangoWebappPlatform.TangoWebappStorage.prototype */
     {
         /**
          * @constructs
@@ -19,14 +20,12 @@ TangoWebappStorage = MVC.Class.extend(
             }
         },
         /**
-         *
          * @param {Object} id
          */
         find_one: function (id) {
             return id ? JSON.parse(localStorage.getItem(this.key))[id] : null;
         },
         /**
-         *
          * @param {Object} obj
          */
         create: function (obj) {
@@ -43,7 +42,6 @@ TangoWebappStorage = MVC.Class.extend(
             localStorage.setItem(this.key, JSON.stringify(data));
         },
         /**
-         *
          * @param {Object} id
          */
         destroy: function (id) {

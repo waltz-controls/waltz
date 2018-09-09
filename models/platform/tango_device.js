@@ -1,7 +1,8 @@
 /**
  * Model tango_device
  *
- * @class
+ * @namespace {TangoWebappPlatform}
+ * @memberof TangoWebappPlatform
  * @property {string} id - host_id/name
  * @property {string} name - host_id/name
  * @property {string} alias - host_id/name
@@ -13,7 +14,7 @@
  * @extends DataCollectionWrapper
  */
 TangoDevice = TangoWebappPlatform.TangoDevice = TangoWebappPlatform.DataCollectionWrapper.extend('tango_device',
-    /** @lends TangoDevice */
+    /** @lends TangoWebappPlatform.TangoDevice */
     {
         attributes: {
             id: 'string',
@@ -36,7 +37,7 @@ TangoDevice = TangoWebappPlatform.TangoDevice = TangoWebappPlatform.DataCollecti
             info: {}
         }
     },
-    /** @lends TangoDevice.prototype */
+    /** @lends TangoWebappPlatform.TangoDevice.prototype */
     {
         /**
          *

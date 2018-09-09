@@ -1,14 +1,22 @@
-/**
- * @module DeviceAttributesConfigView
+/**  @module DeviceAttributesConfigView
+ *   @memberof ui
  */
 (function () {
+    /**
+     * @function
+     * @param info
+     * @memberof ui.DeviceAttributesConfigView
+     */
     var update_attr_info = function (info) {
         var attr = TangoAttribute.find_one(info.masterId);
         attr.set_attributes({info: info});
         var device = PlatformContext.devices.getItem(attr.device_id);
         device.attrs.updateItem(attr.id, attr);
     };
-
+    /**
+     * @constant
+     * @memberof ui.DeviceAttributesConfigView
+     */
     var display_tab_body = {
         id: "display",
         view: "datatable",
@@ -37,7 +45,10 @@
         }
 
     };
-
+    /**
+     * @constant
+     * @memberof ui.DeviceAttributesConfigView
+     */
     var unit_tab_body = {
         id: "unit",
         view: "datatable",
@@ -57,7 +68,10 @@
         }
 
     };
-
+    /**
+     * @constant
+     * @memberof ui.DeviceAttributesConfigView
+     */
     var range_tab_body = {
         id: "range",
         view: "datatable",
@@ -75,7 +89,10 @@
             $update: update_attr_info
         }
     };
-
+    /**
+     * @constant
+     * @memberof ui.DeviceAttributesConfigView
+     */
     var alarms_tab_body = {
         id: "alarms",
         view: "datatable",
@@ -112,7 +129,10 @@
             }
         }
     };
-
+    /**
+     * @constant
+     * @memberof ui.DeviceAttributesConfigView
+     */
     var description_tab_body = {
         id: "description",
         view: "datatable",
@@ -129,7 +149,10 @@
             $update: update_attr_info
         }
     };
-
+    /**
+     * @constant
+     * @memberof ui.DeviceAttributesConfigView
+     */
     var alias_tab_body = {
         id: "alias",
         view: "datatable",
@@ -145,13 +168,17 @@
     };
 
     /**
-     * @class [attr_config_view]
-     * @type {webix.protoUI}
+     * Extends {@link https://docs.webix.com/api__refs__ui.layout.html webix.ui.layout}
+     * @property {String} name
+     * @memberof ui.DeviceAttributesConfigView
+     * @namespace attr_config_view
      */
-    var attr_config_view = webix.protoUI({
+    var attr_config_view = webix.protoUI(
+        /** @lends  attr_config_view */
+        {
         _attr_infos: null,
         /**
-         *
+         * @memberof ui.DeviceAttributesConfigView.attr_config_view
          */
         refresh: function () {
             var top = this.getTopParentView();
@@ -178,7 +205,7 @@
                 .fail(TangoWebappHelpers.error);
         },
         /**
-         *
+         * @memberof ui.DeviceAttributesConfigView.attr_config_view
          */
         apply: function () {
             var top = this.getTopParentView();
@@ -251,6 +278,10 @@
                 ]
             };
         },
+        /**
+         * @memberof ui.DeviceAttributesConfigView.attr_config_view
+         * @constructor
+         */
         $init: function (config) {
             webix.extend(config, this._ui());
 
@@ -279,6 +310,7 @@
     }, webix.IdSpace, TangoWebappPlatform.mixin.TabActivator, TangoWebappPlatform.mixin.DeviceSetter, webix.ui.layout);
     /**
      * @param device
+     * @memberof ui.DeviceAttributesConfigView
      */
     TangoWebapp.ui.newDeviceAttrConfigView = function (device) {
         return {

@@ -1,23 +1,39 @@
 /**
- *
  * @module ScriptingConsole
+ * @memberof ui
  * @author Igor Khokhriakov <igor.khokhriakov@hzg.de>
  * @since 4/30/18
  */
 (function () {
     /**
-     * @type {webix.protoUI}
+     * Extends {@link https://docs.webix.com/api__refs__ui.textarea.html webix.ui.textarea}
+     * @property {String} name
+     * @property editor
+     * @memberof ui.ScriptingConsole
+     * @namespace codemirror_textarea
      */
-    var codemirror_textarea = webix.protoUI({
+    var codemirror_textarea = webix.protoUI(
+        /** @lends codemirror_textarea.prototype */
+        {
         name: "codemirror_textarea",
         editor: null,
+            /**
+             * @memberof ui.ScriptingConsole.codemirror_textarea
+             */
         getValue: function () {
             return this.editor.getValue();
         },
+            /**
+             * @memberof ui.ScriptingConsole.codemirror_textarea
+             */
         setValue: function (value) {
             if (!value || typeof value !== 'string') return;
             this.editor.setValue(value);
         },
+            /**
+             * @memberof ui.ScriptingConsole.codemirror_textarea
+             * @constructor
+             */
         $init: function () {
             this.$ready.push(function () {
                 this.attachEvent('onAfterRender', function () {
@@ -46,8 +62,9 @@
     }, webix.ui.textarea);
 
     /**
-     *
-     * @type {webix.config}
+     * @constant
+     * @memberof ui.ScriptingConsole
+     * @namespace upper_toolbar
      */
     var upper_toolbar = {
         view: 'toolbar',
@@ -63,6 +80,10 @@
                 validate:webix.rules.isNotEmpty,
                 invalidMessage:"Script name can not be empty",
                 on: {
+                    /**
+                     * Event listener.
+                     * @memberof ui.ScriptingConsole.upper_toolbar
+                     */
                     onBindApply: function (script) {
                         if (!script || script.id === undefined) {
                             this.setValue(''); //reset this value after script removal
@@ -71,7 +92,8 @@
                         this.setValue(script.name);
                     },
                     /**
-                     * Work-around [object Object] in this field
+                     * Event listener. Work-around [object Object] in this field.
+                     * @memberof ui.ScriptingConsole.upper_toolbar
                      */
                     onBindRequest:function(){
                         if(typeof this.data.value === 'object')
@@ -105,8 +127,8 @@
     };
 
     /**
-     *
-     * @type {webix.config}
+     * @constant
+     * @memberof ui.ScriptingConsole
      */
     var script_code = {
         view: 'fieldset',
@@ -124,8 +146,8 @@
     };
 
     /**
-     *
-     * @type {webix.config}
+     * @constant
+     * @memberof ui.ScriptingConsole
      */
     var scripts_list = {
         view: 'list',
@@ -140,8 +162,8 @@
     };
 
     /**
-     *
-     * @type {webix.config}
+     * @constant
+     * @memberof ui.ScriptingConsole
      */
     var lower_toolbar = {
         maxHeight: 30,
@@ -163,8 +185,8 @@
     };
 
     /**
-     *
-     * @type {webix.config}
+     * @constant
+     * @memberof ui.ScriptingConsole
      */
     var output = {
         view: 'fieldset',
@@ -177,12 +199,18 @@
     };
 
     /**
-     * @type {webix.protoUI}
+     * Extends {@link https://docs.webix.com/api__refs__ui.layout.html webix.ui.layout}
+     * @property {String} name
+     * @memberof ui.ScriptingConsole
+     * @namespace scripting_console
      */
-    var scripting_console = webix.protoUI({
+    var scripting_console = webix.protoUI(
+        /** @lends scripting_console */
+        {
         name: 'scripting_console',
         /**
          * @return {UserScript}
+         * @memberof ui.ScriptingConsole.scripting_console
          */
         save:function(){
             if(!this.isVisible() || this.$destructed) return;
@@ -208,6 +236,7 @@
         },
         /**
          * @return {UserScript}
+         * @memberof ui.ScriptingConsole.scripting_console
          */
         remove:function(){
             if(!this.$$('script_name').validate()) return null;
@@ -217,6 +246,7 @@
             script.destroy();
             return script;
         },
+            /** @memberof ui.ScriptingConsole.scripting_console */
         execute: function () {
             if(!this.isVisible() || this.$destructed) return;
 
@@ -271,6 +301,10 @@
                 ]
             }
         },
+        /**
+         * @memberof ui.ScriptingConsole.scripting_console
+         * @constructor
+         */
         $init: function (config) {
             webix.extend(config, this._ui());
 
@@ -284,6 +318,10 @@
         }
     }, webix.IdSpace, webix.ui.layout);
 
+    /**
+     * @param config
+     * @memberof ui.ScriptingConsole
+     */
     TangoWebapp.ui.newScriptingConsoleView = function (config) {
         config = config || {};
         return webix.extend({
@@ -292,12 +330,17 @@
     };
 
     /**
-     * @type {webix.protoUI}
+     * @extends scripting_console
+     * @property {String} name
+     * @memberof ui.ScriptingConsole
+     * @namespace stateful_scripting_console
      */
-    var stateful_scripting_console = webix.protoUI({
+    var stateful_scripting_console = webix.protoUI(
+        /** @lends stateful_scripting_console */
+        {
         name:'stateful_scripting_console',
         /**
-         *
+         * @memberof ui.ScriptingConsole.stateful_scripting_console
          * @param {WidgetState} state
          */
         restoreState:function(state){
@@ -311,7 +354,7 @@
         },
         /**
          * Overrides scripting_console.save by adding state update
-         *
+         * @memberof ui.ScriptingConsole.stateful_scripting_console
          */
         save:function(){
             var script = webix.ui.scripting_console.prototype.save.apply(this, arguments);
@@ -323,7 +366,7 @@
         },
         /**
          * Overrides scripting_console.delete by adding state update
-         *
+         * @memberof ui.ScriptingConsole.stateful_scripting_console
          */
         remove:function(){
             var script = webix.ui.scripting_console.prototype.remove.apply(this, arguments);
@@ -335,6 +378,10 @@
         }
     }, TangoWebappPlatform.mixin.Stateful, scripting_console);
 
+    /**
+     * @param config
+     * @memberof ui.ScriptingConsole
+     */
     TangoWebapp.ui.newStatefulScriptingConsoleView = function (config) {
         config = config || {};
         return webix.extend({

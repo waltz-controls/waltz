@@ -1,5 +1,16 @@
+/** @namespace DeviceLoggingView
+ *  @memberof ui
+ */
 (function () {
-    var device_logging = webix.protoUI({
+    /**
+     * Extends {@link https://docs.webix.com/api__refs__ui.layout.html webix.ui.layout}
+     * @property {String} name
+     * @memberof ui.DeviceLoggingView
+     * @namespace device_logging
+     */
+    var device_logging = webix.protoUI(
+        /** @lends  device_logging */
+        {
         _logging_level: ["OFF", "FATAL", "ERROR", "WARNING", "INFO", "DEBUG"],
         _labels: {
             "logging_level": "Logging level",
@@ -41,6 +52,9 @@
                 ]
             };
         },
+        /**
+         * @memberof ui.DeviceLoggingView.device_logging
+         */
         refresh: function () {
             var top = this.getTopParentView();
             top.$$('logging').clearAll();
@@ -93,6 +107,10 @@
             top.$$('logging').parse(dataPromise);
         },
         name: "device_logging",
+        /**
+         * @memberof ui.DeviceLoggingView.device_logging
+         * @constructor
+         */
         $init: function (config) {
             webix.extend(config, this._ui());
 
@@ -103,6 +121,10 @@
         }
     }, webix.IdSpace, TangoWebappPlatform.mixin.TabActivator, TangoWebappPlatform.mixin.DeviceSetter, webix.ui.layout);
 
+    /**
+     * @param device
+     * @memberof ui.DeviceLoggingView
+     */
     TangoWebapp.ui.newDeviceLoggingView = function (device) {
         return {
             device: device,
