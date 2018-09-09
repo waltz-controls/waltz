@@ -4,7 +4,8 @@
 [![codebeat badge](https://codebeat.co/badges/23388ba2-feda-479d-a8c8-abf68eb7b01a)](https://codebeat.co/projects/github-com-tango-controls-tango-webapp-master)
 [![Build Status](https://travis-ci.org/tango-controls/waltz.svg?branch=master)](https://travis-ci.org/tango-controls/waltz)
 
-[![Docs](https://img.shields.io/badge/Generated-Docs-green.svg)](https://tango-controls.github.io/tango-webapp/)
+[![Docs](https://img.shields.io/badge/Generated-Docs-green.svg)](https://tango-controls.github.io/waltz/)
+[![Documentation Status](https://readthedocs.org/projects/waltz-docs/badge/?version=latest)](https://waltz-docs.readthedocs.io/en/latest/?badge=latest)
 
 [![release](https://img.shields.io/github/release/tango-controls/tango-webapp.svg?style=flat)](https://github.com/tango-controls/tango-webapp/releases/latest)
 
@@ -66,11 +67,14 @@ $> REST_API_PROTOCOL=[http|https] REST_API_HOST=[localhost] REST_API_PORT=[10001
 
 This requires jjs to be in the $PATH (is shipped with OpenJDK8 and later)
 
-## Resources
+## Documentation
 
-### Documentation
+[WaltzPlatform API reference](https://tango-controls.github.io/waltz/)
 
 [Waltz docs](https://waltz-docs.readthedocs.io/en/latest/?badge=latest)
+
+
+## Resources
 
 ### Videos
 
@@ -82,7 +86,7 @@ This requires jjs to be in the $PATH (is shipped with OpenJDK8 and later)
 
 [1] [TangoWebapp Insights, 32 Tango Users meeting, 2018](https://www.slideshare.net/IgorKhokhryakov/tangowebapp-insights)
 
-## Implementation details ##
+## Implementation details
 
 * [JavaScriptMVC-1.5.x](https://bitbucket.org/Ingvord/javascriptmvc-1.5.x) is used for MVC implementation
 * [Webix](http://webix.com) is used for UI
