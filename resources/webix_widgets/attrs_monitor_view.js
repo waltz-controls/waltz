@@ -205,8 +205,7 @@
                     OpenAjax.hub.publish("tango_webapp.item_selected", {
                         data: {
                             id: id.id,
-                            kind: 'attrs',
-                            values: PlatformContext.devices.getItem(item.device_id)
+                            kind: 'attrs'
                         }
                     });
                 }

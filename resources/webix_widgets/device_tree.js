@@ -52,7 +52,6 @@
      * @namespace device_tree
      */
     var device_tree = webix.protoUI(
-        /** @lends  device_tree.prototype */
         {
         name: 'device_tree',
         /**
@@ -108,8 +107,7 @@
                     OpenAjax.hub.publish("tango_webapp.item_selected", {
                         data: {
                             id: id,
-                            kind: this.getItem(id).$parent,
-                            values: this.getItem(this.getItem(id).$parent).values
+                            kind: this.getItem(id).$parent
                         }
                     });
                 },

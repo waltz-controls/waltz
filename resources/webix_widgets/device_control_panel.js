@@ -148,7 +148,6 @@
      * @property {String} name
      */
     var test_device_commands = webix.protoUI(
-        /** @lends  test_device_commands.prototype */
         {
         name: 'device_panel_commands',
         _execute_command: function () {
@@ -165,14 +164,6 @@
         _ui: function () {
             return {
                 elements: [
-                    filter,
-                    {
-                        view: 'list',
-                        id: 'list',
-                        select: true,
-                        gravity: 2,
-                        template: "#display_name#"
-                    },
                     {
                         view: 'text',
                         type: 'hidden',
@@ -235,7 +226,7 @@
                 }
             }
         }
-    }, synchronizer, webix.ProgressBar, webix.IdSpace, webix.ui.form);
+    }, webix.ProgressBar, webix.IdSpace, webix.ui.form);
     /**
      * @constant
      * @memberof ui.DeviceControlPanel
@@ -352,8 +343,6 @@
                 .fail(error_handler.bind(this));
         },
         _write: function () {
-            var attribute = this.$$('list').getSelectedItem();
-
             var v = this.elements.w_value.getValue();
 
             UserAction.writeAttribute(attribute, v)
@@ -398,21 +387,6 @@
         _ui: function () {
             return {
                 elements: [
-                    filter,
-                    {
-                        view: 'list',
-                        id: 'list',
-                        select: true,
-                        template: "#display_name#"
-                    },
-                    {
-                        view: 'text',
-                        type: 'hidden',
-                        height: 2,
-                        name: 'name',
-                        validate: webix.rules.isNotEmpty,
-                        invalidMessage: 'Attribute must be selected from the list'
-                    },
                     attr_info_datatable,
                     {
                         cols: [
@@ -523,7 +497,6 @@
      * @property {String} name
      */
     var test_device_pipes = webix.protoUI(
-        /** @lends  test_device_pipes.prototype */
         {
         name: 'device_panel_pipes',
         _read: function () {
@@ -555,13 +528,6 @@
         _ui: function () {
             return {
                 elements: [
-                    filter,
-                    {
-                        view: 'list',
-                        id: 'list',
-                        select: true,
-                        template: "#display_name#"
-                    },
                     {
                         view: 'text',
                         type: 'hidden',
@@ -654,9 +620,11 @@
      * @namespace device_control_panel
      */
     var device_control_panel = webix.protoUI(
-        /** @lends  device_control_panel.prototype */
         {
         name: 'device_control_panel',
+        /**
+         * @memberof ui.DeviceControlPanel.device_control_panel
+         */
         clearAll: function () {
             //TODO
             this.$$('commands').clearAll();
@@ -717,7 +685,6 @@
             }.bind(this));
         },
         defaults: {
-            disabled: true,
             on: {
                 "tango_webapp.item_selected subscribe":function(event){
                     var self = event.controller;
