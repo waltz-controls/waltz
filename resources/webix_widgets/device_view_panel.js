@@ -824,7 +824,15 @@
             },
             _update_header:function(data){
                 $$("device_control_panel_header").config.header = webix.template(function () {
-                    return header + device.display_name;
+                    switch(data.kind){
+                        case "commands":
+                            return "<span class='webix_icon fa-keyboard-o'></span> Command: " + TangoCommand.find_one(data.id).display_name;
+                        case "attrs":
+                            return "<span class='webix_icon fa-keyboard-o'></span> Attr: " + TangoAttribute.find_one(data.id).display_name;
+                        case "pipes":
+                            return "<span class='webix_icon fa-keyboard-o'></span> Pipe: " + TangoPipe.find_one(data.id).display_name;
+                    }
+
                 });
                 $$("device_control_panel_header").refresh();
             },
@@ -847,7 +855,7 @@
                      */
                     "tango_webapp.item_selected subscribe":function(event){
                         var self = event.controller;
-                        self.$$(event.data.kind)._update_header(event.data);
+                        self._update_header(event.data);
                         self.$$(event.data.kind).show(true);
                     },
                     "platform_api.ui.initialized subscribe": function (event) {
