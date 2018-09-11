@@ -11,16 +11,8 @@
  * @since 9/10/18
  */
 (function(){
-    /**
-     * @constant
-     * @memberof ui.DeviceViewPanel
-     */
     var device_panel_header = "<span class='webix_icon fa-microchip'></span> Device: ";
 
-    /**
-     * @constant
-     * @memberof ui.DeviceViewPanel
-     */
     var device_info_values = [
         "name",
         "admin",
@@ -33,9 +25,6 @@
         "stopped_at"
     ];
 
-    /**
-     * @memberof ui.DeviceViewPanel
-     */
     var device_info_parser = function(device){
         if (device.id === undefined) return false;
         function get_device_info(device){
@@ -66,10 +55,6 @@
         $$("device_tree").refresh();
     };
 
-    /**
-     * @constant
-     * @memberof ui.DeviceViewPanel
-     */
     var filter = function () {
         return {
             view: 'text',
@@ -86,18 +71,15 @@
     };
 
     /**
-     * Extends {@link https://docs.webix.com/api__refs__ui.list.html webix.ui.list}
-     * @namespace device_tree_list
+     * More info: {@link https://docs.webix.com/api__refs__ui.list.html webix.ui.list}
+     * @augments webix.ui.list
+     * @name DeviceTreeList
+     * @type {protoUI}
      * @memberof ui.DeviceViewPanel
      */
     var device_tree_list = webix.protoUI(
         {
             name: 'device_tree_list',
-            /**
-             * @constructor
-             * @param config
-             * @memberof ui.DeviceViewPanel.device_tree_list.prototype
-             */
             $init:function(config){
             },
             defaults: {
@@ -106,13 +88,12 @@
                 template: function(obj){
                     return "<span class='webix_icon "+ obj.getIcon() + "'></span>"+ obj.display_name;
                 },
-                onContext:{},
                 on: {
                     /**
                      *
                      * @param device
                      * @return {boolean}
-                     * @memberof ui.DeviceViewPanel.device_tree_list.prototype
+                     * @memberof ui.DeviceViewPanel.DeviceTreeList
                      */
                     onBindApply: function (device) {
                         if (device.id === undefined) return false;
@@ -121,19 +102,13 @@
                         this.sort("#display_name#", "asc", "string");
                     },
                     /**
+                     * Fires "tango_webapp.item_selected"
                      *
-                     * @emits OpenAjax#event:tango_webapp.item_selected
+                     * @fires "tango_webapp.item_selected"
                      * @param {string} id
-                     * @memberof ui.DeviceViewPanel.device_tree_list.prototype
+                     * @memberof ui.DeviceViewPanel.DeviceTreeList
                      */
                     onAfterSelect: function (id) {
-                        /**
-                         * @event tango_webapp.item_selected
-                         * @type {object}
-                         * @property {string} id
-                         * @property {string} kind
-                         * @memberof OpenAjax
-                         */
                         OpenAjax.hub.publish("tango_webapp.item_selected", {
                             data: {
                                 id: id,
@@ -142,9 +117,10 @@
                         });
                     },
                     /**
+                     * Expands DeviceControlPanel
                      *
                      * @param id
-                     * @memberof ui.DeviceViewPanel.device_tree_list.prototype
+                     * @memberof ui.DeviceViewPanel.DeviceTreeList
                      */
                     onItemDblClick:function(id){
                         $$('device_control_panel_header').expand()
@@ -154,10 +130,17 @@
         }, webix.ui.list);
 
     /**
-     * Extends {@link https://docs.webix.com/api__refs__ui.form.html webix.ui.layout}
+     * See {@link https://docs.webix.com/api__refs__ui.form.html webix.ui.layout}
+     * 
+     * @augments webix.ui.layout
      * @memberof ui.DeviceViewPanel
-     * @namespace device_info_panel
-     * @property {String} name
+     * @name DeviceInfoPanel
+     * @type {protoUI}
+     * @property {info_datatable} info
+     * @property {DeviceTreeList} commands
+     * @property {DeviceTreeList} attrs
+     * @property {DeviceTreeList} pipes
+     * @see {@link https://docs.webix.com/api__refs__ui.form.html webix.ui.layout}
      */
     var device_info_panel = webix.protoUI({
         name: 'device_info_panel',
@@ -210,11 +193,6 @@
                 ]
             }
         },
-        /**
-         * @constructor
-         * @param config
-         * @memberof ui.DeviceViewPanel.device_info_panel
-         */
         $init:function(config){
             webix.extend(config, this._ui());
             this.$ready.push(function(){
@@ -226,19 +204,10 @@
         }
     }, webix.IdSpace, webix.ui.layout);
 
-    /**
-     * @constant
-     * @memberof ui.DeviceViewPanel
-     */
     var attr_info_values = [
         'label','writable','data_format','data_type','max_dim_x','max_dim_y','unit','standard_unit',
         'display_unit','format','min_value','max_value'];
 
-    /**
-     * @constant
-     * @memberof ui.DeviceViewPanel
-     * @namespace attr_info_datatable
-     */
     var attr_info_datatable = {
         id: 'info',
         view: 'datatable',
@@ -248,11 +217,6 @@
             {id:'value', fillspace: true}
         ],
         on:{
-            /** Event listener
-             * @function
-             * @param attr
-             * @memberof ui.DeviceViewPanel.attr_info_datatable
-             */
             onBindApply:function(attr){
                 if(!attr) return false;
                 var info = [];
@@ -265,11 +229,7 @@
             }
         }
     };
-    /**
-     * @constant
-     * @memberof ui.DeviceViewPanel
-     * @namespace commands_info_datatable
-     */
+
     var commands_info_datatable = {
         view: 'form',
         id: 'info',
@@ -309,12 +269,6 @@
         }
         ],
         on:{
-            /** Event listener
-             * @function
-             * @param {TangoCommand} cmd
-             * @returns {boolean}
-             * @memberof  ui.DeviceViewPanel.commands_info_datatable
-             */
             onBindApply:function(cmd){
                 if(!cmd) return false;
                 this.setValues(cmd.info);
@@ -323,28 +277,26 @@
     };
 
     /**
-     * Extends {@link https://docs.webix.com/api__refs__ui.form.html webix.ui.view}
+     * More info: {@link https://docs.webix.com/api__refs__ui.view.html webix.ui.view}
+     * @augments webix.ui.view
      * @memberof ui.DeviceViewPanel
-     * @namespace device_panel_empty
-     * @property {String} name
+     * @name DevicePanelEmpty
+     * @type {protoUI}
      */
     var device_panel_empty = webix.protoUI({
         name:"device_panel_empty",
         $init:function(){
-            // this.$ready.push(function(){
-            //     this.showProgress({
-            //         type: "icon"
-            //     })
-            // });
         }
     },  webix.ProgressBar, webix.ui.view);
 
     /**
      * Extends {@link https://docs.webix.com/api__refs__ui.form.html webix.ui.form}
+     * @augments webix.ui.form
      * @memberof ui.DeviceViewPanel
-     * @namespace device_panel_commands
+     * @name DevicePanelCommands
+     * @type {protoUI}
      * @property {TangoCommand} command
-     * @property {String} name
+     * @property {commands_info_datatable} info
      */
     var device_panel_commands = webix.protoUI(
         {
@@ -387,8 +339,8 @@
                 }
             },
             /**
-             * @constructor
-             * @memberof ui.DeviceViewPanel.device_panel_commands
+             * @constructs DevicePanelCommands
+             * @memberof ui.DeviceViewPanel.DevicePanelCommands
              */
             $init: function (config) {
                 webix.extend(config, this._ui());
@@ -400,8 +352,9 @@
                 complexData: true,
                 on: {
                     /**
-                     * Event listener
-                     * @memberof ui.DeviceViewPanel.device_panel_commands
+                     *
+                     * @param {TangoCommand} command
+                     * @memberof ui.DeviceViewPanel.DevicePanelCommands
                      */
                     onBindApply: function (command) {
                         if (!command) return;
@@ -423,13 +376,7 @@
             }
         }, webix.ProgressBar, webix.IdSpace, webix.ui.form);
 
-    /**
-     * @function
-     * @param view
-     * @param resp
-     * @memberof ui.DeviceViewPanel
-     */
-        //TODO make instance functions
+    //TODO make instance functions
     var openTab = function (view, resp) {
             var $$tab = $$(this.id);
             if (!$$tab) {
@@ -444,11 +391,6 @@
         };
 
     //TODO send Open Ajax event and handle it in main_controller
-    /**
-     * @function
-     * @param resp
-     * @memberof ui.DeviceViewPanel
-     */
     var openSpectrumWindow = function (resp) {
         var device = PlatformContext.devices.getItem(this.device_id);
         openTab.bind(this)({
@@ -460,11 +402,6 @@
     };
 
     //TODO send Open Ajax event and handle it in main_controller
-    /**
-     * @function
-     * @param resp
-     * @memberof ui.DeviceViewPanel
-     */
     var openImageWindow = function (resp) {
         var device = PlatformContext.devices.getItem(this.device_id);
         openTab.bind(this)({
@@ -474,11 +411,7 @@
             body: TangoWebapp.ui.newImageView(webix.extend({id: this.id}, resp))
         }, resp);
     };
-    /**
-     * @function
-     * @param resp
-     * @memberof ui.DeviceViewPanel
-     */
+
     var openScalarWindow = function(resp) {
         var device = PlatformContext.devices.getItem(this.device_id);
         openTab.bind(this)({
@@ -488,19 +421,11 @@
             body: TangoWebapp.ui.newScalarView(webix.extend({id: this.id}, resp))
         }, resp)
     };
-    /**
-     * @function
-     * @param resp
-     * @memberof ui.DeviceViewPanel
-     */
+
     var attr_output_handler = function (resp) {
         this.getTopParentView().$$('output').setValue(new View({url: 'views/dev_panel_attribute_out.ejs'}).render(resp));
     };
-    /**
-     * @function
-     * @param resp
-     * @memberof ui.DeviceViewPanel
-     */
+
     var error_handler = function (resp) {
         this.getTopParentView().$$('output').setValue(new View({url: 'views/dev_panel_error_out.ejs'}).render(resp));
         //clear errors
@@ -509,10 +434,12 @@
 
     /**
      * Extends {@link https://docs.webix.com/api__refs__ui.form.html webix.ui.form}
+     * @augments webix.ui.form
      * @memberof ui.DeviceViewPanel
-     * @namespace device_panel_attributes
+     * @name DevicePanelAttributes
+     * @type {protoUI}
      * @property {TangoAttribute} attr -- set in TODO method link onBindApply
-     * @property {String} name
+     * @property {attr_info_datatable} info
      */
     var device_panel_attributes = webix.protoUI(
         {
@@ -628,8 +555,8 @@
                 }
             },
             /**
-             * @constructor
-             * @memberof ui.DeviceViewPanel.device_panel_attributes
+             * @constructs
+             * @memberof ui.DeviceViewPanel.DevicePanelAttributes
              */
             $init: function (config) {
                 webix.extend(config, this._ui());
@@ -642,7 +569,8 @@
                 on: {
                     /**
                      * Event listener
-                     * @memberof ui.DeviceViewPanel.device_panel_attributes
+                     *
+                     * @memberof ui.DeviceViewPanel.DevicePanelAttributes
                      */
                     onBindApply: function (obj, dummy, master) {
                         if (!obj) return this.clear();
@@ -671,10 +599,11 @@
 
     /**
      * Extends {@link https://docs.webix.com/api__refs__ui.form.html webix.ui.form}
+     * @augments webix.ui.form
      * @memberof ui.DeviceViewPanel
-     * @namespace device_panel_pipes
+     * @name DevicePanelPipes
+     * @type {protoUI}
      * @property {TangoPipe} pipe
-     * @property {String} name
      */
     var device_panel_pipes = webix.protoUI(
         {
@@ -752,8 +681,8 @@
                 }
             },
             /**
-             * @constructor
-             * @memberof ui.DeviceViewPanel.device_panel_pipes
+             * @constructs
+             * @memberof ui.DeviceViewPanel.DevicePanelPipes
              */
             $init: function (config) {
                 webix.extend(config, this._ui());
@@ -766,7 +695,8 @@
                     /**
                      *
                      * @param pipe
-                     * @memberof ui.DeviceViewPanel.device_panel_pipes
+                     * @memberof ui.DeviceViewPanel.DevicePanelPipes
+                     * @inner
                      */
                     onBindApply:function(pipe){
                         if(!pipe) return;
@@ -778,16 +708,23 @@
         }, webix.ProgressBar, webix.IdSpace, webix.ui.form);
     
     /**
-     * Extends {@link https://docs.webix.com/api__refs__ui.layout.html webix.ui.layout}
-     * @property {String} name
+     * See {@link https://docs.webix.com/api__refs__ui.layout.html webix.ui.layout}
+     *
+     * @augments webix.ui.layout
      * @memberof ui.DeviceViewPanel
-     * @namespace device_control_panel
+     * @name DeviceControlPanel
+     * @type {protoUI}
+     * @property {DevicePanelCommands} commands
+     * @property {DevicePanelAttributes} attrs
+     * @property {DevicePanelPipes} pipes
+     * @see {@link https://docs.webix.com/api__refs__ui.layout.html webix.ui.layout}
      */
     var device_control_panel = webix.protoUI(
         {
             name: 'device_control_panel',
             /**
-             * @memberof ui.DeviceControlPanel.device_control_panel
+             * @memberof ui.DeviceControlPanel
+             * @inner
              */
             clearAll: function () {
                 //TODO
@@ -846,8 +783,8 @@
                 $$("device_control_panel_header").refresh();
             },
             /**
-             * @constructor
-             * @memberof ui.DeviceViewPanel.device_control_panel
+             * @constructs
+             * @memberof ui.DeviceViewPanel.DeviceControlPanel
              */
             $init: function (config) {
                 webix.extend(config, this._ui(config.context));
@@ -859,31 +796,26 @@
             defaults: {
                 on: {
                     /**
-                     * Event listener
-                     * @memberof ui.DeviceViewPanel.device_control_panel
+                     * @listens "tango_webapp.item_selected"
+                     * @function
+                     * @memberof ui.DeviceViewPanel.DeviceControlPanel.prototype
+                     * @inner
                      */
                     "tango_webapp.item_selected subscribe":function(event){
                         var self = event.controller;
                         self._update_header(event.data);
                         self.$$(event.data.kind).show(true);
-                    },
-                    "platform_api.ui.initialized subscribe": function (event) {
-                        TangoWebappHelpers.debug('test_device_panel.platform_context.create subscribe');
-                        // event.controller.$$('device').bind(event.data.context.devices);
-                    },
-                    "platform_context.destroy subscribe": function (event) {
-                        TangoWebappHelpers.debug('test_device_panel.platform_context.destroy subscribe');
-                        // event.controller.$$('device').unbind();
                     }
                 }
             }
         }, TangoWebappPlatform.mixin.OpenAjaxListener, webix.IdSpace, webix.ui.layout);
 
     /**
+     * Factory function for {@link #uideviceinfopanel DeviceInfoPanel}
      *
      * @param context
-     * @return {{header: *|string, id: string, body: {context: *, view: string}}}
-     * @memberof ui.DeviceViewPanel
+     * @return {DeviceInfoPanel}
+     * @memberof ui
      */
     TangoWebapp.ui.newDeviceInfoPanel = function(context){
         return {
@@ -898,8 +830,11 @@
     };
 
     /**
+     * Factory function for {@link #uidevicecontrolpanel DeviceControlPanel}
+     *
      * @param context
-     * @memberof ui.DeviceViewPanel
+     * @function
+     * @memberof ui
      */
     TangoWebapp.ui.newDeviceControlPanel = function (context) {
         return {
