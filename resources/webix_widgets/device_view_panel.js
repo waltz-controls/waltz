@@ -126,6 +126,14 @@
                                 kind: this.config.$id
                             }
                         });
+                    },
+                    /**
+                     *
+                     * @param id
+                     * @memberof ui.DeviceViewPanel.device_tree_list
+                     */
+                    onItemDblClick:function(id){
+                        $$('device_control_panel_header').expand()
                     }
                 }
             }
