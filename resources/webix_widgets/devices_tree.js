@@ -268,20 +268,6 @@
                             return false;
                         }
                         promise_device.then(function (device) {
-                            return webix.promise.all(
-                                [
-                                    device.fetchAttrs(),
-                                    device.fetchCommands(),
-                                    device.fetchPipes()
-                                        .fail(function(err){
-                                            if(err.errors && err.errors[0].reason === 'TangoApi_NOT_SUPPORTED') return [];
-                                            else throw err;
-                                        })
-                                ]).then(function () {
-                                    return device;
-                                });
-                            })
-                            .then(function (device) {
                                 PlatformContext.devices.setCursor(device.id);
                             });
                     },

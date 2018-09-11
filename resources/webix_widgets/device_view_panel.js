@@ -99,8 +99,22 @@
                     onBindApply: function (device) {
                         if (device.id === undefined) return false;
                         this.clearAll();
-                        this.data.importData(device[this.config.$id]);
-                        this.sort("#display_name#", "asc", "string");
+                        this.showProgress({
+                            type: 'icon'
+                        });
+                        device["fetch" + MVC.String.classize(this.config.$id)]()
+                            .fail(function(err){
+                                if(err.errors && err.errors[0].reason === 'TangoApi_NOT_SUPPORTED') return [];
+                                else throw err;
+                            })
+                            .then(function () {
+                            return device;
+                        })
+                            .then(function(device){
+                                this.data.importData(device[this.config.$id]);
+                                this.sort("#display_name#", "asc", "string");
+                                this.hideProgress();
+                            }.bind(this));
                     },
                     /**
                      * Fires "tango_webapp.item_selected"
@@ -135,7 +149,7 @@
                     }
                 }
             }
-        }, webix.ui.list);
+        }, webix.ProgressBar, webix.ui.list);
 
     /**
      * See {@link https://docs.webix.com/api__refs__ui.form.html webix.ui.layout}
@@ -356,6 +370,25 @@
                 }
             },
             /**
+             *
+             * @param {TangoCommand} command
+             * @memberof ui.DeviceViewPanel.DevicePanelCommands
+             */
+            setCommand:function(command){
+                this.clearValidation();
+
+                this.command = command;
+
+                if (command.info.in_type !== 'DevVoid') {
+                    this.elements.argin.define({
+                        validate: webix.rules.isNotEmpty,
+                        invalidMessage: 'Input argument can not be empty'
+                    });
+                } else {
+                    this.elements.argin.define({validate: '', invalidMessage: 'Input argument can not be empty'});
+                }
+            },
+            /**
              * @constructs DevicePanelCommands
              * @memberof ui.DeviceViewPanel.DevicePanelCommands
              */
@@ -376,18 +409,7 @@
                     onBindApply: function (command) {
                         if (!command) return;
 
-                        this.clearValidation();
-
-                        this.command = command;
-
-                        if (command.info.in_type !== 'DevVoid') {
-                            this.elements.argin.define({
-                                validate: webix.rules.isNotEmpty,
-                                invalidMessage: 'Input argument can not be empty'
-                            });
-                        } else {
-                            this.elements.argin.define({validate: '', invalidMessage: 'Input argument can not be empty'});
-                        }
+                        this.setCommand(command);
                     }
                 }
             }
@@ -575,6 +597,31 @@
                 }
             },
             /**
+             *
+             * @param {TangoAttribute} attr
+             * @memberof ui.DeviceViewPanel.DevicePanelAttributes
+             */
+            setAttribute:function(attr){
+                this.attr = attr;
+                var info = [];
+                info.push({info:'Name', value: attr.name});
+                attr_info_values.forEach(function(el){
+                    info.push({info:MVC.String.classize(el), value: attr.info[el]})
+                }.bind(this));
+                var $$info = this.$$('info');
+                $$info.clearAll();
+                $$info.parse(info);
+
+                this.elements['btnPlot'].enable();
+                if(attr.isScalar()){
+                    this.elements['btnPlotHist'].enable();
+                }
+                if (attr.info.writable.includes("WRITE"))
+                    this.elements['btnWrite'].enable();
+                else
+                    this.elements['btnWrite'].disable();
+            },
+            /**
              * @constructs
              * @memberof ui.DeviceViewPanel.DevicePanelAttributes
              */
@@ -594,24 +641,7 @@
                      */
                     onBindApply: function (obj, dummy, master) {
                         if (!obj) return this.clear();
-                        this.attr = obj;
-                        var info = [];
-                        info.push({info:'Name', value: obj.name});
-                        attr_info_values.forEach(function(el){
-                            info.push({info:MVC.String.classize(el), value: obj.info[el]})
-                        }.bind(this));
-                        var $$info = this.$$('info');
-                        $$info.clearAll();
-                        $$info.parse(info);
-
-                        this.elements['btnPlot'].enable();
-                        if(obj.isScalar()){
-                            this.elements['btnPlotHist'].enable();
-                        }
-                        if (obj.info.writable.includes("WRITE"))
-                            this.elements['btnWrite'].enable();
-                        else
-                            this.elements['btnWrite'].disable();
+                        this.setAttribute(obj);
                     }
                 }
             }
@@ -704,6 +734,14 @@
                 }
             },
             /**
+             *
+             * @param {TangoPipe} pipe
+             * @memberof ui.DeviceViewPanel.DevicePanelPipes
+             */
+            setPipe:function(pipe){
+                this.pipe = pipe;
+            },
+            /**
              * @constructs
              * @memberof ui.DeviceViewPanel.DevicePanelPipes
              */
@@ -723,8 +761,8 @@
                      */
                     onBindApply:function(pipe){
                         if(!pipe) return;
+                        this.setPipe(pipe);
 
-                        this.pipe = pipe;
                     }
                 }
             }
@@ -830,7 +868,20 @@
                     "tango_webapp.item_selected subscribe":function(event){
                         var self = event.controller;
                         self._update_header(event.data);
-                        self.$$(event.data.kind).show(true);
+                        var $$view = self.$$(event.data.kind);
+                        $$view.show(true);
+
+                        switch (event.data.kind){
+                            case "commands":
+                                $$view.setCommand(TangoCommand.find_one(event.data.id));
+                                break;
+                            case "attrs":
+                                $$view.setAttribute(TangoAttribute.find_one(event.data.id));
+                                break;
+                            case "pipes":
+                                $$view.setPipe(TangoPipe.find_one(event.data.id));
+                                break;
+                        }
                     }
                 }
             }
