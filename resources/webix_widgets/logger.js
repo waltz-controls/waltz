@@ -13,7 +13,6 @@
      * @namespace logger
      */
     var logger = webix.protoUI(
-        /** @lends logger.prototype */
         {
             _view: null,
             _limit: 125,
@@ -28,7 +27,7 @@
             name: "logger",
             /**
              * @constructor
-             * @memberof ui.Toolbar.logger
+             * @memberof ui.Logger.logger.prototype
              */
             $init: function (config) {
                 webix.extend(config, this._ui());
@@ -36,7 +35,7 @@
             },
             /**
              * @param item
-             * @memberof ui.Toolbar.logger
+             * @memberof ui.Logger.logger.prototype
              */
             log: function (item) {
                 if (item.type === 'error') item.$css = {"background-color": "lightcoral"};
@@ -58,6 +57,7 @@
     /**
      *
      * @param {string} id
+     * @memberof ui.Logger
      */
     TangoWebapp.ui.newLogger = function(id){
         return webix.extend({

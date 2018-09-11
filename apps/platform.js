@@ -1,7 +1,12 @@
 /**
  * @namespace TangoWebappPlatform
  */
-TangoWebappPlatform = {};
+TangoWebappPlatform = {
+    /**
+     * @namespace OpenAjax
+     */
+    OpenAjax: {}
+};
 
 TangoWebapp = {
     /**

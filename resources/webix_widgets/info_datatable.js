@@ -1,9 +1,15 @@
 /**
- *
+ * @module InfoDatatable
+ * @memberof ui
  * @author Igor Khokhriakov <igor.khokhriakov@hzg.de>
  * @since 9/10/18
  */
 (function(){
+    /**
+     * @constant
+     * @property {String} name
+     * @memberof ui.InfoDatatable
+     */
     var info_datatable = {
         id: 'info',
         view: 'datatable',
@@ -34,7 +40,8 @@
     /**
      *
      * @param {function} parser
-     * @return {*}
+     * @return {info_datatable}
+     * @memberof ui.InfoDatatable
      */
     TangoWebapp.ui.newInfoDatatable = function(parser){
         var result = webix.clone(info_datatable);

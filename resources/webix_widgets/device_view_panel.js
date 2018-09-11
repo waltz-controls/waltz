@@ -1,4 +1,10 @@
 /**
+ * This module contains two panels related to tango device: info panel and control panel.
+ *
+ * Info panel is responsible for displaying device's info as datatable and commands, attributes and pipes as lists
+ *
+ * Control panel executes commands; reads, writes attributes and pipes
+ *
  * @module DeviceViewPanel
  * @memberof ui
  * @author Igor Khokhriakov <igor.khokhriakov@hzg.de>
@@ -90,7 +96,7 @@
             /**
              * @constructor
              * @param config
-             * @memberof ui.DeviceViewPanel.device_tree_list
+             * @memberof ui.DeviceViewPanel.device_tree_list.prototype
              */
             $init:function(config){
             },
@@ -106,7 +112,7 @@
                      *
                      * @param device
                      * @return {boolean}
-                     * @memberof ui.DeviceViewPanel.device_tree_list
+                     * @memberof ui.DeviceViewPanel.device_tree_list.prototype
                      */
                     onBindApply: function (device) {
                         if (device.id === undefined) return false;
@@ -116,10 +122,18 @@
                     },
                     /**
                      *
-                     * @param id
-                     * @memberof ui.DeviceViewPanel.device_tree_list
+                     * @emits OpenAjax#event:tango_webapp.item_selected
+                     * @param {string} id
+                     * @memberof ui.DeviceViewPanel.device_tree_list.prototype
                      */
                     onAfterSelect: function (id) {
+                        /**
+                         * @event tango_webapp.item_selected
+                         * @type {object}
+                         * @property {string} id
+                         * @property {string} kind
+                         * @memberof OpenAjax
+                         */
                         OpenAjax.hub.publish("tango_webapp.item_selected", {
                             data: {
                                 id: id,
@@ -130,7 +144,7 @@
                     /**
                      *
                      * @param id
-                     * @memberof ui.DeviceViewPanel.device_tree_list
+                     * @memberof ui.DeviceViewPanel.device_tree_list.prototype
                      */
                     onItemDblClick:function(id){
                         $$('device_control_panel_header').expand()
