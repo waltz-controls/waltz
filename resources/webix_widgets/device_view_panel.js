@@ -97,7 +97,9 @@
             defaults: {
                 select: true,
                 drag: "source",
-                template: "#display_name#",
+                template: function(obj){
+                    return "<span class='webix_icon "+ obj.getIcon() + "'></span>"+ obj.display_name;
+                },
                 onContext:{},
                 on: {
                     /**

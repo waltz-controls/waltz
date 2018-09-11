@@ -238,6 +238,13 @@ TangoWebappPlatform.TangoHost = MVC.Model.extend("tango_host",
                     this.members.parse(members);
                     return members;
                 }.bind(this))
+        },
+        /**
+         *
+         * @return {string}
+         */
+        getIcon:function(){
+           return 'fa-database' ;
         }
     }
 );

@@ -108,6 +108,23 @@
                 if(this.name === 'State') return 'STATE';
                 if(this.name === 'Status') return 'STATUS';
                 return this.info.data_format;
+            },
+            /**
+             *
+             * @return {string} fa icon
+             */
+            getIcon:function(){
+                if(this.name === 'State') return 'fa-tachometer';
+                if(this.name === 'Status') return 'fa-tachometer';
+
+                switch (this.info.data_format){
+                    case "SCALAR":
+                        return 'fa-at';
+                    case "SPECTRUM":
+                        return 'fa-area-chart';
+                    case "IMAGE":
+                        return 'fa-picture-o';
+                }
             }
         }
     );
