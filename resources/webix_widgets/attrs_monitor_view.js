@@ -196,7 +196,12 @@
             select: true,
             resizeColumn: true,
             on: {
-                "onAfterSelect":function(id){
+                /**
+                 *
+                 * @param id
+                 * @memberof  ui.AttrsMonitorView.scalars
+                 */
+                onAfterSelect:function(id){
                     var item = this.getItem(id.id);
 
 
@@ -521,8 +526,26 @@
 
                 this.$$('attributes').getTabbar().attachEvent("onBeforeTabClose",function(id){
                     this.removeItem(id);
-                }.bind(this))
+                }.bind(this));
             }.bind(this));
+
+            this.addDrop(this.getNode(),{
+                /**
+                 * @function
+                 * @memberof  ui.AttrsMonitorView.attrs_monitor_view
+                 * @see {@link https://docs.webix.com/api__dragitem_onbeforedrop_event.html| onBeforeDrop}
+                 */
+                $drop:function(source, target){
+                    var dnd = webix.DragControl.getContext();
+                    if(dnd.from.config.$id !== 'attrs') return false;
+
+                    var attr = TangoAttribute.find_one(dnd.source[0]);
+                    if(attr == null) return false;
+
+                    this.addAttribute(attr);
+                    return false;
+                }.bind(this)
+            });
         },
         defaults:{
             on:{
@@ -536,7 +559,7 @@
         }
     },
         TangoWebappPlatform.mixin.Runnable, TangoWebappPlatform.mixin.OpenAjaxListener,
-        webix.EventSystem, webix.IdSpace,
+        webix.EventSystem, webix.IdSpace, webix.DragControl,
         webix.ui.layout);
     /**
      * @param context

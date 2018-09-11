@@ -80,56 +80,54 @@
     };
 
     /**
-     * @constant
+     * Extends {@link https://docs.webix.com/api__refs__ui.list.html webix.ui.list}
+     * @namespace device_tree_list
      * @memberof ui.DeviceViewPanel
      */
-    var context_menu = {
-        view: "contextmenu",
-        //autoheight: true,
-        id: 'attrs-menu',
-        data: [
-            {id: 'add_to_monitor', value: 'Add to monitor'}
-        ],
-        on: {
-            onItemClick: function (id) {
-                var tree = this.config.master;
-                var item = tree.getItem(this.getContext().id);
-                var parent = tree.getItem(item.$parent);
-                OpenAjax.hub.publish("tango_webapp.attr_" + id, {
-                    data: parent.values.getItem(item.id)
-                });
-            }
-        }
-    };
-
-    /**
-     * @constant
-     * @memberof ui.DeviceViewPanel
-     */
-    var device_tree_list = function(id){
-        return {
-            view: 'list',
-            id: id,
-            select: true,
-            template: "#display_name#",
-            on: {
-                onBindApply: function (device) {
-                    if (device.id === undefined) return false;
-                    this.clearAll();
-                    this.data.importData(device[id]);
-                    this.sort("#display_name#","asc","string");
-                },
-                onAfterSelect:function(id){
-                    OpenAjax.hub.publish("tango_webapp.item_selected", {
-                        data: {
-                            id: id,
-                            kind: this.config.$id
-                        }
-                    });
+    var device_tree_list = webix.protoUI(
+        {
+            name: 'device_tree_list',
+            /**
+             * @constructor
+             * @param config
+             * @memberof ui.DeviceViewPanel.device_tree_list
+             */
+            $init:function(config){
+            },
+            defaults: {
+                select: true,
+                drag: "source",
+                template: "#display_name#",
+                onContext:{},
+                on: {
+                    /**
+                     *
+                     * @param device
+                     * @return {boolean}
+                     * @memberof ui.DeviceViewPanel.device_tree_list
+                     */
+                    onBindApply: function (device) {
+                        if (device.id === undefined) return false;
+                        this.clearAll();
+                        this.data.importData(device[this.config.$id]);
+                        this.sort("#display_name#", "asc", "string");
+                    },
+                    /**
+                     *
+                     * @param id
+                     * @memberof ui.DeviceViewPanel.device_tree_list
+                     */
+                    onAfterSelect: function (id) {
+                        OpenAjax.hub.publish("tango_webapp.item_selected", {
+                            data: {
+                                id: id,
+                                kind: this.config.$id
+                            }
+                        });
+                    }
                 }
             }
-        }
-    };
+        }, webix.ui.list);
 
     /**
      * Extends {@link https://docs.webix.com/api__refs__ui.form.html webix.ui.layout}
@@ -152,7 +150,10 @@
                                 body: {
                                     rows:[
                                         filter(),
-                                        device_tree_list('commands')
+                                        {
+                                            id:'commands',
+                                            view:'device_tree_list'
+                                        }
                                     ]
                                 }
                             },
@@ -161,7 +162,10 @@
                                 body: {
                                     rows:[
                                         filter(),
-                                        device_tree_list('attrs')
+                                        {
+                                            id:'attrs',
+                                            view:'device_tree_list'
+                                        }
                                     ]
                                 }
                             },
@@ -170,7 +174,10 @@
                                 body: {
                                     rows:[
                                         filter(),
-                                        device_tree_list('pipes')
+                                        {
+                                            id:'pipes',
+                                            view:'device_tree_list'
+                                        }
                                     ]
                                 }
                             }
@@ -192,8 +199,6 @@
                 this.$$('attrs').bind(config.context.devices);
                 this.$$('pipes').bind(config.context.devices);
             }.bind(this));
-
-            webix.ui(context_menu).attachTo(this);
         }
     }, webix.IdSpace, webix.ui.layout);
 
