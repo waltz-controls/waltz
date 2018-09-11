@@ -55,7 +55,7 @@
         $$("device_tree").refresh();
     };
 
-    var filter = function () {
+    var filter = function (id) {
         return {
             view: 'text',
             value: '',
@@ -64,7 +64,7 @@
             labelWidth: 20,
             on: {
                 onTimedKeyPress: function () {
-                    this.getFormView().$$("list").filter("#name#", this.getValue());
+                    this.getTopParentView().$$(id).filter("#name#", this.getValue());
                 }
             }
         }
@@ -156,7 +156,7 @@
                                 header: "Commands",
                                 body: {
                                     rows:[
-                                        filter(),
+                                        filter('commands'),
                                         {
                                             id:'commands',
                                             view:'device_tree_list'
@@ -168,7 +168,7 @@
                                 header: "Attributes",
                                 body: {
                                     rows:[
-                                        filter(),
+                                        filter('attrs'),
                                         {
                                             id:'attrs',
                                             view:'device_tree_list'
@@ -180,7 +180,7 @@
                                 header: "Pipes",
                                 body: {
                                     rows:[
-                                        filter(),
+                                        filter('pipes'),
                                         {
                                             id:'pipes',
                                             view:'device_tree_list'
