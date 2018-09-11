@@ -113,6 +113,23 @@ TangoWebappPlatform.TangoRestApiRequest = MVC.Model.extend('tango_rest_api_reque
             this._super(resp.errors);
         },
         /**
+         *
+         * @event tango_webapp.rest_failure
+         * @type {OpenAjax}
+         * @property {TangoRestApiRequest} data
+         * @memberof TangoWebappPlatform
+         */
+        /**
+         *
+         * @event tango_webapp.rest_success
+         * @type {OpenAjax}
+         * @property {TangoRestApiRequest} data
+         * @memberof TangoWebappPlatform
+         */
+        /**
+         * @fires tango_webapp.rest_failure
+         * @fires tango_webapp.rest_success
+         *
          * @param resp
          * @returns {*}
          * @private
@@ -135,6 +152,8 @@ TangoWebappPlatform.TangoRestApiRequest = MVC.Model.extend('tango_rest_api_reque
         },
 
         /**
+         * @fires tango_webapp.rest_failure
+         *
          * @param resp
          * @private
          */
@@ -230,8 +249,8 @@ TangoWebappPlatform.TangoRestApiRequest = MVC.Model.extend('tango_rest_api_reque
 
         /**
          * Fires event to OpenAjax
-         * @event {OpenAjax} tango_webapp.rest_success
-         * @event {OpenAjax} tango_webapp.rest_failure
+         * @fires tango_webapp.rest_success
+         * @fires tango_webapp.rest_failure
          * @returns {webix.promise}
          */
         exec: function (argin) {
@@ -241,8 +260,8 @@ TangoWebappPlatform.TangoRestApiRequest = MVC.Model.extend('tango_rest_api_reque
 
         /**
          * Fires event to OpenAjax
-         * @event {OpenAjax} tango_webapp.rest_success
-         * @event {OpenAjax} tango_webapp.rest_failure
+         * @fires tango_webapp.rest_success
+         * @fires tango_webapp.rest_failure
          * @returns {webix.promise}
          */
         get: function (what) {
@@ -256,8 +275,8 @@ TangoWebappPlatform.TangoRestApiRequest = MVC.Model.extend('tango_rest_api_reque
 
         /**
          * Fires event to OpenAjax
-         * @event {OpenAjax} tango_webapp.rest_success
-         * @event {OpenAjax} tango_webapp.rest_failure
+         * @fires tango_webapp.rest_success
+         * @fires tango_webapp.rest_failure
          * @returns {webix.promise}
          */
         put: function (what, data) {
@@ -273,8 +292,8 @@ TangoWebappPlatform.TangoRestApiRequest = MVC.Model.extend('tango_rest_api_reque
 
         /**
          * Fires event to OpenAjax
-         * @event {OpenAjax} tango_webapp.rest_success
-         * @event {OpenAjax} tango_webapp.rest_failure
+         * @fires tango_webapp.rest_success
+         * @fires tango_webapp.rest_failure
          * @returns {webix.promise}
          */
         "delete": function (what) {

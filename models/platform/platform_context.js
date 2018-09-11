@@ -65,8 +65,16 @@ TangoWebappPlatform.PlatformContext = MVC.Model.extend('platform_context',
         /** @member {devices} */
         devices: null,
         /**
-         * Fires event to OpenAjax
-         * @event {OpenAjax} platform_context.set_user_context
+         *
+         * @event platform_context.set_user_context
+         * @type {OpenAjax}
+         * @property {PlatformContext} data
+         * @memberof TangoWebappPlatform
+         */
+        /**
+         * Fires event to OpenAjax: platform_context.set_user_context
+         *
+         * @fires platform_context.set_user_context
          * @param {UserContext} v
          */
         set_UserContext: function (v) {
@@ -74,9 +82,16 @@ TangoWebappPlatform.PlatformContext = MVC.Model.extend('platform_context',
             this.publish("set_user_context", {data: this});
         },
         /**
-         * Fires event to OpenAjax
+         *
+         * @event platform_context.set_rest
+         * @type {OpenAjax}
+         * @property {PlatformContext} data
+         * @memberof TangoWebappPlatform
+         */
+        /**
+         * Fires event to OpenAjax: platform_context.set_rest
          * @param {TangoRestApi} v - new rest api
-         * @event {OpenAjax} platform_context.set_rest
+         * @fires platform_context.set_rest
          */
         set_rest: function (v) {
             this.rest = v;
@@ -111,10 +126,18 @@ TangoWebappPlatform.PlatformContext = MVC.Model.extend('platform_context',
             this._super(attrs);//calls set_rest
         },
         /**
-         * Destroys this instance
          *
-         * Fires event to OpenAjax
-         * @event {OpenAjax} platform_context.destroy
+         * @event platform_context.destroy
+         * @type {OpenAjax}
+         * @property {PlatformContext} data
+         * @memberof TangoWebappPlatform
+         */
+        /**
+         * Saves UserContext then destroys this instance
+         *
+         * Fires event to OpenAjax: platform_context.destroy
+         *
+         * @fires platform_context.destroy
          */
         destroy: function () {
             this._super();

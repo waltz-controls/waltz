@@ -1,20 +1,14 @@
-/** @module DeviceControlPanel
- *  @memberof ui
+/**
+ *
+ * @deprecated DeviceViewPanel is used instead
+ * @module DeviceControlPanel
+ * @memberof ui
  */
 (function () {
-    /**
-     * @constant
-     * @memberof ui.DeviceControlPanel
-     */
     var attr_info_values = [
         'label','writable','data_format','data_type','max_dim_x','max_dim_y','unit','standard_unit',
         'display_unit','format','min_value','max_value'];
 
-    /**
-     * @constant
-     * @memberof ui.DeviceControlPanel
-     * @namespace attr_info_datatable
-     */
     var attr_info_datatable = {
         id: 'info',
         view: 'datatable',
@@ -24,11 +18,6 @@
             {id:'value', fillspace: true}
         ],
         on:{
-            /** Event listener
-             * @function
-             * @param attr
-             * @memberof ui.DeviceControlPanel.attr_info_datatable
-             */
             onBindApply:function(attr){
                 if(!attr) return false;
                 var info = [];
@@ -41,11 +30,7 @@
             }
         }
     };
-    /**
-     * @constant
-     * @memberof ui.DeviceControlPanel
-     * @namespace commands_info_datatable
-     */
+
     var commands_info_datatable = {
         view: 'form',
         id: 'info',
@@ -85,23 +70,13 @@
         }
         ],
         on:{
-            /** Event listener
-             * @function
-             * @param {TangoCommand} cmd
-             * @returns {boolean}
-             * @memberof  ui.DeviceControlPanel.commands_info_datatable
-             */
             onBindApply:function(cmd){
                 if(!cmd) return false;
                 this.setValues(cmd.info);
             }
         }
     };
-    /**
-     * @constant
-     * @memberof ui.DeviceControlPanel
-     * @namespace synchronizer
-     */
+
     var synchronizer = {
         _what: null,
         _command: null,
@@ -121,21 +96,12 @@
                 this.elements.name.setValue('');//drop currently selected item
             }
         },
-        /**
-         * @constructor
-         * @memberof ui.DeviceControlPanel.synchronizer
-         */
         $init: function (config) {
             this._what = config.id;
             this._command = 'fetch' + MVC.String.classize(this._what);
         }
     };
 
-    /**
-     * @function
-     * @memberof ui.DeviceControlPanel
-     * @return {Function}
-     */
     var importData = function($$list, data) {
             $$list.data.importData(data);
             $$list.sort("#display_name#","asc","string");

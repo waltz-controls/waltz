@@ -7,8 +7,6 @@
  *
  * @module DeviceViewPanel
  * @memberof ui
- * @author Igor Khokhriakov <igor.khokhriakov@hzg.de>
- * @since 9/10/18
  */
 (function(){
     var device_panel_header = "<span class='webix_icon fa-microchip'></span> Device: ";
@@ -76,8 +74,11 @@
      * @name DeviceTreeList
      * @type {protoUI}
      * @memberof ui.DeviceViewPanel
+     *
+     * @author Igor Khokhriakov <igor.khokhriakov@hzg.de>
+     * @since 9/10/18
      */
-    var device_tree_list = webix.protoUI(
+    var DeviceTreeList = webix.protoUI(
         {
             name: 'device_tree_list',
             $init:function(config){
@@ -109,6 +110,13 @@
                      * @memberof ui.DeviceViewPanel.DeviceTreeList
                      */
                     onAfterSelect: function (id) {
+                        /**
+                         * @event tango_webapp.item_selected
+                         * @type {OpenAjax}
+                         * @property {string} id
+                         * @property {string} kind
+                         * @memberof ui
+                         */
                         OpenAjax.hub.publish("tango_webapp.item_selected", {
                             data: {
                                 id: id,
@@ -141,8 +149,11 @@
      * @property {DeviceTreeList} attrs
      * @property {DeviceTreeList} pipes
      * @see {@link https://docs.webix.com/api__refs__ui.form.html webix.ui.layout}
+     *
+     * @author Igor Khokhriakov <igor.khokhriakov@hzg.de>
+     * @since 9/10/18
      */
-    var device_info_panel = webix.protoUI({
+    var DeviceInfoPanel = webix.protoUI({
         name: 'device_info_panel',
         _ui:function(){
             return {
@@ -282,8 +293,11 @@
      * @memberof ui.DeviceViewPanel
      * @name DevicePanelEmpty
      * @type {protoUI}
+     *
+     * @author Igor Khokhriakov <igor.khokhriakov@hzg.de>
+     * @since 9/10/18
      */
-    var device_panel_empty = webix.protoUI({
+    var DevicePanelEmpty = webix.protoUI({
         name:"device_panel_empty",
         $init:function(){
         }
@@ -297,8 +311,11 @@
      * @type {protoUI}
      * @property {TangoCommand} command
      * @property {commands_info_datatable} info
+     *
+     * @author Igor Khokhriakov <igor.khokhriakov@hzg.de>
+     * @since 9/10/18
      */
-    var device_panel_commands = webix.protoUI(
+    var DevicePanelCommands = webix.protoUI(
         {
             command: null,
             name: 'device_panel_commands',
@@ -440,8 +457,11 @@
      * @type {protoUI}
      * @property {TangoAttribute} attr -- set in TODO method link onBindApply
      * @property {attr_info_datatable} info
+     *
+     * @author Igor Khokhriakov <igor.khokhriakov@hzg.de>
+     * @since 9/10/18
      */
-    var device_panel_attributes = webix.protoUI(
+    var DevicePanelAttributes = webix.protoUI(
         {
             attr: null,
             name: 'device_panel_attributes',
@@ -604,8 +624,11 @@
      * @name DevicePanelPipes
      * @type {protoUI}
      * @property {TangoPipe} pipe
+     *
+     * @author Igor Khokhriakov <igor.khokhriakov@hzg.de>
+     * @since 9/10/18
      */
-    var device_panel_pipes = webix.protoUI(
+    var DevicePanelPipes = webix.protoUI(
         {
             pipe: null,
             name: 'device_panel_pipes',
@@ -718,8 +741,11 @@
      * @property {DevicePanelAttributes} attrs
      * @property {DevicePanelPipes} pipes
      * @see {@link https://docs.webix.com/api__refs__ui.layout.html webix.ui.layout}
+     *
+     * @author Igor Khokhriakov <igor.khokhriakov@hzg.de>
+     * @since 9/10/18
      */
-    var device_control_panel = webix.protoUI(
+    var DeviceControlPanel = webix.protoUI(
         {
             name: 'device_control_panel',
             /**
@@ -811,11 +837,11 @@
         }, TangoWebappPlatform.mixin.OpenAjaxListener, webix.IdSpace, webix.ui.layout);
 
     /**
-     * Factory function for {@link #uideviceinfopanel DeviceInfoPanel}
+     * Factory function for {@link DeviceInfoPanel}
      *
      * @param context
      * @return {DeviceInfoPanel}
-     * @memberof ui
+     * @memberof ui.DeviceViewPanel
      */
     TangoWebapp.ui.newDeviceInfoPanel = function(context){
         return {
@@ -830,11 +856,11 @@
     };
 
     /**
-     * Factory function for {@link #uidevicecontrolpanel DeviceControlPanel}
+     * Factory function for {@link DeviceControlPanel}
      *
      * @param context
      * @function
-     * @memberof ui
+     * @memberof ui.DeviceViewPanel
      */
     TangoWebapp.ui.newDeviceControlPanel = function (context) {
         return {

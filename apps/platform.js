@@ -3,7 +3,18 @@
  */
 TangoWebappPlatform = {
     /**
+     * Use OpenAjax.hub to publish and subscribe to messages.
+     *
+     * @example <caption>Example of publish:</caption>
+     * OpenAjax.hub.publish("event name", {
+     *                       data: {...}
+     *                   });
+     *
+     * @example <caption>Example of subscribe:</caption>
+     * OpenAjax.hub.subscribe("event name", callback);
+     *
      * @namespace OpenAjax
+     * @see {@link https://jmvc-15x.github.io/docs/classes/OpenAjax.html OpenAjax}
      */
     OpenAjax: {}
 };

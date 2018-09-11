@@ -1,5 +1,7 @@
-/** @module DeviceTree
- *  @memberof ui
+/**
+ * @deprecated DeviceViewPanel is used instead
+ * @module DeviceTree
+ * @memberof ui
  */
 (function () {
     /**

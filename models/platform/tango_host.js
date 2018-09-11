@@ -75,11 +75,18 @@ TangoWebappPlatform.TangoHost = MVC.Model.extend("tango_host",
         },
         /**
          *
-         * Fires event to OpenAjax
-         * @event {OpenAjax} tango_webapp.device_loaded
+         * @event tango_webapp.device_loaded
+         * @type {OpenAjax}
+         * @property {TangoDevice} data
+         * @memberof TangoWebappPlatform
+         */
+        /**
+         *
+         * Fires event to OpenAjax: tango_webapp.device_loaded
+         * @fires tango_webapp.device_loaded
          *
          * @param name
-         * @return {Promise} device
+         * @return {Promise<TangoDevice>} device
          */
         fetchDevice: function (name) {
             var device;
@@ -107,9 +114,25 @@ TangoWebappPlatform.TangoHost = MVC.Model.extend("tango_host",
                 }.bind(this));
         },
         /**
+         *
+         * @event tango_webapp.tango_host_loaded
+         * @type {OpenAjax}
+         * @property {TangoHost} data
+         * @memberof TangoWebappPlatform
+         */
+        /**
+         *
+         * @event tango_webapp.database_loaded
+         * @type {OpenAjax}
+         * @property {TangoDatabase} data
+         * @memberof TangoWebappPlatform
+         */
+        /**
          * Fires event to OpenAjax
-         * @event {OpenAjax} tango_webapp.database_loaded
-         * @return {Promise} database
+         * @fires tango_webapp.tango_host_loaded
+         * @fires tango_webapp.device_loaded
+         * @fires tango_webapp.database_loaded
+         * @return {Promise<TangoDatabase>} database
          */
         fetchDatabase: function () {
             if(this.database != null) return webix.promise.resolve(this.database);
