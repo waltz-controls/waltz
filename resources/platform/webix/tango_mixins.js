@@ -1,14 +1,32 @@
 /**
+ * Aggregates TangoWebappPlatform webix mixins.
+ *
+ * More info: {@link https://docs.webix.com/api__toc__ui_mixins.html mixins}
  *
  * @namespace mixins
  */
 TangoWebappPlatform.mixin = {
     /**
      *
-     * Requires `on` property to be defined
+     * Requires `on` property to be defined in the protoUI
+     *
+     * @example <caption>Inject into protoUI</caption>
+     * webix.protoUI({...},TangoWebappPlatform.mixin.OpenAjaxListener,webix.ui.view)
+     *
+     * @example <caption>Define subscription</caption>
+     * webix.protoUI({
+     *   defaults:{
+     *     on:{
+     *       "my_event subscribe":function(event){...}
+     *     }
+     *   }
+     * },TangoWebappPlatform.mixin.OpenAjaxListener,webix.ui.view)
+     *
+     * @example <caption>Fire event</caption>
+     * //somewhere
+     * OpenAjax.hub.publish("my_event", {data:{...}})
      *
      * @type {webix.mixin}
-     * @property {function} on
      * @memberof mixins
      */
     OpenAjaxListener: {
@@ -51,7 +69,11 @@ TangoWebappPlatform.mixin = {
     /**
      * Performs action defined in run function only if this component is visible
      *
+     * User may define before_start and/or after_stop to perform extra action before/after start/stop
+     *
      * @type {webix.mixin}
+     * @property {function} [before_start]
+     * @property {function} [after_stop]
      * @memberof mixins
      */
     Runnable: {
@@ -95,8 +117,19 @@ TangoWebappPlatform.mixin = {
         }
     },
     /**
+     * State is stored in {@link UserContext#ext} e.g. user_context.ext[this.id] = this.state
+     *
+     * Requires restoreState instance member to be defined
+     *
+     * @example
+     * webix.protoUI({
+     *    restoreState:function(state:WidgetState){...}
+     * }, TangoWebappPlatform.mixin.Stateful, ...)
+     *
      *
      * @type {webix.mixin}
+     * @property {MVC.Class} state_class -- {@link WidgetState} by default
+     * @property {function(WidgetState)} restoreState
      * @memberof mixins
      */
     Stateful: {

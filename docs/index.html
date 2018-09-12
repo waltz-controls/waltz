@@ -189,15 +189,15 @@
                         </a></li>
                       
                         <li><a
-                          href='#tangowebappplatformeventtango_rest_apiis_not_alive'
-                          class='regular pre-open'>
-                          ⓔ tango_rest_api.is_not_alive
-                        </a></li>
-                      
-                        <li><a
                           href='#tangowebappplatformeventtango_rest_apiis_alive'
                           class='regular pre-open'>
                           ⓔ tango_rest_api.is_alive
+                        </a></li>
+                      
+                        <li><a
+                          href='#tangowebappplatformeventtango_rest_apiis_not_alive'
+                          class='regular pre-open'>
+                          ⓔ tango_rest_api.is_not_alive
                         </a></li>
                       
                         <li><a
@@ -9596,11 +9596,11 @@ Sets this.Class.current to null</p>
       </div>
     </div>
   
-    <div class='border-bottom' id='tangowebappplatformeventtango_rest_apiis_not_alive'>
+    <div class='border-bottom' id='tangowebappplatformeventtango_rest_apiis_alive'>
       <div class="clearfix small pointer toggle-sibling">
         <div class="py1 contain">
             <a class='icon pin-right py1 dark-link caret-right'>▸</a>
-            <span class='code strong strong truncate'>tango_rest_api.is_not_alive</span>
+            <span class='code strong strong truncate'>tango_rest_api.is_alive</span>
         </div>
       </div>
       <div class="clearfix display-none toggle-target">
@@ -9611,7 +9611,7 @@ Sets this.Class.current to null</p>
   
  
   
-    <div class='pre p1 fill-light mt0'>tango_rest_api.is_not_alive</div>
+    <div class='pre p1 fill-light mt0'>tango_rest_api.is_alive</div>
    
   
     <p>
@@ -9659,11 +9659,11 @@ Sets this.Class.current to null</p>
       </div>
     </div>
   
-    <div class='border-bottom' id='tangowebappplatformeventtango_rest_apiis_alive'>
+    <div class='border-bottom' id='tangowebappplatformeventtango_rest_apiis_not_alive'>
       <div class="clearfix small pointer toggle-sibling">
         <div class="py1 contain">
             <a class='icon pin-right py1 dark-link caret-right'>▸</a>
-            <span class='code strong strong truncate'>tango_rest_api.is_alive</span>
+            <span class='code strong strong truncate'>tango_rest_api.is_not_alive</span>
         </div>
       </div>
       <div class="clearfix display-none toggle-target">
@@ -9674,7 +9674,7 @@ Sets this.Class.current to null</p>
   
  
   
-    <div class='pre p1 fill-light mt0'>tango_rest_api.is_alive</div>
+    <div class='pre p1 fill-light mt0'>tango_rest_api.is_not_alive</div>
    
   
     <p>
@@ -30256,7 +30256,9 @@ Sets this.Class.current to null</p>
   </div>
   
 
-  
+  <p>Aggregates TangoWebappPlatform webix mixins.</p>
+<p>More info: <a href="https://docs.webix.com/api__toc__ui_mixins.html">mixins</a></p>
+
  
   
     <div class='pre p1 fill-light mt0'>mixins</div>
@@ -30297,7 +30299,7 @@ Sets this.Class.current to null</p>
 
   
 
-  <p>Requires <code>on</code> property to be defined</p>
+  <p>Requires <code>on</code> property to be defined in the protoUI</p>
 
  
   
@@ -30321,22 +30323,33 @@ Sets this.Class.current to null</p>
   
 
   
-    <div class='py1 quiet mt1 prose-big'>Properties</div>
-    <div>
-      
-        <div class='space-bottom0'>
-          <span class='code bold'>on</span> <code class='quiet'>(<a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Statements/function">function</a>)</code>
-          
-          
-        </div>
-      
-    </div>
-  
 
   
 
   
 
+  
+    <div class='py1 quiet mt1 prose-big'>Example</div>
+    
+      <p><p>Inject into protoUI</p>
+</p>
+      <pre class='p1 overflow-auto round fill-light'>webix.protoUI({...},TangoWebappPlatform.mixin.OpenAjaxListener,webix.ui.view)</pre>
+    
+      <p><p>Define subscription</p>
+</p>
+      <pre class='p1 overflow-auto round fill-light'>webix.protoUI({
+  <span class="hljs-attr">defaults</span>:{
+    <span class="hljs-attr">on</span>:{
+      <span class="hljs-string">"my_event subscribe"</span>:<span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">event</span>)</span>{...}
+    }
+  }
+},TangoWebappPlatform.mixin.OpenAjaxListener,webix.ui.view)</pre>
+    
+      <p><p>Fire event</p>
+</p>
+      <pre class='p1 overflow-auto round fill-light'><span class="hljs-comment">//somewhere</span>
+OpenAjax.hub.publish(<span class="hljs-string">"my_event"</span>, {<span class="hljs-attr">data</span>:{...}})</pre>
+    
   
 
   
@@ -30466,6 +30479,7 @@ Sets this.Class.current to null</p>
   
 
   <p>Performs action defined in run function only if this component is visible</p>
+<p>User may define before_start and/or after_stop to perform extra action before/after start/stop</p>
 
  
   
@@ -30488,6 +30502,23 @@ Sets this.Class.current to null</p>
 
   
 
+  
+    <div class='py1 quiet mt1 prose-big'>Properties</div>
+    <div>
+      
+        <div class='space-bottom0'>
+          <span class='code bold'>before_start</span> <code class='quiet'>(<a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Statements/function">function</a>?)</code>
+          
+          
+        </div>
+      
+        <div class='space-bottom0'>
+          <span class='code bold'>after_stop</span> <code class='quiet'>(<a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Statements/function">function</a>?)</code>
+          
+          
+        </div>
+      
+    </div>
   
 
   
@@ -30733,7 +30764,9 @@ Sets this.Class.current to null</p>
 
   
 
-  
+  <p>State is stored in <a href="UserContext#ext">UserContext#ext</a> e.g. user_context.ext[this.id] = this.state</p>
+<p>Requires restoreState instance member to be defined</p>
+
  
   
     <div class='pre p1 fill-light mt0'>Stateful</div>
@@ -30756,11 +30789,39 @@ Sets this.Class.current to null</p>
   
 
   
+    <div class='py1 quiet mt1 prose-big'>Properties</div>
+    <div>
+      
+        <div class='space-bottom0'>
+          <span class='code bold'>state_class</span> <code class='quiet'>(MVC.Class)</code>
+          : -- 
+<a href="WidgetState">WidgetState</a>
+ by default
 
+          
+        </div>
+      
+        <div class='space-bottom0'>
+          <span class='code bold'>restoreState</span> <code class='quiet'>(function (WidgetState))</code>
+          
+          
+        </div>
+      
+    </div>
   
 
   
 
+  
+
+  
+    <div class='py1 quiet mt1 prose-big'>Example</div>
+    
+      
+      <pre class='p1 overflow-auto round fill-light'>webix.protoUI({
+   <span class="hljs-attr">restoreState</span>:<span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">state:WidgetState</span>)</span>{...}
+}, TangoWebappPlatform.mixin.Stateful, ...)</pre>
+    
   
 
   
