@@ -64,6 +64,12 @@ TangoCommand = MVC.Model.extend('tango_command',
          */
         getDataFormat:function(){
             return 'COMMAND';
+        },
+        /**
+         *
+         */
+        getIcon:function(){
+            return 'fa-caret-square-o-right';
         }
     }
 );

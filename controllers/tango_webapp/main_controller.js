@@ -23,9 +23,11 @@ TangoWebapp.MainController = MVC.Controller.extend('main', {
             }
         });
 
-        ui_builder.add_left_sidebar_item(TangoWebapp.ui.newDeviceTree(platform_api.context));
+        ui_builder.add_left_sidebar_item(TangoWebapp.ui.newDeviceInfoPanel(platform_api.context));
 
-        ui_builder.set_right_item(TangoWebapp.ui.newDeviceControlPanel(platform_api.context));
+        ui_builder.add_left_sidebar_item(TangoWebapp.ui.newDeviceControlPanel(platform_api.context));
+
+        ui_builder.set_right_item(TangoWebapp.ui.newUserLogPanel(platform_api.context));
 
         ui_builder.add_mainview_item(
             {

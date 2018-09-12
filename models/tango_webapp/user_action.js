@@ -1,4 +1,11 @@
 /**
+ * Executes and logs corresponding user action
+ *
+ * @example
+ * UserAction.writeAttribute(attr, value)
+ *                               .then(function(){
+ *                                    alert(":)");
+ *                               })
  *
  * @author Igor Khokhriakov <igor.khokhriakov@hzg.de>
  * @since 4/24/18
@@ -64,6 +71,15 @@ UserAction = TangoWebapp.UserAction = MVC.Model.extend('user_action',
             }
         },
         /**
+         * @event user_action.log
+         * @type {OpenAjax}
+         * @property {UserAction} data
+         * @memberof TangoWebappPlatform
+         */
+        /**
+         * Fires user_action.log
+         *
+         * @fires user_action.log
          * @param {TangoAttribute} attr
          * @returns {webix.promise}
          */
@@ -86,6 +102,9 @@ UserAction = TangoWebapp.UserAction = MVC.Model.extend('user_action',
                 .fail(this.failure.bind(this));
         },
         /**
+         * Fires user_action.log
+         *
+         * @fires user_action.log
          * @param {TangoAttribute} attr
          */
         readAttributeHistory:function(attr){
@@ -102,6 +121,10 @@ UserAction = TangoWebapp.UserAction = MVC.Model.extend('user_action',
                 .fail(this.failure.bind(this));
         },
         /**
+         * Fires user_action.log
+         *
+         * @fires user_action.log
+         *
          * @param {TangoAttribute} attr
          * @param {any} arg
          * @returns {webix.promise}
@@ -126,6 +149,9 @@ UserAction = TangoWebapp.UserAction = MVC.Model.extend('user_action',
 
         },
         /**
+         * Fires user_action.log
+         *
+         * @fires user_action.log
          * @param {TangoAttribute} attr
          */
         updateAttributeInfo:function(attr){
@@ -142,6 +168,9 @@ UserAction = TangoWebapp.UserAction = MVC.Model.extend('user_action',
                 .fail(this.failure.bind(this));
         },
         /**
+         * Fires user_action.log
+         *
+         * @fires user_action.log
          * @param {TangoCommand} cmd
          * @param {any} argin
          * @returns {webix.promise}
@@ -160,6 +189,10 @@ UserAction = TangoWebapp.UserAction = MVC.Model.extend('user_action',
                 .fail(this.failure.bind(this));
         },
         /**
+         * Fires user_action.log
+         *
+         * @fires user_action.log
+         *
          * @param {TangoPipe} pipe
          * @returns {webix.promise}
          */
@@ -177,6 +210,10 @@ UserAction = TangoWebapp.UserAction = MVC.Model.extend('user_action',
                 .fail(this.failure.bind(this));
         },
         /**
+         * Fires user_action.log
+         *
+         * @fires user_action.log
+         *
          * @param {TangoPipe} pipe
          * @param {any} data
          * @returns {webix.promise}
@@ -195,6 +232,10 @@ UserAction = TangoWebapp.UserAction = MVC.Model.extend('user_action',
                 .fail(this.failure.bind(this));
         },
         /**
+         * Fires user_action.log
+         *
+         * @fires user_action.log
+         *
          * @param {TangoDevice} device
          * @returns {webix.promise}
          */
@@ -212,6 +253,10 @@ UserAction = TangoWebapp.UserAction = MVC.Model.extend('user_action',
                 .fail(this.failure.bind(this));
         },
         /**
+         * Fires user_action.log
+         *
+         * @fires user_action.log
+         *
          * @param {TangoDevice} device
          * @param {prop:[]} props
          * @returns {webix.promise}
@@ -230,6 +275,10 @@ UserAction = TangoWebapp.UserAction = MVC.Model.extend('user_action',
                 .fail(this.failure.bind(this));
         },
         /**
+         * Fires user_action.log
+         *
+         * @fires user_action.log
+         *
          * @param {UserScript} script
          */
         executeUserScript:function(script){
@@ -248,6 +297,10 @@ UserAction = TangoWebapp.UserAction = MVC.Model.extend('user_action',
         //TODO open(load) tango device
         //TODO etc
         /**
+         * Fires user_action.log
+         *
+         * @fires user_action.log
+         *
          * @param {*} err
          */
         failure: function (err) {

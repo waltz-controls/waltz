@@ -60,6 +60,13 @@ TangoPipe = MVC.Model.extend('tango_pipe',
          */
         getDataFormat:function(){
             return 'PIPE';
+        },
+        /**
+         *
+         * @return {string}
+         */
+        getIcon:function(){
+            return 'fa-file-text-o';
         }
     }
 );
