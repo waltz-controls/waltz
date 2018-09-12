@@ -1,8 +1,10 @@
 /**
  *
+ * @class
+ * @memberof tango
  */
 TangoWebappPlatform.TangoFamily = MVC.Model.extend('tango_family',
-    /** @lends  TangoWebappPlatform.TangoFamily */
+    /** @lends  tango.TangoFamily */
     {
         attributes: {
             id: 'int',
@@ -15,7 +17,7 @@ TangoWebappPlatform.TangoFamily = MVC.Model.extend('tango_family',
 
 
     },
-    /** @lends  TangoWebappPlatform.TangoFamily.prototype */
+    /** @lends  tango.TangoFamily.prototype */
     {
         /**
          *

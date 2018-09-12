@@ -2,7 +2,7 @@
  * Model tango_remote_storage
  *
  * Extends {@link https://jmvc-15x.github.io/docs/classes/MVC.Class.html MVC.Class}
- * @namespace {TangoWebappPlatform}
+ * @class
  * @memberof TangoWebappPlatform
  */
 TangoRemoteStorage = MVC.Class.extend('tango_remote_storage',

@@ -2,6 +2,8 @@
  * Model tango_host
  *
  * Extends {@link https://jmvc-15x.github.io/docs/classes/MVC.Model.html MVC.Model}
+ * @class
+ * @memberof tango
  * @property {string} host
  * @property {number} port
  * @property {string} name
@@ -15,7 +17,7 @@
  * @extends MVC.Model
  */
 TangoWebappPlatform.TangoHost = MVC.Model.extend("tango_host",
-    /** @lends  TangoWebappPlatform.TangoHost */
+    /** @lends  tango.TangoHost */
     {
         attributes: {
             host: "string",
@@ -38,7 +40,7 @@ TangoWebappPlatform.TangoHost = MVC.Model.extend("tango_host",
             is_alive: false
         }
     },
-    /** @lends  TangoWebappPlatform.TangoHost.prototype */
+    /** @lends  tango.TangoHost.prototype */
     {
         /** @member {rest} */
         rest: null,

@@ -8,9 +8,10 @@
  * @property {string} code
  * @property {function} func
  * @extends MVC.Model
+ * @memberof TangoWebappPlatform
  */
 UserScript = TangoWebapp.UserScript = MVC.Model.extend('user_script',
-    /** @lends  UserScript */
+    /** @lends  TangoWebappPlatform.UserScript */
     {
         store_type: WebixDataCollectionStorage,
         id: 'name',
@@ -23,7 +24,7 @@ UserScript = TangoWebapp.UserScript = MVC.Model.extend('user_script',
             
         }
     },
-    /** @lends  UserScript.prototype */
+    /** @lends  TangoWebappPlatform.UserScript.prototype */
     {
         /**
          * @param {string} v

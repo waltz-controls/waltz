@@ -2,10 +2,11 @@
  * Model platform_api
  *
  * Extends {@link https://jmvc-15x.github.io/docs/classes/MVC.Model.html MVC.Model}
- * @namespace {TangoWebappPlatform}
+ * @class
  * @property {string} id
  * @property {UIBuilder} ui_builder
  * @property {PlatformContext} context
+ * @memberof TangoWebappPlatform
  */
 TangoWebappPlatform.PlatformApi = MVC.Model.extend('platform_api',
     /** @lends  TangoWebappPlatform.PlatformApi */

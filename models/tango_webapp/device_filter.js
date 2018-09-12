@@ -5,9 +5,10 @@
  * @property {string} user
  * @property {string[]} value
  * @extends MVC.Model
+ * @memberof TangoWebappPlatform
  */
 DeviceFilter = MVC.Model.extend('device_filter',
-    /** @lends  DeviceFilter */
+    /** @lends  TangoWebappPlatform.DeviceFilter */
     {
         store_type: TangoWebappStorage,
         id: "user",
@@ -19,7 +20,7 @@ DeviceFilter = MVC.Model.extend('device_filter',
             user: "default"
         }
     },
-    /** @lends  DeviceFilter.prototype */
+    /** @lends  TangoWebappPlatform.DeviceFilter.prototype */
     {
         /** @member {domain_filter} */
         domain_filter:[],

@@ -3,6 +3,10 @@
  */
 TangoWebappPlatform = {
     /**
+     * @namespace tango
+     */
+    tango:{},
+    /**
      * Use OpenAjax.hub to publish and subscribe to messages.
      *
      * @example <caption>Example of publish:</caption>

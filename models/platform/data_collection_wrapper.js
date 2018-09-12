@@ -2,7 +2,7 @@
  * Model data_collection_wrapper
  *
  * Extends {@link https://jmvc-15x.github.io/docs/classes/MVC.Model.html MVC.Model}
- * @namespace {TangoWebappPlatform}
+ * @class
  * @memberof TangoWebappPlatform
  */
 TangoWebappPlatform.DataCollectionWrapper = MVC.Model.extend(

@@ -1,8 +1,10 @@
 /**
  *
+ * @class
+ * @memberof tango
  */
 TangoWebappPlatform.TangoDomain = MVC.Model.extend('tango_domain',
-    /** @lends  TangoWebappPlatform.TangoDomain */
+    /** @lends  tango.TangoDomain */
     {
         attributes: {
             id: 'int',
@@ -14,7 +16,7 @@ TangoWebappPlatform.TangoDomain = MVC.Model.extend('tango_domain',
 
 
     },
-    /** @lends  TangoWebappPlatform.TangoDomain.prototype */
+    /** @lends  tango.TangoDomain.prototype */
     {
         /**
          *

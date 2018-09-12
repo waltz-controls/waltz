@@ -2,8 +2,8 @@
  * Model tango_command
  *
  * Extends {@link https://jmvc-15x.github.io/docs/classes/MVC.Model.html MVC.Model}
- * @namespace {TangoWebappPlatform}
- * @memberof TangoWebappPlatform
+ * @class
+ * @memberof tango
  * @property {string} id
  * @property {string} device_id
  * @property {string} name
@@ -13,7 +13,7 @@
  * @property {string} output
  */
 TangoCommand = MVC.Model.extend('tango_command',
-    /** @lends  TangoWebappPlatform.TangoCommand */
+    /** @lends  tango.TangoCommand */
     {
 
         attributes: {
@@ -28,7 +28,7 @@ TangoCommand = MVC.Model.extend('tango_command',
         },
         default_attributes: {}
     },
-    /** @lends  TangoWebappPlatform.TangoCommand.prototype */
+    /** @lends  tango.TangoCommand.prototype */
     {
         /**
          *

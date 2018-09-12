@@ -1,6 +1,6 @@
 /**
  *
- * @namespace
+ * @namespace mixins
  */
 TangoWebappPlatform.mixin = {
     /**
@@ -8,6 +8,8 @@ TangoWebappPlatform.mixin = {
      * Requires `on` property to be defined
      *
      * @type {webix.mixin}
+     * @property {function} on
+     * @memberof mixins
      */
     OpenAjaxListener: {
         _listener_controller: null,
@@ -20,6 +22,7 @@ TangoWebappPlatform.mixin = {
     /**
      *
      * @type {webix.mixin}
+     * @memberof mixins
      */
     TabActivator: {
         _is_active: false,
@@ -31,6 +34,7 @@ TangoWebappPlatform.mixin = {
     /**
      *
      * @type {webix.mixin}
+     * @memberof mixins
      */
     DeviceSetter: {
         device_setter: function (device) {
@@ -43,10 +47,14 @@ TangoWebappPlatform.mixin = {
      * Performs action defined in run function only if this component is visible
      *
      * @type {webix.mixin}
+     * @memberof mixins
      */
     Runnable: {
         _delay: 1000,
         _intervalId: 0,
+        /**
+         * @memberof mixins.Runnable
+         */
         start: function () {
             this._intervalId = setInterval(function () {
                 if (!this.$destructed && this.isVisible())
@@ -55,14 +63,25 @@ TangoWebappPlatform.mixin = {
             if(this.before_start !== undefined && typeof this.before_start === 'function')
                 this.before_start();
         },
+        /**
+         * @returns {boolean}
+         * @memberof mixins.Runnable
+         */
         isRunning:function(){
             return this._intervalId !== 0;
         },
+        /**
+         * @param {number} delay
+         * @memberof mixins.Runnable
+         */
         changeDelay: function (delay) {
             this._delay = delay;
             this.stop();
             this.start();
         },
+        /**
+         * @memberof mixins.Runnable
+         */
         stop: function () {
             clearInterval(this._intervalId);
             this._intervalId = 0;
@@ -73,6 +92,7 @@ TangoWebappPlatform.mixin = {
     /**
      *
      * @type {webix.mixin}
+     * @memberof mixins
      */
     Stateful: {
         state: null,

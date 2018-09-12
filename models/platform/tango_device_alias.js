@@ -1,8 +1,12 @@
 /**
- *
+ * @class
+ * @property {number} id
+ * @property {string} value
+ * @property {TangoDevice} device
+ * @memberof tango
  */
 TangoWebappPlatform.TangoDeviceAlias = MVC.Model.extend('tango_device_alias',
-    /** @lends  TangoWebappPlatform.TangoDeviceAlias */
+    /** @lends  tango.TangoDeviceAlias */
     {
         attributes: {
             id: 'int',
@@ -13,7 +17,7 @@ TangoWebappPlatform.TangoDeviceAlias = MVC.Model.extend('tango_device_alias',
 
 
     },
-    /** @lends  TangoWebappPlatform.TangoDeviceAlias.prototype */
+    /** @lends  tango.TangoDeviceAlias.prototype */
     {
         host: null,
         set_host:function(v){

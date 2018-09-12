@@ -4,15 +4,15 @@
      * Model tango_attribute
      *
      * Extends {@link https://jmvc-15x.github.io/docs/classes/MVC.Model.html MVC.Model}
-     * @namespace {TangoWebappPlatform}
-     * @memberof TangoWebappPlatform
+     * @class
+     * @memberof tango
      * @property {string} id - //host_id/device_id/name
      * @property {string} name
      * @property {string} device_id
      * @property {string} display_name
      */
     TangoAttribute = MVC.Model.extend('tango_attribute',
-        /** @lends  TangoWebappPlatform.TangoAttribute */
+        /** @lends  tango.TangoAttribute */
         {
 
             attributes: {
@@ -38,7 +38,7 @@
                 }
             }
         },
-        /** @lends  TangoWebappPlatform.TangoAttribute.prototype */
+        /** @lends  tango.TangoAttribute.prototype */
         {
             /**
              * @param attrs

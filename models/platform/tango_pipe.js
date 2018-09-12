@@ -2,14 +2,14 @@
  * Model tango_pipe
  *
  * Extends {@link https://jmvc-15x.github.io/docs/classes/MVC.Model.html MVC.Model}
- * @namespace {TangoWebappPlatform}
- * @memberof TangoWebappPlatform
+ * @class
+ * @memberof tango
  * @property {string} id
  * @property {string} name
  * @property {string} display_name
  */
 TangoPipe = MVC.Model.extend('tango_pipe',
-    /** @lends  TangoWebappPlatform.TangoPipe */
+    /** @lends  tango.TangoPipe */
     {
 
         attributes: {
@@ -19,7 +19,7 @@ TangoPipe = MVC.Model.extend('tango_pipe',
         },
         default_attributes: {}
     },
-    /** @lends  TangoWebappPlatform.TangoPipe.prototype */
+    /** @lends  tango.TangoPipe.prototype */
     {
         _get_device_id: function () {
             return this.id.substr(0, this.id.lastIndexOf('/'));

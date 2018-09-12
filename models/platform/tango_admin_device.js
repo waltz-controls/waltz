@@ -2,12 +2,12 @@
  * Model tango_admin_device
  *
  * Extends {@link https://jmvc-15x.github.io/docs/classes/MVC.Model.html MVC.Model}
- * @namespace {TangoWebappPlatform}
- * @memberof TangoWebappPlatform
+ * @class
+ * @memberof tango
  * @property {TangoDevice} device
  */
 TangoAdminDevice = MVC.Model.extend('tango_admin_device',
-    /** @lends  TangoWebappPlatform.TangoAdminDevice */
+    /** @lends  tango.TangoAdminDevice */
     {
 
         attributes: {
@@ -15,7 +15,7 @@ TangoAdminDevice = MVC.Model.extend('tango_admin_device',
         },
         default_attributes: {}
     },
-    /** @lends  TangoWebappPlatform.TangoAdminDevice.prototype */
+    /** @lends  tango.TangoAdminDevice.prototype */
     {
         /**
          * @param longStringValue

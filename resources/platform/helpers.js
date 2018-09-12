@@ -16,13 +16,14 @@
 
     /**
      *
-     * @type {{strToHash: TangoWebappPlatform.helpers.strToHash, iterate: TangoWebappPlatform.helpers.iterate, log: TangoWebappPlatform.helpers.log, error: TangoWebappPlatform.helpers.error, debug: TangoWebappPlatform.helpers.debug}}
+     * @namespace helpers
      */
     TangoWebappPlatform.helpers = {
         /**
          *
          * @param {string} str
          * @returns {number}
+         * @memberof helpers
          */
         strToHash: function (str) {
             var hash = 0, i, chr, len;
@@ -34,7 +35,17 @@
             }
             return hash;
         },
-
+        /**
+         * @callback iterateCallback
+         * @param  {webix.DataRecord} element
+         * @param  {string} id
+         */
+        /**
+         *
+         * @param {webix.DataCollection} collection
+         * @param {iterateCallback} f
+         * @memberof helpers
+         */
         iterate: function (collection, f) {
             var id = collection.getFirstId(),
                 last = collection.getLastId();
@@ -50,12 +61,17 @@
         /**
          *
          * @param msg
+         * @memberof helpers
          */
         log: function (msg) {
             console.log(msg);
             $$('main-log').log({type: '', value: msg, timestamp: +new Date()});
         },
-
+        /**
+         *
+         * @param msg
+         * @memberof helpers
+         */
         logWithPopup: function (msg) {
             TangoWebappHelpers.log(msg);
             webix.message(msg);
@@ -65,6 +81,7 @@
          *
          * @param msg
          * @param reason
+         * @memberof helpers
          */
         error: function (msg, reason) {
             console.error(msg);
@@ -83,6 +100,7 @@
         /**
          *
          * @param msg
+         * @memberof helpers
          */
         debug: function (msg) {
             if (MVC.env() === 'development' || MVC.env() === 'test') {
@@ -94,6 +112,7 @@
          *
          * @param attrs
          * @returns {TangoError}
+         * @memberof helpers
          */
         newTangoError: function(attrs){
             return new TangoError(attrs);

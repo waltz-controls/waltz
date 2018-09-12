@@ -16,9 +16,10 @@
  * @property {string} value
  * @property {number} timestamp
  * @extends MVC.Model
+ * @memberof TangoWebappPlatform
  */
 UserAction = TangoWebapp.UserAction = MVC.Model.extend('user_action',
-    /** @lends  UserAction */
+    /** @lends  TangoWebappPlatform.UserAction */
     {
         attributes: {
             id: 'number',
@@ -314,5 +315,5 @@ UserAction = TangoWebapp.UserAction = MVC.Model.extend('user_action',
             throw err;
         }
     },
-    /** @lends  UserAction.prototype */
+    /** @lends  TangoWebappPlatform.UserAction.prototype */
     {});
