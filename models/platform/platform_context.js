@@ -72,7 +72,7 @@ TangoWebappPlatform.PlatformContext = MVC.Model.extend('platform_context',
          * @memberof TangoWebappPlatform
          */
         /**
-         * Fires event to OpenAjax: platform_context.set_user_context
+         * Fires event to OpenAjax: {@link event:set_user_context}
          *
          * @fires platform_context.set_user_context
          * @param {UserContext} v
@@ -89,7 +89,7 @@ TangoWebappPlatform.PlatformContext = MVC.Model.extend('platform_context',
          * @memberof TangoWebappPlatform
          */
         /**
-         * Fires event to OpenAjax: platform_context.set_rest
+         * Fires event to OpenAjax: {@link event:set_rest}
          * @param {TangoRestApi} v - new rest api
          * @fires platform_context.set_rest
          */
@@ -135,7 +135,7 @@ TangoWebappPlatform.PlatformContext = MVC.Model.extend('platform_context',
         /**
          * Saves UserContext then destroys this instance
          *
-         * Fires event to OpenAjax: platform_context.destroy
+         * Fires event to OpenAjax: {@link event:destroy}
          *
          * @fires platform_context.destroy
          */

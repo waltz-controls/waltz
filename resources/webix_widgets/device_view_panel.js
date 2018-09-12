@@ -9,7 +9,18 @@
  * @memberof ui
  */
 (function(){
-    var device_panel_header = "<span class='webix_icon fa-microchip'></span> Device: ";
+    /**
+     * @constant
+     * @type {string}
+     * @memberof ui.DeviceViewPanel
+     */
+    var kDevicePanelHeader = "<span class='webix_icon fa-microchip'></span> Device: ";
+    /**
+     * @constant
+     * @type {string}
+     * @memberof ui.DeviceViewPanel
+     */
+    var kDeviceControlPanelHeader = "<span class='webix_icon fa-keyboard-o'></span> Control Panel";
 
     var device_info_values = [
         "name",
@@ -48,7 +59,7 @@
         this.parse(info);
 
         $$("device_tree").config.header = webix.template(function () {
-            return device_panel_header + device.display_name;
+            return kDevicePanelHeader + device.display_name;
         });
         $$("device_tree").refresh();
     };
@@ -117,9 +128,9 @@
                             }.bind(this));
                     },
                     /**
-                     * Fires "tango_webapp.item_selected"
+                     * Fires {@link event:item_selected}
                      *
-                     * @fires "tango_webapp.item_selected"
+                     * @fires item_selected
                      * @param {string} id
                      * @memberof ui.DeviceViewPanel.DeviceTreeList
                      */
@@ -127,8 +138,7 @@
                         /**
                          * @event tango_webapp.item_selected
                          * @type {OpenAjax}
-                         * @property {string} id
-                         * @property {string} kind
+                         * @property {{id:string,kind:string}} data
                          * @memberof ui
                          */
                         OpenAjax.hub.publish("tango_webapp.item_selected", {
@@ -896,7 +906,7 @@
      */
     TangoWebapp.ui.newDeviceInfoPanel = function(context){
         return {
-            header: device_panel_header,
+            header: kDevicePanelHeader,
             id: 'device_tree',
             body: {
                 context: context,
@@ -915,7 +925,7 @@
      */
     TangoWebapp.ui.newDeviceControlPanel = function (context) {
         return {
-            header: "<span class='webix_icon fa-keyboard-o'></span> Device Control Panel",
+            header: kDeviceControlPanelHeader,
             width: 300,
             id: 'device_control_panel_header',
             collapsed: true,

@@ -197,7 +197,9 @@
             resizeColumn: true,
             on: {
                 /**
+                 * Fires {@link event:item_selected}
                  *
+                 * @fires "tango_webapp.item_selected"
                  * @param id
                  * @memberof  ui.AttrsMonitorView.scalars
                  */
