@@ -108,9 +108,9 @@ UserAction = TangoWebapp.UserAction = MVC.Model.extend('user_action',
          */
         writeAttribute: function (attr, arg) {
             return attr.write(arg)
-                .then(function(attr){
-                    this._check_attr_invalid_quality_error(attr);
-                    this._check_attr_invalid_value_error(attr,arg);
+                .then(function(){
+                    // this._check_attr_invalid_quality_error(attr);
+                    // this._check_attr_invalid_value_error(attr,arg);
                     return attr;
                 }.bind(this))
                 .then(function (result) {

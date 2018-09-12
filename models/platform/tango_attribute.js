@@ -91,7 +91,8 @@
 
                 var values = {};
                 values[this.name] = value;
-                return device.putAttrValues(values).then(this._handle_resp.bind(this));
+                this.value = value;
+                return device.putAttrValues(values);
             },
             /**
              * @returns {*|webix.promise}

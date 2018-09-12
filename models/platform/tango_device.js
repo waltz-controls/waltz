@@ -339,7 +339,7 @@ TangoDevice = TangoWebappPlatform.TangoDevice = TangoWebappPlatform.DataCollecti
             for (var attr in values) {
                 if (values.hasOwnProperty(attr)) x.push(attr + '=' + values[attr]);
             }
-            return this.toTangoRestApiRequest().attributes('value').put('?' + x.join('&')/* + '&async=true'*/);
+            return this.toTangoRestApiRequest().attributes('value').put('?' + x.join('&') + '&async=true');
         },
         /**
          *
