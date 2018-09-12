@@ -85,6 +85,12 @@
     content: "\f1c0";
     font-family: FontAwesome;
 }
+
+.aliases > .webix_tree_folder_open:before, .aliases > .webix_tree_folder:before{
+    content: "\f08e";
+    font-family: FontAwesome;
+}
+
 .tango_host > .webix_tree_folder_open, .tango_host > .webix_tree_folder{
     background-image: none;
 }

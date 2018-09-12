@@ -68,7 +68,7 @@
                             return [];
                         })
                         .then(function (resp) {
-                            return [{value: 'aliases', _value: 'aliases', webix_kids: true, $css: 'domain'}]
+                            return [{value: 'aliases', _value: 'aliases', webix_kids: true, $css: 'aliases'}]
                                 .concat(resp.map(function (el) {
                                     return {
                                         value: el.value,
