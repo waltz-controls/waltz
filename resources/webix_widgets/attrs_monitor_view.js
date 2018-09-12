@@ -9,13 +9,13 @@
 
                 var attr = TangoAttribute.find_one(this.row);
 
-                if(attr.info.writable.indexOf('WRITE') != -1)
-                    attr.write(value)
+                if(attr.info.writable.indexOf('WRITE') !== -1)
+                    UserAction.writeAttribute(attr, value)
                         .then(function(){
                             debugger
                         })
-                        .fail(function(){
-                            debugger
+                        .fail(function(err){
+                            TangoWebappHelpers.error("Failed to write attribute", err);
                         });
 
                 return value;
