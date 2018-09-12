@@ -386,7 +386,6 @@
              */
             setCommand:function(command){
                 this.clearValidation();
-
                 this.command = command;
 
                 if (command.info.in_type !== 'DevVoid') {
@@ -397,6 +396,8 @@
                 } else {
                     this.elements.argin.define({validate: '', invalidMessage: 'Input argument can not be empty'});
                 }
+
+                this.$$('info').setValues(command.info);
             },
             /**
              * @constructs DevicePanelCommands
