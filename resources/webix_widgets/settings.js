@@ -78,8 +78,7 @@
             minWidth: 240,
             on: {
                 "platform_context.set_rest subscribe":function(event){
-                    var self = event.controller;
-                    self.$$('frm_tango_rest_url').elements['rest_url'].setValue(event.data.UserContext.rest_url);
+                    this.$$('frm_tango_rest_url').elements['rest_url'].setValue(event.data.UserContext.rest_url);
                 }
             }
         }
@@ -267,7 +266,7 @@
         defaults: {
             on: {
                 "user_context_controller.found subscribe": function (event) {
-                    event.controller.$$('value').setValue(event.data.device_filters.join('\n'))
+                    this.$$('value').setValue(event.data.device_filters.join('\n'))
                 }
             }
         }
@@ -462,11 +461,11 @@
             minWidth: 240,
             on: {
                 "platform_api.ui.initialized subscribe": function (event) {
-                    event.controller.$$('tango-host-info-value')
+                    this.$$('tango-host-info-value')
                         .bind(event.data.context.tango_hosts)
                 },
                 "platform_context.destroy subscribe": function (event) {
-                    event.controller.$$('tango-host-info-value').unbind()
+                    this.$$('tango-host-info-value').unbind()
                 }
             }
         }

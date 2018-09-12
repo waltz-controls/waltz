@@ -330,13 +330,13 @@
                     },
                     "user_context_controller.found subscribe": function (event) {
                         var user_context = event.data;
-                        event.controller.devices_filter = new DeviceFilter({
+                        this.devices_filter = new DeviceFilter({
                             user: user_context.user,
                             value: user_context.device_filters
                         });
                     },
                     "user_context_controller.add_tango_host subscribe": function (event) {
-                        event.controller.load(kDevicesTreeBackendURL + "?v=" + event.data + '&' +
+                        this.load(kDevicesTreeBackendURL + "?v=" + event.data + '&' +
                         PlatformContext.UserContext.device_filters.map(function (it) {
                             return "f=" + it;
                         }).join('&'))
@@ -347,16 +347,16 @@
                                     $css: 'tango_host',
                                     webix_kids: true
                                 }])
-                            }.bind(event.controller))
+                            }.bind(this))
                     },
                     "user_context_controller.delete_tango_host subscribe": function (event) {
-                        event.controller.remove(event.data);
+                        this.remove(event.data);
                     },
                     "platform_api.ui.initialized subscribe": function (event) {
-                        event.controller.updateRoot(event.data.context);
+                        this.updateRoot(event.data.context);
                     },
                     "platform_context.set_rest subscribe": function (event) {
-                        event.controller.updateRoot(event.data);
+                        this.updateRoot(event.data);
                     }
                 }
             }

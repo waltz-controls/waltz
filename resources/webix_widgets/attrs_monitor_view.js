@@ -553,9 +553,8 @@
             on:{
                 "tango_webapp.item_selected subscribe":function(event){
                     if(event.data.kind !== 'attrs') return;
-                    var self = event.controller;
-                    if(self.$$('scalars').exists(event.data.id) && self.$$('scalars').getSelectedId() !== event.data.id)
-                        self.$$('scalars').select(event.data.id);
+                    if(this.$$('scalars').exists(event.data.id) && this.$$('scalars').getSelectedId() !== event.data.id)
+                        this.$$('scalars').select(event.data.id);
                 }
             }
         }

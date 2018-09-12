@@ -6,6 +6,7 @@ new MVC.Test.Unit('tango_mixins', {
                 on: {
                     "test subscribe": function (data) {
                         self.assert_equal("Hi!", data.data);
+                        self.assert_equal(instance, this);
                     }
                 }
             }

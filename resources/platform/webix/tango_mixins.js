@@ -12,11 +12,16 @@ TangoWebappPlatform.mixin = {
      * @memberof mixins
      */
     OpenAjaxListener: {
+        _actions:[],
         _listener_controller: null,
         _listener_instance: null,
         $init: function (config) {
-            this._listener_controller = MVC.Controller.extend(config.id, this, this.defaults.on);
-            this._listener_instance = new this._listener_controller();
+            for(var subscription in this.defaults.on){
+                if(typeof this.defaults.on[subscription] === 'function'
+                    && MVC.Controller.Action.Subscribe.matches(subscription) !== null){
+                    this._actions.push(new MVC.Controller.Action.Subscribe(subscription,this.defaults.on[subscription].bind(this)))
+                }
+            }
         }
     },
     /**

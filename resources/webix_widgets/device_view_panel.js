@@ -877,9 +877,8 @@
                      * @inner
                      */
                     "tango_webapp.item_selected subscribe":function(event){
-                        var self = event.controller;
-                        self._update_header(event.data);
-                        var $$view = self.$$(event.data.kind);
+                        this._update_header(event.data);
+                        var $$view = this.$$(event.data.kind);
                         $$view.show(true);
 
                         switch (event.data.kind){

@@ -653,19 +653,18 @@
         defaults: {
             on: {
                 "tango_webapp.item_selected subscribe":function(event){
-                    var self = event.controller;
-                    self.$$(event.data.kind).show(true);
-                    var $$list = self.$$(event.data.kind).$$('list');
+                    this.$$(event.data.kind).show(true);
+                    var $$list = this.$$(event.data.kind).$$('list');
                     if($$list.getSelectedId() !== event.data.id)
                         $$list.select(event.data.id);
                 },
                 "platform_api.ui.initialized subscribe": function (event) {
                     TangoWebappHelpers.debug('test_device_panel.platform_context.create subscribe');
-                    event.controller.$$('device').bind(event.data.context.devices);
+                    this.$$('device').bind(event.data.context.devices);
                 },
                 "platform_context.destroy subscribe": function (event) {
                     TangoWebappHelpers.debug('test_device_panel.platform_context.destroy subscribe');
-                    event.controller.$$('device').unbind();
+                    this.$$('device').unbind();
                 }
             }
         }
