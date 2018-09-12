@@ -1,20 +1,14 @@
-/** @module DeviceControlPanel
- *  @memberof ui
+/**
+ *
+ * @deprecated DeviceViewPanel is used instead
+ * @module DeviceControlPanel
+ * @memberof ui
  */
 (function () {
-    /**
-     * @constant
-     * @memberof ui.DeviceControlPanel
-     */
     var attr_info_values = [
         'label','writable','data_format','data_type','max_dim_x','max_dim_y','unit','standard_unit',
         'display_unit','format','min_value','max_value'];
 
-    /**
-     * @constant
-     * @memberof ui.DeviceControlPanel
-     * @namespace attr_info_datatable
-     */
     var attr_info_datatable = {
         id: 'info',
         view: 'datatable',
@@ -24,11 +18,6 @@
             {id:'value', fillspace: true}
         ],
         on:{
-            /** Event listener
-             * @function
-             * @param attr
-             * @memberof ui.DeviceControlPanel.attr_info_datatable
-             */
             onBindApply:function(attr){
                 if(!attr) return false;
                 var info = [];
@@ -41,11 +30,7 @@
             }
         }
     };
-    /**
-     * @constant
-     * @memberof ui.DeviceControlPanel
-     * @namespace commands_info_datatable
-     */
+
     var commands_info_datatable = {
         view: 'form',
         id: 'info',
@@ -85,23 +70,13 @@
         }
         ],
         on:{
-            /** Event listener
-             * @function
-             * @param {TangoCommand} cmd
-             * @returns {boolean}
-             * @memberof  ui.DeviceControlPanel.commands_info_datatable
-             */
             onBindApply:function(cmd){
                 if(!cmd) return false;
                 this.setValues(cmd.info);
             }
         }
     };
-    /**
-     * @constant
-     * @memberof ui.DeviceControlPanel
-     * @namespace synchronizer
-     */
+
     var synchronizer = {
         _what: null,
         _command: null,
@@ -121,21 +96,12 @@
                 this.elements.name.setValue('');//drop currently selected item
             }
         },
-        /**
-         * @constructor
-         * @memberof ui.DeviceControlPanel.synchronizer
-         */
         $init: function (config) {
             this._what = config.id;
             this._command = 'fetch' + MVC.String.classize(this._what);
         }
     };
 
-    /**
-     * @function
-     * @memberof ui.DeviceControlPanel
-     * @return {Function}
-     */
     var importData = function($$list, data) {
             $$list.data.importData(data);
             $$list.sort("#display_name#","asc","string");
@@ -148,7 +114,6 @@
      * @property {String} name
      */
     var test_device_commands = webix.protoUI(
-        /** @lends  test_device_commands.prototype */
         {
         name: 'device_panel_commands',
         _execute_command: function () {
@@ -165,14 +130,6 @@
         _ui: function () {
             return {
                 elements: [
-                    filter,
-                    {
-                        view: 'list',
-                        id: 'list',
-                        select: true,
-                        gravity: 2,
-                        template: "#display_name#"
-                    },
                     {
                         view: 'text',
                         type: 'hidden',
@@ -235,7 +192,7 @@
                 }
             }
         }
-    }, synchronizer, webix.ProgressBar, webix.IdSpace, webix.ui.form);
+    }, webix.ProgressBar, webix.IdSpace, webix.ui.form);
     /**
      * @constant
      * @memberof ui.DeviceControlPanel
@@ -352,8 +309,6 @@
                 .fail(error_handler.bind(this));
         },
         _write: function () {
-            var attribute = this.$$('list').getSelectedItem();
-
             var v = this.elements.w_value.getValue();
 
             UserAction.writeAttribute(attribute, v)
@@ -398,21 +353,6 @@
         _ui: function () {
             return {
                 elements: [
-                    filter,
-                    {
-                        view: 'list',
-                        id: 'list',
-                        select: true,
-                        template: "#display_name#"
-                    },
-                    {
-                        view: 'text',
-                        type: 'hidden',
-                        height: 2,
-                        name: 'name',
-                        validate: webix.rules.isNotEmpty,
-                        invalidMessage: 'Attribute must be selected from the list'
-                    },
                     attr_info_datatable,
                     {
                         cols: [
@@ -523,7 +463,6 @@
      * @property {String} name
      */
     var test_device_pipes = webix.protoUI(
-        /** @lends  test_device_pipes.prototype */
         {
         name: 'device_panel_pipes',
         _read: function () {
@@ -555,13 +494,6 @@
         _ui: function () {
             return {
                 elements: [
-                    filter,
-                    {
-                        view: 'list',
-                        id: 'list',
-                        select: true,
-                        template: "#display_name#"
-                    },
                     {
                         view: 'text',
                         type: 'hidden',
@@ -654,9 +586,11 @@
      * @namespace device_control_panel
      */
     var device_control_panel = webix.protoUI(
-        /** @lends  device_control_panel.prototype */
         {
         name: 'device_control_panel',
+        /**
+         * @memberof ui.DeviceControlPanel.device_control_panel
+         */
         clearAll: function () {
             //TODO
             this.$$('commands').clearAll();
@@ -717,7 +651,6 @@
             }.bind(this));
         },
         defaults: {
-            disabled: true,
             on: {
                 "tango_webapp.item_selected subscribe":function(event){
                     var self = event.controller;

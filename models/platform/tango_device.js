@@ -393,6 +393,13 @@ TangoDevice = TangoWebappPlatform.TangoDevice = TangoWebappPlatform.DataCollecti
          */
         writePipe: function (name, obj) {
             return this.toTangoRestApiRequest().pipes(name).put("", obj);
+        },
+        /**
+         *
+         * @return {string}
+         */
+        getIcon:function(){
+            return 'fa-microchip';
         }
     }
     );

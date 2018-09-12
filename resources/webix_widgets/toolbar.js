@@ -2,54 +2,7 @@
  *  @memberof ui
  */
 (function(){
-    /**
-     * Extends {@link https://docs.webix.com/api__refs__ui.list.html webix.ui.list}
-     * @property {String} name
-     * @memberof ui.Toolbar
-     * @namespace logger
-     */
-    var logger = webix.protoUI(
-        /** @lends logger.prototype */
-        {
-        _view: null,
-        _limit: 125,
-        _getUI: function () {
-            var top = this;
-            return {
-                template: function (obj) {
-                    return top._view.render(obj);
-                }
-            }
-        },
-        name: "logger",
-        /**
-         * @constructor
-         * @memberof ui.Toolbar.logger
-         */
-        $init: function (config) {
-            webix.extend(config, this._getUI());
-            this._view = new View({url: this.defaults.ejs});
-        },
-            /**
-             * @param item
-             * @memberof ui.Toolbar.logger
-             */
-        log: function (item) {
-            if (item.type === 'error') item.$css = {"background-color": "lightcoral"};
-            item.adjusted = true;
-            var id = this.add(item);
-            this.moveTop(id);
-            while (this.data.count() > this._limit) {
-                this.remove(this.getLastId());
-            }
-        },
-        defaults: {
-            type: {
-                height: Infinity
-            },
-            ejs: 'views/main_log_item.ejs'
-        }
-    }, webix.IdSpace, webix.ui.list);
+
 
     /**
      * Extends {@link https://docs.webix.com/api__refs__ui.toolbar.html webix.ui.toolbar}
@@ -153,22 +106,6 @@
                     $$btnLog.getNode().getElementsByTagName("button")[0].firstChild.style.color = "#606060";
                 }
             },
-            _user_log_popup:webix.ui({
-                view: 'popup',
-                id: 'user-log-popup',
-                minHeight: 320,
-                height: 768,
-                minWidth: 320,
-                width: 1024,
-                body: {
-                    rows: [
-                        {
-                            view: 'logger',
-                            id: 'user-log'
-                        }
-                    ]
-                }
-            }),
             _log_popup: webix.ui({
                 view: 'popup',
                 id: 'log',
@@ -178,10 +115,7 @@
                 width: 480,
                 body: {
                     rows: [
-                        {
-                            view: 'logger',
-                            id: 'main-log'
-                        }
+                        TangoWebapp.ui.newLogger('main-log')
                     ]
                 },
                 on: {
@@ -201,17 +135,6 @@
                         data: {type: "", url: "", msg: ""}
                     },
                     //TODO rest api call result
-                    {
-                        view: "button",
-                        id: "btnUserLog",
-                        type: "icon",
-                        tooltip: "User actions log",
-                        //TODO add label
-                        icon: "commenting",
-                        width: 36,
-                        popup: 'user-log-popup',
-                        align: "right"
-                    },
                     {
                         view: "button",
                         id: "btnLog",

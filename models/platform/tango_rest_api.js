@@ -43,10 +43,11 @@ TangoWebappPlatform.TangoRestApi = MVC.Model.extend('tango_rest_api',
             return request;
         },
         /**
-         * Fires event to OpenAjax
+         * Fires event to OpenAjax: tango_webapp.tango_host_loaded
+         *
          * @param {string} host - host
          * @param {int} port - port
-         * @event {OpenAjax} tango_webapp.rest_api.fetch_host
+         * @fires tango_webapp.tango_host_loaded
          * @return {Promise}
          */
         fetchHost: function (host) {
@@ -72,9 +73,24 @@ TangoWebappPlatform.TangoRestApi = MVC.Model.extend('tango_rest_api',
                 }.bind(this));
         },
         /**
-         * Fires event to OpenAjax
-         * @event {OpenAjax} tango_rest_api.is_alive
-         * @event {OpenAjax} tango_rest_api.is_not_alive
+         *
+         * @event tango_rest_api.is_alive
+         * @type {OpenAjax}
+         * @property {TangoRestApi} data
+         * @memberof TangoWebappPlatform
+         */
+        /**
+         *
+         * @event tango_rest_api.is_not_alive
+         * @type {OpenAjax}
+         * @property {TangoRestApi} data
+         * @memberof TangoWebappPlatform
+         */
+        /**
+         * Fires event to OpenAjax: tango_rest_api.is_alive
+         * Fires event to OpenAjax: tango_rest_api.is_not_alive
+         * @fires tango_rest_api.is_alive
+         * @fires tango_rest_api.is_not_alive
          * @return {Promise}
          */
         isAlive: function () {
