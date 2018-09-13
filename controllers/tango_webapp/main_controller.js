@@ -87,7 +87,7 @@ TangoWebapp.MainController = MVC.Controller.extend('main', {
 
         return device.host.fetchDatabase()
         .then(function (db) {
-            return db.deleteDevice(event.data.name);
+            return db.deleteDevice(device.name);
         }).then(function () {
             $$('devices-tree').updateRoot();
         }).fail(TangoWebappHelpers.error);
