@@ -871,7 +871,7 @@
             defaults: {
                 on: {
                     /**
-                     * @listens "tango_webapp.item_selected"
+                     * @listens event:item_selected
                      * @function
                      * @memberof ui.DeviceViewPanel.DeviceControlPanel.prototype
                      * @inner
