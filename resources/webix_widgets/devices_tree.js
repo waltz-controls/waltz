@@ -22,6 +22,38 @@
             {id: 'delete', value: 'Delete'}
         ],
         on: {
+            /**
+             * @event tango_webapp.device_configure
+             * @property {{device:TangoDevice}} data
+             * @type {OpenAjax}
+             * @memberof ui
+             */
+            /**
+             * @event tango_webapp.device_monitor
+             * @property {{device:TangoDevice}} data
+             * @type {OpenAjax}
+             * @memberof ui
+             */
+            /**
+             * @event tango_webapp.device_delete
+             * @property {{device:TangoDevice}} data
+             * @type {OpenAjax}
+             * @memberof ui
+             */
+            /**
+             * Fires {@link #uieventtango_webappdevice_configure event:device_configure}
+             *
+             * Fires {@link #uieventtango_webappdevice_monitor event:device_monitor}
+             *
+             * Fires {@link #uieventtango_webappdevice_delete event:device_delete}
+             *
+             *
+             * @fires event:device_configure
+             * @fires event:device_monitor
+             * @fires event:device_delete
+             * @param id
+             * @memberof ui.DevicesTree.tree_context_menu
+             */
             onItemClick: function (id) {
                 var tree = this.config.master;
                 var item = tree.getItem(this.getContext().id);
