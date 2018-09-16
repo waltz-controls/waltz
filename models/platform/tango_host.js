@@ -84,16 +84,18 @@ TangoWebappPlatform.TangoHost = MVC.Model.extend("tango_host",
          */
         /**
          *
+         * Fetches device specified from this Tango host unless the device is already fetched and exported
+         *
          * Fires event to OpenAjax: tango_webapp.device_loaded
-         * @fires tango_webapp.device_loaded
+         * @fires event:device_loaded
          *
          * @param name
          * @return {Promise<TangoDevice>} device
          */
         fetchDevice: function (name) {
             var device;
-            if((device = TangoWebappPlatform.TangoDevice.find_one(this.id + "/" + name)) !== null) return webix.promise.resolve(device);
-            return this.fetchDatabase()
+            if((device = TangoWebappPlatform.TangoDevice.find_one(this.id + "/" + name)) !== null && device.info.exported) return webix.promise.resolve(device);
+            else return this.fetchDatabase()
                 .then(function (db) {
                     return webix.promise.all(
                         [
