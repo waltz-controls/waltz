@@ -396,7 +396,8 @@
 
     /**
      * Extends {@link https://docs.webix.com/api__refs__ui.layout.html webix.ui.layout}
-     * @property {String} name
+     * @property {filter} txtFilter
+     * @property {tree} devices-tree
      * @memberof ui.DevicesTree
      * @namespace devices_tree
      */
@@ -404,6 +405,17 @@
         /** @lends  devices_tree.prototype */
         {
             name: 'devices_tree',
+            /**
+             *
+             * @param {string} tango_host
+             * @private
+             */
+            _update_header:function(tango_host){
+                $$("devices_tree_panel").config.header = webix.template(function () {
+                    return kDevicesTreePanelHeaderIcon + " Tango host: " + tango_host;
+                });
+                $$("devices_tree_panel").refresh();
+            },
             _ui: function (config) {
                 return {
                     width: 300,
@@ -430,12 +442,49 @@
                 };
             },
             /**
+             * Required for {@link bind}
+             *
+             * @private
+             */
+            setValue:function(host){
+                if(!host) return;
+
+                this._update_header(host.id);
+            },
+            /**
              * @memberof ui.DevicesTree.devices_tree
-             * @constructor
+             * @constructs
              */
             $init: function (config) {
                 webix.extend(config, this._ui(config));
+                this.$ready.push(function(){
+                    this.bind(config.context.tango_hosts)
+                }.bind(this));
             }
         }, webix.ui.layout);
 
+
+    /**
+     * @constant
+     * @memberof ui.DevicesTree
+     * @type {string}
+     */
+    var kDevicesTreePanelHeaderIcon = "<span class='webix_icon fa-sitemap'></span>";
+
+    /**
+     *
+     * @param {PlatformContext} context
+     * @returns {devices_tree}
+     * @memberof ui.DevicesTree
+     */
+    TangoWebapp.ui.newDevicesTree = function(context){
+        return {
+            header: kDevicesTreePanelHeaderIcon + " Tango hosts",
+            id: "devices_tree_panel",
+            body: {
+                context: context,
+                view: 'devices_tree'
+            }
+        }
+    }
 })();

@@ -5,6 +5,9 @@
  * @class
  * @property {string} id
  * @property {UserContext} UserContext
+ * @property {TangoRestApi} rest
+ * @property {webix.DataCollection} tango_hosts
+ * @property {webix.DataCollection} devices
  * @memberof TangoWebappPlatform
  */
 TangoWebappPlatform.PlatformContext = MVC.Model.extend('platform_context',
@@ -18,8 +21,16 @@ TangoWebappPlatform.PlatformContext = MVC.Model.extend('platform_context',
             id: 'singleton'
         },
         /**
+         * @event platform_context.create
+         * @type {OpenAjax}
+         * @property {PlatformContext} data
+         * @memberof TangoWebappPlatform
+         */
+        /**
+         * Fires OpenAjax event {@link event:create}
+         *
          * @param {Object} attrs - must have rest:TangoRestApi and user_context:UserContext
-         * @fires platform_context.create
+         * @fires event:create
          */
         create: function (attrs) {
             //TODO make this return value

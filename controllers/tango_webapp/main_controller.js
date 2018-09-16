@@ -15,13 +15,7 @@ TangoWebapp.MainController = MVC.Controller.extend('main', {
 
         ui_builder.set_top_toolbar(TangoWebapp.ui.newTopToolbar());
 
-        ui_builder.add_left_sidebar_item({
-            header: "<span class='webix_icon fa-sitemap'></span> Devices",
-            body: {
-                context: platform_api.context,
-                view: 'devices_tree'
-            }
-        });
+        ui_builder.add_left_sidebar_item(TangoWebapp.ui.newDevicesTree(platform_api.context));
 
         ui_builder.add_left_sidebar_item(TangoWebapp.ui.newDeviceInfoPanel(platform_api.context));
 

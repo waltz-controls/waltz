@@ -141,6 +141,12 @@
                       <li class='h5'>Events</li>
                       
                         <li><a
+                          href='#tangowebappplatformeventplatform_contextcreate'
+                          class='regular pre-open'>
+                          ⓔ platform_context.create
+                        </a></li>
+                      
+                        <li><a
                           href='#tangowebappplatformeventplatform_contextset_user_context'
                           class='regular pre-open'>
                           ⓔ platform_context.set_user_context
@@ -165,21 +171,15 @@
                         </a></li>
                       
                         <li><a
-                          href='#tangowebappplatformeventtango_webapptango_host_loaded'
-                          class='regular pre-open'>
-                          ⓔ tango_webapp.tango_host_loaded
-                        </a></li>
-                      
-                        <li><a
                           href='#tangowebappplatformeventtango_webappdatabase_loaded'
                           class='regular pre-open'>
                           ⓔ tango_webapp.database_loaded
                         </a></li>
                       
                         <li><a
-                          href='#tangowebappplatformeventtango_webapprest_success'
+                          href='#tangowebappplatformeventtango_webapptango_host_loaded'
                           class='regular pre-open'>
-                          ⓔ tango_webapp.rest_success
+                          ⓔ tango_webapp.tango_host_loaded
                         </a></li>
                       
                         <li><a
@@ -189,15 +189,21 @@
                         </a></li>
                       
                         <li><a
-                          href='#tangowebappplatformeventtango_rest_apiis_not_alive'
+                          href='#tangowebappplatformeventtango_webapprest_success'
                           class='regular pre-open'>
-                          ⓔ tango_rest_api.is_not_alive
+                          ⓔ tango_webapp.rest_success
                         </a></li>
                       
                         <li><a
                           href='#tangowebappplatformeventtango_rest_apiis_alive'
                           class='regular pre-open'>
                           ⓔ tango_rest_api.is_alive
+                        </a></li>
+                      
+                        <li><a
+                          href='#tangowebappplatformeventtango_rest_apiis_not_alive'
+                          class='regular pre-open'>
+                          ⓔ tango_rest_api.is_not_alive
                         </a></li>
                       
                         <li><a
@@ -482,12 +488,6 @@
                         </a></li>
                       
                         <li><a
-                          href='#uieventtango_webappdevice_delete'
-                          class='regular pre-open'>
-                          ⓔ tango_webapp.device_delete
-                        </a></li>
-                      
-                        <li><a
                           href='#uieventtango_webappdevice_configure'
                           class='regular pre-open'>
                           ⓔ tango_webapp.device_configure
@@ -497,6 +497,12 @@
                           href='#uieventtango_webappdevice_monitor'
                           class='regular pre-open'>
                           ⓔ tango_webapp.device_monitor
+                        </a></li>
+                      
+                        <li><a
+                          href='#uieventtango_webappdevice_delete'
+                          class='regular pre-open'>
+                          ⓔ tango_webapp.device_delete
                         </a></li>
                       
                     </ul>
@@ -1286,6 +1292,24 @@
           
         </div>
       
+        <div class='space-bottom0'>
+          <span class='code bold'>rest</span> <code class='quiet'>(TangoRestApi)</code>
+          
+          
+        </div>
+      
+        <div class='space-bottom0'>
+          <span class='code bold'>tango_hosts</span> <code class='quiet'>(webix.DataCollection)</code>
+          
+          
+        </div>
+      
+        <div class='space-bottom0'>
+          <span class='code bold'>devices</span> <code class='quiet'>(webix.DataCollection)</code>
+          
+          
+        </div>
+      
     </div>
   
 
@@ -1311,7 +1335,8 @@
 
   
 
-  
+  <p>Fires OpenAjax event <a href="event:create">event:create</a></p>
+
  
   
     <div class='pre p1 fill-light mt0'>create(attrs: <a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Object">Object</a>)</div>
@@ -9110,6 +9135,69 @@ Sets this.Class.current to null</p>
     <div class='py1 quiet mt1 prose-big'>Events</div>
     <div class="clearfix">
   
+    <div class='border-bottom' id='tangowebappplatformeventplatform_contextcreate'>
+      <div class="clearfix small pointer toggle-sibling">
+        <div class="py1 contain">
+            <a class='icon pin-right py1 dark-link caret-right'>▸</a>
+            <span class='code strong strong truncate'>platform_context.create</span>
+        </div>
+      </div>
+      <div class="clearfix display-none toggle-target">
+        <section class='p2 mb2 clearfix bg-white minishadow'>
+
+  
+
+  
+ 
+  
+    <div class='pre p1 fill-light mt0'>platform_context.create</div>
+   
+  
+    <p>
+      Type:
+      <a href="#openajax">OpenAjax</a>
+    </p>
+  
+  
+
+  
+  
+  
+  
+  
+  
+
+  
+
+  
+    <div class='py1 quiet mt1 prose-big'>Properties</div>
+    <div>
+      
+        <div class='space-bottom0'>
+          <span class='code bold'>data</span> <code class='quiet'>(PlatformContext)</code>
+          
+          
+        </div>
+      
+    </div>
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+</section>
+
+      </div>
+    </div>
+  
     <div class='border-bottom' id='tangowebappplatformeventplatform_contextset_user_context'>
       <div class="clearfix small pointer toggle-sibling">
         <div class="py1 contain">
@@ -9362,69 +9450,6 @@ Sets this.Class.current to null</p>
       </div>
     </div>
   
-    <div class='border-bottom' id='tangowebappplatformeventtango_webapptango_host_loaded'>
-      <div class="clearfix small pointer toggle-sibling">
-        <div class="py1 contain">
-            <a class='icon pin-right py1 dark-link caret-right'>▸</a>
-            <span class='code strong strong truncate'>tango_webapp.tango_host_loaded</span>
-        </div>
-      </div>
-      <div class="clearfix display-none toggle-target">
-        <section class='p2 mb2 clearfix bg-white minishadow'>
-
-  
-
-  
- 
-  
-    <div class='pre p1 fill-light mt0'>tango_webapp.tango_host_loaded</div>
-   
-  
-    <p>
-      Type:
-      <a href="#openajax">OpenAjax</a>
-    </p>
-  
-  
-
-  
-  
-  
-  
-  
-  
-
-  
-
-  
-    <div class='py1 quiet mt1 prose-big'>Properties</div>
-    <div>
-      
-        <div class='space-bottom0'>
-          <span class='code bold'>data</span> <code class='quiet'>(TangoHost)</code>
-          
-          
-        </div>
-      
-    </div>
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-</section>
-
-      </div>
-    </div>
-  
     <div class='border-bottom' id='tangowebappplatformeventtango_webappdatabase_loaded'>
       <div class="clearfix small pointer toggle-sibling">
         <div class="py1 contain">
@@ -9488,11 +9513,11 @@ Sets this.Class.current to null</p>
       </div>
     </div>
   
-    <div class='border-bottom' id='tangowebappplatformeventtango_webapprest_success'>
+    <div class='border-bottom' id='tangowebappplatformeventtango_webapptango_host_loaded'>
       <div class="clearfix small pointer toggle-sibling">
         <div class="py1 contain">
             <a class='icon pin-right py1 dark-link caret-right'>▸</a>
-            <span class='code strong strong truncate'>tango_webapp.rest_success</span>
+            <span class='code strong strong truncate'>tango_webapp.tango_host_loaded</span>
         </div>
       </div>
       <div class="clearfix display-none toggle-target">
@@ -9503,7 +9528,7 @@ Sets this.Class.current to null</p>
   
  
   
-    <div class='pre p1 fill-light mt0'>tango_webapp.rest_success</div>
+    <div class='pre p1 fill-light mt0'>tango_webapp.tango_host_loaded</div>
    
   
     <p>
@@ -9527,7 +9552,7 @@ Sets this.Class.current to null</p>
     <div>
       
         <div class='space-bottom0'>
-          <span class='code bold'>data</span> <code class='quiet'>(TangoRestApiRequest)</code>
+          <span class='code bold'>data</span> <code class='quiet'>(TangoHost)</code>
           
           
         </div>
@@ -9614,11 +9639,11 @@ Sets this.Class.current to null</p>
       </div>
     </div>
   
-    <div class='border-bottom' id='tangowebappplatformeventtango_rest_apiis_not_alive'>
+    <div class='border-bottom' id='tangowebappplatformeventtango_webapprest_success'>
       <div class="clearfix small pointer toggle-sibling">
         <div class="py1 contain">
             <a class='icon pin-right py1 dark-link caret-right'>▸</a>
-            <span class='code strong strong truncate'>tango_rest_api.is_not_alive</span>
+            <span class='code strong strong truncate'>tango_webapp.rest_success</span>
         </div>
       </div>
       <div class="clearfix display-none toggle-target">
@@ -9629,7 +9654,70 @@ Sets this.Class.current to null</p>
   
  
   
-    <div class='pre p1 fill-light mt0'>tango_rest_api.is_not_alive</div>
+    <div class='pre p1 fill-light mt0'>tango_webapp.rest_success</div>
+   
+  
+    <p>
+      Type:
+      <a href="#openajax">OpenAjax</a>
+    </p>
+  
+  
+
+  
+  
+  
+  
+  
+  
+
+  
+
+  
+    <div class='py1 quiet mt1 prose-big'>Properties</div>
+    <div>
+      
+        <div class='space-bottom0'>
+          <span class='code bold'>data</span> <code class='quiet'>(TangoRestApiRequest)</code>
+          
+          
+        </div>
+      
+    </div>
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+</section>
+
+      </div>
+    </div>
+  
+    <div class='border-bottom' id='tangowebappplatformeventtango_rest_apiis_alive'>
+      <div class="clearfix small pointer toggle-sibling">
+        <div class="py1 contain">
+            <a class='icon pin-right py1 dark-link caret-right'>▸</a>
+            <span class='code strong strong truncate'>tango_rest_api.is_alive</span>
+        </div>
+      </div>
+      <div class="clearfix display-none toggle-target">
+        <section class='p2 mb2 clearfix bg-white minishadow'>
+
+  
+
+  
+ 
+  
+    <div class='pre p1 fill-light mt0'>tango_rest_api.is_alive</div>
    
   
     <p>
@@ -9677,11 +9765,11 @@ Sets this.Class.current to null</p>
       </div>
     </div>
   
-    <div class='border-bottom' id='tangowebappplatformeventtango_rest_apiis_alive'>
+    <div class='border-bottom' id='tangowebappplatformeventtango_rest_apiis_not_alive'>
       <div class="clearfix small pointer toggle-sibling">
         <div class="py1 contain">
             <a class='icon pin-right py1 dark-link caret-right'>▸</a>
-            <span class='code strong strong truncate'>tango_rest_api.is_alive</span>
+            <span class='code strong strong truncate'>tango_rest_api.is_not_alive</span>
         </div>
       </div>
       <div class="clearfix display-none toggle-target">
@@ -9692,7 +9780,7 @@ Sets this.Class.current to null</p>
   
  
   
-    <div class='pre p1 fill-light mt0'>tango_rest_api.is_alive</div>
+    <div class='pre p1 fill-light mt0'>tango_rest_api.is_not_alive</div>
    
   
     <p>
@@ -24985,7 +25073,13 @@ Sets this.Class.current to null</p>
     <div>
       
         <div class='space-bottom0'>
-          <span class='code bold'>name</span> <code class='quiet'>(<a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String">String</a>)</code>
+          <span class='code bold'>txtFilter</span> <code class='quiet'>(filter)</code>
+          
+          
+        </div>
+      
+        <div class='space-bottom0'>
+          <span class='code bold'>devices-tree</span> <code class='quiet'>(tree)</code>
           
           
         </div>
@@ -25007,7 +25101,7 @@ Sets this.Class.current to null</p>
       <div class="clearfix small pointer toggle-sibling">
         <div class="py1 contain">
             <a class='icon pin-right py1 dark-link caret-right'>▸</a>
-            <span class='code strong strong truncate'>new $init(config)</span>
+            <span class='code strong strong truncate'>$init(config)</span>
         </div>
       </div>
       <div class="clearfix display-none toggle-target">
@@ -25018,7 +25112,7 @@ Sets this.Class.current to null</p>
   
  
   
-    <div class='pre p1 fill-light mt0'>new $init(config: any)</div>
+    <div class='pre p1 fill-light mt0'>$init(config: any)</div>
    
   
   
@@ -25064,6 +25158,126 @@ Sets this.Class.current to null</p>
     </div>
   
 </div>
+
+  
+
+  
+
+  
+</section>
+
+      </div>
+    </div>
+  
+    <div class='border-bottom' id='uidevicestreekdevicestreepanelheadericon'>
+      <div class="clearfix small pointer toggle-sibling">
+        <div class="py1 contain">
+            <a class='icon pin-right py1 dark-link caret-right'>▸</a>
+            <span class='code strong strong truncate'>kDevicesTreePanelHeaderIcon</span>
+        </div>
+      </div>
+      <div class="clearfix display-none toggle-target">
+        <section class='p2 mb2 clearfix bg-white minishadow'>
+
+  
+
+  
+ 
+  
+    <div class='pre p1 fill-light mt0'>kDevicesTreePanelHeaderIcon</div>
+   
+  
+    <p>
+      Type:
+      <a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String">string</a>
+    </p>
+  
+  
+
+  
+  
+  
+  
+  
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+</section>
+
+      </div>
+    </div>
+  
+    <div class='border-bottom' id='uidevicestreenewdevicestree'>
+      <div class="clearfix small pointer toggle-sibling">
+        <div class="py1 contain">
+            <a class='icon pin-right py1 dark-link caret-right'>▸</a>
+            <span class='code strong strong truncate'>newDevicesTree(context)</span>
+        </div>
+      </div>
+      <div class="clearfix display-none toggle-target">
+        <section class='p2 mb2 clearfix bg-white minishadow'>
+
+  
+
+  
+ 
+  
+    <div class='pre p1 fill-light mt0'>newDevicesTree(context: PlatformContext): devices_tree</div>
+   
+  
+  
+
+  
+  
+  
+  
+  
+  
+
+  
+    <div class='py1 quiet mt1 prose-big'>Parameters</div>
+    <div class='prose'>
+      
+        <div class='space-bottom0'>
+          <div>
+            <span class='code bold'>context</span> <code class='quiet'>(PlatformContext)</code>
+	    
+          </div>
+          
+        </div>
+      
+    </div>
+  
+
+  
+
+  
+    
+      <div class='py1 quiet mt1 prose-big'>Returns</div>
+      <code>devices_tree</code>:
+        
+
+      
+    
+  
+
+  
+
+  
 
   
 
@@ -29745,69 +29959,6 @@ Sets this.Class.current to null</p>
       </div>
     </div>
   
-    <div class='border-bottom' id='uieventtango_webappdevice_delete'>
-      <div class="clearfix small pointer toggle-sibling">
-        <div class="py1 contain">
-            <a class='icon pin-right py1 dark-link caret-right'>▸</a>
-            <span class='code strong strong truncate'>tango_webapp.device_delete</span>
-        </div>
-      </div>
-      <div class="clearfix display-none toggle-target">
-        <section class='p2 mb2 clearfix bg-white minishadow'>
-
-  
-
-  
- 
-  
-    <div class='pre p1 fill-light mt0'>tango_webapp.device_delete</div>
-   
-  
-    <p>
-      Type:
-      <a href="#openajax">OpenAjax</a>
-    </p>
-  
-  
-
-  
-  
-  
-  
-  
-  
-
-  
-
-  
-    <div class='py1 quiet mt1 prose-big'>Properties</div>
-    <div>
-      
-        <div class='space-bottom0'>
-          <span class='code bold'>data</span> <code class='quiet'>({device: TangoDevice})</code>
-          
-          
-        </div>
-      
-    </div>
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-</section>
-
-      </div>
-    </div>
-  
     <div class='border-bottom' id='uieventtango_webappdevice_configure'>
       <div class="clearfix small pointer toggle-sibling">
         <div class="py1 contain">
@@ -29887,6 +30038,69 @@ Sets this.Class.current to null</p>
  
   
     <div class='pre p1 fill-light mt0'>tango_webapp.device_monitor</div>
+   
+  
+    <p>
+      Type:
+      <a href="#openajax">OpenAjax</a>
+    </p>
+  
+  
+
+  
+  
+  
+  
+  
+  
+
+  
+
+  
+    <div class='py1 quiet mt1 prose-big'>Properties</div>
+    <div>
+      
+        <div class='space-bottom0'>
+          <span class='code bold'>data</span> <code class='quiet'>({device: TangoDevice})</code>
+          
+          
+        </div>
+      
+    </div>
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+</section>
+
+      </div>
+    </div>
+  
+    <div class='border-bottom' id='uieventtango_webappdevice_delete'>
+      <div class="clearfix small pointer toggle-sibling">
+        <div class="py1 contain">
+            <a class='icon pin-right py1 dark-link caret-right'>▸</a>
+            <span class='code strong strong truncate'>tango_webapp.device_delete</span>
+        </div>
+      </div>
+      <div class="clearfix display-none toggle-target">
+        <section class='p2 mb2 clearfix bg-white minishadow'>
+
+  
+
+  
+ 
+  
+    <div class='pre p1 fill-light mt0'>tango_webapp.device_delete</div>
    
   
     <p>
