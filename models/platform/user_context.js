@@ -15,7 +15,6 @@
 TangoWebappPlatform.UserContext = MVC.Model.extend('user_context',
     /** @lends  TangoWebappPlatform.UserContext */
     {
-        store_type: TangoRemoteStorage,
         id: "user",
         attributes: {
             user: 'string',

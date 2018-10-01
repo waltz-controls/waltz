@@ -1,8 +1,8 @@
-REST_API_PROTOCOL = "http";
-REST_API_HOST = "localhost";
-REST_API_PORT = 10001;
+REST_API_PROTOCOL = "https";
+REST_API_HOST = "mstatus.esrf.fr";
+REST_API_PORT = "";
 REST_API_VERSION = "rc4";
-TANGO_HOST = "localhost";
+TANGO_HOST = "tangorest02.esrf.fr";
 TANGO_PORT = 10000;
-VERSION = "development";
+VERSION = "esrf-demo";
 USER_CONTEXT_URL = MVC.mvc_root + "/../apps/platform/user_context.jsp";
