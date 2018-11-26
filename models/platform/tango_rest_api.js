@@ -9,7 +9,7 @@
 TangoWebappPlatform.TangoRestApi = MVC.Model.extend('tango_rest_api',
     /** @lends  TangoWebappPlatform.TangoRestApi */
     {
-        _api_version: 'rc4',
+        _api_version: TangoWebappPlatform.consts.REST_API_VERSION,
         id: "url",
         attributes: {
             url: 'string'

@@ -368,7 +368,7 @@ TangoDevice = TangoWebappPlatform.TangoDevice = TangoWebappPlatform.DataCollecti
          * @returns {*|webix.promise}
          */
         deleteProperty: function (name) {
-            return this.toTangoRestApiRequest().properties().delete('/' + name);
+            return this.toTangoRestApiRequest().properties().delete(name);
         },
         /**
          *

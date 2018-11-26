@@ -6,7 +6,7 @@
      * @constant
      * @memberof ui.DevicesTree
      */
-    var kDevicesTreeBackendURL = "/devices-tree/get";
+    var kDevicesTreeBackendURL = "/tango/rest/rc4/devices/tree";
 
     /**
      * @constant
@@ -208,12 +208,12 @@
                 var context = context || PlatformContext;
                 this.clearAll();
 
-                this.load(kDevicesTreeBackendURL + "?" +
+                this.load(PlatformContext.rest.url + kDevicesTreeBackendURL + "?" +
                 context.UserContext.getTangoHosts().map(function (it) {
-                    return "v=" + it;
+                    return "host=" + it;
                 }).concat(
                     context.UserContext.device_filters.map(function (it) {
-                        return "f=" + it;
+                        return "wildcard=" + it;
                     })).join('&'))
                     .fail(function () {
                         this.parse(this._get_data(context));
@@ -368,9 +368,9 @@
                         });
                     },
                     "user_context_controller.add_tango_host subscribe": function (event) {
-                        this.load(kDevicesTreeBackendURL + "?v=" + event.data + '&' +
+                        this.load(PlatformContext.rest.url + kDevicesTreeBackendURL + "?host=" + event.data + '&' +
                         PlatformContext.UserContext.device_filters.map(function (it) {
-                            return "f=" + it;
+                            return "wildcard=" + it;
                         }).join('&'))
                             .fail(function () {
                                 this.parse([{
