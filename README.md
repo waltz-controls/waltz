@@ -27,6 +27,12 @@ This project is an attempt to implement Tango Controls Roadmap Feature Request #
 [![Vulnerabilities](https://sonarcloud.io/api/project_badges/measure?project=org.tango-controls%3ATangoWebapp&metric=vulnerabilities)](https://sonarcloud.io/dashboard?id=org.tango-controls%3ATangoWebapp)
 [![Code smells](https://sonarcloud.io/api/project_badges/measure?project=org.tango-controls%3ATangoWebapp&metric=code_smells)](https://sonarcloud.io/dashboard?id=org.tango-controls%3ATangoWebapp)
 
+# Documentation
+
+[WaltzPlatform API reference](https://tango-controls.github.io/waltz/)
+
+[Waltz docs](https://waltz-docs.readthedocs.io/en/latest/?badge=latest)
+
 
 ## Live demo
 
@@ -67,11 +73,7 @@ $> REST_API_PROTOCOL=[http|https] REST_API_HOST=[localhost] REST_API_PORT=[10001
 
 This requires jjs to be in the $PATH (is shipped with OpenJDK8 and later)
 
-## Documentation
 
-[WaltzPlatform API reference](https://tango-controls.github.io/waltz/)
-
-[Waltz docs](https://waltz-docs.readthedocs.io/en/latest/?badge=latest)
 
 
 ## Resources
