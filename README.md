@@ -46,8 +46,8 @@ Pass: tango
 ## Requirements ##
 
 * Tango Controls environment (tested on Tango 8 and Tango 9)
-* Tango REST Server that supports API spec version rc4 (tested on [mtangorest.server-rc4-2.4](https://bintray.com/ingvord/generic/mtangorest.server/rc4-2.4))
-* Web server that can handle .war files (tested on Apache Tomcat 8)
+* Tango REST Server that supports API spec version rc4 (tested on [rest-server-1.6](https://github.com/tango-controls/rest-server/releases/tag/rest-server-1.6))
+* Web server that can handle .war files (tested on Apache Tomcat 8&9)
 
 ## Getting started ##
 
