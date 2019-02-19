@@ -29,10 +29,21 @@ This project is an attempt to implement Tango Controls Roadmap Feature Request #
 
 # Documentation
 
+[Waltz User/Developer guides](https://waltz-docs.readthedocs.io/en/latest/?badge=latest)
+
 [WaltzPlatform API reference](https://tango-controls.github.io/waltz/)
 
-[Waltz docs](https://waltz-docs.readthedocs.io/en/latest/?badge=latest)
+## Other useful resources
 
+### Videos
+
+[1] [UI and features presentation](https://vimeo.com/268669625)
+
+[2] [Tech stack presentation: TangoWebapp + Tango REST + Tango Controls](https://rutube.ru/video/00d518e2aa8958b891430fbdf24f270a/)
+
+### Slides
+
+[1] [TangoWebapp Insights, 32 Tango Users meeting, 2018](https://www.slideshare.net/IgorKhokhryakov/tangowebapp-insights)
 
 ## Live demo
 
@@ -72,21 +83,6 @@ $> REST_API_PROTOCOL=[http|https] REST_API_HOST=[localhost] REST_API_PORT=[10001
 ```
 
 This requires jjs to be in the $PATH (is shipped with OpenJDK8 and later)
-
-
-
-
-## Resources
-
-### Videos
-
-[1] [UI and features presentation](https://vimeo.com/268669625)
-
-[2] [Tech stack presentation: TangoWebapp + Tango REST + Tango Controls](https://rutube.ru/video/00d518e2aa8958b891430fbdf24f270a/)
-
-### Slides
-
-[1] [TangoWebapp Insights, 32 Tango Users meeting, 2018](https://www.slideshare.net/IgorKhokhryakov/tangowebapp-insights)
 
 ## Implementation details
 
