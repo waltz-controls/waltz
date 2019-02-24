@@ -39,69 +39,62 @@
         </copy>
     </target>
 
-    <target name="compress-javascript" depends="-copy-constants">
-        <echo>Compressing javascript...</echo>
-        <exec executable="${basedir}/jmvcc" failonerror="true" failifexecutionfails="true" osfamily="unix">
-            <arg line="apps/${application.name}/compress.js"/>
-        </exec>
-        <antcall target="-post-compress-javascript"/>
-    </target>
-
-    <target name="-post-compress-javascript">
-        <fail message="production.js was not found. Task 'compress-javascript' has failed.">
-            <condition>
-                <not>
-                    <available file="production.js" filepath="apps/${application.name}"/>
-                </not>
-            </condition>
-        </fail>
-    </target>
-
-    <target name="compress-and-move" depends="compress-javascript">
-        <antcall target="-move-app-productionjs"/>
-    </target>
-
-    <!--TODO -->
-    <target name="compress-css">
-        <!--<echo>Compressing css...</echo>-->
-        <!--<echo>Executing: java -jar exec/yuicompressor-2.4.7.jar - -type css -o '.css$:.min.css'-->
-        <!--${src}/stylesheets/*.css-->
-        <!--</echo>-->
-        <!--<exec dir="${root}" executable="cmd" failonerror="true" failifexecutionfails="true">-->
-        <!--<arg line="/c"/>-->
-        <!--<arg line="java"/>-->
-        <!--<arg line="-jar"/>-->
-        <!--<arg line="exec/yuicompressor-2.4.7.jar"/>-->
-        <!--<arg line="- -type"/>-->
-        <!--<arg line="css"/>-->
-        <!--<arg line="-o"/>-->
-        <!--<arg line="'.css$:.min.css'"/>-->
-        <!--<arg line="${src}/stylesheets/*.css"/>-->
-        <!--</exec>-->
-    </target>
-
-
     <target name="-copy-jmvc-core">
         <copy todir="${build.dir}/jmvc" overwrite="true">
             <fileset dir="jmvc">
                 <include name="include.js"/>
             </fileset>
         </copy>
-    </target>
-
-    <target name="-move-app-productionjs">
-        <move todir="${build.dir}/apps/${application.name}">
-            <fileset dir="apps/${application.name}" erroronmissingdir="false">
-                <include name="**/production.js"/>
-                <include name="**/webix.js"/>
+        <copydir src="jmvc/plugins" dest="${build.dir}/jmvc/plugins" includes="**/*"/>
+        <copydir src="resources/webix_widgets" dest="${build.dir}/resources/webix_widgets" includes="**/*"/>
+        <copy todir="${build.dir}/controllers/">
+            <fileset dir="controllers" erroronmissingdir="false">
+                <include name="**/*.js"/>
             </fileset>
-        </move>
+        </copy>
+        <copy todir="${build.dir}/models/">
+            <fileset dir="models" erroronmissingdir="false">
+                <include name="**/*.js"/>
+            </fileset>
+        </copy>
+        <copy todir="${build.dir}/resources/">
+            <fileset dir="resources">
+                <!--shared resources-->
+                <include name="*.js"/>
+            </fileset>
+        </copy>
+        <copy todir="${build.dir}/views/">
+            <fileset dir="views" erroronmissingdir="false">
+                <include name="**/*.ejs"/>
+            </fileset>
+        </copy>
     </target>
 
-    <target name="-copy-app-mainjs">
+    <target name="-copy-app-js">
         <copy todir="${build.dir}/apps/">
             <fileset dir="apps" erroronmissingdir="false">
-                <include name="**/${application.name}.js"/>
+                <include name="${application.name}.js"/>
+            </fileset>
+        </copy>
+        <copy todir="${build.dir}/controllers/">
+            <fileset dir="controllers" erroronmissingdir="false">
+                <include name="${application.name}/**/*.js"/>
+            </fileset>
+        </copy>
+        <copy todir="${build.dir}/models/">
+            <fileset dir="models" erroronmissingdir="false">
+                <include name="${application.name}/**/*.js"/>
+            </fileset>
+        </copy>
+        <copy todir="${build.dir}/resources/">
+            <fileset dir="resources">
+                <!--app resources-->
+                <include name="${application.name}/**/*.js"/>
+            </fileset>
+        </copy>
+        <copy todir="${build.dir}/views/">
+            <fileset dir="views" erroronmissingdir="false">
+                <include name="${application.name}/**/*.ejs"/>
             </fileset>
         </copy>
     </target>
@@ -110,17 +103,6 @@
         <copy todir="${build.dir}/libs/">
             <fileset dir="libs">
                 <include name="*.min.js"/>
-            </fileset>
-        </copy>
-    </target>
-
-    <target name="-copy-app-resources">
-        <copy todir="${build.dir}/resources/">
-            <fileset dir="resources">
-                <!--shared resources-->
-                <include name="*.*"/>
-                <!--app resources-->
-                <include name="**/${application.name}/*.*"/>
             </fileset>
         </copy>
     </target>
@@ -170,25 +152,9 @@
         </copy>
     </target>
 
-    <target name="generate-production-html">
-        <copy file="apps/${application.name}/index.html" todir="${build.dir}" overwrite="true"/>
-        <replace file="${build.dir}/index.html">
-            <replacefilter token=",development" value=",production"/>
-            <replacefilter token=",test" value=",production"/>
-            <replacefilter token="../../jmvc/include.js?" value="jmvc/include.js?"/>
-            <replacefilter token=".js" value=".min.js"/>
-            <replacefilter token="../../" value=""/>
-            <replacefilter token="jmvc/include.min.js?" value="jmvc/include.js?"/>
-        </replace>
-    </target>
-
     <target name="-copy-index-html">
         <copy todir="${build.dir}/apps/${application.name}" overwrite="true">
             <fileset dir="apps/${application.name}" includes="**/index.html **/index.jsp" erroronmissingdir="false"/>
-            <filterset begintoken="," endtoken="&quot;">
-                <filter token="development" value=",production&quot;"/>
-                <filter token="test" value=",production&quot;"/>
-            </filterset>
         </copy>
     </target>
 
@@ -205,9 +171,7 @@
 
         <antcall target="-copy-engines"/>
 
-        <antcall target="-move-app-productionjs"/>
-
-        <antcall target="-copy-app-mainjs"/>
+        <antcall target="-copy-app-js"/>
 
         <antcall target="-copy-app-images"/>
 

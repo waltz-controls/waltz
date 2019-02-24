@@ -14,16 +14,6 @@ echo($OUT)
 echo($ERR)
 if($EXIT !== 0) exit($EXIT)
 
-$EXEC("ant -f jmvc/ant/build.xml compress-and-move -Dapp=login -DbuildDir=${buildDir}")
-echo($OUT)
-echo($ERR)
-if($EXIT !== 0) exit($EXIT)
-
-$EXEC("ant -f jmvc/ant/build.xml compress-and-move -Dapp=tango_webapp -DbuildDir=${buildDir}")
-echo($OUT)
-echo($ERR)
-if($EXIT !== 0) exit($EXIT)
-
 $EXEC("ant -f jmvc/ant/build.xml copy-webapp -DbuildDir=${buildDir}")
 echo($OUT)
 echo($ERR)
