@@ -25,7 +25,7 @@
     </target>
 
     <target name="-copy-constants">
-        <copy todir="${build.dir}/../tmp/resources" file="resources/constants.js" overwrite="true" failonerror="true">
+        <copy todir="${build.dir}/resources" file="resources/constants.js" overwrite="true" failonerror="true">
             <filterset begintoken="/*@*/" endtoken="/*@*/">
                 <filter token="REST_API_PROTOCOL" value="'${env.REST_API_PROTOCOL}'"/>
                 <filter token="REST_API_HOST" value="'${env.REST_API_HOST}'"/>
@@ -61,6 +61,7 @@
             <fileset dir="resources">
                 <!--shared resources-->
                 <include name="*.js"/>
+                <exclude name="constants.js"/>
             </fileset>
         </copy>
         <copy todir="${build.dir}/views/">
@@ -167,6 +168,8 @@
     <target name="build">
         <echo>Making build dir...</echo>
         <mkdir dir="${build.dir}"/>
+        <antcall target="-copy-constants"/>
+
         <antcall target="-copy-jmvc-core"/>
 
         <antcall target="-copy-engines"/>
