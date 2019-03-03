@@ -77,6 +77,11 @@
                 <include name="${application.name}.js"/>
             </fileset>
         </copy>
+        <copy todir="${build.dir}/apps">
+            <fileset dir="apps" erroronmissingdir="false">
+                <include name="${application.name}/main.js"/>
+            </fileset>
+        </copy>
         <copy todir="${build.dir}/controllers/">
             <fileset dir="controllers" erroronmissingdir="false">
                 <include name="${application.name}/**/*.js"/>
