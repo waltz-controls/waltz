@@ -1,4 +1,5 @@
-/** @module Toolbar
+/**
+ * @module Toolbar
  *  @memberof ui
  */
 (function(){
