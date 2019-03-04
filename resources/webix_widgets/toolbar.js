@@ -2,7 +2,7 @@
  * @module Toolbar
  *  @memberof ui
  */
-(function(){
+(function () {
 
 
     /**
@@ -10,76 +10,135 @@
      * @property {String} name
      * @memberof ui.Toolbar
      */
+
+    var userMenu = webix.ui({
+        view: "popup",
+        id: "userMenu",
+        width: 100,
+        body: {
+            view: "list",
+            data: [
+                {id: "userSettings", value: "Settings"},
+                {id: "userSignOut", value: "Sign out", icon: "sign-out"}
+            ],
+            autoheight: true,
+            borderless: true,
+            on: {
+                onItemClick: function (id) {
+                    if (id === "userSettings" && $$('settings')) {
+                        $$('settings').show();
+                    }
+                    if (id === "userSignOut") {
+                        OpenAjax.hub.publish('platform.user_logout', {});
+                    }
+                    $$("userMenu").hide();
+                }
+            }
+        }
+    });
+    var toolsMenu = webix.ui({
+        view: "popup",
+        id: "toolsMenu",
+        width: 100,
+        body: {
+            view: "list",
+            data: [
+                {id: "toolsScripting", value: "Scripting"},
+                {id: "toolsTerminal", value: "Terminal"}
+            ],
+            autoheight: true,
+            borderless: true,
+            on: {
+                onItemClick: function (id) {
+                    if (id === "toolsScripting" && $$('scripting_console')) {
+                        $$('scripting_console').show();
+                    }
+                    if (id === "toolsTerminal") {
+                        webix.message("Submenu click: " + id);
+                    }
+                    $$("toolsMenu").hide();
+                }
+            }
+        }
+    });
+
+    var helpMenu = webix.ui({
+        view: "popup",
+        id: "helpMenu",
+        width: 100,
+        body: {
+            view: "list",
+            data: [
+                {id: "helpAbout", value: "About"},
+                {id: "helpDocs", value: "User docs"}
+            ],
+            autoheight: true,
+            borderless: true,
+            on: {
+                onItemClick: function (id) {
+                    if (id === "helpAbout") {
+                        window.open("https://waltz-docs.readthedocs.io/en/latest/", "_blank");
+                    }
+                    if (id === "helpDocs") {
+                        window.open("https://waltz-docs.readthedocs.io/en/latest/user_guide/", "_blank");
+                    }
+                    $$("helpMenu").hide();
+                }
+            }
+        }
+    });
+
     var top_toolbar = webix.protoUI(
         /** @lends top_toolbar.prototype*/
         {
-        name: 'top_toolbar',
-        defaults: {
-            height: 32,
-            cols: [
-                {
-                    view: "template",
-                    type: "header",
-                    borderless: true,
-                    width: 100,
-                    template: "<a target='_blank' href='http://tango-controls.org'><span style='width: 240px'><img alt='Tango-Controls' style='max-width: 100%; max-height: 100%' src='../../images/platform/logo_tangocontrols.png'></span></a>"
-                },
-                {
-                    view: "template",
-                    type: "header",
-                    borderless: true,
-                    width: 100,
-                    template: "<a target='_blank' href='http://www.hzg.de'><span style='width: 240px'><img alt='Helmholtz-Zentrum Geesthacht' style='max-width: 100%; max-height: 100%' src='../../images/platform/hzg_rgb_mitzusatz_in_e_300dpi.png'></span></a>"
-                },
-                {
-                    view: "template",
-                    type: "header",
-                    borderless: true,
-                    template: "<a target='_blank' href='http://www.ingvord.ru'><span style='width: 40px'><img alt='IK company' style='max-width: 100%; max-height: 100%' src='../../images/platform/logo_ik.png'></span></a>"
-                },
-                {
-                    // gravity: 4
-                },
-                {
-                    align: 'right',
-                    cols: [
-                        {
-                            type: 'icon',
-                            id: "btnUsername",
-                            view: 'button',
-                            label: "#name#",
-                            tooltip: "#name#",
-                            icon: "user",
-                            align: "right",
-                            width: 100,
-                            click:function(){
-                                if($$('settings')){
-                                    $$('settings').show();
-                                }
-                            }
-                        },
-                        {
-                            view: "button",
-                            id: "btnUser",
-                            type: "icon",
-                            tooltip: "Sign out...",
-                            icon: "sign-out",
-                            width: 36,
-                            click: function () {
-                                OpenAjax.hub.publish('platform.user_logout', {});
-                            },
-                            align: "right"
-                        }
-                    ]
+            name: 'top_toolbar',
+            defaults: {
+                height: 32,
+                cols: [
+                    {
+                        type: "icon",
+                        icon: "user",
+                        id: "btnUsername",
+                        view: 'button',
+                        label: "#name#",
+                        popup: "userMenu",
+                        borderless: true,
+                        width: 80,
+
+                    },
+                    {
+                        type: "icon",
+                        id: "btnTools",
+                        view: 'button',
+                        label: "Tools",
+                        popup: "toolsMenu",
+                        borderless: true,
+                        width: 55
+                    },
+                    {
+                        type: "icon",
+                        id: "btnMenu",
+                        view: 'button',
+                        label: "Help",
+                        popup: "helpMenu",
+                        borderless: true,
+                        width: 55
+                    }
+                ],
+                on: {
+                    "platform_api.ui.initialized subscribe": function (event) {
+                        var context = event.data.context.UserContext;
+                        $$("top-toolbar").$$("btnUsername").define('label', context.user);
+                        $$("top-toolbar").$$("btnUsername").refresh();
+                    }
                 }
-            ]
-        }
-    }, webix.IdSpace, webix.ui.toolbar);
+            }
+        }, TangoWebappPlatform.mixin.OpenAjaxListener, webix.IdSpace, webix.ui.toolbar);
 
     /**
      * @memberof ui.Toolbar
      */
-    TangoWebapp.ui.newTopToolbar = function(){
+    TangoWebapp.ui.newTopToolbar = function () {
         return {
             view: 'top_toolbar',
             id: 'top-toolbar'
@@ -161,7 +220,7 @@
     /**
      * @memberof ui.Toolbar
      */
-    TangoWebapp.ui.newBottomToolbar = function(){
+    TangoWebapp.ui.newBottomToolbar = function () {
         return {
             view: "bottom_toolbar",
             id: "bottom-toolbar"
