@@ -1,3 +1,5 @@
+import * as XenvWidget from "../../resources/webix_widgets/xenv.js";
+
 function load_user_context(){
     var authorization = webix.storage.session.get("Authorization");
     if (authorization !== null && authorization.indexOf('Basic ') === 0) {
