@@ -3,14 +3,6 @@
  *  @memberof ui
  */
 (function () {
-
-
-    /**
-     * Extends {@link https://docs.webix.com/api__refs__ui.toolbar.html webix.ui.toolbar}
-     * @property {String} name
-     * @memberof ui.Toolbar
-     */
-
     var userMenu = webix.ui({
         view: "popup",
         id: "userMenu",
@@ -25,8 +17,8 @@
             borderless: true,
             on: {
                 onItemClick: function (id) {
-                    if (id === "userSettings" && $$('settings')) {
-                        $$('settings').show();
+                    if (id === "userSettings") {
+                        PlatformApi.PlatformUIController().openSettingsTab();
                     }
                     if (id === "userSignOut") {
                         OpenAjax.hub.publish('platform.user_logout', {});
@@ -36,6 +28,7 @@
             }
         }
     });
+
     var toolsMenu = webix.ui({
         view: "popup",
         id: "toolsMenu",
@@ -44,14 +37,15 @@
             view: "list",
             data: [
                 {id: "toolsScripting", value: "Scripting"},
-                {id: "toolsTerminal", value: "Terminal"}
+                //TODO uncomment after terminal has been merged
+                // {id: "toolsTerminal", value: "Terminal"}
             ],
             autoheight: true,
             borderless: true,
             on: {
                 onItemClick: function (id) {
-                    if (id === "toolsScripting" && $$('scripting_console')) {
-                        $$('scripting_console').show();
+                    if (id === "toolsScripting") {
+                        PlatformApi.PlatformUIController().openScriptingTab();
                     }
                     if (id === "toolsTerminal") {
                         webix.message("Submenu click: " + id);
@@ -88,6 +82,11 @@
         }
     });
 
+    /**
+     * Extends {@link https://docs.webix.com/api__refs__ui.toolbar.html webix.ui.toolbar}
+     * @property {String} name
+     * @memberof ui.Toolbar
+     */
     var top_toolbar = webix.protoUI(
         /** @lends top_toolbar.prototype*/
         {

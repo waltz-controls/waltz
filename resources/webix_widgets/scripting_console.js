@@ -388,4 +388,14 @@
             view: 'stateful_scripting_console'
         }, config);
     };
+
+    //TODO export
+    TangoWebapp.ui.newStatefulScriptingConsoleTab = function () {
+        return {
+            header: "<span class='webix_icon fa-pencil-square-o'></span> Scripting",
+            close: true,
+            borderless: true,
+            body: TangoWebapp.ui.newStatefulScriptingConsoleView({id: 'scripting_console'})
+        }
+    };
 })();

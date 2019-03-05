@@ -41,6 +41,34 @@ TangoWebappPlatform.UIController = MVC.Controller.extend("platform_ui_controller
         return $$(device_view_id);
     },
     /**
+     * Opens settings tab
+     *
+     */
+    openSettingsTab: function () {
+        if($$('settings') === undefined){
+            $$("main-tabview").addView(
+                TangoWebapp.ui.newSettingsTab()
+            );
+        }
+        $$('settings').show();
+
+        return $$('settings');
+    },
+    /**
+     * Opens scripting tab
+     *
+     */
+    openScriptingTab: function () {
+        if($$('scripting_console') === undefined){
+            $$("main-tabview").addView(
+                TangoWebapp.ui.newStatefulScriptingConsoleTab()
+                );
+        }
+        $$('scripting_console').show();
+
+        return $$('scripting_console');
+    },
+    /**
      *
      * @param {TangoHost} tango_host
      */
