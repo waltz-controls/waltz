@@ -103,7 +103,6 @@
                         popup: "userMenu",
                         borderless: true,
                         width: 80,
-
                     },
                     {
                         type: "icon",
@@ -127,8 +126,8 @@
                 on: {
                     "platform_api.ui.initialized subscribe": function (event) {
                         var context = event.data.context.UserContext;
-                        $$("top-toolbar").$$("btnUsername").define('label', context.user);
-                        $$("top-toolbar").$$("btnUsername").refresh();
+                        this.$$("btnUsername").define('label', context.user);
+                        this.$$("btnUsername").refresh();
                     }
                 }
             }
