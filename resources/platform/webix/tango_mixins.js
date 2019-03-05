@@ -38,9 +38,9 @@ TangoWebappPlatform.mixin = {
                 if(typeof this.defaults.on[subscription] === 'function'
                     && MVC.Controller.Action.Subscribe.matches(subscription) !== null){
                     this._actions.push(new MVC.Controller.Action.Subscribe(subscription,
-                        function(params) {
+                        function() {
                             try {
-                                this.defaults.on[subscription].bind(this)(params)
+                                this.defaults.on[subscription].apply(this, Array.from(arguments));
                             } catch (e) {
                                 TangoWebappHelpers.error("Failed to execute $$('" + config.id + "')['"+ subscription+"'] due to " + e,e)
                             }

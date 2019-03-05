@@ -365,7 +365,6 @@ MVC.Native.Number = MVC.Number;
 MVC.Native.String = MVC.String;
 MVC.Object = MVC.Native.Object;
 if(!MVC._no_conflict){
-    Array.from = MVC.Array.from;
     Array.last = MVC.Array.last;
     Array.first = MVC.Array.first;
     Array.findFirst = MVC.Array.findFirst;

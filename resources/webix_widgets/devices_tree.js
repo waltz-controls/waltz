@@ -388,7 +388,7 @@
                         this.updateRoot(event.data.context);
                     },
                     "platform_context.set_rest subscribe": function (event) {
-                        this.updateRoot(event.data);
+                        this.updateRoot(event.data.context);
                     }
                 }
             }
