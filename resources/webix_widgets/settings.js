@@ -552,5 +552,18 @@
             webix.extend(config, this._ui());
         }
     }, webix.IdSpace, webix.ui.layout);
+
+    //TODO export
+    TangoWebapp.ui.newSettingsTab = function(){
+        return {
+            header: "<span class='webix_icon fa-gears'></span> Settings",
+            close : true,
+            body:
+                {
+                    id: 'settings',
+                    view: "settings"
+                }
+        }
+    }
 })();
 
