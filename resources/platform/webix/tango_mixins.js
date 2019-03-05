@@ -37,7 +37,16 @@ TangoWebappPlatform.mixin = {
             for(var subscription in this.defaults.on){
                 if(typeof this.defaults.on[subscription] === 'function'
                     && MVC.Controller.Action.Subscribe.matches(subscription) !== null){
-                    this._actions.push(new MVC.Controller.Action.Subscribe(subscription,this.defaults.on[subscription].bind(this)))
+                    this._actions.push(new MVC.Controller.Action.Subscribe(subscription,
+                        function(params) {
+                            try {
+                                this.defaults.on[subscription].bind(this)(params)
+                            } catch (e) {
+                                TangoWebappHelpers.error("Failed to execute $$('" + config.id + "')['"+ subscription+"'] due to " + e,e)
+                            }
+                        }.bind(this)
+
+                    ))
                 }
             }
         }
