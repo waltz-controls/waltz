@@ -22,16 +22,18 @@ UserScript = TangoWebapp.UserScript = MVC.Model.extend('user_script',
         },
         default_attributes: {
             
-        }
+        },
+        AsyncFunction: Object.getPrototypeOf(async function(){}).constructor
     },
     /** @lends  TangoWebappPlatform.UserScript.prototype */
     {
+
         /**
          * @param {string} v
          */
         set_code:function(v){
             this.code = v.trim();
-            this.func = new Function("'use strict';" + this.code);
+            this.func = new this.Class.AsyncFunction("'use strict';" + this.code);
         },
         /**
          * executes this script
