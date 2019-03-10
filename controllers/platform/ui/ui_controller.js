@@ -1,18 +1,24 @@
-TangoWebappPlatform.UIController = MVC.Controller.extend("platform_ui_controller", {}, {
+TangoWebappPlatform.UIController = class extends MVC.Controller {
+    static get className(){
+        return "platform_ui_controller";
+    }
+    static get _attach_actions(){
+        return false;
+    }
     /**
      *
      * @param user
      * @event {OpenAjax} user_context_controller.found
      */
-    expandDeviceTree: function () {
+    expandDeviceTree() {
         $$('device_tree').expand();
-    },
+    }
     /**
      *
      * @param {TangoHost} tango_host
      * @param {webix.ui.tab} device_tab
      */
-    openTangoHostTab: function (tango_host, device_tab) {
+    openTangoHostTab(tango_host, device_tab) {
         if ($$('view/' + tango_host.id) === undefined)
             $$("main-tabview").addView(
                 TangoWebapp.ui.newTangoHostTab(tango_host, device_tab)
@@ -25,12 +31,12 @@ TangoWebappPlatform.UIController = MVC.Controller.extend("platform_ui_controller
         $$('view/' + tango_host.id).show();
 
         return $$('view/' + tango_host.id);
-    },
+    }
     /**
      *
      * @param {TangoDevice} device
      */
-    openDeviceViewTab: function (device) {
+    openDeviceViewTab(device) {
         var device_view_id = "view/" + device.id;
         this.openTangoHostTab(device.host, TangoWebapp.ui.newDeviceView(
             {
@@ -39,12 +45,12 @@ TangoWebappPlatform.UIController = MVC.Controller.extend("platform_ui_controller
             }));
 
         return $$(device_view_id);
-    },
+    }
     /**
      * Opens settings tab
      *
      */
-    openSettingsTab: function () {
+    openSettingsTab() {
         if($$('settings') === undefined){
             $$("main-tabview").addView(
                 TangoWebapp.ui.newSettingsTab()
@@ -53,12 +59,12 @@ TangoWebappPlatform.UIController = MVC.Controller.extend("platform_ui_controller
         $$('settings').show();
 
         return $$('settings');
-    },
+    }
     /**
      * Opens scripting tab
      *
      */
-    openScriptingTab: function () {
+    openScriptingTab() {
         if($$('scripting_console') === undefined){
             $$("main-tabview").addView(
                 TangoWebapp.ui.newStatefulScriptingConsoleTab()
@@ -67,22 +73,22 @@ TangoWebappPlatform.UIController = MVC.Controller.extend("platform_ui_controller
         $$('scripting_console').show();
 
         return $$('scripting_console');
-    },
+    }
     /**
      *
      * @param {TangoHost} tango_host
      */
-    closeTangoHostTab: function (tango_host) {
+    closeTangoHostTab(tango_host) {
 
         $$("main-tabview").removeView(
             'view/' + tango_host.id
         );
-    },
+    }
     /**
      *
      * @param {TangoDevice} device
      */
-    openDeviceMonitorTab: function (device) {
+    openDeviceMonitorTab(device) {
         var device_view_id = "monitor/" + device.id;
 
         this.openTangoHostTab(device.host, TangoWebapp.ui.newDeviceMonitorView({
@@ -93,4 +99,6 @@ TangoWebappPlatform.UIController = MVC.Controller.extend("platform_ui_controller
         return $$(device_view_id);
 
     }
-});
+};
+
+TangoWebappPlatform.UIController.initialize();

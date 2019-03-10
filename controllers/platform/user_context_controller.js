@@ -1,24 +1,31 @@
-TangoWebappPlatform.UserContextController = MVC.Controller.extend("user_context_controller", {}, {
-    _user_context: null,
+TangoWebappPlatform.UserContextController = class extends MVC.Controller {
+    static get className(){
+        return "user_context_controller";
+    }
+    static get _attach_actions(){
+        return false;
+    }
+
     /**
      * Defines global var UserContextController
      *
      * @constructs
      * @param user_context
      */
-    init: function (user_context) {
+    constructor(user_context) {
+        super();
         this._user_context = user_context;
-    },
+    }
     /**
      *
      * @param user
      * @event {OpenAjax} user_context_controller.found
      */
-    find_user_context:function(user){
+    find_user_context(user){
         var found = TangoWebappPlatform.UserContext.find_one(user);
-        UserContext = found;
+        window.UserContext = found;
         this.publish('user_context_controller.found', {data: found});
-    },
+    }
     /**
      * Does nothing if tango_host is already exist
      *
@@ -26,7 +33,7 @@ TangoWebappPlatform.UserContextController = MVC.Controller.extend("user_context_
      *
      * @event {OpenAjax} user_context_controller.add_tango_host
      */
-    add_tango_host: function (tango_host) {
+    add_tango_host(tango_host) {
         if (this._user_context.tango_hosts.hasOwnProperty(tango_host)) return;
         this._user_context.tango_hosts[tango_host] = "";
         this._user_context.save();
@@ -34,7 +41,7 @@ TangoWebappPlatform.UserContextController = MVC.Controller.extend("user_context_
             context: this._user_context,
             data: tango_host
         })
-    },
+    }
     /**
      * Does nothing if tango_host is already deleted
      *
@@ -42,7 +49,7 @@ TangoWebappPlatform.UserContextController = MVC.Controller.extend("user_context_
      *
      * @event {OpenAjax} user_context_controller.delete_tango_host
      */
-    delete_tango_host: function (tango_host) {
+    delete_tango_host(tango_host) {
         if (!this._user_context.tango_hosts.hasOwnProperty(tango_host)) return;
         delete this._user_context.tango_hosts[tango_host];
         this._user_context.save();
@@ -50,26 +57,28 @@ TangoWebappPlatform.UserContextController = MVC.Controller.extend("user_context_
             context: this,
             data: tango_host
         })
-    },
+    }
     /**
      *
      * @param attrs
      *
      * @event {OpenAjax} user_context_controller.update_attributes
      */
-    update_attributes: function (attrs) {
+    update_attributes(attrs) {
         this._user_context.update_attributes(attrs);
         this.publish("user_context_controller.update", {data: this});
-    },
+    }
     /**
      *
      * @event {OpenAjax} user_context_controller.destroy
      */
-    destroy:function(){
+    destroy(){
         this._user_context.destroy();
         UserContext = null;
         this.publish("user_context_controller.destroy", {data: this});
     }
 
 
-});
+};
+
+TangoWebappPlatform.UserContextController.initialize();

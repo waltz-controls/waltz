@@ -110,60 +110,26 @@ TasksController = MVC.Controller.extend('tasks',{
  * Some actions get called with classes that inherit from MVC.Controller.Params.
  * Check your action's params for the data that gets passed to your event handling functions.
  */
-MVC.Controller = MVC.Class.extend(
-/* @Static*/
-{
-    /*
-     * Looks for controller actions and hooks them up to delegator
-     */
-    init: function(){
-        if(!this.className) return;
-        this.singularName =  MVC.String.singularize(this.className);
-        if(!MVC.Controller.controllers[this.className]) MVC.Controller.controllers[this.className] = [];
-        MVC.Controller.controllers[this.className].unshift(this);
-        var val, act;
-        
-        if(!this.modelName)
-            this.modelName = MVC.String.is_singular(this.className) ? this.className : MVC.String.singularize(this.className)
-        if(this._should_attach_actions)
-            this._create_actions();
-
-        this._path = include.get_path();
-        this.action_name = 'init';
-    },
-    _should_attach_actions : true,
-    _create_actions : function(){
-        this.actions = {};
-        for(var action_name in this.prototype){
-    		val = this.prototype[action_name];
-    		if( typeof val == 'function' && action_name != 'Class'){
-                for(var a = 0 ; a < MVC.Controller.actions.length; a++){
-                    act = MVC.Controller.actions[a];
-                    if(act.matches(action_name)){
-                        var callback = this.dispatch_closure(action_name);
-                        this.actions[action_name] =new act(action_name, callback, this.className, this._element, this._events);
-                    }
-                }
-            }
-	    }
-    },
-    dispatch_closure: function(f_name){
-        return MVC.Function.bind(function(params){
-            params = params || {};
-            params.action = f_name;
-            params.controller = this;
-            params = params.constructor == MVC.Controller.Params ? params : new MVC.Controller.Params(params)
-			return this.dispatch(f_name,  params );
-		},this);
-    },
+MVC.Controller = class /*extends MVC.Class*/ {
     /**
-     * Calls the Controller prototype function specified by action_name with the given params.
-     * @param {String} action_name The name of the action to be called.
-     * @param {Controller.Params} params The params the action will be called with.
+     * Override this to specify css class to attach to
+     *
+     * @return {string}
      */
-    dispatch: function(action_name, params){
+    static get className(){
+        return "main";
+    }
+    static get _should_attach_actions(){
+        return true;
+    }
+    /**
+          * Calls the Controller prototype function specified by action_name with the given params.
+          * @param {String} action_name The name of the action to be called.
+          * @param {Controller.Params} params The params the action will be called with.
+          */
+    static dispatch(action_name, params){
 		if(!action_name) action_name = 'index';
-		
+
 		if(typeof action_name === 'string'){
 			if(!(action_name in this.prototype) ) throw 'No action named '+action_name+' was found for '+this._path + '/' + this.className + ' controller.';
 		}else{ //action passed TODO:  WHERE IS THIS USED?
@@ -171,57 +137,71 @@ MVC.Controller = MVC.Class.extend(
 		}
         var instance = this._get_instance(action_name , params);
 		return this._dispatch_action(instance,action_name, params );
-	},
-    _get_instance : function(action_name,  params){
+	}
+
+    static _get_instance(action_name,  params){
           return new this(action_name, params);
-    },
-	_dispatch_action: function(instance, action_name, params){
+    }
+	static _dispatch_action(instance, action_name, params){
         if(!this._listening) return;
         instance.params = params;
 		instance.action_name = action_name;
         return instance[action_name](params);
-	},
-    controllers : {},
-    actions: [],
-    publish: function(message, params){
-        //var subscribers = MVC.Controller.Action.Subscribe.events[message];
-        //if(!subscribers) return;
-        //for(var i =0 ; i < subscribers.length; i++){
-        //    subscribers[i](params);
-        //}
-        OpenAjax.hub.publish(message, params);
-    },
-    get_controller_with_name_and_action: function(controller_name, action) {
-        var controllers = MVC.Controller.controllers[controller_name];
-        if(!controllers) return null;
-		for(var i = 0; i < controllers.length; i++) {
-            var controller = controllers[i];
-            if (controller.prototype[action]) return controller;
-        }
-        return null;
-     },
-     /**
-      * The name of the model this controller can uses for param functions like element_instance
-      */
-     modelName: null,
-     /**
-      * A flag if controllers can respond to events.
-      */
-     _listening : true,
-     _events : MVC.Delegator.events,
-     _element : document.documentElement
-},
-/* @Prototype*/
-{
+	}
+
+    static dispatch_closure(f_name){
+        return function(params){
+            params = params || {};
+            params.action = f_name;
+            params.controller = this;
+            params = params.constructor == MVC.Controller.Params ? params : new MVC.Controller.Params(params)
+			return this.dispatch(f_name,  params );
+		}.bind(this);
+    }
+    static _create_actions() {
+        this.actions = {};
+        Object.getOwnPropertyNames(this.prototype)
+            .filter(value => typeof this.prototype[value] == 'function' && value !== 'constructor')
+            .forEach(value => {
+                const act = MVC.Controller.actions.find(act => act.matches(value));
+                if(act !== undefined){
+                    const callback = this.dispatch_closure(this.prototype[value]);
+                    this.actions[value] =new act(value, callback, this.className, this._element, this._events);
+                }
+        });
+    }
+    /**
+     *
+     */
+    static initialize() {
+        if(!this.className) return;
+        this.singularName =  MVC.String.singularize(this.className);
+        if(!MVC.Controller.controllers[this.className]) MVC.Controller.controllers[this.className] = [];
+        MVC.Controller.controllers[this.className].unshift(this);
+
+        if(!this.modelName)
+            this.modelName = MVC.String.is_singular(this.className) ? this.className : MVC.String.singularize(this.className)
+        if(this._should_attach_actions)
+            this._create_actions();
+
+        this._path = include.get_path();
+    }
+
+
+    constructor(action_name, params){
+        this.action_name = action_name;
+        this.params = params;
+        this.Class = MVC.Controller;
+    }
     /*
-     * Returns a function that when called, calls the action with parameters passed to the function. 
-     * This is very useful for creating callbacks for Ajax functionality. 
-     * The callback is called on the same controller instance that created the callback. 
-     * This allows you to easily pass objects between request and response without resorting to closures. 
+     * Returns a function that when called, calls the action with parameters passed to the function.
+     * This is very useful for creating callbacks for Ajax functionality.
+     * The callback is called on the same controller instance that created the callback.
+     * This allows you to easily pass objects between request and response without resorting to closures.
      * Example:
 @code_start
 Controller('todos',{
-   "a click" : function(params){ 
+   "a click" : function(params){
       this.element = params.element;
 	  this.element.innerHTML = 'deleting ...';
 	  new Ajax('delete', {onComplete: this.continue_to('deleted')}
@@ -234,37 +214,44 @@ Controller('todos',{
      * @param {String} action Name of prototype function you want called
      * @return {Function} function that when called, directs to another controller function
      */
-    continue_to :function(action){
-		var args = MVC.Array.from(arguments)
+    continue_to(action){
+        var args = Array.from(arguments)
         var action = args.shift();
-		if(typeof this[action] != 'function'){ throw 'There is no action named '+action+'. ';}
-		return MVC.Function.bind(function(){
-			this.action_name = action;
-			this[action].apply(this, args.concat(MVC.Array.from(arguments)));
-		}, this);
-	},
+        if(typeof this[action] != 'function'){ throw 'There is no action named '+action+'. ';}
+        return function(){
+            this.action_name = action;
+            this[action].apply(this, args.concat(Array.from(arguments)));
+        }.bind(this);
+    }
     /**
      * Calls an action after some delay
      * @param {Object} delay
      * @param {Object} action_name
      * @param {Object} params
      */
-    delay: function(delay, action_name, params){
-		if(typeof this[action_name] != 'function'){ throw 'There is no action named '+action_name+'. ';}
-		
-        return setTimeout(MVC.Function.bind(function(){
-			this.Class._dispatch_action(this, action_name ,  params )
-		}, this), delay );
-    },
+    delay(delay, action_name, params){
+        if(typeof this[action_name] != 'function'){ throw 'There is no action named '+action_name+'. ';}
+
+        return setTimeout(function(){
+            this.Class._dispatch_action(this, action_name ,  params )
+        }.bind(this), delay );
+    }
     /**
-     * Publishes a message to OpenAjax.hub.  Other controllers 
+     * Publishes a message to OpenAjax.hub.  Other controllers
      * @param {String} message
      * @param {Object} data
      */
-    publish: function(message, data){
+    publish(message, data){
         this.Class.publish(message,data);
     }
-});
+};
+
+    //static fields
+MVC.Controller.actions = [];
+MVC.Controller.controllers = {};
+MVC.Controller._listening = true;
+MVC.Controller._events = MVC.Delegator.events;
+MVC.Controller._element = document.documentElement;
 
 
 /*

@@ -4,8 +4,8 @@
 * @class
  *
 */
-Login.MainController = MVC.Controller.extend('main',{
-    _ui: function(){
+Login.MainController = class extends MVC.Controller {
+    static _ui(){
         return {
             id: 'login',
             view: 'layout',
@@ -69,14 +69,14 @@ Login.MainController = MVC.Controller.extend('main',{
                     ]}
             ]
         };
-    },
+    }
 
     /**
-    * This is the main entry point of the application. This function is invoked after jmvc has been completely initialized.
-    * @param {Object} params
-    */
-    load: function(params){
-        webix.ui(Login.MainController._get_instance()._ui());
+     * This is the main entry point of the application. This function is invoked after jmvc has been completely initialized.
+     * @param {Object} params
+     */
+    load(params){
+        webix.ui(Login.MainController._ui());
 
         webix.html.remove(document.getElementById('ajax-loader'));
 
@@ -90,4 +90,7 @@ Login.MainController = MVC.Controller.extend('main',{
             });
         }
     }
-});
+};
+
+// MVC.Controller.register(Login.MainController);
+Login.MainController.initialize();
