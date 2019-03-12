@@ -22,7 +22,7 @@ TangoWebapp.UserActionController = class extends MVC.Controller {
     }
 
     "user_action.log subscribe"(event) {
-        this.Class.logger.log(event.data);
+        this.logger.log(event.data);
     }
 };
 
