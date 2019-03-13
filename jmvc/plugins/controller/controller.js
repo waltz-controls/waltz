@@ -187,6 +187,10 @@ MVC.Controller = class /*extends MVC.Class*/ {
         this._path = include.get_path();
     }
 
+    static publish(message, params){
+        OpenAjax.hub.publish(message, params);
+    }
+
 
     constructor(action_name, params){
         this.action_name = action_name;
