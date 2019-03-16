@@ -90,7 +90,11 @@
    * 
    */
   
-  MVC.Class = function(){};
+  MVC.Class = class {
+    constructor(){
+        this.Class = this.constructor;
+    }
+  };
   // Create a new Class that inherits from the current class.
   /* @Static*/
   MVC.Class.
