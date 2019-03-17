@@ -1,0 +1,20 @@
+import "./critical_error_no_rest.js";
+import "./logger.js";
+import "./toolbar.js";
+import "./settings.js";
+import "./user_log.js";
+import "./info_datatable.js";
+import "./devices_tree.js";
+import "./device_view_panel.js";
+import "./plot.js";
+import "./tango_host_view.js";
+import "./device_view.js";
+import "./device_properties_view.js";
+import "./device_polling_view.js";
+import "./device_events_view.js";
+import "./device_attributes_config_view.js";
+import "./device_logging_view.js";
+import "./attrs_monitor_view.js";
+import "./device_monitor_view.js";
+import "./scripting_console.js";
+
