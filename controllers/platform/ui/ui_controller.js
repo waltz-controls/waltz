@@ -75,6 +75,20 @@ TangoWebappPlatform.UIController = class extends MVC.Controller {
         return $$('scripting_console');
     }
     /**
+     * Opens terminal tab
+     *
+     */
+    openTerminalTab() {
+        if($$('terminal') === undefined){
+            $$("main-tabview").addView(
+                TangoWebapp.ui.newTerminalViewTab()
+            );
+        }
+        $$('terminal').show();
+
+        return $$('terminal');
+    }
+    /**
      *
      * @param {TangoHost} tango_host
      */

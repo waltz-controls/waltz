@@ -31,4 +31,5 @@ import "./attrs_monitor_view.js";
 import "./device_monitor_view.js";
 import "./scripting_console.js";
 import "./svg.js";
+import "./terminal_view.js";
 

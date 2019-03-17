@@ -6,3 +6,4 @@ TANGO_HOST = "localhost";
 TANGO_PORT = 10000;
 VERSION = "development";
 USER_CONTEXT_URL = MVC.mvc_root + "/../apps/platform/user_context.jsp";
+TERMINAL_URL = 'http://ec2-35-156-104-8.eu-central-1.compute.amazonaws.com:8010/index.html';
