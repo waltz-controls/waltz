@@ -110,7 +110,7 @@ TasksController = MVC.Controller.extend('tasks',{
  * Some actions get called with classes that inherit from MVC.Controller.Params.
  * Check your action's params for the data that gets passed to your event handling functions.
  */
-MVC.Controller = class /*extends MVC.Class*/ {
+MVC.Controller = class extends MVC.Class {
     /**
      * Override this to specify css class to attach to
      *
@@ -193,9 +193,9 @@ MVC.Controller = class /*extends MVC.Class*/ {
 
 
     constructor(action_name, params){
+        super();
         this.action_name = action_name;
         this.params = params;
-        this.Class = MVC.Controller;
     }
     /*
      * Returns a function that when called, calls the action with parameters passed to the function.
