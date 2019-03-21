@@ -139,7 +139,7 @@ if(!window["OpenAjax"]){
 							}
 							if((!fcb) || (fcb.call(sc, name, msg, d))) {
 							  if((!pcb) || (pcb(name, msg, pcid, scid))) {
-							  	setTimeout(cb.bind(sc, name, msg, d, sid),0);
+								  cb.call(sc, name, msg, d, sid);
 							  }
 							}
 						}
