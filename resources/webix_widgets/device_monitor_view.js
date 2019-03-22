@@ -123,9 +123,6 @@
             webix.extend(config, this._ui(config.device));
 
             this.$ready.push(function () {
-                this.$$('attributes').$$('scalars').hideColumn('device_id');
-                this.$$('attributes').$$('scalars').hideColumn('remove');
-
                 this.$$('attributes').$$('scalars').data.attachEvent('onDataUpdate',function(id, update){
                     if(this.config.device.attrs.getItem(id).name === 'State'){
                         this.$$('state').setValues(update);

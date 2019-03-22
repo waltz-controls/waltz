@@ -22,7 +22,45 @@
             }
     }, webix.editors.text);
 
-
+    /**
+     * @function
+     * @return {webix.config} form
+     * @memberof ui.AttrsMonitorView
+     */
+    const newScalarSettings = function(){
+        return {
+            id: 'scalar-settings',
+            view: 'form',
+            hidden: true,
+            elements: [
+                {
+                    cols: [
+                        {view: "checkbox", label: "Device", name: "device_id", value: 1},
+                        {view: "checkbox", label: "Attribute", name: "label", value: 1},
+                        {view: "checkbox", label: "Value", name: "value", value: 1},
+                        {view: "checkbox", label: "Plot", name: "stream"},
+                        {view: "checkbox", label: "Quality", name: "quality"},
+                        {view: "checkbox", label: "Last updated", name: "timestamp"},
+                        {view: "checkbox", label: "Unit", name: "unit"},
+                        {view: "checkbox", label: "Description", name: "description"},
+                        {view: "checkbox", label: "Remove", name: "remove", value: 1}
+                    ]
+                },
+                {
+                    cols: [
+                        {},
+                        {
+                            view: "button", value: "Apply", maxWidth: 120, click: function () {
+                                const $$frm = this.getFormView();
+                                const $$scalars = $$frm.getTopParentView().$$('scalars');
+                                $$scalars.applySettings($$frm.getValues());
+                            }
+                        }
+                    ]
+                }
+            ]
+        }
+    };
 
     /**
      * @function
@@ -88,7 +126,23 @@
                         }
                     }
                 },
-                {}
+                {},
+                {
+                    view: "button",
+                    type: "icon",
+                    icon: "cog",
+                    align: 'left',
+                    width: 30,
+                    tooltip: "Show/hide scalar settings",
+                    click: function () {
+                        const $$scalarSettings = this.getTopParentView().$$('scalar-settings');
+                        $$scalarSettings.setValues(this.getTopParentView().$$('scalars').state.data);
+                        if($$scalarSettings.isVisible())
+                            $$scalarSettings.hide();
+                        else
+                            $$scalarSettings.show();
+                    }
+                }
             ]
         };
     };
@@ -139,7 +193,7 @@
                         // header: ["Device", {content: "textFilter"}], //TODO custom filter https://docs.webix.com/datatable__headers_footers.html#customheaderandfootercontent
                         header: "Device",
                         width: TangoWebappPlatform.consts.NAME_COLUMN_WIDTH,
-                        sort: "string",
+                        sort: "string", fillspace:true,
                         template:function(obj){
                             return PlatformContext.devices.getItem(obj.device_id).display_name;
                         }
@@ -148,25 +202,25 @@
                         id: "label",
                         header: ["Attribute", {content: "textFilter"}],
                         width: TangoWebappPlatform.consts.NAME_COLUMN_WIDTH,
-                        sort: "string"
+                        sort: "string", fillspace:true
                     },
-                    {id: "value", header: "Value", width: 200, editor: "attr_value_editor"},
+                    {id: "value", header: "Value", width: 200, editor: "attr_value_editor", fillspace:true},
                     {
-                        id: "stream", header: "", width: 30, template: function (obj) {
+                        id: "stream", header: "", width: 30, hidden:true, template: function (obj) {
                             if (obj.plotted)
                                 return "<span class='chart webix_icon fa-times-circle-o'></span>";
                             else
                                 return "<span class='chart webix_icon fa-line-chart'></span>";
                         }
                     },
-                    {id: "quality", header: "Quality", width: 180, sort: "string"},
+                    {id: "quality", header: "Quality", width: 180, sort: "string", hidden:true},
                     {
-                        id: "timestamp", header: "Last updated", width: 180, template: function (obj) {
+                        id: "timestamp", header: "Last updated", width: 180, hidden:true, fillspace:true, template: function (obj) {
                             return TangoWebappPlatform.consts.LOG_DATE_FORMATTER(new Date(obj.timestamp));
                         }
                     },
-                    {id: "unit", header: "Unit", width: 60},
-                    {id: "description", header: "Description", fillspace:true},
+                    {id: "unit", header: "Unit", hidden:true, width: 60},
+                    {id: "description", header: "Description", hidden:true, fillspace:true},
                     {
                         id: "remove", header: "<span class='remove-all webix_icon fa-trash'></span>", width: 30,
                         tooltip: "Remove all",
@@ -213,6 +267,29 @@
         update: function (attrs) {
             this.parse(attrs);
         },
+        restoreState(state){
+            this.applySettings(state.data);
+            //TODO the following is undefined - is it possible to make it defined?
+            // this.getTopParentView().$$('scalar-settings').setValues(state.data);
+        },
+        applySettings(values){
+            const showColumns = Object.entries(values)
+                .filter((element) => element[1]);
+            const hideColumns = Object.entries(values)
+                .filter((element) => !element[1]);
+
+            hideColumns.forEach((checkbox)=>{
+                if(this.isColumnVisible(checkbox[0]))
+                    this.hideColumn(checkbox[0]);
+            });
+
+            showColumns.forEach((checkbox)=>{
+                if(!this.isColumnVisible(checkbox[0]))
+                    this.showColumn(checkbox[0]);
+            });
+
+            this.state.updateState(values);
+        },
          /**
           * @memberof  ui.AttrsMonitorView.scalars
           * @constructor
@@ -249,7 +326,8 @@
                 }
             }
         }
-    }, webix.EventSystem, webix.OverlayBox, webix.ui.datatable);
+    }, TangoWebappPlatform.mixin.Stateful, webix.EventSystem, webix.OverlayBox, webix.ui.datatable);
+    
     /**
      * @memberof ui.AttrsMonitorView
      */
@@ -324,7 +402,6 @@
                 });
             }
         },
-
         /**
          * @param id
          * @memberof ui.AttrsMonitorView.attrs_monitor_view
@@ -535,6 +612,7 @@
                         view: 'resizer'
                     },
                     newAttributes(),
+                    newScalarSettings(),
                     newToolbar()
                 ]
             }
