@@ -168,11 +168,25 @@
                     {id: "unit", header: "Unit", width: 60},
                     {id: "description", header: "Description", fillspace:true},
                     {
-                        id: "remove", header: "", width: 30, template: function (obj) {
+                        id: "remove", header: "<span class='remove-all webix_icon fa-trash'></span>", width: 30,
+                        tooltip: "Remove all",
+                        template: function (obj) {
                             return "<span class='remove webix_icon fa-trash'></span>";
                         }
                     }
-                ]
+                ],
+                on: {
+                    onHeaderClick(obj){
+                        if(obj.column === 'remove'){
+                            const top = this.getTopParentView();
+
+                            TangoWebappHelpers.iterate(this, (el) => {
+                                top.removeAttribute(el);
+                            });
+                            return false;
+                        }
+                    }
+                }
             }
         },
         /**
