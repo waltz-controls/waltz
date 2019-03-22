@@ -41,19 +41,35 @@
                     maxWidth: 20,
                     align: "right"
                 },
-                {view: "counter", id: "refresh", step: 100, value: 1000, min: 100, max: 100000, width: 90},
+                {
+                    view: "counter", id: "refresh", step: 10, value: 1000, min: 10, max: 100000, width: 90,
+                    tooltip: "Update refresh rate",
+                    on: {
+                        onChange(){
+                            this.getTopParentView()._delay = this.getValue();
+                            if (this.getTopParentView().isRunning()) {
+                                this.getTopParentView().stop();
+                                this.getTopParentView().start();
+                            }
+                        },
+                        onEnter(){
+                            this.getTopParentView()._delay = this.getValue();
+                            if (this.getTopParentView().isRunning()) {
+                                this.getTopParentView().stop();
+                                this.getTopParentView().start();
+                            }
+                        }
+                    }
+                },
                 {
                     view: "button",
                     type: "iconButton",
                     icon: "refresh",
                     align: 'right',
                     width: 30,
+                    tooltip: "Update",
                     click: function () {
-                        this.getTopParentView()._delay = this.getTopParentView().$$("refresh").getValue();
-                        if (this.getTopParentView().isRunning()) {
-                            this.getTopParentView().stop();
-                            this.getTopParentView().start();
-                        }
+                        this.getTopParentView().run();
                     }
                 },
                 {
@@ -63,6 +79,7 @@
                     icon: "play",
                     align: 'right',
                     width: 30,
+                    tooltip: "Update continuously",
                     click: function () {
                         if (this.getTopParentView().isRunning()) {
                             this.getTopParentView().stop();
@@ -268,9 +285,9 @@
      * Extends {@link https://docs.webix.com/api__refs__ui.layout.html webix.ui.layout}
      * @property {string} name
      * @memberof ui.AttrsMonitorView
-     * @namespace attrs_monitor_view
+     * @namespace attrs_monitor
      */
-    var attrs_monitor_view = webix.protoUI(
+    var attrs_monitor = webix.protoUI(
         /** @lends  attrs_monitor_view.prototype */
         {
         name: 'attrs_monitor',
@@ -704,7 +721,7 @@
             webix.ui.attrs_monitor.prototype.stopPlot.apply(this, arguments);
             this.state.updateState(item.id, false);
         }
-    },TangoWebappPlatform.mixin.Stateful, attrs_monitor_view);
+    },TangoWebappPlatform.mixin.Stateful, attrs_monitor);
 
     /**
      * @param config
