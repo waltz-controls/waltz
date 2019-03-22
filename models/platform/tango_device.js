@@ -212,7 +212,6 @@ TangoDevice = TangoWebappPlatform.TangoDevice = TangoWebappPlatform.DataCollecti
                     return attributes[0];
                 }.bind(this))
                 .fail(function (resp) {
-                    TangoWebappHelpers.error(resp);
                     throw resp;
                 });
         },
