@@ -144,6 +144,7 @@ TangoWebappPlatform.mixin = {
      * @memberof mixins
      */
     Stateful: {
+        initial_state: null,
         state: null,
 
         $init:function(config){
@@ -155,7 +156,8 @@ TangoWebappPlatform.mixin = {
                     TangoWebappHelpers.log("Widget["+this.config.id+"] state is restored.");
                 } else
                     this.state = new this.config.state_class({
-                        id: this.config.id
+                        id: this.config.id,
+                        data: this.initial_state || {}
                     })
             }.bind(this));
         }

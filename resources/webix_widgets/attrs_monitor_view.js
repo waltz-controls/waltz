@@ -170,6 +170,17 @@
     var scalars = webix.protoUI(
         /** @lends scalars.prototype */
         {
+            initial_state:{
+                device_id: 1,
+                label: 1,
+                value: 1,
+                stream: 0,
+                quality: 0,
+                timestamp: 0,
+                unit: 0,
+                description: 0,
+                remove: 1
+            },
         name: 'scalars',
         _config: function () {
             return {
