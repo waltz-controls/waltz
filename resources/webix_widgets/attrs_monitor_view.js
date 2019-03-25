@@ -1,3 +1,5 @@
+import newToolbar from "./attrs_monitor_toolbar.js"
+
 /**
  * @namespace AttrsMonitorView
  * @memberof ui
@@ -62,90 +64,7 @@
         }
     };
 
-    /**
-     * @function
-     * @return {webix.config} toolbar
-     * @memberof ui.AttrsMonitorView
-     */
-    var newToolbar = function(){
-        return {
-            view: "toolbar",
-            height: 40,
-            cols: [
-                {
-                    view: "icon",
-                    id: "status",
-                    icon: "repeat",
-                    maxWidth: 20,
-                    align: "right"
-                },
-                {
-                    view: "counter", id: "refresh", step: 10, value: 1000, min: 10, max: 100000, width: 90,
-                    tooltip: "Update refresh rate",
-                    on: {
-                        onChange(){
-                            this.getTopParentView()._delay = this.getValue();
-                            if (this.getTopParentView().isRunning()) {
-                                this.getTopParentView().stop();
-                                this.getTopParentView().start();
-                            }
-                        },
-                        onEnter(){
-                            this.getTopParentView()._delay = this.getValue();
-                            if (this.getTopParentView().isRunning()) {
-                                this.getTopParentView().stop();
-                                this.getTopParentView().start();
-                            }
-                        }
-                    }
-                },
-                {
-                    view: "button",
-                    type: "iconButton",
-                    icon: "refresh",
-                    align: 'right',
-                    width: 30,
-                    tooltip: "Update",
-                    click: function () {
-                        this.getTopParentView().run();
-                    }
-                },
-                {
-                    view: "button",
-                    id: "startStop",
-                    type: "iconButton",
-                    icon: "play",
-                    align: 'right',
-                    width: 30,
-                    tooltip: "Update continuously",
-                    click: function () {
-                        if (this.getTopParentView().isRunning()) {
-                            this.getTopParentView().stop();
-                        } else {
-                            this.getTopParentView().start();
-                        }
-                    }
-                },
-                {},
-                {
-                    view: "button",
-                    type: "icon",
-                    icon: "cog",
-                    align: 'left',
-                    width: 30,
-                    tooltip: "Show/hide scalar settings",
-                    click: function () {
-                        const $$scalarSettings = this.getTopParentView().$$('scalar-settings');
-                        $$scalarSettings.setValues(this.getTopParentView().$$('scalars').state.data);
-                        if($$scalarSettings.isVisible())
-                            $$scalarSettings.hide();
-                        else
-                            $$scalarSettings.show();
-                    }
-                }
-            ]
-        };
-    };
+
     /**
      * @function
      * @return {webix.config}
@@ -370,6 +289,23 @@
                     body: newScalars()
                 }
             ]
+        }
+    };
+
+    const toolbar_settings = {
+        view: "button",
+        type: "icon",
+        icon: "cog",
+        align: 'left',
+        width: 30,
+        tooltip: "Show/hide scalar settings",
+        click: function () {
+            const $$scalarSettings = this.getTopParentView().$$('scalar-settings');
+            $$scalarSettings.setValues(this.getTopParentView().$$('scalars').state.data);
+            if($$scalarSettings.isVisible())
+                $$scalarSettings.hide();
+            else
+                $$scalarSettings.show();
         }
     };
 
@@ -605,6 +541,7 @@
             this.removeItem(attr.id);
         },
         _ui: function () {
+
             return {
                 rows: [
                     newScalarsPlot(),
@@ -613,7 +550,9 @@
                     },
                     newAttributes(),
                     newScalarSettings(),
-                    newToolbar()
+                    newToolbar(
+                        toolbar_settings
+                    )
                 ]
             }
         },
