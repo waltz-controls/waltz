@@ -328,13 +328,13 @@ import newToolbar from "./attrs_monitor_toolbar.js"
                 this.$$('attributes').addView({
                     close:true,
                     header: attr.info.label,
-                    body: TangoWebapp.ui.newSpectrumView(attr)
+                    body: TangoWebapp.ui.newSpectrum(attr)
                 });
             } else if (attr.info.data_format === 'IMAGE') {
                 this.$$('attributes').addView({
                     close:true,
                     header: attr.info.label,
-                    body: TangoWebapp.ui.newImageView(attr)
+                    body: TangoWebapp.ui.newImage(attr)
                 });
             }
         },
@@ -352,7 +352,7 @@ import newToolbar from "./attrs_monitor_toolbar.js"
          * @memberof ui.AttrsMonitorView.attrs_monitor_view
          */
         startPlot:function(item){
-            var $$plot = this.$$('plot');
+            var $$plot = this.$$('plot').plot;
             var $$scalars = this.$$('scalars');
 
             $$scalars.updateItem(item.id, {
@@ -368,7 +368,7 @@ import newToolbar from "./attrs_monitor_toolbar.js"
          * @memberof ui.AttrsMonitorView.attrs_monitor_view
          */
         stopPlot:function(item){
-            var $$plot = this.$$('plot');
+            var $$plot = this.$$('plot').plot;
             var $$scalars = this.$$('scalars');
 
             var index = item.plotIndex;
@@ -394,7 +394,7 @@ import newToolbar from "./attrs_monitor_toolbar.js"
             TangoWebappHelpers.iterate(this._plotted, function(scalar){
                 plotted.push(scalar);
             });
-            this.$$('plot').updateTraces(
+            this.$$('plot').plot.updateTraces(
                 plotted.map(function (el) {
                     return el.plotIndex;
                 }),
@@ -420,24 +420,6 @@ import newToolbar from "./attrs_monitor_toolbar.js"
             }, this);
 
             this._update_plot();
-        },
-        _update_start_stop_icon:function(icon){
-            this.$$('startStop').define("icon", icon);
-            this.$$('startStop').refresh();
-        },
-        /**
-         * @memberof ui.AttrsMonitorView.attrs_monitor_view
-         */
-        before_start:function(){
-            this._update_start_stop_icon("pause");
-            webix.html.addCss( this.$$('status').getNode(), "fa-spin");
-        },
-        /**
-         * @memberof ui.AttrsMonitorView.attrs_monitor_view
-         */
-        after_stop:function(){
-            this._update_start_stop_icon("play");
-            webix.html.removeCss( this.$$('status').getNode(), "fa-spin");
         },
         /*
          * @return {[]}

@@ -3,18 +3,18 @@
  * @return {webix.config} toolbar
  * @memberof ui.AttrsMonitorView
  */
-export default function newToolbar(extension){
+export default function newToolbar(extension = {}){
     return {
         view: "toolbar",
         height: 40,
         cols: [
-            {
-                view: "icon",
-                id: "status",
-                icon: "repeat",
-                maxWidth: 20,
-                align: "right"
-            },
+            // {
+            //     view: "icon",
+            //     id: "status",
+            //     icon: "repeat",
+            //     maxWidth: 20,
+            //     align: "right"
+            // },
             {
                 view: "counter", id: "refresh", step: 10, value: 1000, min: 10, max: 100000, width: 90,
                 tooltip: "Update refresh rate",
@@ -47,17 +47,18 @@ export default function newToolbar(extension){
                 }
             },
             {
-                view: "button",
-                id: "startStop",
+                view: "toggle",
                 type: "iconButton",
-                icon: "play",
-                align: 'right',
-                width: 30,
+                onIcon: "stop",
+                offIcon: "play",
+                maxWidth: 30,
                 tooltip: "Update continuously",
                 click: function () {
-                    if (this.getTopParentView().isRunning()) {
+                    if (this.getValue()) {
+                        // webix.html.removeCss( this.$$('status').getNode(), "fa-spin");
                         this.getTopParentView().stop();
                     } else {
+                        // webix.html.addCss( this.$$('status').getNode(), "fa-spin");
                         this.getTopParentView().start();
                     }
                 }

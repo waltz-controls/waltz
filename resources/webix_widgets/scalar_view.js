@@ -1,4 +1,5 @@
 import {margins} from "./plot.js"
+import newToolbar from "./attrs_monitor_toolbar.js";
 
 /**
  *
@@ -12,7 +13,7 @@ import {margins} from "./plot.js"
  * @memberof ui.Plot
  * @namespace scalar_plot
  */
-var scalar = webix.protoUI(
+const scalar = webix.protoUI(
     /** @lends scalar_plot*/
     {
         name: 'scalar',
@@ -99,8 +100,9 @@ var scalar = webix.protoUI(
                 y: [data.map(function(el){ return el.value;})]
             }, [0]);
             //TODO check if required
+            const last = data.pop();
             this._relayout({
-                title: "Data acquired @ " + new Date(data.pop().timestamp),
+                title: `${last.value} @ ${new Date(last.timestamp)}`,
                 autosize: false,
                 width: this.$width,
                 height: this.$height,
@@ -137,7 +139,6 @@ var scalar = webix.protoUI(
          * @constructor
          */
         $init: function (config) {
-            // webix.extend(config, this._ui(config));
             this.$ready.push(this._newPlot.bind(this, config));
             this.$ready.push(function () {
                 if (!config.empty) {
@@ -164,12 +165,94 @@ var scalar = webix.protoUI(
         }
     }, webix.IdSpace, webix.ui.view);
 
+function newWriteForm(config){
+    return {
+        view:"form",
+        elements:[
+            {view:"text", name:"value", label:`Input [min:${config.info.min_value};max:${config.info.max_value}]`, labelPosition: "top", placeholder: config.info.format, tooltip:config.info.description, validate:webix.rules.isNotEmpty},
+            {
+                cols:[
+                    {},
+                    {view:"button", maxWidth:120, value:"Write", hotkey: "enter",click(){
+                        if(this.getFormView().validate()){
+                            UserAction.writeAttribute(config,this.getFormView().getValues().value)
+                                .then(()=>{
+                                    this.getTopParentView().run();
+                                });
+                        }
+                    }}
+                ]
+            }
+        ]
+    }
+}
+
+/**
+ * @param {TangoAttribute} config
+ * @memberof ui.Plot
+ */
+TangoWebapp.ui.newScalar = function(config) {
+    return webix.extend({
+        view: "scalar"
+    }, config);
+};
+
+const scalar_view = webix.protoUI({
+    name: "scalar_view",
+    _ui(config){
+        const rows = [];
+
+        rows.push(webix.extend({
+            view: "scalar",
+            id:'plot',
+            gravity: 3
+        },config));
+
+        if(!config.empty && config.info.writable.includes('WRITE')){
+            rows.push({view:"resizer"});
+            rows.push(newWriteForm(config));
+        }
+
+        if(!config.empty) {
+            rows.push(newToolbar({
+                view:"button",
+                value:"History",
+                maxWidth:120,
+                click(){
+                    this.getTopParentView().readHistory();
+
+                }
+            }));
+        }
+
+        return {
+            rows:rows
+        }
+    },
+    readHistory(){
+        UserAction.readAttributeHistory(this.config)
+            .then(() => {
+                this.plot.updateMulti(this.config.history);
+            });
+    },
+    get plot(){
+        return this.$$('plot');
+    },
+    async run(){
+        const resp = await this.config.read();
+        this.plot.update(resp);
+    },
+    $init(config){
+        webix.extend(config, this._ui(config));
+    }
+}, TangoWebappPlatform.mixin.Runnable ,  webix.IdSpace, webix.ui.layout);
+
 /**
  * @param {TangoAttribute} config
  * @memberof ui.Plot
  */
 TangoWebapp.ui.newScalarView = function(config) {
     return webix.extend({
-        view: "scalar"
+        view: "scalar_view"
     }, config);
 };
