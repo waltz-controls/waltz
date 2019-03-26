@@ -19,8 +19,12 @@
                 id: 'string',//host_id/device_id/name
                 name: 'string',
                 device_id: 'string',
-                display_name: 'string'
-                //TODO value
+                display_name: 'string',
+                info: 'object',
+                properties: 'object',
+                value: 'any',
+                timestamp: 'int',
+                quality: 'string'
             },
             default_attributes: {},
             /**

@@ -84,7 +84,7 @@ const image_view = webix.protoUI({
     },
     async run(){
         const resp = await this.config.read();
-        this.plot.update(resp);
+        this.plot.update(resp.attributes());
     },
     $init(config){
         webix.extend(config, this._ui(config));

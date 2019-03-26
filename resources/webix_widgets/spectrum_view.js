@@ -29,9 +29,9 @@ var spectrum_text = webix.protoUI(
  * @property {String} name
  * @extends webix.ui.view
  * @memberof ui.Plot
- * @namespace spectrum_plot
+ * @namespace spectrum
  */
-var spectrum_plot = webix.protoUI(
+var spectrum = webix.protoUI(
     /** @lends spectrum_plot*/
     {
         name: 'spectrum',
@@ -88,11 +88,16 @@ const spectrum_view = webix.protoUI({
     _ui(config){
         return {
             rows:[
-                webix.extend({
-                    view: "spectrum",
-                    gravity: 3,
-                    id:'plot'
-                },config),
+                (config.info.data_type === 'DevString') ?
+                    webix.extend({
+                        view: "spectrum_text",
+                        id: 'plot'
+                    }, config.attributes()) :
+                    webix.extend({
+                        view: "spectrum",
+                        gravity: 3,
+                        id: 'plot'
+                    }, config),
                 newToolbar()
             ]
         };
@@ -102,7 +107,7 @@ const spectrum_view = webix.protoUI({
     },
     async run(){
         const resp = await this.config.read();
-        this.plot.update(resp);
+        this.plot.update(resp.attributes());
     },
     $init(config){
         webix.extend(config, this._ui(config));
@@ -114,14 +119,7 @@ const spectrum_view = webix.protoUI({
  * @memberof ui.Plot
  */
 TangoWebapp.ui.newSpectrumView = function (config) {
-    if (config.info.data_type === 'DevString') {
-        return webix.extend({
-            view: "spectrum_text"
-        }, config);
-    }
-    else {
         return webix.extend({
             view: "spectrum_view"
         }, config);
-    }
 };

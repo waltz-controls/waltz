@@ -3,7 +3,7 @@
  * @return {webix.config} toolbar
  * @memberof ui.AttrsMonitorView
  */
-export default function newToolbar(extension = {}){
+export default function newToolbar(extension = []){
     return {
         view: "toolbar",
         height: 40,
@@ -63,8 +63,7 @@ export default function newToolbar(extension = {}){
                     }
                 }
             },
-            {},
-            extension
-        ]
+            {}
+        ].concat(extension)
     };
 }

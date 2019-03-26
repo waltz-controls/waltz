@@ -7,6 +7,36 @@ import newToolbar from "./attrs_monitor_toolbar.js";
  * @since 3/25/19
  */
 /**
+ * Extends {@link https://docs.webix.com/api__refs__ui.list.html webix.ui.list}
+ * @property {String} name
+ * @memberof ui.Plot
+ * @namespace scalar_text
+ */
+const scalar_text = webix.protoUI(
+    /** @lends spectrum_text*/
+    {
+        name: 'scalar_text',
+        /**
+         * @param {TangoAttribute} data
+         * @memberof ui.Plot.spectrum_text
+         */
+        update: function (data) {
+            this.add({value: data.value, timestamp: data.timestamp}, 0);
+        },
+        defaults: {
+            template: `
+                   <span class="webix_strong">Updated: </span>{common.date()}<br>
+                   <span class="webix_strong">Data: </span>#value#`,
+            type: {
+                height: "auto",
+                date(obj) {
+                    return new Date(obj.timestamp);
+                }
+            }
+        }
+    }, webix.ui.list);
+
+/**
  * @class [scalar_plot]
  * @property {String} name
  * @extends webix.ui.view
@@ -112,7 +142,7 @@ const scalar = webix.protoUI(
         /**
          * @memberof ui.Plot.scalar_plot
          */
-        clear:function(){
+        clearAll:function(){
             Plotly.deleteTraces(this.getNode(), this._traces.map(function(el, ndx){ return ndx;}));
             this._traces.forEach(function(trace){
                 Plotly.addTraces(this.getNode(), {
@@ -157,7 +187,7 @@ const scalar = webix.protoUI(
                     master: node, //  ID of a DIV container
                     on: {
                         onItemClick: function (id) {
-                            self.clear();
+                            self.clearAll();
                         }
                     }
                 });
@@ -201,33 +231,40 @@ const scalar_view = webix.protoUI({
     name: "scalar_view",
     _ui(config){
         const rows = [];
+        const view = config.info.data_type === 'DevString' ? "scalar_text" : "scalar";
 
         rows.push(webix.extend({
-            view: "scalar",
-            id:'plot',
-            gravity: 3
-        },config));
+            view: view,
+            id: 'plot'
+        }, config.attributes()));
 
-        if(!config.empty && config.info.writable.includes('WRITE')){
+        if(config.info.writable.includes('WRITE')){
             rows.push({view:"resizer"});
             rows.push(newWriteForm(config));
         }
 
-        if(!config.empty) {
-            rows.push(newToolbar({
-                view:"button",
-                value:"History",
-                maxWidth:120,
-                click(){
-                    this.getTopParentView().readHistory();
-
-                }
-            }));
-        }
+        rows.push(newToolbar([{
+            view:"button",
+            value:"History",
+            maxWidth:120,
+            click(){
+                this.getTopParentView().readHistory();
+            }
+        },{
+            view:"button",
+            value:"Clear all",
+            maxWidth:120,
+            click(){
+                this.getTopParentView().clearAll();
+            }
+        }]));
 
         return {
             rows:rows
         }
+    },
+    clearAll(){
+        this.plot.clearAll();
     },
     readHistory(){
         UserAction.readAttributeHistory(this.config)
@@ -240,7 +277,7 @@ const scalar_view = webix.protoUI({
     },
     async run(){
         const resp = await this.config.read();
-        this.plot.update(resp);
+        this.plot.update(resp.attributes());
     },
     $init(config){
         webix.extend(config, this._ui(config));
@@ -252,6 +289,7 @@ const scalar_view = webix.protoUI({
  * @memberof ui.Plot
  */
 TangoWebapp.ui.newScalarView = function(config) {
+    webix.assert(!config.empty, "Config can not be empty for newScalarView");
     return webix.extend({
         view: "scalar_view"
     }, config);

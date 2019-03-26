@@ -74,7 +74,7 @@ import newToolbar from "./attrs_monitor_toolbar.js"
         return {
             view: 'fieldset',
             label: "Scalar plot",
-            body: TangoWebapp.ui.newScalarView({
+            body: TangoWebapp.ui.newScalar({
                 id: 'plot',
                 empty: true
             })
@@ -328,13 +328,13 @@ import newToolbar from "./attrs_monitor_toolbar.js"
                 this.$$('attributes').addView({
                     close:true,
                     header: attr.info.label,
-                    body: TangoWebapp.ui.newSpectrum(attr)
+                    body: TangoWebapp.ui.newSpectrum(attr.attributes())
                 });
             } else if (attr.info.data_format === 'IMAGE') {
                 this.$$('attributes').addView({
                     close:true,
                     header: attr.info.label,
-                    body: TangoWebapp.ui.newImage(attr)
+                    body: TangoWebapp.ui.newImage(attr.attributes())
                 });
             }
         },
@@ -352,7 +352,7 @@ import newToolbar from "./attrs_monitor_toolbar.js"
          * @memberof ui.AttrsMonitorView.attrs_monitor_view
          */
         startPlot:function(item){
-            var $$plot = this.$$('plot').plot;
+            var $$plot = this.$$('plot');
             var $$scalars = this.$$('scalars');
 
             $$scalars.updateItem(item.id, {
@@ -368,7 +368,7 @@ import newToolbar from "./attrs_monitor_toolbar.js"
          * @memberof ui.AttrsMonitorView.attrs_monitor_view
          */
         stopPlot:function(item){
-            var $$plot = this.$$('plot').plot;
+            var $$plot = this.$$('plot');
             var $$scalars = this.$$('scalars');
 
             var index = item.plotIndex;
@@ -394,7 +394,7 @@ import newToolbar from "./attrs_monitor_toolbar.js"
             TangoWebappHelpers.iterate(this._plotted, function(scalar){
                 plotted.push(scalar);
             });
-            this.$$('plot').plot.updateTraces(
+            this.$$('plot').updateTraces(
                 plotted.map(function (el) {
                     return el.plotIndex;
                 }),
