@@ -1,4 +1,4 @@
-import {margins} from "./plot.js";
+import {kMargins} from "./plot.js";
 import newToolbar from "./attrs_monitor_toolbar.js"
 
 /**
@@ -44,7 +44,7 @@ var spectrum = webix.protoUI(
                 autosize: false,
                 width: this.$width,
                 height: this.$height,
-                margin: margins
+                margin: kMargins
             };
 
             Plotly.relayout(this.getNode(), layout);

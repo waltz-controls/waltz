@@ -2,7 +2,7 @@
  * @constant
  * @memberof ui.Plot
  */
-export const margins = {
+export const kMargins = {
     l: 50,
     r: 50,
     b: 50,

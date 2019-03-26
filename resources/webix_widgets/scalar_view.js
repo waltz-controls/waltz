@@ -1,4 +1,4 @@
-import {margins} from "./plot.js"
+import {kMargins} from "./plot.js"
 import newToolbar from "./attrs_monitor_toolbar.js";
 
 /**
@@ -37,11 +37,11 @@ const scalar_text = webix.protoUI(
     }, webix.ui.list);
 
 /**
- * @class [scalar_plot]
+ * @class [scalar]
  * @property {String} name
  * @extends webix.ui.view
  * @memberof ui.Plot
- * @namespace scalar_plot
+ * @namespace scalar
  */
 const scalar = webix.protoUI(
     /** @lends scalar_plot*/
@@ -71,7 +71,7 @@ const scalar = webix.protoUI(
                 autosize: false,
                 width: this.$width,
                 height: this.$height,
-                margin: margins
+                margin: kMargins
             });
         },
         /**
@@ -85,7 +85,7 @@ const scalar = webix.protoUI(
                 autosize: false,
                 width: this.$width,
                 height: this.$height,
-                margin: margins
+                margin: kMargins
             });
         },
         /**
@@ -108,7 +108,7 @@ const scalar = webix.protoUI(
                 autosize: false,
                 width: this.$width,
                 height: this.$height,
-                margin: margins
+                margin: kMargins
             });
         },
         /**
@@ -136,7 +136,7 @@ const scalar = webix.protoUI(
                 autosize: false,
                 width: this.$width,
                 height: this.$height,
-                margin: margins
+                margin: kMargins
             });
         },
         /**
@@ -199,7 +199,7 @@ function newWriteForm(config){
     return {
         view:"form",
         elements:[
-            {view:"text", name:"value", label:`Input [min:${config.info.min_value};max:${config.info.max_value}]`, labelPosition: "top", placeholder: config.info.format, tooltip:config.info.description, validate:webix.rules.isNotEmpty},
+            {view:"text", name:"value", label:`Input: ${config.info.data_type} [min:${config.info.min_value};max:${config.info.max_value}]`, labelPosition: "top", placeholder: config.info.format, tooltip:config.info.description, validate:webix.rules.isNotEmpty},
             {
                 cols:[
                     {},
