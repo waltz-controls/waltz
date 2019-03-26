@@ -324,19 +324,20 @@ import newToolbar from "./attrs_monitor_toolbar.js"
         _devices: null,
         _plotIndex: 0, //TODO is this shared?
         _add_attr: function (attr) {
+            let view;
             if (attr.info.data_format === 'SPECTRUM') {
-                this.$$('attributes').addView({
-                    close:true,
-                    header: attr.info.label,
-                    body: TangoWebapp.ui.newSpectrum(attr.attributes())
-                });
+                view = TangoWebapp.ui.newSpectrum(attr)
             } else if (attr.info.data_format === 'IMAGE') {
-                this.$$('attributes').addView({
-                    close:true,
-                    header: attr.info.label,
-                    body: TangoWebapp.ui.newImage(attr.attributes())
-                });
+                view = TangoWebapp.ui.newImage(attr)
+            } else {
+                throw new Error(`Unexpected data_format=${attr.info.data_format}`)
             }
+
+            this.$$('attributes').addView({
+                close:true,
+                header: attr.info.label,
+                body: view
+            });
         },
         /**
          * @param id
