@@ -261,7 +261,7 @@ const scalar_view = webix.protoUI({
         }]));
 
         return {
-            rows:rows
+            rows
         }
     },
     clearAll(){
