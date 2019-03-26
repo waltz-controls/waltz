@@ -323,21 +323,23 @@ import newToolbar from "./attrs_monitor_toolbar.js"
         _plotted: null,
         _devices: null,
         _plotIndex: 0, //TODO is this shared?
+        _view_id_to_attr_id:Object.create(null),
         _add_attr: function (attr) {
-            let view;
+            let body;
             if (attr.info.data_format === 'SPECTRUM') {
-                view = TangoWebapp.ui.newSpectrum(attr)
+                body = TangoWebapp.ui.newSpectrum(attr)
             } else if (attr.info.data_format === 'IMAGE') {
-                view = TangoWebapp.ui.newImage(attr)
+                body = TangoWebapp.ui.newImage(attr)
             } else {
                 throw new Error(`Unexpected data_format=${attr.info.data_format}`)
             }
 
-            this.$$('attributes').addView({
+            const id = this.$$('attributes').addView({
                 close:true,
                 header: attr.info.label,
-                body: view
+                body
             });
+            this._view_id_to_attr_id[id] = attr.id;
         },
         /**
          * @param id
@@ -558,7 +560,8 @@ import newToolbar from "./attrs_monitor_toolbar.js"
                 });
 
                 this.$$('attributes').getTabbar().attachEvent("onBeforeTabClose",function(id){
-                    this.removeItem(id);
+                    const attrId = this._view_id_to_attr_id[id];
+                    this.removeItem(attrId);
                 }.bind(this));
             }.bind(this));
 
