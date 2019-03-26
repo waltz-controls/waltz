@@ -441,7 +441,7 @@
     //TODO make instance functions
     var openTab = function (view, resp) {
             var $$tab = $$(this.id);
-            if (!$$tab) {
+            if (!$$tab || !$$tab.isVisible()) {
                 var device = PlatformContext.devices.getItem(this.device_id);
                 PlatformApi.PlatformUIController().openTangoHostTab(device.host, view);
 

@@ -231,7 +231,8 @@ const scalar_view = webix.protoUI({
     name: "scalar_view",
     _ui(config){
         const rows = [];
-        const view = config.info.data_type === 'DevString' ? "scalar_text" : "scalar";
+        const view = config.info.data_type === 'DevString' ||
+                    config.info.data_type === 'State' ? "scalar_text" : "scalar";
 
         rows.push(webix.extend({
             view: view,
