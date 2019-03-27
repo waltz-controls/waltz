@@ -503,7 +503,8 @@ import {kNonPlottableDataTypes} from "./plot.js";
                     device_id: scalar.device_id,
                     label: scalar.info.label,
                     unit: scalar.info.unit,
-                    description: scalar.info.description
+                    description: scalar.info.description,
+                    data_type: scalar.info.data_type
                 }
             }));
 

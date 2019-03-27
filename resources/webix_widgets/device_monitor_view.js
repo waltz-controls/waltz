@@ -132,11 +132,7 @@
                     }
                 }.bind(this));
 
-                this.loadAttributes(config.device)
-                    .then(function () {
-                        this.$$('attributes').start();
-                        // return this.run();
-                    }.bind(this));
+                this.loadAttributes(config.device);
             }.bind(this));
 
             // this.$ready.push(this.start.mvc_bind(this));
