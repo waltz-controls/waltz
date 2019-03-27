@@ -71,14 +71,10 @@ import newToolbar from "./attrs_monitor_toolbar.js"
      * @memberof ui.AttrsMonitorView
      */
     var newScalarsPlot = function(){
-        return {
-            view: 'fieldset',
-            label: "Scalar plot",
-            body: TangoWebapp.ui.newScalar({
+        return TangoWebapp.ui.newScalar({
                 id: 'plot',
                 empty: true
-            })
-        }
+            });
     };
     /**
      * Extends {@link https://docs.webix.com/api__refs__ui.datatable.html webix.ui.datatable}
@@ -298,7 +294,11 @@ import newToolbar from "./attrs_monitor_toolbar.js"
                 {
                     header: "Scalars",
                     body: newScalars()
-                }
+                },
+                {
+                    header: "Plot",
+                    body: newScalarsPlot(),
+                },
             ]
         }
     };
@@ -440,18 +440,21 @@ import newToolbar from "./attrs_monitor_toolbar.js"
          */
         _get_attrs_to_update:function(){
             var result = [];
-            TangoWebappHelpers.iterate(this._plotted, function (plotted) {
-                result.push(
-                    this._monitored.getItem(plotted.id));
-            }.bind(this));
 
-            if (this.$$('attributes').getTabbar().getValue() === 'scalars') {
+            const value = this.$$('attributes').getTabbar().getValue();
+            if (value === 'scalars') {
                 TangoWebappHelpers.iterate(this.$$('scalars').data, function (scalar) {
-                    if (!scalar.plotted) result.push(this._monitored.getItem(scalar.id));
+                    result.push(
+                        this._monitored.getItem(scalar.id));
+                }.bind(this));
+            } else if(value === 'plot') {
+                TangoWebappHelpers.iterate(this._plotted, function (plotted) {
+                    result.push(
+                        this._monitored.getItem(plotted.id));
                 }.bind(this));
             } else {
                 result.push(
-                    this._monitored.getItem(this.$$('attributes').getTabbar().getValue()));
+                    this._monitored.getItem(value));
             }
             return result;
         },
@@ -540,10 +543,6 @@ import newToolbar from "./attrs_monitor_toolbar.js"
 
             return {
                 rows: [
-                    newScalarsPlot(),
-                    {
-                        view: 'resizer'
-                    },
                     newAttributes(),
                     newScalarSettings(),
                     newToolbar(
