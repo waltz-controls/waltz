@@ -226,7 +226,7 @@
         }
 
         $$tab.show();
-        $$tab.update(resp);
+        $$tab.plot.update(resp);
     };
 
     //TODO send Open Ajax event and handle it in main_controller

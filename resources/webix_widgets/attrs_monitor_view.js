@@ -1,3 +1,5 @@
+import newToolbar from "./attrs_monitor_toolbar.js"
+
 /**
  * @namespace AttrsMonitorView
  * @memberof ui
@@ -62,90 +64,7 @@
         }
     };
 
-    /**
-     * @function
-     * @return {webix.config} toolbar
-     * @memberof ui.AttrsMonitorView
-     */
-    var newToolbar = function(){
-        return {
-            view: "toolbar",
-            height: 40,
-            cols: [
-                {
-                    view: "icon",
-                    id: "status",
-                    icon: "repeat",
-                    maxWidth: 20,
-                    align: "right"
-                },
-                {
-                    view: "counter", id: "refresh", step: 10, value: 1000, min: 10, max: 100000, width: 90,
-                    tooltip: "Update refresh rate",
-                    on: {
-                        onChange(){
-                            this.getTopParentView()._delay = this.getValue();
-                            if (this.getTopParentView().isRunning()) {
-                                this.getTopParentView().stop();
-                                this.getTopParentView().start();
-                            }
-                        },
-                        onEnter(){
-                            this.getTopParentView()._delay = this.getValue();
-                            if (this.getTopParentView().isRunning()) {
-                                this.getTopParentView().stop();
-                                this.getTopParentView().start();
-                            }
-                        }
-                    }
-                },
-                {
-                    view: "button",
-                    type: "iconButton",
-                    icon: "refresh",
-                    align: 'right',
-                    width: 30,
-                    tooltip: "Update",
-                    click: function () {
-                        this.getTopParentView().run();
-                    }
-                },
-                {
-                    view: "button",
-                    id: "startStop",
-                    type: "iconButton",
-                    icon: "play",
-                    align: 'right',
-                    width: 30,
-                    tooltip: "Update continuously",
-                    click: function () {
-                        if (this.getTopParentView().isRunning()) {
-                            this.getTopParentView().stop();
-                        } else {
-                            this.getTopParentView().start();
-                        }
-                    }
-                },
-                {},
-                {
-                    view: "button",
-                    type: "icon",
-                    icon: "cog",
-                    align: 'left',
-                    width: 30,
-                    tooltip: "Show/hide scalar settings",
-                    click: function () {
-                        const $$scalarSettings = this.getTopParentView().$$('scalar-settings');
-                        $$scalarSettings.setValues(this.getTopParentView().$$('scalars').state.data);
-                        if($$scalarSettings.isVisible())
-                            $$scalarSettings.hide();
-                        else
-                            $$scalarSettings.show();
-                    }
-                }
-            ]
-        };
-    };
+
     /**
      * @function
      * @return {webix.config}
@@ -155,7 +74,7 @@
         return {
             view: 'fieldset',
             label: "Scalar plot",
-            body: TangoWebapp.ui.newScalarView({
+            body: TangoWebapp.ui.newScalar({
                 id: 'plot',
                 empty: true
             })
@@ -384,6 +303,23 @@
         }
     };
 
+    const toolbar_settings = {
+        view: "button",
+        type: "icon",
+        icon: "cog",
+        align: 'left',
+        width: 30,
+        tooltip: "Show/hide scalar settings",
+        click: function () {
+            const $$scalarSettings = this.getTopParentView().$$('scalar-settings');
+            $$scalarSettings.setValues(this.getTopParentView().$$('scalars').state.data);
+            if($$scalarSettings.isVisible())
+                $$scalarSettings.hide();
+            else
+                $$scalarSettings.show();
+        }
+    };
+
     /**
      * Extends {@link https://docs.webix.com/api__refs__ui.layout.html webix.ui.layout}
      * @property {string} name
@@ -398,20 +334,23 @@
         _plotted: null,
         _devices: null,
         _plotIndex: 0, //TODO is this shared?
+        _view_id_to_attr_id:Object.create(null),
         _add_attr: function (attr) {
+            let body;
             if (attr.info.data_format === 'SPECTRUM') {
-                this.$$('attributes').addView({
-                    close:true,
-                    header: attr.info.label,
-                    body: TangoWebapp.ui.newSpectrumView(attr)
-                });
+                body = TangoWebapp.ui.newSpectrum(attr)
             } else if (attr.info.data_format === 'IMAGE') {
-                this.$$('attributes').addView({
-                    close:true,
-                    header: attr.info.label,
-                    body: TangoWebapp.ui.newImageView(attr)
-                });
+                body = TangoWebapp.ui.newImage(attr)
+            } else {
+                throw new Error(`Unexpected data_format=${attr.info.data_format}`)
             }
+
+            const id = this.$$('attributes').addView({
+                close:true,
+                header: attr.info.label,
+                body
+            });
+            this._view_id_to_attr_id[id] = attr.id;
         },
         /**
          * @param id
@@ -495,24 +434,6 @@
             }, this);
 
             this._update_plot();
-        },
-        _update_start_stop_icon:function(icon){
-            this.$$('startStop').define("icon", icon);
-            this.$$('startStop').refresh();
-        },
-        /**
-         * @memberof ui.AttrsMonitorView.attrs_monitor_view
-         */
-        before_start:function(){
-            this._update_start_stop_icon("pause");
-            webix.html.addCss( this.$$('status').getNode(), "fa-spin");
-        },
-        /**
-         * @memberof ui.AttrsMonitorView.attrs_monitor_view
-         */
-        after_stop:function(){
-            this._update_start_stop_icon("play");
-            webix.html.removeCss( this.$$('status').getNode(), "fa-spin");
         },
         /*
          * @return {[]}
@@ -616,6 +537,7 @@
             this.removeItem(attr.id);
         },
         _ui: function () {
+
             return {
                 rows: [
                     newScalarsPlot(),
@@ -624,7 +546,9 @@
                     },
                     newAttributes(),
                     newScalarSettings(),
-                    newToolbar()
+                    newToolbar(
+                        toolbar_settings
+                    )
                 ]
             }
         },
@@ -647,7 +571,8 @@
                 });
 
                 this.$$('attributes').getTabbar().attachEvent("onBeforeTabClose",function(id){
-                    this.removeItem(id);
+                    const attrId = this._view_id_to_attr_id[id];
+                    this.removeItem(attrId);
                 }.bind(this));
             }.bind(this));
 

@@ -155,7 +155,19 @@
                      * @memberof ui.DeviceViewPanel.DeviceTreeList
                      */
                     onItemDblClick:function(id){
-                        $$('device_control_panel_header').expand()
+                        const attr = this.getItem(id);
+                        if (attr.info.data_format === "SPECTRUM") {
+                            UserAction.readAttribute(attr)
+                                .then(openSpectrumWindow.bind(attr));
+                        } else if (attr.info.data_format === "IMAGE") {
+                            UserAction.readAttribute(attr)
+                                .then(openImageWindow.bind(attr));
+                        } else if (attr.info.data_format === "SCALAR") {
+                            UserAction.readAttribute(attr)
+                                .then(openScalarWindow.bind(attr));
+                        } else {
+                            TangoWebappHelpers.error("Unsupported data format: " + this.attr.info.data_format);
+                        }
                     }
                 }
             }
@@ -429,7 +441,7 @@
     //TODO make instance functions
     var openTab = function (view, resp) {
             var $$tab = $$(this.id);
-            if (!$$tab) {
+            if (!$$tab || !$$tab.isVisible()) {
                 var device = PlatformContext.devices.getItem(this.device_id);
                 PlatformApi.PlatformUIController().openTangoHostTab(device.host, view);
 
@@ -437,7 +449,7 @@
             }
 
             $$tab.show();
-            $$tab.update(resp);
+            $$tab.plot.update(resp);
         };
 
     //TODO send Open Ajax event and handle it in main_controller
@@ -543,67 +555,8 @@
             },
             _ui: function () {
                 return {
-                    elements: [
-                        attr_info_datatable,
-                        {
-                            cols: [
-                                {
-                                    view: 'button',
-                                    name: 'btnRead',
-                                    value: 'Read',
-                                    click: function () {
-                                        var form = this.getFormView();
-                                        if (form.validate()) {
-                                            form._read();
-                                        }
-                                    }
-                                },
-                                {
-                                    view: 'button',
-                                    name: 'btnPlot',
-                                    disabled: true,
-                                    value: 'Plot',
-                                    click: function () {
-                                        var form = this.getFormView();
-                                        if (form.validate()) {
-                                            form._plot();
-                                        }
-                                    }
-                                },
-                                {
-                                    view: 'button',
-                                    name: 'btnPlotHist',
-                                    disabled: true,
-                                    value: 'Plot.Hist',
-                                    click: function () {
-                                        var form = this.getFormView();
-                                        if (form.validate()) {
-                                            form._plot_history();
-                                        }
-                                    }
-                                }]
-                        },
-                        {
-                            cols:[
-                                {
-                                    view: 'button',
-                                    name: 'btnWrite',
-                                    disabled: true,
-                                    value: 'Write',
-                                    click: function () {
-                                        var form = this.getFormView();
-                                        if (form.validate()) {
-                                            form._write();
-                                        }
-                                    }
-                                },{
-                                    view: 'text',
-                                    name: 'w_value',
-                                    placeholder: 'attribute value',
-                                    gravity:2
-                                }
-                            ]
-                        }
+                    rows: [
+                        attr_info_datatable
                     ]
                 }
             },
@@ -622,15 +575,6 @@
                 var $$info = this.$$('info');
                 $$info.clearAll();
                 $$info.parse(info);
-
-                this.elements['btnPlot'].enable();
-                if(attr.isScalar()){
-                    this.elements['btnPlotHist'].enable();
-                }
-                if (attr.info.writable.includes("WRITE"))
-                    this.elements['btnWrite'].enable();
-                else
-                    this.elements['btnWrite'].disable();
             },
             /**
              * @constructs
