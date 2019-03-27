@@ -1,6 +1,8 @@
 /** @module DevicesTree
  *  @memberof ui
  */
+import newSearch from "./search.js";
+
 (function () {
     /**
      * @constant
@@ -420,19 +422,7 @@
                 return {
                     width: 300,
                     rows: [
-                        {
-                            view: "text",
-                            id: "txtFilter",
-                            label: "<span class='webix_icon fa-filter' style='padding-left: 10px;'></span>",
-                            labelWidth: 32,
-                            placeholder: "type to filter",
-                            value: "",
-                            on: {
-                                onTimedKeyPress: function () {
-                                    $$("devices-tree").filter("#value#", this.getValue());
-                                }
-                            }
-                        },
+                        newSearch("devices-tree","#value#"),
                         {
                             context: config.context,
                             view: "devices_tree_tree",
@@ -461,7 +451,7 @@
                     this.bind(config.context.tango_hosts)
                 }.bind(this));
             }
-        }, webix.ui.layout);
+        }, webix.IdSpace, webix.ui.layout);
 
 
     /**

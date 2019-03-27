@@ -147,14 +147,14 @@ TangoWebappPlatform.mixin = {
             config.state_class = config.state_class || TangoWebappPlatform.WidgetState;
             this.$ready.push(function(){
                 this.state = this.config.state_class.find_one(this.config.id);
-                if(this.state !== null) {
-                    this.restoreState(this.state);
-                    TangoWebappHelpers.log("Widget["+this.config.id+"] state is restored.");
-                } else
+                if(this.state === null) {
                     this.state = new this.config.state_class({
                         id: this.config.id,
                         data: this.initial_state || {}
                     })
+                }
+                this.restoreState(this.state);
+                TangoWebappHelpers.log("Widget["+this.config.id+"] state is restored.");
             }.bind(this));
         }
     }

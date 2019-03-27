@@ -37,17 +37,21 @@ import {kNonPlottableDataTypes} from "./plot.js";
             hidden: true,
             elements: [
                 {
-                    cols: [
-                        {view: "checkbox", label: "Device", name: "device_id", value: 1},
-                        {view: "checkbox", label: "Attribute", name: "label", value: 1},
-                        {view: "checkbox", label: "Value", name: "value", value: 1},
-                        {view: "checkbox", label: "Plot", name: "stream"},
-                        {view: "checkbox", label: "Quality", name: "quality"},
-                        {view: "checkbox", label: "Last updated", name: "timestamp"},
-                        {view: "checkbox", label: "Unit", name: "unit"},
-                        {view: "checkbox", label: "Description", name: "description"},
-                        {view: "checkbox", label: "Remove", name: "remove", value: 1}
-                    ]
+                    view:"fieldset",
+                    label: "Show/hide columns",
+                    body: {
+                        cols: [
+                            {view: "checkbox", label: "Device", labelPosition: "top", name: "device_id", value: 1},
+                            {view: "checkbox", label: "Attribute", labelPosition: "top", name: "label", value: 1},
+                            {view: "checkbox", label: "Value", labelPosition: "top", name: "value", value: 1},
+                            {view: "checkbox", label: "Quality", labelPosition: "top", name: "quality"},
+                            {view: "checkbox", label: "Last updated", labelPosition: "top", name: "timestamp"},
+                            {view: "checkbox", label: "Unit", labelPosition: "top", name: "unit"},
+                            {view: "checkbox", label: "Description", labelPosition: "top", name: "description"},
+                            {view: "checkbox", label: "Plot", labelPosition: "top", name: "stream"},
+                            {view: "checkbox", label: "Remove", labelPosition: "top", name: "remove", value: 1}
+                        ]
+                    }
                 },
                 {
                     cols: [
@@ -90,7 +94,7 @@ import {kNonPlottableDataTypes} from "./plot.js";
                 device_id: 1,
                 label: 1,
                 value: 1,
-                stream: 0,
+                stream: 1,
                 quality: 0,
                 timestamp: 0,
                 unit: 0,
@@ -132,8 +136,17 @@ import {kNonPlottableDataTypes} from "./plot.js";
                         sort: "string", fillspace:true
                     },
                     {id: "value", header: "Value", width: 200, editor: "attr_value_editor", fillspace:true},
+                    {id: "quality", header: "Quality", width: 180, sort: "string"},
                     {
-                        id: "stream", header: "", width: 30, hidden:true, template: function (obj) {
+                        id: "timestamp", header: "Last updated", width: 180, fillspace:true, template: function (obj) {
+                            return TangoWebappPlatform.consts.LOG_DATE_FORMATTER(new Date(obj.timestamp));
+                        }
+                    },
+                    {id: "unit", header: "Unit", width: 60},
+                    {id: "description", header: "Description",fillspace:true},
+                    {id: "data_type", hidden:true, fillspace:true},
+                    {
+                        id: "stream", header: "", width: 30, template: function (obj) {
                             if(kNonPlottableDataTypes.includes(obj.data_type)) return "<span class='webix_icon fa-ban'></span>";
                             if (obj.plotted)
                                 return "<span class='chart webix_icon fa-times-circle-o'></span>";
@@ -141,15 +154,6 @@ import {kNonPlottableDataTypes} from "./plot.js";
                                 return "<span class='chart webix_icon fa-line-chart'></span>";
                         }
                     },
-                    {id: "quality", header: "Quality", width: 180, sort: "string", hidden:true},
-                    {
-                        id: "timestamp", header: "Last updated", width: 180, hidden:true, fillspace:true, template: function (obj) {
-                            return TangoWebappPlatform.consts.LOG_DATE_FORMATTER(new Date(obj.timestamp));
-                        }
-                    },
-                    {id: "unit", header: "Unit", hidden:true, width: 60},
-                    {id: "description", header: "Description", hidden:true, fillspace:true},
-                    {id: "data_type", hidden:true, fillspace:true},
                     {
                         id: "remove", header: "<span class='remove-all webix_icon fa-trash'></span>", width: 30,
                         tooltip: "Remove all",

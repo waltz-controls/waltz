@@ -8,6 +8,8 @@
  * @module DeviceViewPanel
  * @memberof ui
  */
+import newSearch from "./search.js";
+
 (function(){
     /**
      * @constant
@@ -62,21 +64,6 @@
             return kDevicePanelHeader + device.display_name;
         });
         $$("device_tree").refresh();
-    };
-
-    var filter = function (id) {
-        return {
-            view: 'text',
-            value: '',
-            placeholder: 'type to filter',
-            label: '<span class="webix_icon fa-filter"></span>',
-            labelWidth: 20,
-            on: {
-                onTimedKeyPress: function () {
-                    this.getTopParentView().$$(id).filter("#name#", this.getValue());
-                }
-            }
-        }
     };
 
     /**
@@ -203,7 +190,7 @@
                                 header: "Commands",
                                 body: {
                                     rows:[
-                                        filter('commands'),
+                                        newSearch("commands","#name#"),
                                         {
                                             id:'commands',
                                             view:'device_tree_list'
@@ -215,7 +202,7 @@
                                 header: "Attributes",
                                 body: {
                                     rows:[
-                                        filter('attrs'),
+                                        newSearch("attrs","#name#"),
                                         {
                                             id:'attrs',
                                             view:'device_tree_list'
@@ -227,7 +214,7 @@
                                 header: "Pipes",
                                 body: {
                                     rows:[
-                                        filter('pipes'),
+                                        newSearch("pipes","#name#"),
                                         {
                                             id:'pipes',
                                             view:'device_tree_list'
