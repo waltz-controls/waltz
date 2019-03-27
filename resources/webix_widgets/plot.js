@@ -10,6 +10,11 @@ export const kMargins = {
     pad: 4
 };
 
+export const kNonPlottableDataTypes = [
+    "DevString",
+    "State"
+];
+
 /** @module Plot
  *  @memberof ui
  */

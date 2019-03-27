@@ -1,4 +1,5 @@
 import newToolbar from "./attrs_monitor_toolbar.js"
+import {kNonPlottableDataTypes} from "./plot.js";
 
 /**
  * @namespace AttrsMonitorView
@@ -133,6 +134,7 @@ import newToolbar from "./attrs_monitor_toolbar.js"
                     {id: "value", header: "Value", width: 200, editor: "attr_value_editor", fillspace:true},
                     {
                         id: "stream", header: "", width: 30, hidden:true, template: function (obj) {
+                            if(kNonPlottableDataTypes.includes(obj.data_type)) return "<span class='webix_icon fa-ban'></span>";
                             if (obj.plotted)
                                 return "<span class='chart webix_icon fa-times-circle-o'></span>";
                             else
@@ -147,6 +149,7 @@ import newToolbar from "./attrs_monitor_toolbar.js"
                     },
                     {id: "unit", header: "Unit", hidden:true, width: 60},
                     {id: "description", header: "Description", hidden:true, fillspace:true},
+                    {id: "data_type", hidden:true, fillspace:true},
                     {
                         id: "remove", header: "<span class='remove-all webix_icon fa-trash'></span>", width: 30,
                         tooltip: "Remove all",
@@ -181,7 +184,8 @@ import newToolbar from "./attrs_monitor_toolbar.js"
                 device_id: attr.device_id,
                 label: attr.info.label,
                 unit: attr.info.unit,
-                description: attr.info.description
+                description: attr.info.description,
+                data_type: attr.info.data_type
             });
 
             this.hideOverlay();
@@ -266,6 +270,7 @@ import newToolbar from "./attrs_monitor_toolbar.js"
                     var attrId = id.row;
                     var item = this.getItem(attrId);
                     // this.getTopParentView().addTab(tabId, attrId, item);
+                    if(kNonPlottableDataTypes.includes(item.data_type)) return false;
                     if(item.plotted){
                         this.getTopParentView().stopPlot(item);
                     } else {
