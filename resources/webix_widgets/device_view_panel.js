@@ -111,6 +111,8 @@ import newSearch from "./search.js";
                         } else {
                             TangoWebappHelpers.error("Unsupported data format: " + this.attr.info.data_format);
                         }
+
+                        $$('info_control_panel_header').expand()
                     }
                 }
             }

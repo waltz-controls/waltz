@@ -87,6 +87,20 @@
                     }.bind(this));
             },
             /**
+             *
+             * @return {Promise<AttributeInfo>}
+             */
+            fetchInfo(){
+                const device = PlatformContext.devices.getItem(this.device_id);
+                return device.toTangoRestApiRequest().attributes(this.name).get('/info')
+                    .then((resp) => {
+                        this.update_attributes({
+                            info: resp
+                        });
+                        return resp;
+                    });
+            },
+            /**
              * @param value
              * @returns {webix.promise}
              */

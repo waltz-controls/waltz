@@ -1,28 +1,61 @@
 const kAttr_info_values = [
-    'label','writable','data_format','data_type','max_dim_x','max_dim_y','unit','standard_unit',
-    'display_unit','format','min_value','max_value'];
+    'label','writable','data_format','data_type','max_dim_x','max_dim_y','format','description'];
+
+const kAttr_alarms_values = [
+    'min_alarm','max_alarm','min_warning','max_warning','delta_t','delta_val'];
+
 
 const kAttr_info_datatable = {
     id: 'info',
-    view: 'datatable',
+    view: 'treetable',
     header:false,
+    editable:true,
     columns:[
-        {id:'info' },
-        {id:'value', fillspace: true}
-    ],
-    on:{
-        onBindApply:function(attr){
-            if(!attr) return false;
-            var info = [];
-            info.push({info:'Name', value: attr.name});
-            kAttr_info_values.forEach(function(el){
-                info.push({info:MVC.String.classize(el), value: attr.info[el]})
-            });
-            this.clearAll();
-            this.parse(info);
-        }
-    }
+        {id:'info' , template:"{common.icon()} #info#"},
+        {id:'value', editor: "text", fillspace: true}
+    ]
 };
+
+/**
+ *
+ * @param {AttributeInfo} info
+ * @return {Array}
+ */
+function parseInfo(info){
+    const result = [];
+    result.push({id:'name',info:'Name', value: info.name});
+    kAttr_info_values.forEach(el => result.push({id:el, info:MVC.String.classize(el), value: info[el]}));
+    result.push(
+        {id:'unit', info:'Unit', value: info.unit, data: [
+                {id:'standard_unit', info: "Standard", value: info.standard_unit},
+                {id:'display_unit', info: "Display", value: info.display_unit}
+            ]});
+    result.push(
+        {info:'Range', value: "", data: [
+                {id:'min_value', info: "MinValue", value: info.min_value},
+                {id:'max_value', info: "MaxValue", value: info.max_value}
+            ]});
+
+    result.push(
+        {info:'Alarms', value: "", data:
+                kAttr_alarms_values.map(el => ({id:el, info:MVC.String.classize(el), value: info.alarms[el]}))});
+    result.push({info:'Change event', value: "", data:[
+                        {id:'ch_event.rel_change', info: "Relative", value: info.events.ch_event.rel_change},
+                        {id:'ch_event.abs_change', info: "Absolute", value: info.events.ch_event.abs_change}
+                ]});
+    result.push({info:'Periodic event', value: "", data:[
+                        {id:'per_event.period', info: "Period", value: info.events.per_event.period}
+                ]});
+    result.push({info:'Archive event', value: "", data:[
+                    {id:'arch_event.rel_change', info: "Relative", value: info.events.arch_event.rel_change},
+                    {id:'arch_event.abs_change', info: "Absolute", value: info.events.arch_event.abs_change},
+                    {id:'arch_event.period', info: "Period", value: info.events.arch_event.period}
+                ]});
+    result.push({info:'Polled', value: undefined});
+    result.push({info:'Alias', value: undefined});
+    
+    return result;
+}
 
 /**
  * Extends {@link https://docs.webix.com/api__refs__ui.form.html webix.ui.form}
@@ -42,10 +75,77 @@ const attr_info_panel = webix.protoUI(
         name: 'attr_info_panel',
         _ui: function () {
             return {
+                borderless: true,
+                padding: 0,
                 rows: [
-                    kAttr_info_datatable
+                    kAttr_info_datatable,
+                    {
+                        view:"toolbar",
+                        maxHeight: 30,
+                        cols:[
+                            {
+                                view:"button",
+                                type:"icon",
+                                icon:"refresh",
+                                maxWidth:30,
+                                click(){
+                                    this.getTopParentView().refresh();
+                                }
+                            },
+                            {},
+                            {
+                                view:"button",
+                                type:"icon",
+                                icon:"save",
+                                maxWidth:30,
+                                click(){
+                                    this.getTopParentView().save();
+                                }
+                            }
+                        ]
+                    }
                 ]
             }
+        },
+        async save(){
+            let $$info = this.$$('info');
+            //flatten serialized structure
+            const items = $$info.data.serialize().reduce((acc,val) => {
+                acc.push(val);
+                if(val.data) return acc.concat(val.data);
+                return acc;
+            },[]);
+            items
+                .filter(item => this.attr.info.hasOwnProperty(item.id))
+                .forEach(item => this.attr.info[item.id] = item.value);
+
+            items
+                .filter(item => kAttr_alarms_values.includes(item.id))
+                .forEach(item => this.attr.info.alarms[item.id] = item.value);
+
+            //Change event
+            this.attr.info.events.ch_event.rel_change = $$info.getItem('ch_event.rel_change').value;
+            this.attr.info.events.ch_event.abs_change = $$info.getItem('ch_event.abs_change').value;
+
+            //Periodic event
+            this.attr.info.events.per_event.period = $$info.getItem('per_event.period').value;
+
+            //Archive event
+            this.attr.info.events.arch_event.rel_change = $$info.getItem('arch_event.rel_change').value;
+            this.attr.info.events.arch_event.abs_change = $$info.getItem('arch_event.abs_change').value;
+            this.attr.info.events.arch_event.period = $$info.getItem('arch_event.period').value;
+
+            //TODO alias
+
+            //TODO Polled
+
+            UserAction.updateAttributeInfo(this.attr)
+                .then(() => OpenAjax.hub.publish("attr_info_panel.update_attr_info", {data: this.attr.info}))
+                .fail(TangoWebappHelpers.error);
+        },
+        async refresh(){
+            await this.attr.fetchInfo();
+            this.setAttribute(this.attr);
         },
         /**
          *
@@ -54,11 +154,7 @@ const attr_info_panel = webix.protoUI(
          */
         setAttribute:function(attr){
             this.attr = attr;
-            var info = [];
-            info.push({info:'Name', value: attr.name});
-            kAttr_info_values.forEach(function(el){
-                info.push({info:MVC.String.classize(el), value: attr.info[el]})
-            }.bind(this));
+            var info = parseInfo(attr.info);
             var $$info = this.$$('info');
             $$info.clearAll();
             $$info.parse(info);
@@ -69,22 +165,5 @@ const attr_info_panel = webix.protoUI(
          */
         $init: function (config) {
             webix.extend(config, this._ui());
-
-            this.$ready.push(function () {
-                this.bind($$('device_view_panel').$$('attrs'));
-            }.bind(this));
-        },
-        defaults: {
-            on: {
-                /**
-                 * Event listener
-                 *
-                 * @memberof ui.DeviceViewPanel.DevicePanelAttributes
-                 */
-                onBindApply: function (obj, dummy, master) {
-                    if (!obj) return this.clear();
-                    this.setAttribute(obj);
-                }
-            }
         }
-    }, webix.ProgressBar, webix.IdSpace, webix.ui.form);
+    }, webix.ProgressBar, webix.IdSpace, webix.ui.layout);
