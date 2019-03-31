@@ -51,7 +51,7 @@ function parseInfo(info){
                     {id:'arch_event.abs_change', info: "Absolute", value: info.events.arch_event.abs_change},
                     {id:'arch_event.period', info: "Period", value: info.events.arch_event.period}
                 ]});
-    result.push({info:'Polled', value: undefined});
+
     result.push({info:'Alias', value: undefined});
     
     return result;
@@ -137,10 +137,14 @@ const attr_info_panel = webix.protoUI(
 
             //TODO alias
 
-            //TODO Polled
-
             UserAction.updateAttributeInfo(this.attr)
                 .then(() => OpenAjax.hub.publish("attr_info_panel.update_attr_info", {data: this.attr.info}))
+                .fail(TangoWebappHelpers.error);
+
+            const polled = $$info.getItem('polled').value === "true" || $$info.getItem('polled').value === "1";
+            const poll_rate = $$info.getItem('poll_rate').value;
+            UserAction.updateAttributePolling(this.attr, polled, poll_rate)
+                .then(() => OpenAjax.hub.publish("attr_info_panel.update_attr_polling", {data: this.attr.info}))
                 .fail(TangoWebappHelpers.error);
         },
         async refresh(){
@@ -152,10 +156,17 @@ const attr_info_panel = webix.protoUI(
          * @param {TangoAttribute} attr
          * @memberof ui.DeviceViewPanel.DevicePanelAttributes
          */
-        setAttribute:function(attr){
+        async setAttribute(attr){
             this.attr = attr;
-            var info = parseInfo(attr.info);
-            var $$info = this.$$('info');
+            const info = parseInfo(attr.info);
+
+            await attr.fetchPollingStatus();  //TODO move to attribute initialization?
+            info.push({info:'Polling', value: "", data:[
+                    {id:'polled', info: "IsPolled", value: attr.polled},
+                    {id:'poll_rate', info: "Period (ms)", value: attr.poll_rate}
+                ]});
+
+            const $$info = this.$$('info');
             $$info.clearAll();
             $$info.parse(info);
         },

@@ -24,7 +24,9 @@
                 properties: 'object',
                 value: 'any',
                 timestamp: 'int',
-                quality: 'string'
+                quality: 'string',
+                polled: 'boolean',
+                poll_rate: 'int'
             },
             default_attributes: {},
             /**
@@ -44,6 +46,73 @@
         },
         /** @lends  tango.TangoAttribute.prototype */
         {
+            /**
+             *
+             * @return {Promise<void>}
+             */
+            fetchPollingStatus() {
+                const device = PlatformContext.devices.getItem(this.device_id);
+                return device.fetchAdmin().then(admin => {
+                        return admin.devPollStatus(device.name);
+                    }).then((resp) => {
+                        const polled = resp.output.find(el => el.includes(`name = ${this.name}`));
+                        if(polled === undefined) {
+                            this.polled = false;
+                            this.poll_rate = undefined;
+                        } else {
+                            this.polled = true;
+                            this.poll_rate = polled.split('\n')[1].split(" = ")[1];
+                        }
+                    });
+            },
+            /**
+             *
+             * @param {boolean} polled
+             * @param {int} poll_rate
+             */
+            updatePolling(polled, poll_rate = 0){
+                function addObjPolling(item) {
+                    return function (admin) {
+                        admin.addObjPolling({
+                            lvalue: [poll_rate],
+                            svalue: [device.name, "attribute", item.name]
+                        }).fail(TangoWebappHelpers.error);
+                    }
+                }
+
+                function updObjPolling(item) {
+                    return function (admin) {
+                        admin.updObjPollingPeriod({
+                            lvalue: [poll_rate],
+                            svalue: [device.name, "attribute", item.name]
+                        }).fail(TangoWebappHelpers.error);
+                    }
+                }
+
+                function remObjPolling(item) {
+                    return function (admin) {
+                        admin.remObjPolling([device.name, "attribute", item.name]).fail(TangoWebappHelpers.error);
+                    }
+                }
+
+                const device = PlatformContext.devices.getItem(this.device_id);
+                let pollStatusPromise;
+                if (polled)
+                    if(!this.polled)
+                        pollStatusPromise = device.fetchAdmin().then(addObjPolling(this));
+                    else
+                        pollStatusPromise = device.fetchAdmin().then(updObjPolling(this));
+                else if (this.polled)
+                    pollStatusPromise = device.fetchAdmin().then(remObjPolling(this));
+                else throw new Error("Ouch!");
+
+                return pollStatusPromise.then(() => {
+                    this.update_attributes({
+                        polled,
+                        poll_rate
+                    });
+                });
+            },
             /**
              * @param attrs
              * @constructs

@@ -172,6 +172,25 @@ UserAction = TangoWebapp.UserAction = MVC.Model.extend('user_action',
          * Fires user_action.log
          *
          * @fires user_action.log
+         * @param {TangoAttribute} attr
+         */
+        updateAttributePolling:function(attr, polled, poll_rate = 0){
+            return attr.updatePolling(polled, poll_rate)
+                .then(function(/*async*/){
+                    var instance = new this({
+                        id: webix.uid(),
+                        value: this._get_user().concat(['Action: update attribute polling[', attr.id, polled, poll_rate, ']']).join(' '),
+                        timestamp: +new Date()
+                    });
+                    this.publish('log', {data: instance});
+                    return attr;
+                }.bind(this))
+                .fail(this.failure.bind(this));
+        },
+        /**
+         * Fires user_action.log
+         *
+         * @fires user_action.log
          * @param {TangoCommand} cmd
          * @param {any} argin
          * @returns {webix.promise}
