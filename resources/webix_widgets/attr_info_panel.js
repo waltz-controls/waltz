@@ -71,7 +71,7 @@ const attr_info_panel = webix.protoUI(
             webix.extend(config, this._ui());
 
             this.$ready.push(function () {
-                this.bind($$('device_info_panel').$$('attrs'));
+                this.bind($$('device_view_panel').$$('attrs'));
             }.bind(this));
         },
         defaults: {

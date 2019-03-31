@@ -46,6 +46,7 @@ TangoWebappPlatform.TangoHost = MVC.Model.extend("tango_host",
         rest: null,
         /** @member {database} */
         database: null,
+        display_name:"",
         /**
          * @return {string} host + "/" + port
          */
@@ -67,7 +68,8 @@ TangoWebappPlatform.TangoHost = MVC.Model.extend("tango_host",
 
             this._super(attrs);
 
-
+            //TODO alias
+            this.display_name = this.id;
         },
         /**
          * @return {string} device

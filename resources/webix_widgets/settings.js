@@ -411,66 +411,6 @@
         }
     }, TangoWebappPlatform.mixin.OpenAjaxListener, webix.ui.layout);
 
-    /**
-     * Extends {@link https://docs.webix.com/api__refs__ui.layout.html webix.ui.layout}
-     * @property {String} name
-     * @memberof ui.Settings
-     * @namespace dashboard_tango_host_info
-     */
-    var dashboard_tango_host_info = webix.protoUI(
-        /** @lends dashboard_tango_host_info.prototype*/
-        {
-        name: 'dashboard_tango_host_info',
-        _ui: function () {
-            return {
-                rows: [
-                    {
-                        type: 'header',
-                        height: 40,
-                        template: "<span class='webix_icon fa-database'></span><span class='webix_strong'> Tango host info</span>"
-                    },
-                    {
-                        autoheight: true,
-                        id: "tango-host-info-value",
-                        template: function (obj, $view) {
-                            //TODO see if we can use overlay here
-                            if (obj.Class === undefined) return "Please choose TANGO host in the list to view the info";
-                            if (obj.is_alive)
-                                return "<span class='webix_strong'>" + obj.id + "</span>  is alive!" +
-                                    "<hr/><div style='display: block'>" + obj.info.join('<br/>') + "</div>";
-                            else
-                                return "<span class='webix_icon fa-frown-o'></span><span class='webix_strong'>" + obj.id + "</span>  is not alive!";
-                        }
-                    }
-                ]
-            }
-        },
-            /**
-             * @memberof ui.Settings.dashboard_tango_host_info
-             * @constructor
-             */
-        $init: function (config) {
-            webix.extend(config, this._ui());
-
-            this.$ready.push(function () {
-                this.$$('tango-host-info-value')
-                    .bind(PlatformContext.tango_hosts)
-            }.bind(this));
-        },
-        defaults: {
-            minWidth: 240,
-            on: {
-                "platform_api.ui.initialized subscribe": function (event) {
-                    this.$$('tango-host-info-value')
-                        .bind(event.data.context.tango_hosts)
-                },
-                "platform_context.destroy subscribe": function (event) {
-                    this.$$('tango-host-info-value').unbind()
-                }
-            }
-        }
-    }, TangoWebappPlatform.mixin.OpenAjaxListener, webix.IdSpace, webix.ui.layout);
-
     //TODO remove dashboard- from ids
     /**
      * Extends {@link https://docs.webix.com/api__refs__ui.layout.html webix.ui.layout}
@@ -529,11 +469,7 @@
                         gravity: 3,
                         rows: [
                             {},
-                            {
-
-                                view: 'dashboard_tango_host_info',
-                                id: 'tango-host-info'
-                            },
+                            {},
                             {}
                         ]
 

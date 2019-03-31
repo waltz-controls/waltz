@@ -99,7 +99,7 @@ const pipe_info_panel = webix.protoUI(
         $init: function (config) {
             webix.extend(config, this._ui());
             this.$ready.push(function () {
-                this.bind($$('device_info_panel').$$('pipes'));
+                this.bind($$('device_view_panel').$$('pipes'));
             }.bind(this));
         },
         defaults:{

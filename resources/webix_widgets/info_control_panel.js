@@ -92,12 +92,18 @@ const info_control_panel = webix.protoUI(
         _update_header:function(data){
             $$("info_control_panel_header").config.header = webix.template(function () {
                 switch(data.kind){
+                    case "tango_host":
+                        return "<span class='webix_icon fa-keyboard-o'></span> Tango host: " + TangoHost.find_one(data.id).display_name;
+                    case "device":
+                        return "<span class='webix_icon fa-keyboard-o'></span> Device: " + TangoDevice.find_one(data.id).display_name;
                     case "commands":
                         return "<span class='webix_icon fa-keyboard-o'></span> Command: " + TangoCommand.find_one(data.id).display_name;
                     case "attrs":
                         return "<span class='webix_icon fa-keyboard-o'></span> Attr: " + TangoAttribute.find_one(data.id).display_name;
                     case "pipes":
                         return "<span class='webix_icon fa-keyboard-o'></span> Pipe: " + TangoPipe.find_one(data.id).display_name;
+                    default:
+                        throw new Error(`Unknown selected kind=${data.kind}`);
                 }
 
             });
@@ -123,8 +129,9 @@ const info_control_panel = webix.protoUI(
                  * @inner
                  */
                 "tango_webapp.item_selected subscribe":function(event){
-                    this._update_header(event.data);
                     var $$view = this.$$(event.data.kind);
+                    if($$view === undefined) return;
+                    this._update_header(event.data);
                     $$view.show(true);
 
                     switch (event.data.kind){

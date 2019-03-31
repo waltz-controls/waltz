@@ -16,50 +16,7 @@ import newSearch from "./search.js";
      * @type {string}
      * @memberof ui.DeviceViewPanel
      */
-    var kDevicePanelHeader = "<span class='webix_icon fa-microchip'></span> Device: ";
-
-
-    var device_info_values = [
-        "name",
-        "admin",
-        "device_class",
-        "exported",
-        "host",
-        "idl",
-        "pid",
-        "started_at",
-        "stopped_at"
-    ];
-
-    var device_info_parser = function(device){
-        if (device.id === undefined) return false;
-        function get_device_info(device){
-            var result = [];
-
-            result.push({
-                info: 'Alias',
-                value: device.display_name
-            });
-
-            device_info_values.forEach(function(item){
-                result.push({
-                    info: MVC.String.classize(item),
-                    value: device.info[item]
-                })
-            });
-
-            return result;
-        }
-
-        var info = get_device_info(device);
-        this.clearAll();
-        this.parse(info);
-
-        $$("device_tree").config.header = webix.template(function () {
-            return kDevicePanelHeader + device.display_name;
-        });
-        $$("device_tree").refresh();
-    };
+    const kDevicePanelHeader = "<span class='webix_icon fa-microchip'></span> Device: ";
 
     /**
      * More info: {@link https://docs.webix.com/api__refs__ui.list.html webix.ui.list}
@@ -92,6 +49,10 @@ import newSearch from "./search.js";
                     onBindApply: function (device) {
                         if (device.id === undefined) return false;
                         this.clearAll();
+                        $$("device_tree").config.header = webix.template(function () {
+                            return kDevicePanelHeader + device.display_name;
+                        });
+                        $$("device_tree").refresh();
                         this.showProgress({
                             type: 'icon'
                         });
@@ -171,67 +132,16 @@ import newSearch from "./search.js";
      * @author Igor Khokhriakov <igor.khokhriakov@hzg.de>
      * @since 9/10/18
      */
-    var device_info_panel = webix.protoUI({
-        name: 'device_info_panel',
-        _ui:function(){
-            return {
-                rows:[
-                    TangoWebapp.ui.newInfoDatatable(device_info_parser),
-                    {
-                        view: "tabview",
-                        gravity: 2,
-                        cells: [
-                            {
-                                header: "Commands",
-                                body: {
-                                    rows:[
-                                        newSearch("commands","#name#"),
-                                        {
-                                            id:'commands',
-                                            view:'device_tree_list'
-                                        }
-                                    ]
-                                }
-                            },
-                            {
-                                header: "Attributes",
-                                body: {
-                                    rows:[
-                                        newSearch("attrs","#name#"),
-                                        {
-                                            id:'attrs',
-                                            view:'device_tree_list'
-                                        }
-                                    ]
-                                }
-                            },
-                            {
-                                header: "Pipes",
-                                body: {
-                                    rows:[
-                                        newSearch("pipes","#name#"),
-                                        {
-                                            id:'pipes',
-                                            view:'device_tree_list'
-                                        }
-                                    ]
-                                }
-                            }
-                        ]
-                    }
-                ]
-            }
-        },
+    var device_view_panel = webix.protoUI({
+        name: 'device_view_panel',
         $init:function(config){
-            webix.extend(config, this._ui());
             this.$ready.push(function(){
-                this.$$('info').bind(config.context.devices);
                 this.$$('commands').bind(config.context.devices);
                 this.$$('attrs').bind(config.context.devices);
                 this.$$('pipes').bind(config.context.devices);
             }.bind(this));
         }
-    }, webix.IdSpace, webix.ui.layout);
+    }, webix.IdSpace, webix.ui.tabview);
 
 
 
@@ -300,20 +210,58 @@ import newSearch from "./search.js";
 
 
     /**
-     * Factory function for {@link DeviceInfoPanel}
+     * Factory function for {@link DeviceViewPanel}
      *
      * @param context
-     * @return {DeviceInfoPanel}
+     * @return {DeviceViewPanel}
      * @memberof ui.DeviceViewPanel
      */
-    TangoWebapp.ui.newDeviceInfoPanel = function(context){
+    TangoWebapp.ui.newDeviceViewPanel = function(context){
         return {
             header: kDevicePanelHeader,
             id: 'device_tree',
             body: {
                 context: context,
-                id: 'device_info_panel',
-                view: 'device_info_panel'
+                id: 'device_view_panel',
+                view: 'device_view_panel',
+                cells: [
+                    {
+                        header: "Commands",
+                        body: {
+                            rows: [
+                                newSearch("commands", "#name#"),
+                                {
+                                    id: 'commands',
+                                    view: 'device_tree_list'
+                                }
+                            ]
+                        }
+                    },
+                    {
+                        header: "Attributes",
+                        body: {
+                            rows: [
+                                newSearch("attrs", "#name#"),
+                                {
+                                    id: 'attrs',
+                                    view: 'device_tree_list'
+                                }
+                            ]
+                        }
+                    },
+                    {
+                        header: "Pipes",
+                        body: {
+                            rows: [
+                                newSearch("pipes", "#name#"),
+                                {
+                                    id: 'pipes',
+                                    view: 'device_tree_list'
+                                }
+                            ]
+                        }
+                    }
+                ]
             }
         }
     };
