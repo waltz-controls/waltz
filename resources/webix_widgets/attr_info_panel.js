@@ -141,7 +141,7 @@ const attr_info_panel = webix.protoUI(
                 .then(() => OpenAjax.hub.publish("attr_info_panel.update_attr_info", {data: this.attr.info}))
                 .fail(TangoWebappHelpers.error);
 
-            const polled = $$info.getItem('polled').value === "true" || $$info.getItem('polled').value === "1";
+            const polled = $$info.getItem('polled').value || $$info.getItem('polled').value === "true" || $$info.getItem('polled').value === "1";
             const poll_rate = $$info.getItem('poll_rate').value;
             UserAction.updateAttributePolling(this.attr, polled, poll_rate)
                 .then(() => OpenAjax.hub.publish("attr_info_panel.update_attr_polling", {data: this.attr.info}))
