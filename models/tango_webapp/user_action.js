@@ -299,6 +299,31 @@ UserAction = TangoWebapp.UserAction = MVC.Model.extend('user_action',
          *
          * @fires user_action.log
          *
+         * @param {TangoDevice} device
+         * @param {[string]} prop_names
+         * @returns {webix.promise}
+         */
+        deleteDeviceProperties: function (device, prop_names) {
+            return webix.promise.all(
+                    prop_names.map(prop_name => {
+                        device.deleteProperty(prop_name)
+                    })
+                ).then(function (result) {
+                    var instance = new this({
+                        id: webix.uid(),
+                        value: this._get_user().concat(['Action: delete device properties:', device.id, '; Properties:', prop_names]).join(' '),
+                        timestamp: +new Date()
+                    });
+                    this.publish('log', {data: instance});
+                    return result;
+                }.bind(this))
+                .fail(this.failure.bind(this));
+        },
+        /**
+         * Fires user_action.log
+         *
+         * @fires user_action.log
+         *
          * @param {UserScript} script
          */
         executeUserScript:function(script){

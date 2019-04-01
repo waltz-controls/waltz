@@ -11,11 +11,12 @@
      */
     var info_datatable = {
         id: 'info',
-        view: 'datatable',
+        view: 'treetable',
         header:false,
+        editable: true,
         columns:[
-            {id:'info' },
-            {id:'value', fillspace: true}
+            {id:'info' , editor: "text", template: "{common.icon()} #info#"},
+            {id:'value', editor: "text", fillspace: true}
         ],
         on:{
             onBindApply:function(){
