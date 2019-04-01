@@ -41,6 +41,13 @@ TangoCommand = MVC.Model.extend('tango_command',
 
             this._super(attrs);
         },
+        executeWithPredefinedInput(){
+            var device = PlatformContext.devices.getItem(this.device_id);
+            return device.executeCommand(this.name, this.input).then(function(resp){
+                this.update_attributes(resp);
+                return this;
+            }.bind(this));
+        },
         /**
          *
          * @param argin
@@ -48,15 +55,10 @@ TangoCommand = MVC.Model.extend('tango_command',
          * @returns {webix.promise}
          */
         execute: function (argin) {
-            var device = PlatformContext.devices.getItem(this.device_id);
-
             this.update_attributes({
                 input: argin
             });
-            return device.executeCommand(this.name, argin).then(function(resp){
-                this.update_attributes(resp);
-                return this;
-            }.bind(this));
+            return this.executeWithPredefinedInput();
         },
         /**
          *

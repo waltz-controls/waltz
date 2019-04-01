@@ -187,6 +187,45 @@ UserAction = TangoWebapp.UserAction = MVC.Model.extend('user_action',
                 }.bind(this))
                 .fail(this.failure.bind(this));
         },
+        updateDeviceAlias(device, alias){
+            return device.updateAlias(alias)
+                .then(function (result) {
+                    var instance = new this({
+                        id: webix.uid(),
+                        value: this._get_user().concat(['Action: update device alias:', device.alias, '; device:', device.name]).join(' '),
+                        timestamp: +new Date()
+                    });
+                    this.publish('log', {data: instance});
+                    return result;
+                }.bind(this))
+                .fail(this.failure.bind(this));
+        },
+        deleteDeviceAlias(device){
+            return device.deleteAlias()
+                .then(function (result) {
+                    var instance = new this({
+                        id: webix.uid(),
+                        value: this._get_user().concat(['Action: delete device alias:', device.alias, '; device:', device.name]).join(' '),
+                        timestamp: +new Date()
+                    });
+                    this.publish('log', {data: instance});
+                    return result;
+                }.bind(this))
+                .fail(this.failure.bind(this));
+        },
+        executeCommandWithPredefinedInput(cmd){
+            return cmd.executeWithPredefinedInput()
+                .then(function (result) {
+                    var instance = new this({
+                        id: webix.uid(),
+                        value: this._get_user().concat(['Action: execute command:', result.id, '; Input:', result.input, '; Ouput:', result.output]).join(' '),
+                        timestamp: +new Date()
+                    });
+                    this.publish('log', {data: instance});
+                    return result;
+                }.bind(this))
+                .fail(this.failure.bind(this));
+        },
         /**
          * Fires user_action.log
          *

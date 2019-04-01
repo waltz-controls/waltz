@@ -38,10 +38,14 @@ async function device_info_parser (device){
         data:properties.map(property => ({info:property.name, value:property.values.join(",")}))
     });
 
+    //TODO Polling
+
+    //TODO Logging
+
     info.push({
         id:'alias',
         info: 'Alias',
-        value: device.display_name
+        value: device.alias
     });
 
     this.clearAll();
@@ -90,7 +94,7 @@ const device_info_panel = webix.protoUI({
         $$info.open("properties");
         $$info.editRow(id)
     },
-    saveProperties(properties){
+    updateProperties(properties){
         if(properties.data.length === 0) return;
 
         const data = {};
@@ -104,19 +108,32 @@ const device_info_panel = webix.protoUI({
             .filter(property => !property.value)
             .map(property => property.info);
 
-        webix.promise.all([
+        return webix.promise.all([
                 UserAction.writeDeviceProperties(this.deviceRecord.data, data),
                 UserAction.deleteDeviceProperties(this.deviceRecord.data, deleteProperties)
-            ]).then(()=>
-                device_info_parser.bind(this.$$('info'))(this.deviceRecord.data)
-            ).fail(TangoWebappHelpers.error);
+            ]).fail(TangoWebappHelpers.error);
+    },
+    updateAlias(alias){
+        const device = this.deviceRecord.data;
+        if(!alias || alias === device.name)
+            return UserAction.deleteDeviceAlias(device).fail(TangoWebappHelpers.error);
+        else
+            return UserAction.updateDeviceAlias(device, alias).fail(TangoWebappHelpers.error);
     },
     save(){
-        const values = this.$$('info').serialize();
+        const result = [];
+        const $$info = this.$$('info');
+        $$info.editStop();
+        const values = $$info.serialize();
         const properties = values.find(value => value.id === "properties");
-        if(properties !== undefined) this.saveProperties(properties)
+        if(properties !== undefined) result.push(this.updateProperties(properties));
 
-        //TODO alias
+        const alias = $$info.getItem("alias");
+        result.push(this.updateAlias(alias.value));
+
+        webix.promise.all(result).then(()=>
+            device_info_parser.bind($$info)(this.deviceRecord.data)
+        )
     },
     _ui(){
 

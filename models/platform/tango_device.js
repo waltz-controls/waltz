@@ -394,6 +394,28 @@ TangoDevice = TangoWebappPlatform.TangoDevice = TangoWebappPlatform.DataCollecti
         writePipe: function (name, obj) {
             return this.toTangoRestApiRequest().pipes(name).put("", obj);
         },
+        updateAlias(alias){
+            return this.host.fetchDatabase().then(db => {
+                return db.putDeviceAlias(this.name, alias).then(() => {
+                    this.update_attributes({
+                        display_name: this.alias,
+                        alias
+                    });
+                    return this;
+                });
+            });
+        },
+        deleteAlias(){
+            return this.host.fetchDatabase().then(db => {
+                    return db.deleteDeviceAlias(this.alias).then(() => {
+                        this.update_attributes({
+                            display_name: this.name,
+                            alias: ""
+                        });
+                        return this;
+                    });
+            });
+        },
         /**
          *
          * @return {string}

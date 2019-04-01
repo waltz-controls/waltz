@@ -245,6 +245,11 @@ import newSearch from "./search.js";
                 type: 'lineTree',
                 select: true,
                 on: {
+                    onItemClick(id){
+                        if(this.getSelectedId() === id)
+                            this.callEvent("onAfterSelect",[id]);
+                        return true;
+                    },
                     /**
                      * Event listener.
                      * @memberof ui.DevicesTree.tree
@@ -312,7 +317,7 @@ import newSearch from "./search.js";
                             PlatformContext.devices.setCursor(device.id);
                             OpenAjax.hub.publish("tango_webapp.item_selected", {
                                 data: {
-                                    id: id,
+                                    id: device.id,
                                     kind: "device"
                                 }
                             });
