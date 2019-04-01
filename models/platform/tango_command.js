@@ -23,10 +23,15 @@ TangoCommand = MVC.Model.extend('tango_command',
             display_name: 'string',
             info: 'object',
             input: 'any',
-            output: 'any'
+            output: 'any',
+            polled: 'boolean',
+            poll_rate: 'int',
+            polling_type: 'string'
             //TODO history
         },
-        default_attributes: {}
+        default_attributes: {
+            polling_type: 'command'
+        }
     },
     /** @lends  tango.TangoCommand.prototype */
     {

@@ -2,6 +2,17 @@
  *  @memberof ui
  */
 (function () {
+    function map(line) {
+        const lines = line.split('\n');
+        return {
+            name: lines[0].split(' = ')[1],
+            polled: true,
+            isNewPolled: true,
+            poll_rate: lines[1].split(' = ')[1]
+        };
+    }
+
+
     /**
      * Extends {@link https://docs.webix.com/api__refs__ui.layout.html webix.ui.layout}
      * @property {String} name
@@ -15,102 +26,75 @@
              * @memberof ui.DevicePollingView.device_polling
              */
             refresh: function () {
-                var map = function (el) {
-                    var lines = el.split('\n');
-                    return {
-                        name: lines[0].split(' = ')[1],
-                        isPolled: true,
+                TangoWebappHelpers.iterate(this.$$attributes, (item, id) => {
+                    item.update_attributes({
+                        polled: false,
                         isNewPolled: false,
-                        period: lines[1].split(' = ')[1]
-                    };
-                };
+                        poll_rate: ""
+                    });
+                });
 
-                var f = function (resp) {
-                    return function (collection, type) {
-                        var polled = resp.output.filter(function (el) {
-                            return el.indexOf(type + " name") > -1
-                        }).map(map);
+                TangoWebappHelpers.iterate(this.$$commands, (item, id) => {
+                    item.update_attributes({
+                        polled: false,
+                        isNewPolled: false,
+                        poll_rate: ""
+                    });
+                });
 
-                        TangoWebappHelpers.iterate(collection, function (item, id) {
-                            var found = polled.find(function (el) {
-                                return el.name === item.name;
+                this._device.fetchAdmin().then(admin => admin.devPollStatus(this._device.name))
+                    .then((resp) => {
+                        resp.output.filter(line => line.includes(" attribute "))
+                            .map(map)
+                            .forEach(pollable => {
+                                TangoWebappHelpers.iterate(this.$$attributes, (item, id) => {
+                                    if (item.name === pollable.name)
+                                        this.$$attributes.updateItem(id, pollable);
+                                });
                             });
 
-                            if (found) collection.updateItem(id, found);
+                        resp.output.filter(line => line.includes(" command "))
+                            .map(map).forEach(pollable => {
+                            TangoWebappHelpers.iterate(this.$$commands, (item, id) => {
+                                if (item.name === pollable.name)
+                                    this.$$commands.updateItem(id, pollable);
+                            });
                         });
-                    }
-                };
-
-                var top = this.getTopParentView();
-                top._device.fetchAdmin().then(function (admin) {
-                        return admin.devPollStatus(this._device.name);
-                    }.bind(top))
-                    .then(function (resp) {
-                        f(resp)(this._commands, 'command');
-                        f(resp)(this._attributes, 'attribute');
-                    }.bind(top));
+                    });
             },
             /** @memberof ui.DevicePollingView.device_polling */
             apply: function () {
-                var top = this.getTopParentView();
-
-                var device_name = top._device.name;
-
-                function addObjPolling(item, type) {
-                    return function (admin) {
-                        admin.addObjPolling({
-                            lvalue: [item.period],
-                            svalue: [device_name, type, item.name]
-                        }).fail(TangoWebappHelpers.error);
-                    }
+                function setObjPolling(item) {
+                    this._device.fetchAdmin().then(admin => {
+                        return admin.updatePolling(this._device.name, item, item.isNewPolled, item.poll_rate);
+                    }).then(pollable => {
+                        item.update_attributes(pollable)
+                    }).fail(TangoWebappHelpers.error);
                 }
 
-                function updObjPolling(item, type) {
-                    return function (admin) {
-                        admin.updObjPollingPeriod({
-                            lvalue: [item.period],
-                            svalue: [device_name, type, item.name]
-                        }).fail(TangoWebappHelpers.error);
-                    }
-                }
-
-                function remObjPolling(item, type) {
-                    return function (admin) {
-                        admin.remObjPolling([device_name, type, item.name]).fail(TangoWebappHelpers.error);
-                    }
-                }
-
-
-                function setObjPolling(type) {
-                    return function (item) {
-                        if (item.isPolled)
-                            if (item.isNewPolled)
-                                this._device.fetchAdmin().then(addObjPolling(item, type));
-                            else
-                                this._device.fetchAdmin().then(updObjPolling(item, type));
-                        else if (!item.isNewPolled)
-                            this._device.fetchAdmin().then(remObjPolling(item, type));
-                    }
-                }
-
-                TangoWebappHelpers.iterate(top._commands, setObjPolling('command').bind(top));
-                TangoWebappHelpers.iterate(top._attributes, setObjPolling('attribute').bind(top));
+                TangoWebappHelpers.iterate(this.$$commands, setObjPolling.bind(this));
+                TangoWebappHelpers.iterate(this.$$attributes, setObjPolling.bind(this));
             },
             /** @memberof  ui.DevicePollingView.device_polling */
             reset: function () {
                 var device_name = this._device.name;
-                var admin = this._device.promiseAdmin();
+                var admin = this._device.fetchAdmin();
 
                 function removePolling(type) {
-                    return function (el, item) {
-                        admin.then(function (admin) {
-                            admin.remObjPolling([device_name, type, item.name]).fail(TangoWebappHelpers.error);
-                        });
+                    return function (item, id) {
+                        if (item.polled)
+                            return admin.then(function (admin) {
+                                admin.remObjPolling([device_name, type, item.name]);
+                            }).then(() => item.update_attributes({
+                                polled: false,
+                                isNewPolled: false
+                            }))
+                                .fail(TangoWebappHelpers.error);
                     }
                 }
 
-                TangoWebappHelpers.iterate(this._commands, removePolling("command"));
-                TangoWebappHelpers.iterate(this._attributes, removePolling("attribute"));
+                TangoWebappHelpers.iterate(this.$$commands, removePolling("command"));
+                TangoWebappHelpers.iterate(this.$$attributes, removePolling("attribute"));
 
                 webix.alert({
                     title: "Confirm reset",
@@ -135,12 +119,16 @@
                                         view: "datatable",
                                         editable: true,
                                         columns: [
-                                            {id: "name", header: "Command", width: TangoWebappPlatform.consts.NAME_COLUMN_WIDTH},
-                                            {id: "isPolled", header: "Is Polled", template: "{common.checkbox()}"},
-                                            {id: "period", header: "Period (ms)", fillspace: true, editor: "text"}
+                                            {
+                                                id: "name",
+                                                header: "Command",
+                                                width: TangoWebappPlatform.consts.NAME_COLUMN_WIDTH
+                                            },
+                                            {id: "isNewPolled", header: "Is Polled", template: "{common.checkbox()}"},
+                                            {id: "poll_rate", header: "Period (ms)", fillspace: true, editor: "text"}
                                         ],
                                         rules: {
-                                            "period": webix.rules.isNumber
+                                            "poll_rate": webix.rules.isNumber
                                         }
                                     }
                                 },
@@ -151,12 +139,16 @@
                                         view: "datatable",
                                         editable: true,
                                         columns: [
-                                            {id: "name", header: "Attribute", width: TangoWebappPlatform.consts.NAME_COLUMN_WIDTH},
-                                            {id: "isPolled", header: "Is Polled", template: "{common.checkbox()}"},
-                                            {id: "period", header: "Period (ms)", fillspace: true, editor: "text"}
+                                            {
+                                                id: "name",
+                                                header: "Attribute",
+                                                width: TangoWebappPlatform.consts.NAME_COLUMN_WIDTH
+                                            },
+                                            {id: "isNewPolled", header: "Is Polled", template: "{common.checkbox()}"},
+                                            {id: "poll_rate", header: "Period (ms)", fillspace: true, editor: "text"}
                                         ],
                                         rules: {
-                                            "period": webix.rules.isNumber
+                                            "poll_rate": webix.rules.isNumber
                                         }
                                     }
                                     //},
@@ -184,7 +176,9 @@
                                     value: "Refresh",
                                     width: 100,
                                     align: "left",
-                                    click: top.refresh
+                                    click() {
+                                        this.getTopParentView().refresh();
+                                    }
                                 },
                                 {
                                     view: "button",
@@ -192,7 +186,9 @@
                                     value: "Apply",
                                     width: 100,
                                     align: "left",
-                                    click: top.apply
+                                    click() {
+                                        this.getTopParentView().apply();
+                                    }
                                 },
                                 {
                                     view: "button",
@@ -200,7 +196,7 @@
                                     value: "Reset",
                                     width: 100,
                                     align: "left",
-                                    click: function () {
+                                    click() {
                                         webix.confirm({
                                             title: "Confirm reset",
                                             ok: "Yes",
@@ -221,43 +217,25 @@
             },
             name: "device_polling",
             /**
-             * @param arg
-             * @memberof ui.DevicePollingView.device_polling
-             */
-            map: function (arg) {
-                return arg.map(function (el) {
-                    return {
-                        name: el.name,
-                        isPolled: false,
-                        isNewPolled: true,
-                        period: ""
-                    }
-                });
-            },
-            /**
              * @memberof  ui.DevicePollingView.device_polling
              * @constructor
              */
             $init: function (config) {
                 webix.extend(config, this._ui());
 
-                //TODO sync
-                this._commands = new webix.DataCollection();
-                this._commands.parse(config.device.fetchCommands().then(this.map));
-
-                this._attributes = new webix.DataCollection();
-                this._attributes.parse(config.device.fetchAttrs().then(this.map));
+                config.device.fetchCommands();
+                config.device.fetchAttrs();
 
                 this.$ready.push(function () {
                     this.$$commands = this.$$('commands');
                     this.$$attributes = this.$$('attributes');
                     this.$$settings = this.$$('settings');
 
-                    this.$$commands.data.sync(this._commands);
-                    this.$$attributes.data.sync(this._attributes);
+                    this.$$commands.data.sync(config.device.commands);
+                    this.$$attributes.data.sync(config.device.attrs);
+                    this.refresh();
                 }.bind(this));
 
-                this.$ready.push(this.refresh);
             },
             defaults: {
                 on: {
