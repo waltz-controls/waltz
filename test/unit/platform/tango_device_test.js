@@ -101,5 +101,21 @@ new MVC.Test.Unit('tango_device', {
         var ampli = attrs[0];
         this.assert_equal("ampli", ampli.name);
         this.assert_equal(ampli.name, ampli.info.name);
+    },
+    async test_poll_status(){
+        var api = new TangoRestApi({url: TestValues.rest_url});
+        const device = await api.fetchHost(TestValues.tango_host)
+            .then(function (host) {
+                return host.fetchDevice(TestValues.test_device);
+            });
+
+        await device.fetchCommands();
+        await device.fetchAttrs();
+        device.pollStatus()
+            .then(this.next_callback('check_poll_status'))
+    },
+    check_poll_status(polled){
+        const pollable = polled.find(pollable => pollable.name === "double_scalar");
+        this.assert(pollable.polled)
     }
 });

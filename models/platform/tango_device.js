@@ -418,6 +418,60 @@ TangoDevice = TangoWebappPlatform.TangoDevice = TangoWebappPlatform.DataCollecti
         },
         /**
          *
+         * @return {PromiseLike<Array>} polled cmds and attrs
+         */
+        pollStatus(){
+            webix.assert(this.attrs.count() !== 0 || this.commands.count() !== 0, "attrs and commands must be fetched first!");
+
+            function resetPollStatus(pollable){
+                pollable.update_attributes({
+                    polled: false,
+                    poll_rate: undefined
+                })
+            }
+
+            function lineToPollable(line){
+                const lines = line.split('\n');
+                return {
+                    name: lines[0].split(' = ')[1],
+                    polled: true,
+                    poll_rate: lines[1].split(' = ')[1]
+                }
+            }
+
+            return this.fetchAdmin()
+                .then(admin => admin.devPollStatus(this.name))
+                .then(resp => {
+                    const result = [];
+
+                    TangoWebappHelpers.iterate(this.attrs, resetPollStatus);
+                    TangoWebappHelpers.iterate(this.commands, resetPollStatus);
+
+                    resp.output
+                        .filter(line => line.includes(" command "))
+                        .map(lineToPollable)
+                        .forEach(pollable => {
+                            const cmd = this.commands.find(item => item.name === pollable.name, true);
+                            if(!cmd || cmd.length === 0) throw new Error(`cmd[name=${pollable.name}] must be found!`);
+                            this.commands.updateItem(cmd.id, pollable);
+                            result.push(cmd);
+                        });
+
+                    resp.output
+                        .filter(line => line.includes(" attribute "))
+                        .map(lineToPollable)
+                        .forEach(pollable => {
+                            const attr = this.attrs.find(item => item.name === pollable.name, true);
+                            if(!attr || attr.length === 0) throw new Error(`attr[name=${pollable.name}] must be found!`);
+                            this.attrs.updateItem(attr.id, pollable);
+                            result.push(attr);
+                        });
+
+                    return result;
+                })
+        },
+        /**
+         *
          * @return {string}
          */
         getIcon:function(){
