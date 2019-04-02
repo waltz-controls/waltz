@@ -11,7 +11,7 @@
      * @property {string} device_id
      * @property {string} display_name
      */
-    TangoAttribute = MVC.Model.extend('tango_attribute',
+    TangoAttribute = TangoPollable.extend('tango_attribute',
         /** @lends  tango.TangoAttribute */
         {
 
@@ -25,9 +25,6 @@
                 value: 'any',
                 timestamp: 'int',
                 quality: 'string',
-                polled: 'boolean',
-                poll_rate: 'int',
-                polling_type: 'string'
             },
             default_attributes: {
                 polling_type: "attribute"
@@ -49,41 +46,6 @@
         },
         /** @lends  tango.TangoAttribute.prototype */
         {
-            /**
-             *
-             * @return {Promise<void>}
-             */
-            fetchPollingStatus() {
-                const device = PlatformContext.devices.getItem(this.device_id);
-                return device.fetchAdmin().then(admin => {
-                        return admin.devPollStatus(device.name);
-                    }).then((resp) => {
-                        const polled = resp.output.find(el => el.includes(`name = ${this.name}`));
-                        if(polled === undefined) {
-                            this.polled = false;
-                            this.poll_rate = undefined;
-                        } else {
-                            this.polled = true;
-                            this.poll_rate = polled.split('\n')[1].split(" = ")[1];
-                        }
-                    });
-            },
-            /**
-             *
-             * @param {boolean} polled
-             * @param {int} poll_rate
-             */
-            updatePolling(polled, poll_rate = 0){
-                const device = PlatformContext.devices.getItem(this.device_id);
-                return device.fetchAdmin().then(admin => {
-                    return admin.updatePolling(device.name, this, polled, poll_rate)
-                }).then(() => {
-                    this.update_attributes({
-                        polled,
-                        poll_rate
-                    });
-                });
-            },
             /**
              * @param attrs
              * @constructs

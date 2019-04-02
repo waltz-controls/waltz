@@ -12,7 +12,7 @@
  * @property {string} input
  * @property {string} output
  */
-TangoCommand = MVC.Model.extend('tango_command',
+TangoCommand = TangoPollable.extend('tango_command',
     /** @lends  tango.TangoCommand */
     {
 
@@ -24,9 +24,6 @@ TangoCommand = MVC.Model.extend('tango_command',
             info: 'object',
             input: 'any',
             output: 'any',
-            polled: 'boolean',
-            poll_rate: 'int',
-            polling_type: 'string'
             //TODO history
         },
         default_attributes: {
@@ -46,6 +43,11 @@ TangoCommand = MVC.Model.extend('tango_command',
 
             this._super(attrs);
         },
+        /**
+         * Uses this#input as argin
+         *
+         * @return {PromiseLike<T | never> | Promise<T | never>}
+         */
         executeWithPredefinedInput(){
             var device = PlatformContext.devices.getItem(this.device_id);
             return device.executeCommand(this.name, this.input).then(function(resp){
