@@ -5,48 +5,123 @@
     const pollable_datatable = webix.protoUI({
         name: 'pollable_datatable',
         apply(){
-
+            this.data.each(pollable => {
+                if(pollable.isNewPolled || pollable.polled !== pollable.isNewPolled)
+                    pollable.wrapped.updatePolling(pollable.isNewPolled, pollable.poll_rate).fail(TangoWebappHelpers.error);
+            });
         },
-        refresh(){
-
+        update(){
+            const transformed = [];
+            this.config.pollables.data.each(pollable => {
+                transformed.push({
+                    id: pollable.id,
+                    wrapped: pollable,
+                    name: pollable.name,
+                    polled: pollable.polled,
+                    poll_rate: pollable.poll_rate,
+                    isNewPolled: pollable.polled
+                });
+            });
+            this.parse(transformed);
         },
         reset(){
-
+            this.data.each(pollable => {
+                if(pollable.isNewPolled || pollable.polled !== pollable.isNewPolled)
+                    pollable.wrapped.updatePolling(false)
+                        .then(() => {
+                            this.updateItem(pollable.id,{
+                                polled: false,
+                                isNewPolled: false,
+                                poll_rate: undefined
+                            });
+                        })
+                        .fail(TangoWebappHelpers.error);
+            });
+        },
+        _config(){
+            return {
+                editable: true,
+                columns: [
+                    {
+                        id: "name",
+                        header: "Name",
+                        width: TangoWebappPlatform.consts.NAME_COLUMN_WIDTH
+                    },
+                    {id: "isNewPolled", header: "Is Polled", template: "{common.checkbox()}", width: 40},
+                    {id: "poll_rate", header: "Period (ms)", fillspace: true, editor: "text"}
+                ],
+                rules: {
+                    "poll_rate": webix.rules.isNumber
+                }
+            }
         },
         $init(config){
-            this.$ready.push(() => {
-                this.data.sync(config.pollables);
-            })
+            webix.extend(config, this._config())
         },
-        defaults:{
-            editable: true,
-            columns: [
-                {
-                    id: "name",
-                    header: "Command",
-                    width: TangoWebappPlatform.consts.NAME_COLUMN_WIDTH
+        defaults: {
+            on:{
+                onDataUpdate(){
+                    debugger
                 },
-                {id: "isNewPolled", header: "Is Polled", template: "{common.checkbox()}", width: 40},
-                {id: "poll_rate", header: "Period (ms)", fillspace: true, editor: "text"}
-            ],
-            rules: {
-                "poll_rate": webix.rules.isNumber
+                onAfterLoad(){
+                    debugger
+                },
+                onBindUpdate(){
+                    debugger
+                },
+                onBindRequest(){
+                    debugger
+                }
             }
         }
-
     },webix.IdSpace,webix.ui.datatable);
 
-
-    function map(line) {
-        const lines = line.split('\n');
-        return {
-            name: lines[0].split(' = ')[1],
-            polled: true,
-            isNewPolled: true,
-            poll_rate: lines[1].split(' = ')[1]
-        };
-    }
-
+    const toolbar = {
+        view: "toolbar",
+        cols: [
+            {
+                view: "button",
+                id: "btnRefresh",
+                value: "Refresh",
+                width: 100,
+                align: "left",
+                click() {
+                    this.getTopParentView().refresh();
+                }
+            },
+            {
+                view: "button",
+                id: "btnApply",
+                value: "Apply",
+                width: 100,
+                align: "left",
+                click() {
+                    this.getTopParentView().apply();
+                }
+            },
+            {
+                view: "button",
+                id: "btnReset",
+                value: "Reset",
+                width: 100,
+                align: "left",
+                click() {
+                    const top = this.getTopParentView();
+                    webix.confirm({
+                        title: "Confirm reset",
+                        ok: "Yes",
+                        cancel: "No",
+                        type: "confirm-error",
+                        text: "This will reset configuration for all commands and attributes.\n Continue?",
+                        callback: function (ok) {
+                            if (ok)
+                                top.callEvent('onResetConfirmed');
+                        }
+                    });
+                }
+            }
+        ]
+    };
 
     /**
      * Extends {@link https://docs.webix.com/api__refs__ui.layout.html webix.ui.layout}
@@ -57,94 +132,32 @@
     var device_polling = webix.protoUI(
         /** @lends  device_polling.prototype */
         {
+            get activeTab(){
+                const tab = this.$$('tabview').getTabbar().getValue();
+                if(tab === 'attributes')
+                    return this.$$attributes;
+                else if (tab === 'commands')
+                    return this.$$commands;
+                else throw new Error("AssertionError: attributes or commands is expected here!");
+            },
             /**
              * @memberof ui.DevicePollingView.device_polling
              */
-            refresh: function () {
-                debugger
-                this.config.device.pollStatus();
+            async refresh() {
+                await this.config.device.pollStatus();
 
-                this.$$commands.refresh();
-
-                return;
-                TangoWebappHelpers.iterate(this.$$attributes, (item, id) => {
-                    item.update_attributes({
-                        polled: false,
-                        isNewPolled: false,
-                        poll_rate: ""
-                    });
-                });
-
-                TangoWebappHelpers.iterate(this.$$commands, (item, id) => {
-                    item.update_attributes({
-                        polled: false,
-                        isNewPolled: false,
-                        poll_rate: ""
-                    });
-                });
-
-                this._device.fetchAdmin().then(admin => admin.devPollStatus(this._device.name))
-                    .then((resp) => {
-                        resp.output.filter(line => line.includes(" attribute "))
-                            .map(map)
-                            .forEach(pollable => {
-                                TangoWebappHelpers.iterate(this.$$attributes, (item, id) => {
-                                    if (item.name === pollable.name)
-                                        this.$$attributes.updateItem(id, pollable);
-                                });
-                            });
-
-                        resp.output.filter(line => line.includes(" command "))
-                            .map(map).forEach(pollable => {
-                            TangoWebappHelpers.iterate(this.$$commands, (item, id) => {
-                                if (item.name === pollable.name)
-                                    this.$$commands.updateItem(id, pollable);
-                            });
-                        });
-                    });
+                this.activeTab.update();
             },
             /** @memberof ui.DevicePollingView.device_polling */
-            apply: function () {
-                function setObjPolling(item) {
-                    this._device.fetchAdmin().then(admin => {
-                        return admin.updatePolling(this._device.name, item, item.isNewPolled, item.poll_rate);
-                    }).then(pollable => {
-                        item.update_attributes(pollable)
-                    }).fail(TangoWebappHelpers.error);
-                }
-
-                TangoWebappHelpers.iterate(this.$$commands, setObjPolling.bind(this));
-                TangoWebappHelpers.iterate(this.$$attributes, setObjPolling.bind(this));
+            apply() {
+                // await this.config.device.pollStatus();
+                this.activeTab.apply();
             },
             /** @memberof  ui.DevicePollingView.device_polling */
             reset: function () {
-                var device_name = this._device.name;
-                var admin = this._device.fetchAdmin();
-
-                function removePolling(type) {
-                    return function (item, id) {
-                        if (item.polled)
-                            return admin.then(function (admin) {
-                                admin.remObjPolling([device_name, type, item.name]);
-                            }).then(() => item.update_attributes({
-                                polled: false,
-                                isNewPolled: false
-                            }))
-                                .fail(TangoWebappHelpers.error);
-                    }
-                }
-
-                TangoWebappHelpers.iterate(this.$$commands, removePolling("command"));
-                TangoWebappHelpers.iterate(this.$$attributes, removePolling("attribute"));
-
-                webix.alert({
-                    title: "Confirm reset",
-                    type: "alert-warning",
-                    text: "Done. Please restart " + device_name + "!"
-                });
+                this.activeTab.reset();
             },
             _ui: function (device) {
-                var top = this;
                 return {
                     rows: [
                         {
@@ -155,93 +168,24 @@
                             id: "tabview",
                             cells: [
                                 {
+                                    header: "Attributes",
+                                    body: {
+                                        id: "attributes",
+                                        view: "pollable_datatable",
+                                        pollables: device.attrs
+                                    }
+                                },
+                                {
                                     header: "Commands",
                                     body: {
                                         id: "commands",
                                         view: "pollable_datatable",
                                         pollables: device.commands
                                     }
-                                },
-                                {
-                                    header: "Attributes",
-                                    body: {
-                                        id: "attributes",
-                                        view: "datatable",
-                                        editable: true,
-                                        columns: [
-                                            {
-                                                id: "name",
-                                                header: "Attribute",
-                                                width: TangoWebappPlatform.consts.NAME_COLUMN_WIDTH
-                                            },
-                                            {id: "isNewPolled", header: "Is Polled", template: "{common.checkbox()}"},
-                                            {id: "poll_rate", header: "Period (ms)", fillspace: true, editor: "text"}
-                                        ],
-                                        rules: {
-                                            "poll_rate": webix.rules.isNumber
-                                        }
-                                    }
-                                    //},
-                                    //{
-                                    //    header: "Settings",
-                                    //    body  : {
-                                    //        id     : "settings",
-                                    //        editable   : true,
-                                    //        view   : "datatable",
-                                    //        columns: [
-                                    //            {header: "Parameters name", editor: "text"},
-                                    //            {header: "Value", editor: "text"}
-                                    //        ]
-                                    //
-                                    //    }
                                 }
                             ]
                         },
-                        {
-                            view: "toolbar",
-                            cols: [
-                                {
-                                    view: "button",
-                                    id: "btnRefresh",
-                                    value: "Refresh",
-                                    width: 100,
-                                    align: "left",
-                                    click() {
-                                        this.getTopParentView().refresh();
-                                    }
-                                },
-                                {
-                                    view: "button",
-                                    id: "btnApply",
-                                    value: "Apply",
-                                    width: 100,
-                                    align: "left",
-                                    click() {
-                                        this.getTopParentView().apply();
-                                    }
-                                },
-                                {
-                                    view: "button",
-                                    id: "btnReset",
-                                    value: "Reset",
-                                    width: 100,
-                                    align: "left",
-                                    click() {
-                                        webix.confirm({
-                                            title: "Confirm reset",
-                                            ok: "Yes",
-                                            cancel: "No",
-                                            type: "confirm-error",
-                                            text: "This will reset configuration for all commands and attributes.\n Continue?",
-                                            callback: function (ok) {
-                                                if (ok)
-                                                    top.callEvent('onResetConfirmed');
-                                            }
-                                        });
-                                    }
-                                }
-                            ]
-                        }
+                        toolbar
                     ]
                 }
             },
@@ -250,20 +194,21 @@
              * @memberof  ui.DevicePollingView.device_polling
              * @constructor
              */
-            $init: function (config) {
+            $init(config) {
                 webix.extend(config, this._ui(config.device));
 
-                config.device.fetchCommands();
-                config.device.fetchAttrs();
+                this.$ready.push(async function () {
+                    //TODO should we move it from here
+                    await webix.promise.all(
+                        [config.device.fetchCommands(),
+                            config.device.fetchAttrs()]).then(() => this.config.device.pollStatus());
 
-                this.$ready.push(function () {
                     this.$$commands = this.$$('commands');
                     this.$$attributes = this.$$('attributes');
-                    this.$$settings = this.$$('settings');
 
-                    // this.$$commands.data.sync(config.device.commands);
-                    this.$$attributes.data.sync(config.device.attrs);
-                    this.refresh();
+                    // this.$$attributes.data.sync(this.config.device.attrs);
+                    this.$$commands.update();
+                    this.$$attributes.update();
                 }.bind(this));
 
             },
