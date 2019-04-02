@@ -2,6 +2,41 @@
  *  @memberof ui
  */
 (function () {
+    const pollable_datatable = webix.protoUI({
+        name: 'pollable_datatable',
+        apply(){
+
+        },
+        refresh(){
+
+        },
+        reset(){
+
+        },
+        $init(config){
+            this.$ready.push(() => {
+                this.data.sync(config.pollables);
+            })
+        },
+        defaults:{
+            editable: true,
+            columns: [
+                {
+                    id: "name",
+                    header: "Command",
+                    width: TangoWebappPlatform.consts.NAME_COLUMN_WIDTH
+                },
+                {id: "isNewPolled", header: "Is Polled", template: "{common.checkbox()}", width: 40},
+                {id: "poll_rate", header: "Period (ms)", fillspace: true, editor: "text"}
+            ],
+            rules: {
+                "poll_rate": webix.rules.isNumber
+            }
+        }
+
+    },webix.IdSpace,webix.ui.datatable);
+
+
     function map(line) {
         const lines = line.split('\n');
         return {
@@ -26,6 +61,12 @@
              * @memberof ui.DevicePollingView.device_polling
              */
             refresh: function () {
+                debugger
+                this.config.device.pollStatus();
+
+                this.$$commands.refresh();
+
+                return;
                 TangoWebappHelpers.iterate(this.$$attributes, (item, id) => {
                     item.update_attributes({
                         polled: false,
@@ -102,7 +143,7 @@
                     text: "Done. Please restart " + device_name + "!"
                 });
             },
-            _ui: function () {
+            _ui: function (device) {
                 var top = this;
                 return {
                     rows: [
@@ -111,25 +152,14 @@
                         },
                         {
                             view: "tabview",
+                            id: "tabview",
                             cells: [
                                 {
                                     header: "Commands",
                                     body: {
                                         id: "commands",
-                                        view: "datatable",
-                                        editable: true,
-                                        columns: [
-                                            {
-                                                id: "name",
-                                                header: "Command",
-                                                width: TangoWebappPlatform.consts.NAME_COLUMN_WIDTH
-                                            },
-                                            {id: "isNewPolled", header: "Is Polled", template: "{common.checkbox()}"},
-                                            {id: "poll_rate", header: "Period (ms)", fillspace: true, editor: "text"}
-                                        ],
-                                        rules: {
-                                            "poll_rate": webix.rules.isNumber
-                                        }
+                                        view: "pollable_datatable",
+                                        pollables: device.commands
                                     }
                                 },
                                 {
@@ -221,7 +251,7 @@
              * @constructor
              */
             $init: function (config) {
-                webix.extend(config, this._ui());
+                webix.extend(config, this._ui(config.device));
 
                 config.device.fetchCommands();
                 config.device.fetchAttrs();
@@ -231,7 +261,7 @@
                     this.$$attributes = this.$$('attributes');
                     this.$$settings = this.$$('settings');
 
-                    this.$$commands.data.sync(config.device.commands);
+                    // this.$$commands.data.sync(config.device.commands);
                     this.$$attributes.data.sync(config.device.attrs);
                     this.refresh();
                 }.bind(this));
