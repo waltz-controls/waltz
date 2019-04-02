@@ -12,8 +12,21 @@ const kAttr_info_datatable = {
     editable:true,
     columns:[
         {id:'info' , template:"{common.icon()} #info#"},
-        {id:'value', editor: "text", fillspace: true}
-    ]
+        {id:'value', editor: "text", template:(obj, common, value) => {
+                if(obj.id === 'polled') {
+                    return common.checkbox(obj, common, obj.value, {
+                        checkValue: true
+                    });
+                }
+                else return value;
+            }, fillspace: true}
+    ],
+    on:{
+        onBeforeEditStart:function(id){
+            var row = id.row;
+            return row !== 'polled';
+        }
+    }
 };
 
 /**
