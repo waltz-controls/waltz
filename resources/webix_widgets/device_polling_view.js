@@ -99,10 +99,12 @@
                     this.getTopParentView().apply();
                 }
             },
+            {},
             {
                 view: "button",
                 id: "btnReset",
                 value: "Reset",
+                type: "danger",
                 width: 100,
                 align: "left",
                 click() {
@@ -112,7 +114,7 @@
                         ok: "Yes",
                         cancel: "No",
                         type: "confirm-error",
-                        text: "This will reset configuration for all commands and attributes.\n Continue?",
+                        text: "This will reset polling configuration!\n\n\t Continue?",
                         callback: function (ok) {
                             if (ok)
                                 top.callEvent('onResetConfirmed');
