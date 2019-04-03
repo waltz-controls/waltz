@@ -292,19 +292,21 @@ TangoDevice = TangoWebappPlatform.TangoDevice = TangoWebappPlatform.DataCollecti
                     return admin;
                 }.bind(this))
         },
+        _parseProperties(resp){
+            var properties = TangoDeviceProperty.create_many_as_existing(
+                resp.map(function (it) {
+                    return MVC.Object.extend(it, this._get_extension(it))
+                }.bind(this)));
+            this.properties.clearAll();
+            this.properties.parse(properties);
+            return properties;
+        },
         /**
          *
          * @returns {Promise}
          */
         fetchProperties: function () {
-            return this.toTangoRestApiRequest().properties().get().then(function (resp) {
-                var properties = TangoDeviceProperty.create_many_as_existing(
-                    resp.map(function (it) {
-                        return MVC.Object.extend(it, this._get_extension(it))
-                    }.bind(this)));
-                this.properties.parse(properties);
-                return properties;
-            }.bind(this));
+            return this.toTangoRestApiRequest().properties().get().then(this._parseProperties.bind(this));
         },
         /**
          *
@@ -360,15 +362,17 @@ TangoDevice = TangoWebappPlatform.TangoDevice = TangoWebappPlatform.DataCollecti
                 return result.join('&');
             }
 
-            return this.toTangoRestApiRequest().properties().put('?' + toUrl(props));
+            return this.toTangoRestApiRequest().properties().put('?' + toUrl(props))
+                .then(this._parseProperties.bind(this));
         },
         /**
          *
-         * @param name
+         * @param {string} name
          * @returns {*|webix.promise}
          */
         deleteProperty: function (name) {
-            return this.toTangoRestApiRequest().properties().delete(name);
+            return this.toTangoRestApiRequest().properties().delete(name)
+                .then(() => this.properties.remove(this.id + "/" + name));
         },
         /**
          *

@@ -122,6 +122,7 @@ const attr_info_panel = webix.protoUI(
         },
         async save(){
             let $$info = this.$$('info');
+            $$info.editStop();
             //flatten serialized structure
             const items = $$info.data.serialize().reduce((acc,val) => {
                 acc.push(val);
