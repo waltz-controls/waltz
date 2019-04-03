@@ -46,7 +46,7 @@ TangoWebapp.MainController = class extends MVC.Controller{
 
             deviceTab.show();
 
-            deviceTab.$$(event.data.tab).activate();
+            deviceTab.activate();
     }
     "tango_webapp.device_view subscribe"(event) {
         var device = event.data.device;
