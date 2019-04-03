@@ -116,11 +116,28 @@ TangoWebappPlatform.TangoDatabase = MVC.Model.extend('tango_database',
         },
         /**
          *
-         * @param device
+         * @param {string} device
          * @return {*|webix.promise}
          */
         deleteDevice: function (device) {
             return this.device.executeCommand("DbDeleteDevice", device);
+        },
+        /**
+         *
+         * @param {string} device
+         * @param {string} alias
+         * @returns {*|webix.promise}
+         */
+        putDeviceAlias(device, alias){
+            return this.device.executeCommand("DbPutDeviceAlias", [device, alias]);
+        },
+        /**
+         *
+         * @param {string} alias
+         * @returns {*|webix.promise}
+         */
+        deleteDeviceAlias(alias){
+            return this.device.executeCommand("DbDeleteDeviceAlias", alias);
         }
         //TODO commands
     }

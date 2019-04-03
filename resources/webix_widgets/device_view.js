@@ -27,7 +27,7 @@
     }
 }, webix.IdSpace, webix.ui.tabview);
     /**
-     * @param device
+     * @param config
      * @memberof ui.DeviceView
      */
 TangoWebapp.ui.newDeviceView = function (config) {

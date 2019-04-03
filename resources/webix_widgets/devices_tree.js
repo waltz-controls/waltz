@@ -245,6 +245,11 @@ import newSearch from "./search.js";
                 type: 'lineTree',
                 select: true,
                 on: {
+                    onItemClick(id){
+                        if(this.getSelectedId() === id)
+                            this.callEvent("onAfterSelect",[id]);
+                        return true;
+                    },
                     /**
                      * Event listener.
                      * @memberof ui.DevicesTree.tree
@@ -284,11 +289,18 @@ import newSearch from "./search.js";
                         if (!item) return false;//TODO or true
                         var tango_host = TangoHost.find_one(this._get_tango_host_id(item));
                         PlatformContext.tango_hosts.setCursor(tango_host.id);
+                        OpenAjax.hub.publish("tango_webapp.item_selected", {
+                            data: {
+                                id: tango_host.id,
+                                kind: "tango_host"
+                            }
+                        });
                         var promise_device;
                         if ((item.isAlias && item.device_name !== undefined) || item.isMember) {
                             promise_device = tango_host.fetchDevice(item.device_name)
                         }
                         else if (item.isAlias && item.device_name === undefined) {
+                            //TODO send event handle event in controller
                             promise_device = tango_host
                                 .fetchDatabase()
                                 .then(function (db) {
@@ -302,8 +314,14 @@ import newSearch from "./search.js";
                             return false;
                         }
                         promise_device.then(function (device) {
-                                PlatformContext.devices.setCursor(device.id);
+                            PlatformContext.devices.setCursor(device.id);
+                            OpenAjax.hub.publish("tango_webapp.item_selected", {
+                                data: {
+                                    id: device.id,
+                                    kind: "device"
+                                }
                             });
+                        });
                     },
                     /**
                      * Event listener.

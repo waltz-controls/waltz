@@ -82,7 +82,7 @@ UIBuilder = MVC.Model.extend('ui_builder',
             if (this['_set_' + what + '_item']) return this._ui[what];
             else
                 return {
-                    header: '<span class="webix_icon fa-bars"></span>',
+                    header: "   ",
                     width: 300,
                     // collapsed: true,
                     body: {

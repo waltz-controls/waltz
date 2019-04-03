@@ -11,7 +11,7 @@
      * @property {string} device_id
      * @property {string} display_name
      */
-    TangoAttribute = MVC.Model.extend('tango_attribute',
+    TangoAttribute = TangoPollable.extend('tango_attribute',
         /** @lends  tango.TangoAttribute */
         {
 
@@ -24,9 +24,11 @@
                 properties: 'object',
                 value: 'any',
                 timestamp: 'int',
-                quality: 'string'
+                quality: 'string',
             },
-            default_attributes: {},
+            default_attributes: {
+                polling_type: "attribute"
+            },
             /**
              * @param id
              * @return {{tango_host: string, tango_port: number, device: string, name: string}}
@@ -85,6 +87,20 @@
                         });
                         return this;
                     }.bind(this));
+            },
+            /**
+             *
+             * @return {Promise<AttributeInfo>}
+             */
+            fetchInfo(){
+                const device = PlatformContext.devices.getItem(this.device_id);
+                return device.toTangoRestApiRequest().attributes(this.name).get('/info')
+                    .then((resp) => {
+                        this.update_attributes({
+                            info: resp
+                        });
+                        return resp;
+                    });
             },
             /**
              * @param value

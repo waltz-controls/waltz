@@ -56,7 +56,7 @@ include(function () { //runs after prior includes are loaded
         "platform/tango_webapp_storage", "platform/tango_remote_storage","platform/user_context_storage","platform/widget_state",
         "platform/tango_rest_api_request", "platform/tango_host","platform/tango_device_alias","platform/tango_domain","platform/tango_family","platform/tango_member",
         "platform/tango_device", "platform/tango_admin_device", "platform/tango_database",
-        "platform/tango_command", "platform/tango_attribute", "platform/tango_pipe", "platform/tango_device_property",
+        "platform/tango_pollable", "platform/tango_command", "platform/tango_attribute", "platform/tango_pipe", "platform/tango_device_property",
         "platform/tango_rest_api",
         "platform/user_context", "platform/platform_context",
         "platform/ui_builder", "platform/platform_api"
@@ -74,6 +74,7 @@ include(function () { //runs after prior includes are loaded
         include.unit_tests(
             "platform/tango_rest_api_request",
             "platform/tango_device", "platform/tango_database",
+            "platform/tango_pollable",
             "platform/tango_rest_api",
             "platform/user_context",
             "platform/tango_mixins",

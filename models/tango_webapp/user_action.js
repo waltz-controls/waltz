@@ -172,6 +172,64 @@ UserAction = TangoWebapp.UserAction = MVC.Model.extend('user_action',
          * Fires user_action.log
          *
          * @fires user_action.log
+         * @param {TangoAttribute} attr
+         */
+        updateAttributePolling:function(attr, polled, poll_rate = 0){
+            return attr.updatePolling(polled, poll_rate)
+                .then(function(/*async*/){
+                    var instance = new this({
+                        id: webix.uid(),
+                        value: this._get_user().concat(['Action: update attribute polling[', attr.id, polled, poll_rate, ']']).join(' '),
+                        timestamp: +new Date()
+                    });
+                    this.publish('log', {data: instance});
+                    return attr;
+                }.bind(this))
+                .fail(this.failure.bind(this));
+        },
+        updateDeviceAlias(device, alias){
+            return device.updateAlias(alias)
+                .then(function (result) {
+                    var instance = new this({
+                        id: webix.uid(),
+                        value: this._get_user().concat(['Action: update device alias:', device.alias, '; device:', device.name]).join(' '),
+                        timestamp: +new Date()
+                    });
+                    this.publish('log', {data: instance});
+                    return result;
+                }.bind(this))
+                .fail(this.failure.bind(this));
+        },
+        deleteDeviceAlias(device){
+            return device.deleteAlias()
+                .then(function (result) {
+                    var instance = new this({
+                        id: webix.uid(),
+                        value: this._get_user().concat(['Action: delete device alias:', device.alias, '; device:', device.name]).join(' '),
+                        timestamp: +new Date()
+                    });
+                    this.publish('log', {data: instance});
+                    return result;
+                }.bind(this))
+                .fail(this.failure.bind(this));
+        },
+        executeCommandWithPredefinedInput(cmd){
+            return cmd.executeWithPredefinedInput()
+                .then(function (result) {
+                    var instance = new this({
+                        id: webix.uid(),
+                        value: this._get_user().concat(['Action: execute command:', result.id, '; Input:', result.input, '; Ouput:', result.output]).join(' '),
+                        timestamp: +new Date()
+                    });
+                    this.publish('log', {data: instance});
+                    return result;
+                }.bind(this))
+                .fail(this.failure.bind(this));
+        },
+        /**
+         * Fires user_action.log
+         *
+         * @fires user_action.log
          * @param {TangoCommand} cmd
          * @param {any} argin
          * @returns {webix.promise}
@@ -268,6 +326,31 @@ UserAction = TangoWebapp.UserAction = MVC.Model.extend('user_action',
                     var instance = new this({
                         id: webix.uid(),
                         value: this._get_user().concat(['Action: write_device_properties:', device.id, '; Properties:', result.length]).join(' '),
+                        timestamp: +new Date()
+                    });
+                    this.publish('log', {data: instance});
+                    return result;
+                }.bind(this))
+                .fail(this.failure.bind(this));
+        },
+        /**
+         * Fires user_action.log
+         *
+         * @fires user_action.log
+         *
+         * @param {TangoDevice} device
+         * @param {[string]} prop_names
+         * @returns {webix.promise}
+         */
+        deleteDeviceProperties: function (device, prop_names) {
+            return webix.promise.all(
+                    prop_names.map(prop_name => {
+                        device.deleteProperty(prop_name)
+                    })
+                ).then(function (result) {
+                    var instance = new this({
+                        id: webix.uid(),
+                        value: this._get_user().concat(['Action: delete device properties:', device.id, '; Properties:', prop_names]).join(' '),
                         timestamp: +new Date()
                     });
                     this.publish('log', {data: instance});

@@ -169,6 +169,16 @@ TangoDevice = TangoWebappPlatform.TangoDevice = TangoWebappPlatform.DataCollecti
                 });
             }.bind(this);
         },
+        fetchInfo(){
+            return this.host.fetchDeviceInfo(this.name)
+                .then(([info, alias]) => {
+                    this.update_attributes({
+                        alias,
+                        info
+                    });
+                    return this;
+                })
+        },
         /**
          * @returns {Promise}
          */
@@ -185,10 +195,11 @@ TangoDevice = TangoWebappPlatform.TangoDevice = TangoWebappPlatform.DataCollecti
                     this.attrs.parse(attributes);
                     return attributes;
                 }.bind(this))
-                .fail(function (resp) {
-                    TangoWebappHelpers.error(resp);
-                    throw resp;
-                });
+                //TODO refactor this: 1) make pollables dedicated collection OR 2) ...
+                .then((attrs) => {
+                    this.pollStatus();
+                    return attrs;
+                })
         },
         /**
          * @param {string} name
@@ -236,7 +247,12 @@ TangoDevice = TangoWebappPlatform.TangoDevice = TangoWebappPlatform.DataCollecti
                     }.bind(this)));
                 this.commands.parse(commands);
                 return commands;
-            }.bind(this));
+            }.bind(this))
+            //TODO refactor this: 1) make pollables dedicated collection OR 2) ...
+                .then((commands) => {
+                    this.pollStatus();
+                    return commands;
+                });
         },
         /**
          *
@@ -292,19 +308,21 @@ TangoDevice = TangoWebappPlatform.TangoDevice = TangoWebappPlatform.DataCollecti
                     return admin;
                 }.bind(this))
         },
+        _parseProperties(resp){
+            var properties = TangoDeviceProperty.create_many_as_existing(
+                resp.map(function (it) {
+                    return MVC.Object.extend(it, this._get_extension(it))
+                }.bind(this)));
+            this.properties.clearAll();
+            this.properties.parse(properties);
+            return properties;
+        },
         /**
          *
          * @returns {Promise}
          */
         fetchProperties: function () {
-            return this.toTangoRestApiRequest().properties().get().then(function (resp) {
-                var properties = TangoDeviceProperty.create_many_as_existing(
-                    resp.map(function (it) {
-                        return MVC.Object.extend(it, this._get_extension(it))
-                    }.bind(this)));
-                this.properties.parse(properties);
-                return properties;
-            }.bind(this));
+            return this.toTangoRestApiRequest().properties().get().then(this._parseProperties.bind(this));
         },
         /**
          *
@@ -360,15 +378,17 @@ TangoDevice = TangoWebappPlatform.TangoDevice = TangoWebappPlatform.DataCollecti
                 return result.join('&');
             }
 
-            return this.toTangoRestApiRequest().properties().put('?' + toUrl(props));
+            return this.toTangoRestApiRequest().properties().put('?' + toUrl(props))
+                .then(this._parseProperties.bind(this));
         },
         /**
          *
-         * @param name
+         * @param {string} name
          * @returns {*|webix.promise}
          */
         deleteProperty: function (name) {
-            return this.toTangoRestApiRequest().properties().delete(name);
+            return this.toTangoRestApiRequest().properties().delete(name)
+                .then(() => this.properties.remove(this.id + "/" + name));
         },
         /**
          *
@@ -393,6 +413,82 @@ TangoDevice = TangoWebappPlatform.TangoDevice = TangoWebappPlatform.DataCollecti
          */
         writePipe: function (name, obj) {
             return this.toTangoRestApiRequest().pipes(name).put("", obj);
+        },
+        updateAlias(alias){
+            return this.host.fetchDatabase().then(db => {
+                return db.putDeviceAlias(this.name, alias).then(() => {
+                    this.update_attributes({
+                        display_name: this.alias,
+                        alias
+                    });
+                    return this;
+                });
+            });
+        },
+        deleteAlias(){
+            return this.host.fetchDatabase().then(db => {
+                    return db.deleteDeviceAlias(this.alias).then(() => {
+                        this.update_attributes({
+                            display_name: this.name,
+                            alias: ""
+                        });
+                        return this;
+                    });
+            });
+        },
+        /**
+         *
+         * @return {PromiseLike<Array>} polled cmds and attrs
+         */
+        pollStatus(){
+            webix.assert(this.attrs.count() !== 0 || this.commands.count() !== 0, "attrs and commands must be fetched first!");
+
+            function resetPollStatus(pollable){
+                pollable.update_attributes({
+                    polled: false,
+                    poll_rate: undefined
+                })
+            }
+
+            function lineToPollable(line){
+                const lines = line.split('\n');
+                return {
+                    name: lines[0].split(' = ')[1],
+                    polled: true,
+                    poll_rate: lines[1].split(' = ')[1]
+                }
+            }
+
+            return this.fetchAdmin()
+                .then(admin => admin.devPollStatus(this.name))
+                .then(resp => {
+                    const result = [];
+
+                    TangoWebappHelpers.iterate(this.attrs, resetPollStatus);
+                    TangoWebappHelpers.iterate(this.commands, resetPollStatus);
+
+                    resp.output
+                        .filter(line => line.includes(" command "))
+                        .map(lineToPollable)
+                        .forEach(pollable => {
+                            const cmd = this.commands.find(item => item.name === pollable.name, true);
+                            if(!cmd || cmd.length === 0) throw new Error(`cmd[name=${pollable.name}] must be found!`);
+                            this.commands.updateItem(cmd.id, pollable);
+                            result.push(cmd);
+                        });
+
+                    resp.output
+                        .filter(line => line.includes(" attribute "))
+                        .map(lineToPollable)
+                        .forEach(pollable => {
+                            const attr = this.attrs.find(item => item.name === pollable.name, true);
+                            if(!attr || attr.length === 0) throw new Error(`attr[name=${pollable.name}] must be found!`);
+                            this.attrs.updateItem(attr.id, pollable);
+                            result.push(attr);
+                        });
+
+                    return result;
+                })
         },
         /**
          *

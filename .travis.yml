@@ -10,6 +10,7 @@ script:
   - ./jmvcc jmvc/assemble
   - test -e build/distributions/TangoWebapp.war
 after_success:
+  - git fetch --unshallow --quiet
   - sonar-scanner -Dsonar.projectKey=org.tango-controls:TangoWebapp -Dsonar.sources=. -Dsonar.exclusions=build/**,jmvc/**,docs/**,apps/**
 deploy:
   - provider: releases

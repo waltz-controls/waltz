@@ -12,7 +12,7 @@
  * @property {string} input
  * @property {string} output
  */
-TangoCommand = MVC.Model.extend('tango_command',
+TangoCommand = TangoPollable.extend('tango_command',
     /** @lends  tango.TangoCommand */
     {
 
@@ -23,10 +23,12 @@ TangoCommand = MVC.Model.extend('tango_command',
             display_name: 'string',
             info: 'object',
             input: 'any',
-            output: 'any'
+            output: 'any',
             //TODO history
         },
-        default_attributes: {}
+        default_attributes: {
+            polling_type: 'command'
+        }
     },
     /** @lends  tango.TangoCommand.prototype */
     {
@@ -42,21 +44,28 @@ TangoCommand = MVC.Model.extend('tango_command',
             this._super(attrs);
         },
         /**
+         * Uses this#input as argin
+         *
+         * @return {PromiseLike<T | never> | Promise<T | never>}
+         */
+        executeWithPredefinedInput(){
+            var device = PlatformContext.devices.getItem(this.device_id);
+            return device.executeCommand(this.name, this.input).then(function(resp){
+                this.update_attributes(resp);
+                return this;
+            }.bind(this));
+        },
+        /**
          *
          * @param argin
          *
          * @returns {webix.promise}
          */
         execute: function (argin) {
-            var device = PlatformContext.devices.getItem(this.device_id);
-
             this.update_attributes({
                 input: argin
             });
-            return device.executeCommand(this.name, argin).then(function(resp){
-                this.update_attributes(resp);
-                return this;
-            }.bind(this));
+            return this.executeWithPredefinedInput();
         },
         /**
          *

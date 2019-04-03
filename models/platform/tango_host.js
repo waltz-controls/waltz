@@ -46,6 +46,7 @@ TangoWebappPlatform.TangoHost = MVC.Model.extend("tango_host",
         rest: null,
         /** @member {database} */
         database: null,
+        display_name:"",
         /**
          * @return {string} host + "/" + port
          */
@@ -67,13 +68,24 @@ TangoWebappPlatform.TangoHost = MVC.Model.extend("tango_host",
 
             this._super(attrs);
 
-
+            //TODO alias
+            this.display_name = this.id;
         },
         /**
          * @return {string} device
          */
         toUrl: function () {
             return this.host + "/" + this.port;
+        },
+        fetchDeviceInfo(name){
+            return this.fetchDatabase()
+                .then(db => {
+                    return webix.promise.all(
+                        [
+                            db.getDeviceInfo(name),
+                            db.getDeviceAlias(name).fail(()=>"")
+                        ]);
+                })
         },
         /**
          *
@@ -95,27 +107,18 @@ TangoWebappPlatform.TangoHost = MVC.Model.extend("tango_host",
         fetchDevice: function (name) {
             var device;
             if((device = TangoWebappPlatform.TangoDevice.find_one(this.id + "/" + name)) !== null && device.info.exported) return webix.promise.resolve(device);
-            else return this.fetchDatabase()
-                .then(function (db) {
-                    return webix.promise.all(
-                        [
-                            db.getDeviceInfo(name),
-                            db.getDeviceAlias(name).fail(function(){
-                                return "";
-                            })
-                        ]);
-                })
-                .then(function (info) {
+            else return this.fetchDeviceInfo(name)
+                .then(([info,alias]) => {
                     var device = new TangoWebappPlatform.TangoDevice({
-                        info: info[0],
-                        alias: info[1],
+                        info: info,
+                        alias: alias,
                         id: this.id + "/" + name,
                         name: name,
                         host: this
                     });
                     OpenAjax.hub.publish("tango_webapp.device_loaded", {data: device});
                     return device;
-                }.bind(this));
+                });
         },
         /**
          *
