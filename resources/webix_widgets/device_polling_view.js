@@ -57,22 +57,6 @@
         },
         $init(config){
             webix.extend(config, this._config())
-        },
-        defaults: {
-            on:{
-                onDataUpdate(){
-                    debugger
-                },
-                onAfterLoad(){
-                    debugger
-                },
-                onBindUpdate(){
-                    debugger
-                },
-                onBindRequest(){
-                    debugger
-                }
-            }
         }
     },webix.IdSpace,webix.ui.datatable);
 
