@@ -32,7 +32,7 @@ function newDeviceInfoDatatable (){
         autoheight: true,
         editable: true,
         columns: [
-            {id: 'info', editor: "text" },
+            {id: 'info'},
             {id: 'value', editor: "text", fillspace: true}
         ],
         on: {
