@@ -25,6 +25,14 @@ function newDeviceInfoDatatable (){
         });
     }
 
+    function _updateHeader(device) {
+        $$("info_control_panel_header").config.header = webix.template(function () {
+            return `<span class='webix_icon ${device.getIcon()}'></span> Device: ${device.display_name}`;
+        });
+
+        $$("info_control_panel_header").refresh();
+    }
+
     return {
         id: 'info',
         view: 'datatable',
@@ -38,6 +46,9 @@ function newDeviceInfoDatatable (){
         on: {
             onBindApply: function (device) {
                 if (!device || device.id === undefined) return false;
+
+                //TODO fire event, or even better use bind for all types in info_control_panel
+                _updateHeader(device);
 
                 var info = get_device_info(device);
                 info.push({
