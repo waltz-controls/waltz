@@ -17,6 +17,14 @@ const kDevice_info_values = [
  * @memberof ui.Utils
  */
 function newDeviceInfoDatatable (){
+    function _syncPollables(type, source) {
+        this.getTopParentView().$$(`polled_${type}`).data.sync(source, function () {
+            this.filter((pollable) => {
+                return pollable.polled;
+            });
+        });
+    }
+
     return {
         id: 'info',
         view: 'datatable',
@@ -27,13 +35,6 @@ function newDeviceInfoDatatable (){
             {id: 'info', editor: "text" },
             {id: 'value', editor: "text", fillspace: true}
         ],
-        _syncPollables(type, source) {
-            this.getTopParentView().$$(`polled_${type}`).data.sync(source, function () {
-                this.filter((pollable) => {
-                    return pollable.polled;
-                });
-            });
-        },
         on: {
             onBindApply: function (device) {
                 if (!device || device.id === undefined) return false;
@@ -51,9 +52,9 @@ function newDeviceInfoDatatable (){
                 this.device = device;
                 this.getTopParentView().$$('properties').data.sync(device.properties);
 
-                this._syncPollables('attributes',device.attrs);
+                _syncPollables.call(this, 'attributes',device.attrs);
 
-                this._syncPollables('commands',device.commands);
+                _syncPollables.call(this, 'commands',device.commands);
             },
             onBeforeEditStart: function (id) {
                 var row = id.row;
