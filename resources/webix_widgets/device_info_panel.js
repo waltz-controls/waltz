@@ -88,12 +88,6 @@ function get_device_info(device){
     return result;
 }
 
-async function device_info_parser (device){
-
-
-    //TODO Logging
-}
-
 /**
  *
  * @param {string} id
@@ -216,7 +210,7 @@ const device_info_panel = webix.protoUI({
         return {
             fitBiggest:true,
             rows:[
-                newDeviceInfoDatatable(device_info_parser),
+                newDeviceInfoDatatable(),
                 {
                     template: "Properties",
                     type: "header"

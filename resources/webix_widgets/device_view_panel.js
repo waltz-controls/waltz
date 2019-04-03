@@ -197,20 +197,6 @@ import newSearch from "./search.js";
         }, resp)
     };
 
-    var attr_output_handler = function (resp) {
-        this.getTopParentView().$$('output').setValue(new View({url: 'views/dev_panel_attribute_out.ejs'}).render(resp));
-    };
-
-    var error_handler = function (resp) {
-        this.getTopParentView().$$('output').setValue(new View({url: 'views/dev_panel_error_out.ejs'}).render(resp));
-        //clear errors
-        resp.errors.length = 0;
-    };
-
-
-    
-
-
     /**
      * Factory function for {@link DeviceViewPanel}
      *
