@@ -77,6 +77,16 @@ TangoWebappPlatform.TangoHost = MVC.Model.extend("tango_host",
         toUrl: function () {
             return this.host + "/" + this.port;
         },
+        fetchDeviceInfo(name){
+            return this.fetchDatabase()
+                .then(db => {
+                    return webix.promise.all(
+                        [
+                            db.getDeviceInfo(name),
+                            db.getDeviceAlias(name).fail(()=>"")
+                        ]);
+                })
+        },
         /**
          *
          * @event tango_webapp.device_loaded
@@ -97,27 +107,18 @@ TangoWebappPlatform.TangoHost = MVC.Model.extend("tango_host",
         fetchDevice: function (name) {
             var device;
             if((device = TangoWebappPlatform.TangoDevice.find_one(this.id + "/" + name)) !== null && device.info.exported) return webix.promise.resolve(device);
-            else return this.fetchDatabase()
-                .then(function (db) {
-                    return webix.promise.all(
-                        [
-                            db.getDeviceInfo(name),
-                            db.getDeviceAlias(name).fail(function(){
-                                return "";
-                            })
-                        ]);
-                })
-                .then(function (info) {
+            else this.fetchDeviceInfo(name)
+                .then(([info,alias]) => {
                     var device = new TangoWebappPlatform.TangoDevice({
-                        info: info[0],
-                        alias: info[1],
+                        info: info,
+                        alias: alias,
                         id: this.id + "/" + name,
                         name: name,
                         host: this
                     });
                     OpenAjax.hub.publish("tango_webapp.device_loaded", {data: device});
                     return device;
-                }.bind(this));
+                });
         },
         /**
          *

@@ -24,24 +24,9 @@ function get_device_info(device){
 }
 
 async function device_info_parser (device){
-    if (device.id === undefined) return false;
+    if (!device || device.id === undefined) return false;
 
     var info = get_device_info(device);
-
-    const properties = await device.fetchProperties();
-
-    info.push({
-        id:"properties",
-        info: "Properties",
-        value:"",
-        open: true,
-        data:properties.map(property => ({info:property.name, value:property.values.join(",")}))
-    });
-
-    //TODO Polling
-
-    //TODO Logging
-
     info.push({
         id:'alias',
         info: 'Alias',
@@ -50,22 +35,77 @@ async function device_info_parser (device){
 
     this.clearAll();
     this.parse(info);
+
+    this.device = device;
+    this.getTopParentView().$$('properties').data.sync(device.properties);
+
+    this.getTopParentView().$$('polled_attributes').data.sync(device.attrs,function(){
+        this.filter((pollable)=>{
+            return pollable.polled;
+        });
+    });
+
+    this.getTopParentView().$$('polled_commands').data.sync(device.commands,function(){
+        this.filter((pollable)=>{
+            return pollable.polled;
+        });
+    });
+
+    //TODO Logging
+}
+
+/**
+ *
+ * @param {string} id
+ * @return {{view: string, columns: *[], header: boolean, autoheight: boolean, id: *}}
+ */
+function newPolledDatatable(id) {
+    return {
+        view: "datatable",
+        id: id,
+        header: false,
+        autoheight: true,
+        columns: [
+            {id: 'name'},
+            {id: 'poll_rate', template: "#poll_rate# (ms)", fillspace: true}
+        ]
+    }
 }
 
 
 const toolbar = {
     view: "toolbar",
     cols:[
+        {
+            view:"button",
+            type:"icon",
+            icon:"refresh",
+            maxWidth:30,
+            click(){
+                this.getTopParentView().refresh();
+            }
+        },
         {},
         {
             view: "button",
             value: "Add",
             type: "icon",
-            icon: "plus",
+            icon: "eye",
             maxWidth: 30,
-            tooltip: "Add new property",
+            tooltip: "Monitor",
             click(){
-                this.getTopParentView().addNewProperty();
+                this.getTopParentView().monitor();
+            }
+        },
+        {
+            view: "button",
+            value: "Add",
+            type: "icon",
+            icon: "gears",
+            maxWidth: 30,
+            tooltip: "Configure",
+            click(){
+                this.getTopParentView().configure();
             }
         },
         {
@@ -81,65 +121,71 @@ const toolbar = {
 };
 
 
+function newPropertiesDatatable() {
+    return {
+        view: "datatable",
+        id: "properties",
+        header: false,
+        autoheight: true,
+        columns: [
+            {id: 'name'},
+            {id: 'values', fillspace: true}
+        ]
+    }
+}
+
 const device_info_panel = webix.protoUI({
     name:"device_info_panel",
-    deviceRecord: new webix.DataRecord(),
-    addNewProperty(){
-        const $$info = this.$$('info');
-        $$info.editStop();
-        const id = $$info.add({
-            info: "New property",
-            value: ""
-        },0,"properties");
-        $$info.open("properties");
-        $$info.editRow(id)
+    get device(){
+        return this.$$('info').device;
     },
-    updateProperties(properties){
-        if(properties.data.length === 0) return;
+    async refresh(){
+        [device,...other] = await webix.promise.all(
+            [this.device.fetchInfo(),
+             this.device.fetchProperties(),
+             this.device.pollStatus()]).fail(TangoWebappHelpers.error);
 
-        const data = {};
-        properties.data
-            .filter(property => property.value)
-            .forEach(property => {
-                data[property.info] = (property.value.split) ? property.value.split(',') : property.value;
-            });
-
-        const deleteProperties = properties.data
-            .filter(property => !property.value)
-            .map(property => property.info);
-
-        return webix.promise.all([
-                UserAction.writeDeviceProperties(this.deviceRecord.data, data),
-                UserAction.deleteDeviceProperties(this.deviceRecord.data, deleteProperties)
-            ]).fail(TangoWebappHelpers.error);
+        device_info_parser.bind(this.$$('info'))(device);
     },
     updateAlias(alias){
-        const device = this.deviceRecord.data;
+        const device = this.device;
         if(!alias || alias === device.name)
             return UserAction.deleteDeviceAlias(device).fail(TangoWebappHelpers.error);
         else
             return UserAction.updateDeviceAlias(device, alias).fail(TangoWebappHelpers.error);
     },
     save(){
-        const result = [];
         const $$info = this.$$('info');
         $$info.editStop();
-        const values = $$info.serialize();
-        const properties = values.find(value => value.id === "properties");
-        if(properties !== undefined) result.push(this.updateProperties(properties));
 
         const alias = $$info.getItem("alias");
-        result.push(this.updateAlias(alias.value));
-
-        webix.promise.all(result).then(()=>
-            device_info_parser.bind($$info)(this.deviceRecord.data)
-        )
+        this.updateAlias(alias.value).then(() => {
+            this.refresh();
+        });
     },
     _ui(){
-
         return {
+            fitBiggest:true,
             rows:[
                 TangoWebapp.ui.newInfoDatatable(device_info_parser),
+                {
+                    template: "Properties",
+                    type: "header"
+                },
+                newPropertiesDatatable(),
+                {
+                    template: "Polled attributes",
+                    type: "header"
+                },
+                newPolledDatatable("polled_attributes"),
+                {
+                    template: "Polled commands",
+                    type: "header"
+                },
+                newPolledDatatable("polled_commands"),
+                {
+                    minHeight:1
+                },
                 toolbar
             ]
         }
@@ -148,6 +194,5 @@ const device_info_panel = webix.protoUI({
         webix.extend(config, this._ui());
 
         this.$ready.push(()=>{this.$$("info").bind(config.context.devices);});
-        this.$ready.push(()=>{this.deviceRecord.bind(config.context.devices);});
     }
 },  webix.ProgressBar, webix.IdSpace, webix.ui.layout);

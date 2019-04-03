@@ -2,24 +2,26 @@
  *  @memberof ui
  */
 (function () {
-    const properties_datatable = {
-        view: "datatable",
-        id: "device_properties_data",
-        select: "row",
-        multiselect: true,
-        editable: true,
-        columns: [
-            {id: "name", header: "Property", editor: "text", width: TangoWebappPlatform.consts.NAME_COLUMN_WIDTH},
-            {id: "values", header: "Value", editor: "text", fillspace: true}
-        ],
-        rules:{
-            name: webix.rules.isNotEmpty,
-            values: webix.rules.isNotEmpty
-        },
-        on:{
-            onAfterEditStop(data, obj){
-                if(obj.column === "name")
-                    this.data.changeId(obj.row, this.getTopParentView().config.device.id + "/" + data.value);
+    function newPropertiesDatatable() {
+        return {
+            view: "datatable",
+            id: "device_properties_data",
+            select: "row",
+            multiselect: true,
+            editable: true,
+            columns: [
+                {id: "name", header: "Property", editor: "text", width: TangoWebappPlatform.consts.NAME_COLUMN_WIDTH},
+                {id: "values", header: "Value", editor: "text", fillspace: true}
+            ],
+            rules: {
+                name: webix.rules.isNotEmpty,
+                values: webix.rules.isNotEmpty
+            },
+            on: {
+                onAfterEditStop(data, obj) {
+                    if (obj.column === "name")
+                        this.data.changeId(obj.row, this.getTopParentView().config.device.id + "/" + data.value);
+                }
             }
         }
     };
@@ -120,7 +122,7 @@
         _ui: function () {
             return {
                 rows: [
-                    properties_datatable,
+                    newPropertiesDatatable(),
                     toolbar
                 ]
             }

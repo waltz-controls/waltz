@@ -13,6 +13,7 @@
         id: 'info',
         view: 'treetable',
         header:false,
+        autoheight: true,
         editable: true,
         columns:[
             {id:'info' , editor: "text", template: "{common.icon()} #info#"},

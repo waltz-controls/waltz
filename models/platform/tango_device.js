@@ -169,6 +169,16 @@ TangoDevice = TangoWebappPlatform.TangoDevice = TangoWebappPlatform.DataCollecti
                 });
             }.bind(this);
         },
+        fetchInfo(){
+            return this.host.fetchDeviceInfo(this.name)
+                .then(([info, alias]) => {
+                    this.update_attributes({
+                        alias,
+                        info
+                    });
+                    return this;
+                })
+        },
         /**
          * @returns {Promise}
          */
