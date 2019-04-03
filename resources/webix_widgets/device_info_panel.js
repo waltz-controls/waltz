@@ -10,6 +10,58 @@ const kDevice_info_values = [
     "stopped_at"
 ];
 
+/**
+ * @namespace InfoDatatable
+ * @memberof ui.Utils
+ */
+function newDeviceInfoDatatable (){
+    return {
+        id: 'info',
+        view: 'datatable',
+        header: false,
+        autoheight: true,
+        editable: true,
+        columns: [
+            {id: 'info', editor: "text" },
+            {id: 'value', editor: "text", fillspace: true}
+        ],
+        on: {
+            onBindApply: function (device) {
+                if (!device || device.id === undefined) return false;
+
+                var info = get_device_info(device);
+                info.push({
+                    id:'alias',
+                    info: 'Alias',
+                    value: device.alias
+                });
+
+                this.clearAll();
+                this.parse(info);
+
+                this.device = device;
+                this.getTopParentView().$$('properties').data.sync(device.properties);
+
+                this.getTopParentView().$$('polled_attributes').data.sync(device.attrs,function(){
+                    this.filter((pollable)=>{
+                        return pollable.polled;
+                    });
+                });
+
+                this.getTopParentView().$$('polled_commands').data.sync(device.commands,function(){
+                    this.filter((pollable)=>{
+                        return pollable.polled;
+                    });
+                });
+            },
+            onBeforeEditStart: function (id) {
+                var row = id.row;
+                return row === 'alias';
+            }
+        }
+    }
+}
+
 function get_device_info(device){
     const result = [];
 
@@ -24,32 +76,7 @@ function get_device_info(device){
 }
 
 async function device_info_parser (device){
-    if (!device || device.id === undefined) return false;
 
-    var info = get_device_info(device);
-    info.push({
-        id:'alias',
-        info: 'Alias',
-        value: device.alias
-    });
-
-    this.clearAll();
-    this.parse(info);
-
-    this.device = device;
-    this.getTopParentView().$$('properties').data.sync(device.properties);
-
-    this.getTopParentView().$$('polled_attributes').data.sync(device.attrs,function(){
-        this.filter((pollable)=>{
-            return pollable.polled;
-        });
-    });
-
-    this.getTopParentView().$$('polled_commands').data.sync(device.commands,function(){
-        this.filter((pollable)=>{
-            return pollable.polled;
-        });
-    });
 
     //TODO Logging
 }
@@ -94,7 +121,11 @@ const toolbar = {
             maxWidth: 30,
             tooltip: "Monitor",
             click(){
-                this.getTopParentView().monitor();
+                OpenAjax.hub.publish("tango_webapp.device_view", {
+                    data: {
+                        device: this.getTopParentView().device
+                    }
+                });
             }
         },
         {
@@ -105,7 +136,11 @@ const toolbar = {
             maxWidth: 30,
             tooltip: "Configure",
             click(){
-                this.getTopParentView().configure();
+                OpenAjax.hub.publish("tango_webapp.device_configure", {
+                    data: {
+                        device: this.getTopParentView().device
+                    }
+                });
             }
         },
         {
@@ -113,6 +148,7 @@ const toolbar = {
             type: "icon",
             maxWidth:30,
             icon: "save",
+            tooltip: "Save alias",
             click(){
                 this.getTopParentView().save();
             }
@@ -167,7 +203,7 @@ const device_info_panel = webix.protoUI({
         return {
             fitBiggest:true,
             rows:[
-                TangoWebapp.ui.newInfoDatatable(device_info_parser),
+                newDeviceInfoDatatable(device_info_parser),
                 {
                     template: "Properties",
                     type: "header"

@@ -60,6 +60,14 @@ TangoWebapp.MainController = class extends MVC.Controller{
 
             deviceTab.activate();
     }
+    "tango_webapp.device_loaded subscribe"(event){
+        const device = event.data;
+        device.fetchInfo();
+        device.fetchProperties();
+        webix.promise.all(
+            [device.fetchAttrs(),
+             device.fetchCommands()]).then(() => device.pollStatus());
+    }
     "tango_webapp.device_delete subscribe"(event) {
         var device = event.data.device;
 

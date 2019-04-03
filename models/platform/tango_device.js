@@ -195,10 +195,11 @@ TangoDevice = TangoWebappPlatform.TangoDevice = TangoWebappPlatform.DataCollecti
                     this.attrs.parse(attributes);
                     return attributes;
                 }.bind(this))
-                .fail(function (resp) {
-                    TangoWebappHelpers.error(resp);
-                    throw resp;
-                });
+                //TODO refactor this: 1) make pollables dedicated collection OR 2) ...
+                .then((attrs) => {
+                    this.pollStatus();
+                    return attrs;
+                })
         },
         /**
          * @param {string} name
@@ -246,7 +247,12 @@ TangoDevice = TangoWebappPlatform.TangoDevice = TangoWebappPlatform.DataCollecti
                     }.bind(this)));
                 this.commands.parse(commands);
                 return commands;
-            }.bind(this));
+            }.bind(this))
+            //TODO refactor this: 1) make pollables dedicated collection OR 2) ...
+                .then((commands) => {
+                    this.pollStatus();
+                    return commands;
+                });
         },
         /**
          *

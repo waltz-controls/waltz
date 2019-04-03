@@ -134,8 +134,6 @@
         $init: function (config) {
             webix.extend(config, this._ui());
 
-            config.device.fetchProperties();
-
             this.$ready.push(() => {
                 this.$$('device_properties_data').data.sync(this.config.device.properties);
             });

@@ -16,7 +16,7 @@ import newSearch from "./search.js";
      * @type {string}
      * @memberof ui.DeviceViewPanel
      */
-    const kDevicePanelHeader = "<span class='webix_icon fa-microchip'></span> Device: ";
+    const kDevicePanelHeader = "<span class='webix_icon fa-keyboard-o'></span> Device: ";
 
     /**
      * More info: {@link https://docs.webix.com/api__refs__ui.list.html webix.ui.list}

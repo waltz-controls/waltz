@@ -93,15 +93,15 @@ const info_control_panel = webix.protoUI(
             $$("info_control_panel_header").config.header = webix.template(function () {
                 switch(data.kind){
                     case "tango_host":
-                        return "<span class='webix_icon fa-keyboard-o'></span> Tango host: " + TangoHost.find_one(data.id).display_name;
+                        return `<span class='webix_icon ${TangoHost.find_one(data.id).getIcon()}'></span> Tango host: ${TangoHost.find_one(data.id).display_name}`;
                     case "device":
-                        return "<span class='webix_icon fa-keyboard-o'></span> Device: " + TangoDevice.find_one(data.id).display_name;
+                        return `<span class='webix_icon ${TangoDevice.find_one(data.id).getIcon()}'></span> Device: ${TangoDevice.find_one(data.id).display_name}`;
                     case "commands":
-                        return "<span class='webix_icon fa-keyboard-o'></span> Command: " + TangoCommand.find_one(data.id).display_name;
+                        return `<span class='webix_icon ${TangoCommand.find_one(data.id).getIcon()}'></span> Command: ${TangoCommand.find_one(data.id).display_name}`;
                     case "attrs":
-                        return "<span class='webix_icon fa-keyboard-o'></span> Attr: " + TangoAttribute.find_one(data.id).display_name;
+                        return `<span class='webix_icon ${TangoAttribute.find_one(data.id).getIcon()}'></span> Attr: ${TangoAttribute.find_one(data.id).display_name}`;
                     case "pipes":
-                        return "<span class='webix_icon fa-keyboard-o'></span> Pipe: " + TangoPipe.find_one(data.id).display_name;
+                        return `<span class='webix_icon ${TangoPipe.find_one(data.id).getIcon()}'></span> Pipe: ${TangoPipe.find_one(data.id).display_name}`;
                     default:
                         throw new Error(`Unknown selected kind=${data.kind}`);
                 }

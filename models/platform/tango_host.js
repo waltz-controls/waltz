@@ -107,7 +107,7 @@ TangoWebappPlatform.TangoHost = MVC.Model.extend("tango_host",
         fetchDevice: function (name) {
             var device;
             if((device = TangoWebappPlatform.TangoDevice.find_one(this.id + "/" + name)) !== null && device.info.exported) return webix.promise.resolve(device);
-            else this.fetchDeviceInfo(name)
+            else return this.fetchDeviceInfo(name)
                 .then(([info,alias]) => {
                     var device = new TangoWebappPlatform.TangoDevice({
                         info: info,

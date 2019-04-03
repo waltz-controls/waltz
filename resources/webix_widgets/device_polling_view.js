@@ -200,11 +200,6 @@
                 webix.extend(config, this._ui(config.device));
 
                 this.$ready.push(async function () {
-                    //TODO should we move it from here
-                    await webix.promise.all(
-                        [config.device.fetchCommands(),
-                            config.device.fetchAttrs()]).then(() => this.config.device.pollStatus());
-
                     this.$$commands = this.$$('commands');
                     this.$$attributes = this.$$('attributes');
 

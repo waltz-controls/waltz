@@ -3,7 +3,6 @@ import "./logger.js";
 import "./toolbar.js";
 import "./settings.js";
 import "./user_log.js";
-import "./info_datatable.js";
 import "./devices_tree.js";
 import "./tango_host_info_panel.js";
 import "./device_info_panel.js";
