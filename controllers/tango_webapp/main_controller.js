@@ -1,3 +1,16 @@
+function _deviceTabHelper(target, device){
+    if (!device.info.exported) throw new Error(`Device[${device.id}] is not exported`);
+
+    let deviceTab;
+    if(target === "configure")
+        deviceTab = PlatformApi.PlatformUIController().openDeviceViewTab(device);
+    else if(target === "monitor")
+        deviceTab = PlatformApi.PlatformUIController().openDeviceMonitorTab(device);
+    else throw new Error(`Unknown target = ${target}!`);
+
+    deviceTab.show();
+}
+
 /**
  * Main controller of the TangoWebapp applcation. It is responsible for creating main application UI after platform context has been initialized
  *
@@ -37,28 +50,10 @@ TangoWebapp.MainController = class extends MVC.Controller{
     }
     //TODO move to ui_controller
     "tango_webapp.device_configure subscribe"(event) {
-        var device = event.data.device;
-
-            if (!device.info.exported) throw "Device[" + device.id + "] is not exported";
-
-            var deviceTab =
-                PlatformApi.PlatformUIController().openDeviceViewTab(device);
-
-            deviceTab.show();
-
-            deviceTab.activate();
+        _deviceTabHelper("configure", event.data.device);
     }
     "tango_webapp.device_view subscribe"(event) {
-        var device = event.data.device;
-
-            if (!device.info.exported) throw "Device[" + device.id + "] is not exported";
-
-            var deviceTab =
-                PlatformApi.PlatformUIController().openDeviceMonitorTab(device);
-
-            deviceTab.show();
-
-            deviceTab.activate();
+        _deviceTabHelper("monitor", event.data.device);
     }
     "tango_webapp.device_loaded subscribe"(event){
         const device = event.data;
