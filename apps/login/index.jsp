@@ -4,7 +4,7 @@
 <html>
 <head lang="en">
     <meta charset="UTF-8">
-    <title>Tango Webapp</title>
+    <title>Waltz</title>
     <link rel="shortcut icon" href="../../images/platform/favicon.png">
     <link rel="stylesheet" href="https://cdn.webix.com/5.1/skins/aircompact.css" type="text/css">
 </head>
