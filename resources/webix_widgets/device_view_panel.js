@@ -113,10 +113,14 @@ import newSearch from "./search.js";
                         }
 
                         $$('info_control_panel_header').expand()
+                    },
+                    "left_panel_toolbar.click.refresh subscribe"(){
+                        if(this.isVisible())
+                            PlatformContext.devices.refreshCursor();
                     }
                 }
             }
-        }, webix.ProgressBar, webix.ui.list);
+        }, TangoWebappPlatform.mixin.OpenAjaxListener, webix.ProgressBar, webix.ui.list);
 
     /**
      * See {@link https://docs.webix.com/api__refs__ui.form.html webix.ui.layout}

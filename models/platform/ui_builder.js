@@ -1,3 +1,21 @@
+function newPanelToolbar(side) {
+    return {
+        view: "toolbar",
+        id: `${side}_panel_toolbar`,
+        cols: [
+            {
+                view: "button",
+                type: "icon",
+                icon: "refresh",
+                maxWidth: 30,
+                click() {
+                    OpenAjax.hub.publish(`${side}_panel_toolbar.click.refresh`, {});
+                }
+            }
+        ]
+    }
+}
+
 /**
  * Model ui_builder
  *
@@ -20,9 +38,9 @@ UIBuilder = MVC.Model.extend('ui_builder',
          */
         init: function () {
             this._ui = {
-                _top: { maxHeight: 5 },
+                _top: { maxHeight: 1 },
                 main: [],
-                _bottom: { maxHeight: 5 }
+                _bottom: { maxHeight: 1 }
             };
         },
 
@@ -83,16 +101,24 @@ UIBuilder = MVC.Model.extend('ui_builder',
             else
                 return {
                     header: "   ",
-                    width: 300,
+                    minWidth: 100,
+                    maxWidth: 300,
                     // collapsed: true,
                     body: {
-                        view: "accordion",
-                        rows: this._ui[what].map(function (el, ndx) {
-                            if (ndx > 0) {
-                                el.collapsed = true
-                            }
-                            return el;
-                        })
+                        rows:[
+                            {
+                                view: "accordion",
+                                id:`${what}_panel`,
+                                rows: this._ui[what].map(function (el, ndx) {
+                                    if (ndx > 0) {
+                                        el.collapsed = true
+                                    }
+                                    return el;
+                                })
+                            },
+                            //TODO provide API for this toolbar
+                            newPanelToolbar(what)
+                        ]
                     }
                 };
         },

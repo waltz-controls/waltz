@@ -46,6 +46,16 @@ TangoWebapp.MainController = class extends MVC.Controller{
         ui_builder.set_bottom_toolbar(TangoWebapp.ui.newBottomToolbar());
     }
     initialize(platform_api){
+        $$('left_panel').attachEvent("onAfterExpand", function(id){
+            if(id === 'info_control_panel_header')
+                $$('left_panel_toolbar').hide()
+        });
+
+        $$('left_panel').attachEvent("onAfterCollapse", function(id){
+            if(id === 'info_control_panel_header')
+                $$('left_panel_toolbar').show()
+        });
+
         OpenAjax.hub.publish("platform_api.ui.initialized", {data: platform_api});
     }
     //TODO move to ui_controller

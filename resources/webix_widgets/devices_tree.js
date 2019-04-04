@@ -409,6 +409,10 @@ import newSearch from "./search.js";
                     },
                     "platform_context.set_rest subscribe": function (event) {
                         this.updateRoot(event.data.context);
+                    },
+                    "left_panel_toolbar.click.refresh subscribe"(){
+                        if(this.isVisible())
+                            this.updateRoot();
                     }
                 }
             }
@@ -440,8 +444,9 @@ import newSearch from "./search.js";
                 return {
                     width: 300,
                     rows: [
-                        newSearch("devices-tree","#value#"),
+                        newSearch("devices-tree", "#value#"),
                         {
+                            borderless:true,
                             context: config.context,
                             view: "devices_tree_tree",
                             id: "devices-tree"
