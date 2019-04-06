@@ -9,78 +9,23 @@
  * @author Igor Khokhriakov <igor.khokhriakov@hzg.de>
  * @since 9/10/18
  */
+import {newInfoDatatable, newInfoDatatableToolbar} from "./attr_info_panel.js";
+
 const pipe_info_panel = webix.protoUI(
     {
         pipe: null,
         name: 'pipe_info_panel',
-        _read: function () {
-            var pipe = this.pipe;
-
-            UserAction.readPipe(pipe)
-                .then(function (resp) {
-                    this.getTopParentView().$$('output').setValue(new View({url: 'views/dev_panel_pipe_out.ejs'}).render(resp));
-                }.bind(this))
-                .fail(error_handler.bind(this));
-
+        refresh(){
+            this.setPipe(this.pipe);
         },
-        _write: function () {
-            var pipe = this.pipe;
-
-            var input;
-            try {
-                input = JSON.parse(this.elements.input.getValue())
-            } catch (e) {
-                TangoWebappHelpers.error(e);
-            }
-
-            UserAction.writePipe(pipe, input)
-                .then(function (resp) {
-                    this.getTopParentView().$$('output').setValue(new View({url: 'views/dev_panel_pipe_out.ejs'}).render(resp));
-                }.bind(this))
-                .fail(error_handler.bind(this));
+        save(){
+            return false;
         },
         _ui: function () {
             return {
-                elements: [
-                    {
-                        view: 'text',
-                        type: 'hidden',
-                        height: 2,
-                        name: 'name',
-                        validate: webix.rules.isNotEmpty,
-                        invalidMessage: 'Pipe must be selected from the list'
-                    },
-                    {
-                        view: 'textarea',
-                        name: 'input'
-                        //TODO code highlight
-                    },
-                    {
-                        cols: [
-                            {
-                                view: 'button',
-                                name: 'btnRead',
-                                value: 'Read',
-                                click: function () {
-                                    var form = this.getFormView();
-                                    if (form.validate()) {
-                                        form._read();
-                                    }
-                                }
-                            },
-                            {
-                                view: 'button',
-                                name: 'btnWrite',
-                                value: 'Write',
-                                click: function () {
-                                    var form = this.getFormView();
-                                    if (form.validate()) {
-                                        form._write();
-                                    }
-                                }
-                            }
-                        ]
-                    }
+                rows: [
+                    newInfoDatatable(),
+                    newInfoDatatableToolbar()
                 ]
             }
         },
@@ -91,6 +36,14 @@ const pipe_info_panel = webix.protoUI(
          */
         setPipe:function(pipe){
             this.pipe = pipe;
+
+            const info = [
+                {info: "Name", value: pipe.name}
+            ];
+
+            const $$info = this.$$('info');
+            $$info.clearAll();
+            $$info.parse(info);
         },
         /**
          * @constructs
@@ -98,9 +51,9 @@ const pipe_info_panel = webix.protoUI(
          */
         $init: function (config) {
             webix.extend(config, this._ui());
-            this.$ready.push(function () {
-                this.bind($$('device_view_panel').$$('pipes'));
-            }.bind(this));
+            // this.$ready.push(function () {
+            //     this.bind($$('device_view_panel').$$('pipes'));
+            // }.bind(this));
         },
         defaults:{
             on:{
@@ -117,4 +70,4 @@ const pipe_info_panel = webix.protoUI(
                 }
             }
         }
-    }, webix.ProgressBar, webix.IdSpace, webix.ui.form);
+    }, webix.ProgressBar, webix.IdSpace, webix.ui.layout);

@@ -4,37 +4,36 @@
  * @author Igor Khokhriakov <igor.khokhriakov@hzg.de>
  * @since 4/30/18
  */
-(function () {
-    /**
-     * Extends {@link https://docs.webix.com/api__refs__ui.textarea.html webix.ui.textarea}
-     * @property {String} name
-     * @property editor
-     * @memberof ui.ScriptingConsole
-     * @namespace codemirror_textarea
-     */
-    var codemirror_textarea = webix.protoUI(
-        /** @lends codemirror_textarea.prototype */
-        {
+/**
+ * Extends {@link https://docs.webix.com/api__refs__ui.textarea.html webix.ui.textarea}
+ * @property {String} name
+ * @property editor
+ * @memberof ui.ScriptingConsole
+ * @namespace codemirror_textarea
+ */
+export const codemirror_textarea = webix.protoUI(
+    /** @lends codemirror_textarea.prototype */
+    {
         name: "codemirror_textarea",
         editor: null,
-            /**
-             * @memberof ui.ScriptingConsole.codemirror_textarea
-             */
+        /**
+         * @memberof ui.ScriptingConsole.codemirror_textarea
+         */
         getValue: function () {
             return this.editor.getValue();
         },
-            /**
-             * @memberof ui.ScriptingConsole.codemirror_textarea
-             */
+        /**
+         * @memberof ui.ScriptingConsole.codemirror_textarea
+         */
         setValue: function (value) {
             if (!value || typeof value !== 'string') return;
             this.editor.setValue(value);
         },
-            /**
-             * @memberof ui.ScriptingConsole.codemirror_textarea
-             * @constructor
-             */
-        $init: function () {
+        /**
+         * @memberof ui.ScriptingConsole.codemirror_textarea
+         * @constructor
+         */
+        $init: function (config) {
             this.$ready.push(function () {
                 this.attachEvent('onAfterRender', function () {
                     if(MVC.env().match(/development|test/)) console.time('CodeMirror render');
@@ -44,6 +43,10 @@
                     }
                     this.editor = CodeMirror.fromTextArea(this.getInputNode(),{
                         extraKeys: {"Ctrl-Space": "autocomplete"},
+                        commands:{
+                            indentAuto:"Shift-Tab"
+                        },
+                        mode:  config.mode || "javascript",
                         lineNumbers: true,
                         gutter: true,
                         lineWrapping: true
@@ -60,6 +63,10 @@
             tooltip: 'Autocomplete: ctrl+space'
         }
     }, webix.ui.textarea);
+
+
+(function () {
+
 
     /**
      * @constant

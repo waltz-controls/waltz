@@ -122,6 +122,10 @@ import newSearch from "./search.js";
                         } else if(item.Class.className === 'tango_command'){
                             const cmd = item;
                             openCommandWindow(cmd);
+                        } else if(item.Class.className === 'tango_pipe'){
+                            const pipe = item;
+                            UserAction.readPipe(pipe)
+                                .then(openPipeWindow.bind(pipe));
                         }
 
                         $$('info_control_panel_header').expand()
@@ -215,7 +219,15 @@ import newSearch from "./search.js";
         }, resp)
     }
 
-
+    function openPipeWindow(resp) {
+        const device = PlatformContext.devices.getItem(this.device_id);
+        openTab.bind(this)({
+            header: getHeader.call(this,device),
+            close: true,
+            borderless: true,
+            body: TangoWebapp.ui.newPipeView(webix.extend({id: this.id}, resp))
+        }, resp)
+    }
 
     function openCommandWindow(cmd) {
         var device = PlatformContext.devices.getItem(cmd.device_id);

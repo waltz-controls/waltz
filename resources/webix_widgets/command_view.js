@@ -18,7 +18,7 @@ const command_output = webix.protoUI(
                     height: "auto",
                     template(obj){
                         return `<div>
-                                    <div>Command executed: ${+new Date()}</div>
+                                    <div>Command executed: ${+new Date()} (${new Date()})</div>
                                     <div>Input: ${obj.input} [${cmd.info.in_type_desc}]</div>
                                     <div>Output: ${obj.output} [${cmd.info.out_type_desc}]</div>
                                 </div>`

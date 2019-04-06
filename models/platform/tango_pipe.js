@@ -15,7 +15,10 @@ TangoPipe = MVC.Model.extend('tango_pipe',
         attributes: {
             id: 'string', //host_id/device_id/name
             name: 'string',
-            display_name: 'string'
+            display_name: 'string',
+            timestamp: 'int',
+            size: 'int',
+            data:'[]'
         },
         default_attributes: {}
     },
