@@ -1,6 +1,15 @@
 import {kMargins} from "./plot.js"
 import newToolbar from "./attrs_monitor_toolbar.js";
 
+export const btnClearAll = {
+    view:"button",
+    value:"Clear all",
+    maxWidth:120,
+    click(){
+        this.getTopParentView().clearAll();
+    }
+};
+
 /**
  *
  * @author Igor Khokhriakov <igor.khokhriakov@hzg.de>
@@ -217,6 +226,15 @@ function newWriteForm(config){
     }
 }
 
+const btnHistory = {
+    view:"button",
+    value:"History",
+    maxWidth:120,
+    click(){
+        this.getTopParentView().readHistory();
+    }
+};
+
 /**
  * @param {TangoAttribute} config
  * @memberof ui.Plot
@@ -244,21 +262,8 @@ const scalar_view = webix.protoUI({
             rows.push(newWriteForm(config));
         }
 
-        rows.push(newToolbar([{
-            view:"button",
-            value:"History",
-            maxWidth:120,
-            click(){
-                this.getTopParentView().readHistory();
-            }
-        },{
-            view:"button",
-            value:"Clear all",
-            maxWidth:120,
-            click(){
-                this.getTopParentView().clearAll();
-            }
-        }]));
+
+        rows.push(newToolbar([btnHistory,btnClearAll]));
 
         return {
             rows

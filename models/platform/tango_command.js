@@ -52,7 +52,7 @@ TangoCommand = TangoPollable.extend('tango_command',
             var device = PlatformContext.devices.getItem(this.device_id);
             return device.executeCommand(this.name, this.input).then(function(resp){
                 this.update_attributes(resp);
-                return this;
+                return resp;
             }.bind(this));
         },
         /**

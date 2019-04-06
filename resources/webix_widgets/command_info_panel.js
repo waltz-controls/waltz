@@ -1,48 +1,8 @@
-const kCommands_info_datatable = {
-    view: 'form',
-    id: 'info',
-    elements:[{
-        cols: [{
-            view:'fieldset',
-            label: 'Input',
-            body:{
-                rows:[
-                    {
-                        view: 'label',
-                        name:'in_type'
-                    },
-                    {
-                        view: 'textarea',
-                        name:'in_type_desc'
-                    }
-                ]
-            }
-        },
-            {
-                view:'fieldset',
-                label: 'Output',
-                body:{
-                    rows:[
-                        {
-                            view: 'label',
-                            name:'out_type'
-                        },
-                        {
-                            view: 'textarea',
-                            name:'out_type_desc'
-                        }
-                    ]
-                }
-            }]
-    }
-    ],
-    on:{
-        onBindApply:function(cmd){
-            if(!cmd) return false;
-            this.setValues(cmd.info);
-        }
-    }
-};
+import {newInfoDatatable, newInfoDatatableToolbar, parsePollable, savePollable} from "./attr_info_panel.js";
+
+function parseInfo(command){
+    return Object.entries(command.info).map(entity => ({info:MVC.String.classize(entity[0]),value:entity[1]}));
+}
 
 /**
  * Extends {@link https://docs.webix.com/api__refs__ui.form.html webix.ui.form}
@@ -60,39 +20,18 @@ const command_info_panel = webix.protoUI(
     {
         command: null,
         name: 'command_info_panel',
-        _execute_command: function () {
-            var command = this.command;
-
-            var argin = this.elements.argin.getValue();
-
-            UserAction.executeCommand(command, argin)
-                .then(function (resp) {
-                    if (!resp.output) resp.output = "";
-                    this.getTopParentView().$$('output').setValue(new View({url: 'views/dev_panel_command_out.ejs'}).render(resp));
-                }.bind(this))
-                .fail(error_handler.bind(this));
+        refresh(){
+            this.setCommand(this.command);
+        },
+        save() {
+            const $$info = this.$$('info');
+            savePollable(this.command, $$info);
         },
         _ui: function () {
             return {
-                elements: [
-                    kCommands_info_datatable,
-                    {
-                        view: 'text',
-                        name: 'argin',
-                        placeholder: 'Input e.g. 3.14 or [3.14, 2.87] etc'
-                        //TODO argin converter
-                    },
-                    {
-                        view: 'button',
-                        name: 'btnExecCmd',
-                        value: 'Execute',
-                        click: function () {
-                            var form = this.getFormView();
-                            if (form.validate()) {
-                                form._execute_command();
-                            }
-                        }
-                    }
+                rows: [
+                    newInfoDatatable(),
+                    newInfoDatatableToolbar()
                 ]
             }
         },
@@ -101,20 +40,15 @@ const command_info_panel = webix.protoUI(
          * @param {TangoCommand} command
          * @memberof ui.DeviceViewPanel.DevicePanelCommands
          */
-        setCommand:function(command){
-            this.clearValidation();
+        async setCommand(command){
             this.command = command;
 
-            if (command.info.in_type !== 'DevVoid') {
-                this.elements.argin.define({
-                    validate: webix.rules.isNotEmpty,
-                    invalidMessage: 'Input argument can not be empty'
-                });
-            } else {
-                this.elements.argin.define({validate: '', invalidMessage: 'Input argument can not be empty'});
-            }
+            const info = parseInfo(command);
 
-            this.$$('info').setValues(command.info);
+            info.push(await parsePollable(command));
+
+            this.$$('info').clearAll();
+            this.$$('info').parse(info);
         },
         /**
          * @constructs DevicePanelCommands
@@ -122,9 +56,9 @@ const command_info_panel = webix.protoUI(
          */
         $init: function (config) {
             webix.extend(config, this._ui());
-            this.$ready.push(function () {
-                this.bind($$('device_view_panel').$$('commands'));
-            }.bind(this));
+            // this.$ready.push(function () {
+            //     this.bind($$('device_view_panel').$$('commands'));
+            // }.bind(this));
         },
         defaults: {
             complexData: true,
@@ -141,4 +75,4 @@ const command_info_panel = webix.protoUI(
                 }
             }
         }
-    }, webix.ProgressBar, webix.IdSpace, webix.ui.form);
+    }, webix.ProgressBar, webix.IdSpace, webix.ui.layout);

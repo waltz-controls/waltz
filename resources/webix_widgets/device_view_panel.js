@@ -40,6 +40,11 @@ import newSearch from "./search.js";
                     return "<span class='webix_icon "+ obj.getIcon() + "'></span>"+ obj.display_name;
                 },
                 on: {
+                    onItemClick(id){
+                        if(this.getSelectedId() === id)
+                            this.callEvent("onAfterSelect",[id]);
+                        return true;
+                    },
                     /**
                      *
                      * @param device
@@ -98,18 +103,25 @@ import newSearch from "./search.js";
                      * @memberof ui.DeviceViewPanel.DeviceTreeList
                      */
                     onItemDblClick:function(id){
-                        const attr = this.getItem(id);
-                        if (attr.info.data_format === "SPECTRUM") {
-                            UserAction.readAttribute(attr)
-                                .then(openSpectrumWindow.bind(attr));
-                        } else if (attr.info.data_format === "IMAGE") {
-                            UserAction.readAttribute(attr)
-                                .then(openImageWindow.bind(attr));
-                        } else if (attr.info.data_format === "SCALAR") {
-                            UserAction.readAttribute(attr)
-                                .then(openScalarWindow.bind(attr));
-                        } else {
-                            TangoWebappHelpers.error("Unsupported data format: " + this.attr.info.data_format);
+                        const item = this.getItem(id);
+
+                        if(item.Class.className === 'tango_attribute') {
+                            const attr = item;
+                            if (attr.info.data_format === "SPECTRUM") {
+                                UserAction.readAttribute(attr)
+                                    .then(openSpectrumWindow.bind(attr));
+                            } else if (attr.info.data_format === "IMAGE") {
+                                UserAction.readAttribute(attr)
+                                    .then(openImageWindow.bind(attr));
+                            } else if (attr.info.data_format === "SCALAR") {
+                                UserAction.readAttribute(attr)
+                                    .then(openScalarWindow.bind(attr));
+                            } else {
+                                TangoWebappHelpers.error("Unsupported data format: " + this.attr.info.data_format);
+                            }
+                        } else if(item.Class.className === 'tango_command'){
+                            const cmd = item;
+                            openCommandWindow(cmd);
                         }
 
                         $$('info_control_panel_header').expand()
@@ -152,14 +164,16 @@ import newSearch from "./search.js";
 
 
 
-
+    function getHeader(device){
+        return `<span class='webix_icon ${this.getIcon()}'></span>[<span class='webix_strong'>${device.display_name}/${this.display_name}</span>]`;
+    }
 
 
     //TODO make instance functions
-    var openTab = function (view, resp) {
-            var $$tab = $$(this.id);
+    function openTab(view, resp) {
+            let $$tab = $$(this.id);
             if (!$$tab || !$$tab.isVisible()) {
-                var device = PlatformContext.devices.getItem(this.device_id);
+                const device = PlatformContext.devices.getItem(this.device_id);
                 PlatformApi.PlatformUIController().openTangoHostTab(device.host, view);
 
                 $$tab = $$(this.id);
@@ -167,39 +181,51 @@ import newSearch from "./search.js";
 
             $$tab.show();
             $$tab.plot.update(resp);
-        };
+        }
 
     //TODO send Open Ajax event and handle it in main_controller
-    var openSpectrumWindow = function (resp) {
+    function openSpectrumWindow(resp) {
         var device = PlatformContext.devices.getItem(this.device_id);
         openTab.bind(this)({
-            header: "<span class='webix_icon fa-area-chart'></span>[<span class='webix_strong'>" + device.display_name + '/' + this.display_name + "</span>]",
+            header: getHeader.call(this, device),
             close: true,
             borderless: true,
             body: TangoWebapp.ui.newSpectrumView(this)
         }, resp);
-    };
+    }
 
     //TODO send Open Ajax event and handle it in main_controller
-    var openImageWindow = function (resp) {
+    function openImageWindow(resp) {
         var device = PlatformContext.devices.getItem(this.device_id);
         openTab.bind(this)({
-            header: "<span class='webix_icon fa-image'></span>[<span class='webix_strong'>" + device.display_name + '/' + this.display_name + "</span>]",
+            header: getHeader.call(this,device),
             close: true,
             borderless: true,
             body: TangoWebapp.ui.newImageView(webix.extend({id: this.id}, resp))
         }, resp);
-    };
+    }
 
-    var openScalarWindow = function(resp) {
-        var device = PlatformContext.devices.getItem(this.device_id);
+    function openScalarWindow(resp) {
+        const device = PlatformContext.devices.getItem(this.device_id);
         openTab.bind(this)({
-            header: "<span class='webix_icon fa-at'></span>[<span class='webix_strong'>" + device.display_name + '/' + this.display_name + "</span>]",
+            header: getHeader.call(this,device),
             close: true,
             borderless: true,
             body: TangoWebapp.ui.newScalarView(webix.extend({id: this.id}, resp))
         }, resp)
-    };
+    }
+
+
+
+    function openCommandWindow(cmd) {
+        var device = PlatformContext.devices.getItem(cmd.device_id);
+        openTab.bind(cmd)({
+            header: getHeader.call(cmd, device),
+            close: true,
+            borderless: true,
+            body: TangoWebapp.ui.newCommandView(cmd)
+        }, undefined)
+    }
 
     /**
      * Factory function for {@link DeviceViewPanel}

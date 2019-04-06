@@ -49,22 +49,17 @@ TangoAdminDevice = MVC.Model.extend('tango_admin_device',
         updatePolling(device_name, pollable, polled, poll_rate = 0){
             if (polled)
                 if (!pollable.polled)
-                    this.addObjPolling({
+                    return this.addObjPolling({
                         lvalue: [poll_rate],
                         svalue: [device_name, pollable.polling_type, pollable.name]
                     });
                 else
-                    this.updObjPollingPeriod({
+                    return this.updObjPollingPeriod({
                         lvalue: [poll_rate],
                         svalue: [device_name, pollable.polling_type, pollable.name]
                     });
             else if (pollable.polled)
-                this.remObjPolling([device_name, pollable.polling_type, pollable.name]);
-
-            return {
-                polled,
-                poll_rate
-            };
+                return this.remObjPolling([device_name, pollable.polling_type, pollable.name]);
         },
         /**
          * @param {} args

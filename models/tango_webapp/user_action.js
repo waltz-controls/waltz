@@ -174,16 +174,16 @@ UserAction = TangoWebapp.UserAction = MVC.Model.extend('user_action',
          * @fires user_action.log
          * @param {TangoAttribute} attr
          */
-        updateAttributePolling:function(attr, polled, poll_rate = 0){
-            return attr.updatePolling(polled, poll_rate)
+        updatePolling:function(pollable, polled = false, poll_rate = undefined){
+            return pollable.updatePolling(polled, poll_rate)
                 .then(function(/*async*/){
                     var instance = new this({
                         id: webix.uid(),
-                        value: this._get_user().concat(['Action: update attribute polling[', attr.id, polled, poll_rate, ']']).join(' '),
+                        value: this._get_user().concat(['Action: update ',pollable.polling_type,' polling[', pollable.id, polled, poll_rate, ']']).join(' '),
                         timestamp: +new Date()
                     });
                     this.publish('log', {data: instance});
-                    return attr;
+                    return pollable;
                 }.bind(this))
                 .fail(this.failure.bind(this));
         },
@@ -239,7 +239,7 @@ UserAction = TangoWebapp.UserAction = MVC.Model.extend('user_action',
                 .then(function (result) {
                     var instance = new this({
                         id: webix.uid(),
-                        value: this._get_user().concat(['Action: execute command:', result.id, '; Input:', result.input, '; Ouput:', result.output]).join(' '),
+                        value: this._get_user().concat(['Action: execute command:', cmd.id, '; Input:', cmd.input, '; Ouput:', result.output]).join(' '),
                         timestamp: +new Date()
                     });
                     this.publish('log', {data: instance});
