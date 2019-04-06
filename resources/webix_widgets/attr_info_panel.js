@@ -12,6 +12,13 @@ export async function parsePollable(pollable) {
         ]};
 }
 
+export function savePollable(pollable, $$info){
+    const polled = $$info.getItem('polled').value || $$info.getItem('polled').value === "true" || $$info.getItem('polled').value === "1";
+    const poll_rate = $$info.getItem('poll_rate').value;
+    UserAction.updatePolling(pollable, polled, poll_rate)
+        .fail(TangoWebappHelpers.error);
+}
+
 export function newInfoDatatable(){
     return {
         id: 'info',
@@ -171,10 +178,7 @@ const attr_info_panel = webix.protoUI(
                 .then(() => OpenAjax.hub.publish("attr_info_panel.update_attr_info", {data: this.attr.info}))
                 .fail(TangoWebappHelpers.error);
 
-            const polled = $$info.getItem('polled').value || $$info.getItem('polled').value === "true" || $$info.getItem('polled').value === "1";
-            const poll_rate = $$info.getItem('poll_rate').value;
-            UserAction.updatePolling(this.attr, polled, poll_rate)
-                .fail(TangoWebappHelpers.error);
+            savePollable(this.attr, $$info);
         },
         async refresh(){
             await this.attr.fetchInfo();

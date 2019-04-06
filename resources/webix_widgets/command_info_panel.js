@@ -1,4 +1,4 @@
-import {newInfoDatatable, newInfoDatatableToolbar, parsePollable} from "./attr_info_panel.js";
+import {newInfoDatatable, newInfoDatatableToolbar, parsePollable, savePollable} from "./attr_info_panel.js";
 
 function parseInfo(command){
     return Object.entries(command.info).map(entity => ({info:MVC.String.classize(entity[0]),value:entity[1]}));
@@ -25,10 +25,7 @@ const command_info_panel = webix.protoUI(
         },
         save() {
             const $$info = this.$$('info');
-            const polled = $$info.getItem('polled').value || $$info.getItem('polled').value === "true" || $$info.getItem('polled').value === "1";
-            const poll_rate = $$info.getItem('poll_rate').value;
-            UserAction.updatePolling(this.command, polled, poll_rate)
-                .fail(TangoWebappHelpers.error);
+            savePollable(this.command, $$info);
         },
         _ui: function () {
             return {
