@@ -195,11 +195,6 @@ TangoDevice = TangoWebappPlatform.TangoDevice = TangoWebappPlatform.DataCollecti
                     this.attrs.parse(attributes);
                     return attributes;
                 }.bind(this))
-                //TODO refactor this: 1) make pollables dedicated collection OR 2) ...
-                .then((attrs) => {
-                    this.pollStatus();
-                    return attrs;
-                })
         },
         /**
          * @param {string} name
@@ -248,11 +243,6 @@ TangoDevice = TangoWebappPlatform.TangoDevice = TangoWebappPlatform.DataCollecti
                 this.commands.parse(commands);
                 return commands;
             }.bind(this))
-            //TODO refactor this: 1) make pollables dedicated collection OR 2) ...
-                .then((commands) => {
-                    this.pollStatus();
-                    return commands;
-                });
         },
         /**
          *
@@ -440,8 +430,9 @@ TangoDevice = TangoWebappPlatform.TangoDevice = TangoWebappPlatform.DataCollecti
          *
          * @return {PromiseLike<Array>} polled cmds and attrs
          */
-        pollStatus(){
-            webix.assert(this.attrs.count() !== 0 || this.commands.count() !== 0, "attrs and commands must be fetched first!");
+        async pollStatus(){
+            if(this.attrs.count() === 0 || this.commands.count() === 0)
+                await webix.promise.all([this.fetchAttrs(),this.fetchCommands()]);
 
             function resetPollStatus(pollable){
                 pollable.update_attributes({

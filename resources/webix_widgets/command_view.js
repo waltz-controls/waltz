@@ -69,10 +69,17 @@ const command_view = webix.protoUI({
         this.plot.clearAll();
     },
     execute(){
-        if(!this.$$('input').validate()) return;
         const command = this.config;
+        let argin;
+        if(this.config.info.in_type !== 'DevVoid') {
+            const $$input = this.$$('input');
+            if (!$$input.validate()) return;
 
-        const argin = this.$$('input').elements.argin.getValue(); //TODO clever logic here
+            argin = $$input.elements.argin.getValue(); //TODO clever logic here
+        } else {
+            argin = undefined;
+        }
+
 
         UserAction.executeCommand(command, argin)
             .then((resp) => {
@@ -85,13 +92,16 @@ const command_view = webix.protoUI({
         this.execute();
     },
     _ui(config){
-        return {
-            rows:[
-                {
-                    view: 'command_output',
-                    id:'output',
-                    cmd: config
-                },
+        const rows = [];
+
+        rows.push({
+            view: 'command_output',
+            id:'output',
+            cmd: config
+        });
+
+        if (config.info.in_type !== 'DevVoid') {
+            rows.push(
                 {
                     view:"resizer"
                 },
@@ -99,9 +109,14 @@ const command_view = webix.protoUI({
                     view: 'command_input',
                     id: 'input',
                     cmd: config
-                },
-                newToolbar([btnExecute,btnClearAll])
-            ]
+                });
+        }
+
+        rows.push(newToolbar([btnExecute,btnClearAll]));
+
+
+        return {
+            rows
         }
     },
     get plot(){

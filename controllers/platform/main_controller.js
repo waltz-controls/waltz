@@ -1,3 +1,16 @@
+function updatePollableHelper(pollable){
+    const device = PlatformContext.devices.getItem(pollable.device_id);
+    let pollables;
+    if(pollable.Class.className === 'tango_command')
+        pollables = device.commands;
+    else if(pollable.Class.className === 'tango_attribute')
+        pollables = device.attrs;
+    pollables.updateItem(pollable.id, {
+        polled: pollable.polled,
+        poll_rate: pollable.poll_rate
+    })
+}
+
 /**
  * Main controller
  *
@@ -57,6 +70,16 @@ TangoWebappPlatform.MainController = class extends MVC.Controller {
     }
     "user_context_controller.delete_tango_host subscribe"(event) {
         PlatformContext.tango_hosts.remove(event.data);
+    }
+
+    //TODO use sync not only for polling
+    "tango_command.update subscribe"(event){
+        const pollable = event.data;
+        updatePollableHelper(pollable)
+    }
+    "tango_attribute.update subscribe"(event) {
+        const pollable = event.data;
+        updatePollableHelper(pollable);
     }
 };
 

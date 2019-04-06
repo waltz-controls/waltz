@@ -45,16 +45,34 @@ TangoPollable = MVC.Model.extend("pollable",
             });
         },
         /**
+         * @event tango_command.update
+         * @type {OpenAjax}
+         * @property {TangoCommand} data
+         * @memberof TangoWebappPlatform
+         */
+        /**
+         * @event tango_attribute.update
+         * @type {OpenAjax}
+         * @property {TangoAttribute} data
+         * @memberof TangoWebappPlatform
+         */
+        /**
          *
          * @param {boolean} polled
          * @param {int} poll_rate
+         * @return {PromiseLike<TangoPollable>}
+         *
+         * @fires event:update
          */
         updatePolling(polled, poll_rate){
             const device = PlatformContext.devices.getItem(this.device_id);
             return device.fetchAdmin().then(admin => {
                 return admin.updatePolling(device.name, this, polled, poll_rate)
-            }).then((pollable) => {
-                this.update_attributes(pollable);
+            }).then(() => {
+                this.update_attributes({
+                    polled,
+                    poll_rate
+                });
                 return this;
             });
         },

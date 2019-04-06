@@ -183,12 +183,13 @@ const device_info_panel = webix.protoUI({
         return this.$$('info').device;
     },
     async refresh(){
+        let device, other;
         [device,...other] = await webix.promise.all(
             [this.device.fetchInfo(),
              this.device.fetchProperties(),
              this.device.pollStatus()]).fail(TangoWebappHelpers.error);
 
-        device_info_parser.bind(this.$$('info'))(device);
+        this.$$('info').callEvent("onBindApply",[device]);
     },
     updateAlias(alias){
         const device = this.device;

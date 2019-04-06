@@ -13,6 +13,7 @@ new MVC.Test.Unit('tango_pollable', {
 
         const pollable = new TangoAttribute({
             device_id : device.id,
+            id: webix.uid(),
             name: "long_scalar"
         });
 
@@ -31,6 +32,7 @@ new MVC.Test.Unit('tango_pollable', {
 
         const pollable = new TangoAttribute({
             device_id : device.id,
+            id: webix.uid(),
             name: "long_scalar"
         });
 
@@ -51,6 +53,7 @@ new MVC.Test.Unit('tango_pollable', {
 
         const pollable = new TangoAttribute({
             device_id : device.id,
+            id: webix.uid(),
             name: "long_scalar"
         });
 
@@ -71,6 +74,7 @@ new MVC.Test.Unit('tango_pollable', {
 
         const pollable = new TangoAttribute({
             device_id : device.id,
+            id: webix.uid(),
             name: "long_scalar"
         });
 

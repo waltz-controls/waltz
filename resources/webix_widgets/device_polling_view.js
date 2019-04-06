@@ -7,7 +7,8 @@
         apply(){
             this.data.each(pollable => {
                 if(pollable.isNewPolled || pollable.polled !== pollable.isNewPolled)
-                    pollable.wrapped.updatePolling(pollable.isNewPolled, pollable.poll_rate).fail(TangoWebappHelpers.error);
+                    pollable.wrapped.updatePolling(pollable.isNewPolled, pollable.poll_rate)
+                        .fail(TangoWebappHelpers.error);
             });
         },
         update(){
