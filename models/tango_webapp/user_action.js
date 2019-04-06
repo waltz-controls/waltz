@@ -239,7 +239,7 @@ UserAction = TangoWebapp.UserAction = MVC.Model.extend('user_action',
                 .then(function (result) {
                     var instance = new this({
                         id: webix.uid(),
-                        value: this._get_user().concat(['Action: execute command:', result.id, '; Input:', result.input, '; Ouput:', result.output]).join(' '),
+                        value: this._get_user().concat(['Action: execute command:', cmd.id, '; Input:', cmd.input, '; Ouput:', result.output]).join(' '),
                         timestamp: +new Date()
                     });
                     this.publish('log', {data: instance});

@@ -7,24 +7,40 @@ const command_output = webix.protoUI(
         /**
          * @memberof ui.Plot.spectrum_text
          */
-        update: function (resp) {
-            if(!resp) return;
-            this.clearAll();
-            this.parse(resp.output);//TODO
+        update: function (command) {
+            if(!command) return;
+            this.add(command,0);
+        },
+        _config(cmd){
+            return {
+                type: {
+                    height: "auto",
+                    template(obj){
+                        return `<div>
+                                    <div>Command executed:</div>
+                                    <div>Input: ${obj.input} [${cmd.info.in_type_desc}]</div>
+                                    <div>Output: ${obj.output} [${cmd.info.out_type_desc}]</div>
+                                </div>`
+                    }
+                }
+            }
+        },
+        $init(config){
+            webix.extend(config, this._config(config.cmd));
         }
     }, webix.ui.list);
 
 const command_input = webix.protoUI({
     name: 'command_input',
-    _config(){
+    _config(config){
         return {
             elements:[
-
+                {view:"textarea", name:"argin", label:`Input: ${config.info.in_type} [${config.info.in_type_desc}]`, labelPosition: "top", placeholder: "3.14, 'String', ['string','array']", validate:webix.rules.isNotEmpty},
             ]
         }
     },
     $init(config){
-        webix.extend(config, this._config())
+        webix.extend(config, this._config(config.cmd))
     }
 },webix.ui.form);
 
@@ -34,18 +50,32 @@ const command_view = webix.protoUI({
         this.plot.clearAll();
     },
     execute(){
-        debugger
+        const command = this.config;
+
+        const argin = this.$$('input').elements.argin.getValue(); //TODO clever logic here
+
+        UserAction.executeCommand(command, argin)
+            .then((resp) => {
+                if (!resp.output) resp.output = "";
+                webix.extend(resp, {input:argin});
+                this.$$('output').update(resp);
+            });
     },
-    _ui(){
+    _ui(config){
         return {
             rows:[
                 {
                     view: 'command_output',
                     id:'output',
+                    cmd: config
+                },
+                {
+                    view:"resizer"
                 },
                 {
                     view: 'command_input',
-                    id: 'input'
+                    id: 'input',
+                    cmd: config
                 },
                 newToolbar([{
                     view:"button",
@@ -69,7 +99,7 @@ const command_view = webix.protoUI({
         return this.$$('output');
     },
     $init(config){
-        webix.extend(config, this._ui());
+        webix.extend(config, this._ui(config));
     }
 },webix.IdSpace,webix.ui.layout);
 
