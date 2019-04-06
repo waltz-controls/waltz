@@ -1,3 +1,4 @@
+import "./codemirror/formatting.js"
 import "./critical_error_no_rest.js";
 import "./logger.js";
 import "./toolbar.js";
