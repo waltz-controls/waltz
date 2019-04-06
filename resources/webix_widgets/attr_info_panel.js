@@ -6,10 +6,10 @@ const kAttr_alarms_values = [
 
 export async function parsePollable(pollable) {
     await pollable.fetchPollingStatus();  //TODO move to attribute initialization?
-    info.push({info:'Polling', value: "", data:[
+    return {info:'Polling', value: "", data:[
             {id:'polled', info: "IsPolled", value: pollable.polled},
             {id:'poll_rate', info: "Period (ms)", value: pollable.poll_rate}
-        ]});
+        ]};
 }
 
 export function newInfoDatatable(){
@@ -185,7 +185,7 @@ const attr_info_panel = webix.protoUI(
             this.attr = attr;
             const info = parseInfo(attr.info);
 
-            info.push(parsePollable(attr));
+            info.push(await parsePollable(attr));
 
             const $$info = this.$$('info');
             $$info.clearAll();

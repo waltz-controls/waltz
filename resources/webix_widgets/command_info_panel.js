@@ -72,7 +72,7 @@ const command_info_panel = webix.protoUI(
 
             const info = parseInfo(command);
 
-            info.push(parsePollable(command));
+            info.push(await parsePollable(command));
 
             this.$$('info').clearAll();
             this.$$('info').parse(info);

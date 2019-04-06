@@ -33,23 +33,23 @@ const command_output = webix.protoUI(
 const command_input = webix.protoUI({
     name: 'command_input',
     _config(config){
+        const argin = {view:"textarea", name:"argin", label:`Input: ${config.info.in_type} [${config.info.in_type_desc}]`, labelPosition: "top", placeholder: "3.14, 'String', ['string','array']"};
+
+        if (config.info.in_type !== 'DevVoid') {
+            webix.extend(argin,{
+                validate: webix.rules.isNotEmpty,
+                invalidMessage: 'Input argument can not be empty'
+            });
+        } 
+
         return {
             elements:[
-                {view:"textarea", name:"argin", label:`Input: ${config.info.in_type} [${config.info.in_type_desc}]`, labelPosition: "top", placeholder: "3.14, 'String', ['string','array']", validate:webix.rules.isNotEmpty},
+                argin
             ]
         }
     },
     $init(config){
         webix.extend(config, this._config(config.cmd))
-
-        // if (command.info.in_type !== 'DevVoid') {
-        //     this.elements.argin.define({
-        //         validate: webix.rules.isNotEmpty,
-        //         invalidMessage: 'Input argument can not be empty'
-        //     });
-        // } else {
-        //     this.elements.argin.define({validate: '', invalidMessage: 'Input argument can not be empty'});
-        // }
     }
 },webix.ui.form);
 
@@ -59,6 +59,7 @@ const command_view = webix.protoUI({
         this.plot.clearAll();
     },
     execute(){
+        if(!this.$$('input').validate()) return;
         const command = this.config;
 
         const argin = this.$$('input').elements.argin.getValue(); //TODO clever logic here
@@ -69,6 +70,9 @@ const command_view = webix.protoUI({
                 webix.extend(resp, {input:argin});
                 this.$$('output').update(resp);
             });
+    },
+    run(){
+        this.execute();
     },
     _ui(config){
         return {
@@ -110,7 +114,7 @@ const command_view = webix.protoUI({
     $init(config){
         webix.extend(config, this._ui(config));
     }
-},webix.IdSpace,webix.ui.layout);
+},TangoWebappPlatform.mixin.Runnable, webix.IdSpace,webix.ui.layout);
 
 TangoWebapp.ui.newCommandView = function(config){
     return webix.extend({
