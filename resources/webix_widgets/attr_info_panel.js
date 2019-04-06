@@ -4,30 +4,42 @@ const kAttr_info_values = [
 const kAttr_alarms_values = [
     'min_alarm','max_alarm','min_warning','max_warning','delta_t','delta_val'];
 
+export async function parsePollable(pollable) {
+    await pollable.fetchPollingStatus();  //TODO move to attribute initialization?
+    info.push({info:'Polling', value: "", data:[
+            {id:'polled', info: "IsPolled", value: pollable.polled},
+            {id:'poll_rate', info: "Period (ms)", value: pollable.poll_rate}
+        ]});
+}
 
-const kAttr_info_datatable = {
-    id: 'info',
-    view: 'treetable',
-    header:false,
-    editable:true,
-    columns:[
-        {id:'info' , template:"{common.icon()} #info#"},
-        {id:'value', editor: "text", template:(obj, common, value) => {
-                if(obj.id === 'polled') {
-                    return common.checkbox(obj, common, obj.value, {
-                        checkValue: true
-                    });
-                }
-                else return value;
-            }, fillspace: true}
-    ],
-    on:{
-        onBeforeEditStart:function(id){
-            var row = id.row;
-            return row !== 'polled';
+export function newInfoDatatable(){
+    return {
+        id: 'info',
+        view: 'treetable',
+        header:false,
+        editable:true,
+        columns:[
+            {id:'info' , template:"{common.icon()} #info#"},
+            {id:'value', editor: "text", template:(obj, common, value) => {
+                    if(obj.id === 'polled') {
+                        return common.checkbox(obj, common, obj.value, {
+                            checkValue: true
+                        });
+                    }
+                    else return value;
+                }, fillspace: true}
+        ],
+        rules: {
+            poll_rate: webix.rules.isNumber
+        },
+        on:{
+            onBeforeEditStart:function(id){
+                var row = id.row;
+                return row !== 'polled';
+            }
         }
-    }
-};
+    };
+}
 
 /**
  *
@@ -91,7 +103,7 @@ const attr_info_panel = webix.protoUI(
                 borderless: true,
                 padding: 0,
                 rows: [
-                    kAttr_info_datatable,
+                    newInfoDatatable(),
                     {
                         view:"toolbar",
                         maxHeight: 30,
@@ -157,8 +169,7 @@ const attr_info_panel = webix.protoUI(
 
             const polled = $$info.getItem('polled').value || $$info.getItem('polled').value === "true" || $$info.getItem('polled').value === "1";
             const poll_rate = $$info.getItem('poll_rate').value;
-            UserAction.updateAttributePolling(this.attr, polled, poll_rate)
-                .then(() => OpenAjax.hub.publish("attr_info_panel.update_attr_polling", {data: this.attr.info}))
+            UserAction.updatePolling(this.attr, polled, poll_rate)
                 .fail(TangoWebappHelpers.error);
         },
         async refresh(){
@@ -174,11 +185,7 @@ const attr_info_panel = webix.protoUI(
             this.attr = attr;
             const info = parseInfo(attr.info);
 
-            await attr.fetchPollingStatus();  //TODO move to attribute initialization?
-            info.push({info:'Polling', value: "", data:[
-                    {id:'polled', info: "IsPolled", value: attr.polled},
-                    {id:'poll_rate', info: "Period (ms)", value: attr.poll_rate}
-                ]});
+            info.push(parsePollable(attr));
 
             const $$info = this.$$('info');
             $$info.clearAll();

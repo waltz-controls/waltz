@@ -41,6 +41,15 @@ const command_input = webix.protoUI({
     },
     $init(config){
         webix.extend(config, this._config(config.cmd))
+
+        // if (command.info.in_type !== 'DevVoid') {
+        //     this.elements.argin.define({
+        //         validate: webix.rules.isNotEmpty,
+        //         invalidMessage: 'Input argument can not be empty'
+        //     });
+        // } else {
+        //     this.elements.argin.define({validate: '', invalidMessage: 'Input argument can not be empty'});
+        // }
     }
 },webix.ui.form);
 
