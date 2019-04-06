@@ -15,6 +15,7 @@ import "./plot.js";
 import "./scalar_view.js";
 import "./spectrum_view.js";
 import "./image_view.js";
+import "./command_view.js";
 import "./tango_host_view.js";
 import "./device_view.js";
 import "./device_properties_view.js";
