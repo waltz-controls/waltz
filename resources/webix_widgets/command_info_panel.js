@@ -1,4 +1,4 @@
-import {newInfoDatatable, parsePollable} from "./attr_info_panel.js";
+import {newInfoDatatable, newInfoDatatableToolbar, parsePollable} from "./attr_info_panel.js";
 
 function parseInfo(command){
     return Object.entries(command.info).map(entity => ({info:MVC.String.classize(entity[0]),value:entity[1]}));
@@ -34,31 +34,7 @@ const command_info_panel = webix.protoUI(
             return {
                 rows: [
                     newInfoDatatable(),
-                    {
-                        view:"toolbar",
-                        maxHeight: 30,
-                        cols:[
-                            {
-                                view:"button",
-                                type:"icon",
-                                icon:"refresh",
-                                maxWidth:30,
-                                click(){
-                                    this.getTopParentView().refresh();
-                                }
-                            },
-                            {},
-                            {
-                                view:"button",
-                                type:"icon",
-                                icon:"save",
-                                maxWidth:30,
-                                click(){
-                                    this.getTopParentView().save();
-                                }
-                            }
-                        ]
-                    }
+                    newInfoDatatableToolbar()
                 ]
             }
         },

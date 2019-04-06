@@ -1,4 +1,5 @@
 import newToolbar from "./attrs_monitor_toolbar.js";
+import {btnClearAll} from "./scalar_view.js";
 
 const command_output = webix.protoUI(
     /** @lends spectrum_text*/
@@ -53,6 +54,15 @@ const command_input = webix.protoUI({
     }
 },webix.ui.form);
 
+const btnExecute = {
+    view:"button",
+    value:"Execute",
+    maxWidth:120,
+    click(){
+        this.getTopParentView().execute();
+    }
+};
+
 const command_view = webix.protoUI({
     name: 'command_view',
     clearAll(){
@@ -90,21 +100,7 @@ const command_view = webix.protoUI({
                     id: 'input',
                     cmd: config
                 },
-                newToolbar([{
-                    view:"button",
-                    value:"Execute",
-                    maxWidth:120,
-                    click(){
-                        this.getTopParentView().execute();
-                    }
-                },{
-                    view:"button",
-                    value:"Clear all",
-                    maxWidth:120,
-                    click(){
-                        this.getTopParentView().clearAll();
-                    }
-                }])
+                newToolbar([btnExecute,btnClearAll])
             ]
         }
     },

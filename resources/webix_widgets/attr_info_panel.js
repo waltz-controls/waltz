@@ -41,6 +41,34 @@ export function newInfoDatatable(){
     };
 }
 
+export function newInfoDatatableToolbar() {
+    return {
+        view:"toolbar",
+        maxHeight: 30,
+        cols:[
+            {
+                view:"button",
+                type:"icon",
+                icon:"refresh",
+                maxWidth:30,
+                click(){
+                    this.getTopParentView().refresh();
+                }
+            },
+            {},
+            {
+                view:"button",
+                type:"icon",
+                icon:"save",
+                maxWidth:30,
+                click(){
+                    this.getTopParentView().save();
+                }
+            }
+        ]
+    };
+}
+
 /**
  *
  * @param {AttributeInfo} info
@@ -104,31 +132,7 @@ const attr_info_panel = webix.protoUI(
                 padding: 0,
                 rows: [
                     newInfoDatatable(),
-                    {
-                        view:"toolbar",
-                        maxHeight: 30,
-                        cols:[
-                            {
-                                view:"button",
-                                type:"icon",
-                                icon:"refresh",
-                                maxWidth:30,
-                                click(){
-                                    this.getTopParentView().refresh();
-                                }
-                            },
-                            {},
-                            {
-                                view:"button",
-                                type:"icon",
-                                icon:"save",
-                                maxWidth:30,
-                                click(){
-                                    this.getTopParentView().save();
-                                }
-                            }
-                        ]
-                    }
+                    newInfoDatatableToolbar()
                 ]
             }
         },
