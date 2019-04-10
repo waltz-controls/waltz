@@ -189,6 +189,11 @@ TangoWebappPlatform.TangoRestApiRequest = MVC.Model.extend('tango_rest_api_reque
             //     throw resp;
             // }
         },
+        subscriptions(id = 0){
+            this.url += '/subscriptions';
+            this.url += id ? `/${id}` : '';
+            return this;
+        },
         /**
          * @returns {TangoRestApiRequest}
          */
@@ -271,6 +276,26 @@ TangoWebappPlatform.TangoRestApiRequest = MVC.Model.extend('tango_rest_api_reque
             this.type = "GET";
             OpenAjax.hub.publish("tango_webapp.rest_send", {data: this});
             return this.transport().get(this.url).then(this._success.bind(this)).fail(this._failure.bind(this));
+        },
+
+        /**
+         * Fires event to OpenAjax
+         * @fires tango_webapp.rest_success
+         * @fires tango_webapp.rest_failure
+         * @returns {webix.promise}
+         */
+        post: function (what, data) {
+            if (this.result != null) return this.promise.resolve(this.result);
+            if (this.failure != null) return this.promise.reject(this.failure);
+            if (what) this.url += what;//TODO if no what is provided data will be treated as what -> failure
+            this.type = "POST";
+            OpenAjax.hub.publish("tango_webapp.rest_send", {data: this});
+            if(data)
+                return this.transport().headers({
+                    "Content-type": "application/json"
+                }).post(this.url, (typeof data == 'object') ? JSON.stringify(data) : data).then(this._success.bind(this)).fail(this._failure.bind(this));
+            else
+                return this.transport().post(this.url).then(this._success.bind(this)).fail(this._failure.bind(this));
         },
 
         /**

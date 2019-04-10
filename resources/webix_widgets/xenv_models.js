@@ -46,6 +46,65 @@ export class XenvServer {
         this.status = status;
         this.device = device;
     }
+
+    /**
+     *
+     * @return {Promise<string>}
+     */
+    fetchState(){
+        return this.fetchAttrValue("State")
+            .catch(() => "UNKNOWN")
+    }
+
+    /**
+     *
+     * @return {Promise<string>}
+     */
+    fetchStatus(){
+        return this.fetchAttrValue("Status")
+            .catch(() => "UNKNOWN")
+    }
+
+    /**
+     *
+     * @param attr
+     * @return {Promise<AttributeValue>}
+     */
+    fetchAttrValue(attr){
+        return this.device.fetchAttr(attr).then(attr => attr.read()).then(resp => resp.value);
+    }
+}
+
+export class ConfigurationManager extends XenvServer {
+    constructor(){
+        super("ConfigurationManager",undefined,"UNKNOWN", "Proxy is not initialized", null)
+    }
+
+    async readNexusFileWebix(){
+        if(this.device === null) return "";
+        return await this.fetchAttrValue("nexusFileWebixXml");
+    }
+}
+
+export class DataFormatServer extends XenvServer {
+    constructor(){
+        super("DataFormatServer",undefined,"UNKNOWN", "Proxy is not initialized", null)
+    }
+
+    async readCwd(){
+        if(this.device === null) return undefined;
+        return await this.fetchAttrValue("cwd");
+    }
+
+    async readNxTemplate(){
+        if(this.device === null) return undefined;
+        return await this.fetchAttrValue("nxTemplate");
+    }
+
+    async readNxFile(){
+        if(this.device === null) return undefined;
+        return await this.fetchAttrValue("nxFile");
+    }
 }
 
 export class Profile {

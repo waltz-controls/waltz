@@ -1,5 +1,5 @@
-import {xenvHqBody, xenvHqBottom, xenvHqSettings, xenvHqToolbar, xenvProfileSettings} from "./xenv_views.js"
-import {DataSource, Profile, XenvServer} from "./xenv_models.js";
+import {newXenvHqBody, xenvHqBottom, xenvHqSettings, xenvHqToolbar, xenvProfileSettings} from "./xenv_views.js"
+import {ConfigurationManager, DataFormatServer, Profile, XenvServer} from "./xenv_models.js";
 
 // if(MVC.env() === "test")
 //     import("./xenv_test.js").then(module => bad_status = module.bad_status)
@@ -16,9 +16,10 @@ const kServerFieldMap = {
     "PreExperimentDataCollector":"predator"
 };
 
+
 export const XenvHqController = class extends MVC.Controller {
     buildUI(platform_api) {
-        platform_api.ui_builder.add_mainview_item(newXenvHeadQuarterTab())
+        platform_api.ui_builder.add_mainview_item(newXenvHeadQuarterTab());
     }
     /**
      *
@@ -26,6 +27,7 @@ export const XenvHqController = class extends MVC.Controller {
      */
     async initialize(platform_api){
         const $$hq = $$('hq');
+
 
         // const tango_host = await platform_api.context.rest.fetchHost("hzgxenvtest:10000");
         // $$hq.main = await tango_host.fetchDevice("development/hq/main");
@@ -54,7 +56,6 @@ XenvHqController.initialize();
 const xenvHq = webix.protoUI({
     name: "xenv-hq",
     async applySettings(){
-        this.$$('listServers').clearAll();
         for(const server of kServers){
             if(this.$$(kServerFieldMap[server]).getValue()) {
                 await this.dropDevice(this.$$(kServerFieldMap[server]).getValue());
@@ -88,7 +89,11 @@ const xenvHq = webix.protoUI({
                 xenvHqToolbar,
                 xenvProfileSettings,
                 xenvHqSettings,
-                xenvHqBody ,
+                newXenvHqBody({
+                    master: this,
+                    configurationManager: this.configuration,
+                    dataFormatServer: this.data_format_server
+                }),
                 xenvHqBottom
             ]
         }
@@ -104,10 +109,10 @@ const xenvHq = webix.protoUI({
             return;
         }
 
-        const stopAll = await this.main.fetchCommand("stopAll");
-        const clearAll = await this.main.fetchCommand("clearAll");
-        const updateAll = await this.main.fetchCommand("updateAll");
-        const startAll = await this.main.fetchCommand("startAll");
+        const stopAll = await this.main.device.fetchCommand("stopAll");
+        const clearAll = await this.main.device.fetchCommand("clearAll");
+        const updateAll = await this.main.device.fetchCommand("updateAll");
+        const startAll = await this.main.device.fetchCommand("startAll");
 
         TangoWebapp.UserAction.executeCommand(stopAll)
         .then(() => TangoWebapp.UserAction.executeCommand(clearAll))
@@ -115,12 +120,12 @@ const xenvHq = webix.protoUI({
         .then(() => TangoWebapp.UserAction.executeCommand(startAll));
     },
     async loadProfiles(){
-        if(!this.configuration) {
+        if(!this.configuration.device) {
             TangoWebappHelpers.error("Can not load profiles: configuration server has not been set!");
             return;
         }
 
-        const profiles = await this.configuration.fetchAttr("profiles")
+        const profiles = await this.configuration.device.fetchAttr("profiles")
             .then(attr => attr.read())
             .catch(reason => TangoWebappHelpers.error("Can not load profiles", reason));
 
@@ -130,7 +135,7 @@ const xenvHq = webix.protoUI({
         this.$$('profiles').refresh();
     },
     async createProfile(profile, tango_host, instance_name){
-        const createProfile = await this.configuration.fetchCommand("createProfile");
+        const createProfile = await this.configuration.device.fetchCommand("createProfile");
 
         await TangoWebapp.UserAction.executeCommand(createProfile, [profile, tango_host, instance_name]);
 
@@ -139,7 +144,7 @@ const xenvHq = webix.protoUI({
         this.$$('profiles').setValue(profile);
     },
     async deleteProfile(profile){
-        const deleteProfile = await this.configuration.fetchCommand("deleteProfile");
+        const deleteProfile = await this.configuration.device.fetchCommand("deleteProfile");
 
         await TangoWebapp.UserAction.executeCommand(deleteProfile, profile);
 
@@ -152,25 +157,22 @@ const xenvHq = webix.protoUI({
      * @param {string|null} profile
      */
     async selectProfile(profile){
+        this.$$('main_tab').clearAll();
         if(profile === null) {
-            this.$$('listDataSources').clearAll();
-            this.$$('frmDataSource').clear();
             return;
         }
-        if(!this.main) {
+        if(!this.main.device) {
             TangoWebappHelpers.error("Can not select profile: main server has not been set!");
             return;
         }
-        const load = await this.main.fetchCommand("load");
+        const load = await this.main.device.fetchCommand("load");
 
         TangoWebapp.UserAction.executeCommand(load, profile).then(async () => {
-            const dataSourcesAttr = await this.configuration.fetchAttr("dataSources");
+            const dataSourcesAttr = await this.configuration.device.fetchAttr("dataSources");
             const dataSources = await dataSourcesAttr.read();
-            this.$$('frmDataSource').clear();
-            this.$$('listDataSources').clearAll();
-            this.$$('listDataSources').parse(dataSources.value.map(v => JSON.parse(v)));
+            this.$$('main_tab').data.parse(dataSources.value.map(v => JSON.parse(v)));
         }).then(async () => {
-            const attrs = await this.manager.fetchAttrValues(["tangoHost", "instanceName"]);
+            const attrs = await this.manager.device.fetchAttrValues(["tangoHost", "instanceName"]);
 
             this.$$('tango_host').setValue(attrs[0].value);
             this.$$('instance_name').setValue(attrs[1].value);
@@ -179,84 +181,73 @@ const xenvHq = webix.protoUI({
             this.state.updateState({profile:profile});
         });
     },
-    /**
-     *
-     * @param {DataSource} dataSource
-     */
-    addDataSource: async function(dataSource){
-        const createDataSourceCmd = await this.configuration.fetchCommand("createDataSource");
 
-        TangoWebapp.UserAction.executeCommand(createDataSourceCmd, [
-            // PlatformContext.UserContext.user,
-            dataSource.id,
-            dataSource.nxPath,
-            dataSource.type,
-            dataSource.src,
-            dataSource.pollRate,
-            dataSource.dataType
-        ]).then(() => this.commitConfiguration());
-    },
-    /**
-     *
-     * @param {DataSource} dataSource
-     */
-    removeDataSource: async function(dataSource){
-        const deleteDataSourceCmd = await this.configuration.fetchCommand("removeDataSource");
-
-        TangoWebapp.UserAction.executeCommand(deleteDataSourceCmd,
-            dataSource.id
-        ).then(() => this.commitConfiguration());
-    },
     updateConfiguration:async function(){
-        const updateCmd = await this.configuration.fetchCommand("update");
+        const updateCmd = await this.configuration.device.fetchCommand("update");
 
         TangoWebapp.UserAction.executeCommand(updateCmd);
     },
     commitConfiguration:async function(){
-        const commitCmd = await this.configuration.fetchCommand("commit");
+        const commitCmd = await this.configuration.device.fetchCommand("commit");
 
         TangoWebapp.UserAction.executeCommand(commitCmd,
             PlatformContext.UserContext.user
         );
     },
     pushConfiguration:async function(){
-        const pushCmd = await this.configuration.fetchCommand("push");
+        const pushCmd = await this.configuration.device.fetchCommand("push");
 
         TangoWebapp.UserAction.executeCommand(pushCmd);
     },
-    run:function(){
-        TangoWebappPlatform.helpers.iterate(this.$$('listServers').data, (value, id) => {
-            setTimeout(async function(){
-                const state = await value.device.fetchAttr("State")
-                    .then(state => state.read())
-                    .then(value1 => value1.value)
-                    .catch(() => "UNKNOWN");
-                const status = await value.device.fetchAttr("Status")
-                    .then(status => status.read())
-                    .then(value1 => value1.value)
-                    .catch(() => "UNKNOWN");
-                this.$$('listServers').updateItem(id , {state: state, status: status});
-            }.bind(this),0);
-        });
-    },
+
         /**
          *
-         * @param {string} id
+         * @param device_class
+         * @return {*|undefined}
          */
-    dropAttr(id){
-        const attr = TangoAttribute.find_one(id);
-        if(attr == null) return;
+        getServerByDeviceClass(device_class){
+            return this.servers.find(server => server.name === device_class, true);
+        },
+        _init(config){
+            this.servers = new webix.DataCollection({
+                data: [
+                    new XenvServer("HeadQuarter", undefined, "UNKNOWN", "Proxy is not initialized", null),
+                    new XenvServer("XenvManager", undefined, "UNKNOWN", "Proxy is not initialized", null),
+                    new ConfigurationManager(),
+                    new XenvServer("StatusServer2", undefined, "UNKNOWN", "Proxy is not initialized", null),
+                    new XenvServer("CamelIntegration", undefined, "UNKNOWN", "Proxy is not initialized", null),
+                    new XenvServer("PreExperimentDataCollector", undefined, "UNKNOWN", "Proxy is not initialized", null),
+                    new DataFormatServer()
+                ]
+            });
+        },
+        addStateAndStatusListeners: function (server) {
+            PlatformContext.subscription.addEventListener({
+                    host: server.device.host.id,
+                    device: server.device.name,
+                    attribute: "status",
+                    type: "change"
+                },
+                function (event) {
+                    OpenAjax.hub.publish(`${server.name}.update.status`, event);
+                }.bind(this),
+                function (error) {
+                    webix.message(error.data, "error")
+                }.bind(this));
 
-        const device = TangoDevice.find_one(attr.device_id);
-        const $$list = this.$$('listDataSources');
-        $$list.select(
-            $$list.add(
-                new DataSource(`tango://${attr.id}`,
-                    `/entry/hardware/${device.name}/${attr.name}`,
-                    "log",
-                    200,
-                    DataSource.devDataTypeToNexus(attr.info.data_type))));
-    },
+            PlatformContext.subscription.addEventListener({
+                    host: server.device.host.id,
+                    device: server.device.name,
+                    attribute: "state",
+                    type: "change"
+                },
+                function (event) {
+                    OpenAjax.hub.publish(`${server.name}.update.state`, event);
+                }.bind(this),
+                function (error) {
+                    webix.message(error.data, "error")
+                }.bind(this));
+        },
         /**
          *
          * @param {string} id
@@ -277,24 +268,59 @@ const xenvHq = webix.protoUI({
 
         const device_class = device.info.device_class;
 
+        const server = this.getServerByDeviceClass(device_class);
 
-        if(!kServers.includes(device_class)) return;
+        if(server === undefined) return;
 
-        const server = new XenvServer(device_class, device.name, "UNKNOWN", "UNKNOWN", device);
-        this.$$('listServers').add(server);
+        this.servers.updateItem(server.id, {
+            status: `Proxy has been set to ${device.id}`,
+            ver: device.name,
+            device
+        });
 
-        this[kServerFieldMap[device_class]] = device;
+        OpenAjax.hub.publish(`${server.name}.set.proxy`,{server});
+
+        this.addStateAndStatusListeners(server);
+
+        //update settings
         this.$$([kServerFieldMap[device_class]]).setValue(device.id);
 
+        //update state
         const state = Object.create(null);
         state[device_class] = device.id;
         this.state.updateState(state);
     },
+    get main(){
+        return this.servers.find(server => server.name === "HeadQuarter",true);
+    },
+    get configuration(){
+        return this.servers.find(server => server.name === "ConfigurationManager",true);
+    },
+    get manager(){
+        return this.servers.find(server => server.name === "XenvManager",true);
+    },
+    get status_server(){
+        return this.servers.find(server => server.name === "StatusServer2",true);
+    },
+    get camel(){
+        return this.servers.find(server => server.name === "CamelIntegration",true);
+    },
+    get predator(){
+        return this.servers.find(server => server.name === "PreExperimentDataCollector",true);
+    },
+    get data_format_server(){
+        return this.servers.find(server => server.name === "DataFormatServer",true);
+    },
     $init:function(config){
+        this._init(config);
+
         webix.extend(config, this._ui());
 
         this.$ready.push(()=> {
-            this.$$('frmDataSource').bind(this.$$('listDataSources'));
+            this.$$('main_tab').servers.data.sync(this.servers);
+        });
+
+        this.$ready.push(()=> {
             this.$$('profile').bind(this.$$('profiles'));
         });
 
@@ -304,17 +330,29 @@ const xenvHq = webix.protoUI({
              */
             $drop:function(source, target){
                 var dnd = webix.DragControl.getContext();
-                if(dnd.from.config.$id === 'attrs') {
-                    this.dropAttr(dnd.source[0]);
-                } else if(dnd.from.config.view === 'devices_tree_tree'){
+                if(dnd.from.config.view === 'devices_tree_tree'){
                     this.dropDevice(dnd.source[0]);
                 }
 
                 return false;
             }.bind(this)
         });
+    },
+    defaults:{
+        on:{
+            "DataFormatServer.update.status subscribe"(event){
+                this.servers.updateItem(this.data_format_server.id, {
+                    status: event.data
+                })
+            },
+            "DataFormatServer.update.state subscribe"(event){
+                this.servers.updateItem(this.data_format_server.id, {
+                    state: event.data
+                })
+            }
+        }
     }
-}, TangoWebappPlatform.mixin.Runnable, TangoWebappPlatform.mixin.Stateful, TangoWebappPlatform.mixin.OpenAjaxListener,
+}, TangoWebappPlatform.mixin.Stateful, TangoWebappPlatform.mixin.OpenAjaxListener,
     webix.ProgressBar, webix.DragControl, webix.IdSpace,
     webix.ui.layout);
 
