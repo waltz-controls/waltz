@@ -54,7 +54,7 @@
                     // alert("svgDoc ="+svgDoc);
                     // var blue = svgDoc.getElementById("blue");
                     blue.addEventListener("mousedown",function(){
-                        alert('hello world!')
+                        alert('1 hello world!')
                     }, false);
 
 
@@ -64,21 +64,50 @@
             defaults:{
                 on: {
 
+                    onAfterRender(width, height){
+                        const alphasvg = document.getElementById("alphasvg");
+                        alphasvg.setAttribute("width",this.$width -5);
+                        alphasvg.setAttribute("height",this.$height -5);
+                    },
                     'platform_api.ui.initialized subscribe': function (data) {
                     debugger
                         if(document.getElementById("alphasvg") == null) {return;}
 
-                        document.getElementById("alphasvg").addEventListener("load", () => {
+                        const alphasvg = document.getElementById("alphasvg");
+
+
+
+                        alphasvg.addEventListener("load", () => {
                             console.log("svg loaded")
+
                              debugger
+
+
+                            alphasvg.setAttribute("width",this.$width );
+                            alphasvg.setAttribute("height",this.$height);
+                            const svg = svgPanZoom('#alphasvg', {
+                                zoomEnabled: true,
+                                controlIconsEnabled: true
+                            });
+
+                            svg.updateBBox();
+                            svg.center();
+
+                            webix.event(window, "resize", ()=>{
+                                alphasvg.setAttribute("width",this.$width );
+                                alphasvg.setAttribute("height",this.$height );
+
+                                svg.resize();
+                            })
+
                             var blue = document.getElementById("alphasvg").contentDocument.getElementById("blue");
 
                             //!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
                             // var svgDoc = document.getElementById("alphasvg").contentDocument;
                             // alert("svgDoc ="+svgDoc);
                             // var blue = svgDoc.getElementById("blue");
-                            blue.addEventListener("mousedown",function(){
-                                alert('hello world!')
+                            blue.addEventListener("click",function(){
+                                alert('2 hello world!')
                             }, false);
                         });
                     }},
