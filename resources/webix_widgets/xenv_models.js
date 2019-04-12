@@ -90,6 +90,11 @@ export class ConfigurationManager extends XenvServer {
         return await this.fetchAttrValue("preExperimentDataCollectorYaml");
     }
 
+    async readRoutesXml(){
+        if(this.device === null) return "";
+        return await this.fetchAttrValue("camelRoutes");
+    }
+
     async writePreExperimentDataCollectorYaml(value){
         if(this.device === null) return;
         const attr = await this.device.fetchAttr("preExperimentDataCollectorYaml");

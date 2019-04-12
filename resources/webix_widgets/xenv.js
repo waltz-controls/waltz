@@ -359,6 +359,16 @@ const xenvHq = webix.protoUI({
                 this.servers.updateItem(this.predator.id, {
                     state: event.data
                 })
+            },
+            "CamelIntegration.update.status subscribe"(event){
+                this.servers.updateItem(this.camel.id, {
+                    status: event.data
+                })
+            },
+            "CamelIntegration.update.state subscribe"(event){
+                this.servers.updateItem(this.camel.id, {
+                    state: event.data
+                })
             }
         }
     }

@@ -66,6 +66,7 @@ const predator_view = webix.protoUI({
         return {
             rows:[
                 newMetaYamlView(),
+                {view: "resizer"},
                 newXenvServerLog()
             ]
         }

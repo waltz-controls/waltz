@@ -1,6 +1,6 @@
 import {newXenvMainBody} from "./xenv_hq_main_view.js";
 import {StatusServerViewBody} from "./xenv_status_server_view.js";
-import {CamelViewBody} from "./xenv_camel_view.js";
+import {newCamelIntegrationViewBody} from "./xenv_camel_view.js";
 import {newPredatorViewBody} from "./xenv_predator_view.js";
 import {newDfsViewBody} from "./xenv_dfs_view.js";
 
@@ -251,7 +251,7 @@ export function newXenvHqBody(config){
             },
             {
                 header: "CamelIntegration",
-                body: CamelViewBody
+                body: newCamelIntegrationViewBody(config)
             },
             {
                 header: "PreExperimentDataCollector",
