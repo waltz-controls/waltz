@@ -109,7 +109,7 @@
                         .then(TangoWebappHelpers.log.bind(null, "Device " + it + " has been added"))
                         .fail(TangoWebappHelpers.error.bind(null, "Failed to add device " + it));
                 })
-            ).then($$('devices-tree').updateRoot.bind($$('devices-tree'), PlatformContext));
+            ).then($$('devices_tree').tree.updateRoot.bind($$('devices_tree').tree, PlatformContext));
         },
         _ui: function () {
             return {

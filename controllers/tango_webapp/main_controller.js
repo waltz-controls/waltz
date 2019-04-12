@@ -80,7 +80,7 @@ TangoWebapp.MainController = class extends MVC.Controller{
         .then(function (db) {
             return db.deleteDevice(device.name);
         }).then(function () {
-            $$('devices-tree').updateRoot();
+            $$('devices_tree').tree.updateRoot();
         }).fail(TangoWebappHelpers.error);
     }
     "tango_webapp.attr_add_to_monitor subscribe"(event){

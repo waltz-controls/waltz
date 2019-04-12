@@ -429,6 +429,9 @@ import newSearch from "./search.js";
         /** @lends  devices_tree.prototype */
         {
             name: 'devices_tree',
+            get tree(){
+                return this.$$('devices-tree');
+            },
             /**
              *
              * @param {string} tango_host
@@ -496,7 +499,8 @@ import newSearch from "./search.js";
             id: "devices_tree_panel",
             body: {
                 context: context,
-                view: 'devices_tree'
+                view: 'devices_tree',
+                id: 'devices_tree'
             }
         }
     }
