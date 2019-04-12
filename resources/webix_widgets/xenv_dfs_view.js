@@ -77,11 +77,6 @@ const dfs = webix.protoUI({
         const nexusFileXml = await this.config.configurationManager.readNexusFileWebix();
         this.$$('nxTemplate').clearAll();
         this.$$('nxTemplate').parse(nexusFileXml,"xml");
-
-        this.$$('log').add({
-            data: this.config.dataFormatServer.status,
-            timestamp: +new Date()
-        },0);
     },
     _ui(){
         return {

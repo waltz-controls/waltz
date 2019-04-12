@@ -229,6 +229,9 @@ const xenvHq = webix.protoUI({
                     type: "change"
                 },
                 function (event) {
+                    this.servers.updateItem(server.id, {
+                        status: event.data
+                    });
                     OpenAjax.hub.publish(`${server.name}.update.status`, event);
                 }.bind(this),
                 function (error) {
@@ -242,6 +245,9 @@ const xenvHq = webix.protoUI({
                     type: "change"
                 },
                 function (event) {
+                    this.servers.updateItem(server.id, {
+                        state: event.data
+                    });
                     OpenAjax.hub.publish(`${server.name}.update.state`, event);
                 }.bind(this),
                 function (error) {
@@ -337,40 +343,6 @@ const xenvHq = webix.protoUI({
                 return false;
             }.bind(this)
         });
-    },
-    defaults:{
-        on:{
-            "DataFormatServer.update.status subscribe"(event){
-                this.servers.updateItem(this.data_format_server.id, {
-                    status: event.data
-                })
-            },
-            "DataFormatServer.update.state subscribe"(event){
-                this.servers.updateItem(this.data_format_server.id, {
-                    state: event.data
-                })
-            },
-            "PreExperimentDataCollector.update.status subscribe"(event){
-                this.servers.updateItem(this.predator.id, {
-                    status: event.data
-                })
-            },
-            "PreExperimentDataCollector.update.state subscribe"(event){
-                this.servers.updateItem(this.predator.id, {
-                    state: event.data
-                })
-            },
-            "CamelIntegration.update.status subscribe"(event){
-                this.servers.updateItem(this.camel.id, {
-                    status: event.data
-                })
-            },
-            "CamelIntegration.update.state subscribe"(event){
-                this.servers.updateItem(this.camel.id, {
-                    state: event.data
-                })
-            }
-        }
     }
 }, TangoWebappPlatform.mixin.Stateful, TangoWebappPlatform.mixin.OpenAjaxListener,
     webix.ProgressBar, webix.DragControl, webix.IdSpace,

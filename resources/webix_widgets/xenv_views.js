@@ -1,8 +1,31 @@
 import {newXenvMainBody} from "./xenv_hq_main_view.js";
-import {StatusServerViewBody} from "./xenv_status_server_view.js";
+import {newStatusServerViewBody} from "./xenv_status_server_view.js";
 import {newCamelIntegrationViewBody} from "./xenv_camel_view.js";
 import {newPredatorViewBody} from "./xenv_predator_view.js";
 import {newDfsViewBody} from "./xenv_dfs_view.js";
+import {codemirror_textarea} from "./scripting_console.js";
+
+const xml = webix.protoUI({
+    name: "xml",
+    update(value){
+        if(!value) return;
+        this.setValue(value);
+    }
+},codemirror_textarea);
+
+export function newXmlView(){
+    return {
+        gravity: 2,
+        rows: [
+            {
+                view: "xml",
+                id: "xml",
+                mode: "application/xml",
+                matchClosing: true
+            }
+        ]
+    }
+}
 
 export function newXenvServerLog() {
     return {
@@ -247,7 +270,7 @@ export function newXenvHqBody(config){
             },
             {
                 header: "StatusServer",
-                body: StatusServerViewBody
+                body: newStatusServerViewBody(config)
             },
             {
                 header: "CamelIntegration",
