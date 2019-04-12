@@ -76,12 +76,12 @@ const xenvHq = webix.protoUI({
             if(state.data[server])
                 await this.dropDevice(state.data[server]);
         }
+        this.hideProgress();
+        
         await this.loadProfiles();
 
         if(state.data.profile)
             this.$$('profiles').setValue(state.data.profile);
-
-        this.hideProgress();
     },
     _ui:function(){
         return {
@@ -347,6 +347,16 @@ const xenvHq = webix.protoUI({
             },
             "DataFormatServer.update.state subscribe"(event){
                 this.servers.updateItem(this.data_format_server.id, {
+                    state: event.data
+                })
+            },
+            "PreExperimentDataCollector.update.status subscribe"(event){
+                this.servers.updateItem(this.predator.id, {
+                    status: event.data
+                })
+            },
+            "PreExperimentDataCollector.update.state subscribe"(event){
+                this.servers.updateItem(this.predator.id, {
                     state: event.data
                 })
             }

@@ -84,6 +84,17 @@ export class ConfigurationManager extends XenvServer {
         if(this.device === null) return "";
         return await this.fetchAttrValue("nexusFileWebixXml");
     }
+
+    async readPreExperimentDataCollectorYaml(){
+        if(this.device === null) return "";
+        return await this.fetchAttrValue("preExperimentDataCollectorYaml");
+    }
+
+    async writePreExperimentDataCollectorYaml(value){
+        if(this.device === null) return;
+        const attr = await this.device.fetchAttr("preExperimentDataCollectorYaml");
+        return UserAction.writeAttribute(attr, value);
+    }
 }
 
 export class DataFormatServer extends XenvServer {

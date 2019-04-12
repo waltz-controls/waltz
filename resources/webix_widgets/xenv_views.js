@@ -1,8 +1,24 @@
 import {newXenvMainBody} from "./xenv_hq_main_view.js";
 import {StatusServerViewBody} from "./xenv_status_server_view.js";
 import {CamelViewBody} from "./xenv_camel_view.js";
-import {PredatorViewBody} from "./xenv_predator_view.js";
+import {newPredatorViewBody} from "./xenv_predator_view.js";
 import {newDfsViewBody} from "./xenv_dfs_view.js";
+
+export function newXenvServerLog() {
+    return {
+        view:"list",
+        id:'log',
+        type:{
+            height: "auto",
+            template(obj){
+                return `<div>
+                            <p>${obj.data}</p>
+                            <div><span class="webix_icon fa-clock-o"></span>${obj.timestamp} [${new Date(obj.timestamp)}]</div>
+                        </div>`;
+            }
+        }
+    }
+}
 
 export const xenvProfileSettings = {
     view: "form",
@@ -239,7 +255,7 @@ export function newXenvHqBody(config){
             },
             {
                 header: "PreExperimentDataCollector",
-                body: PredatorViewBody
+                body: newPredatorViewBody(config)
             }
         ]
     };

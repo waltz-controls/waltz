@@ -1,4 +1,5 @@
 import newSearch from "./search.js";
+import {newXenvServerLog} from "./xenv_views.js";
 
 const DfsViewBodyHeader = {
     id: 'header',
@@ -60,22 +61,6 @@ const DfsViewBodyMain = {
     ]
 };
 
-function newDfsViewBodyBottom() {
-    return {
-        view:"list",
-        id:'log',
-        type:{
-            height: "auto",
-            template(obj){
-                return `<div>
-                            <p>${obj.data}</p>
-                            <div><span class="webix_icon fa-clock-o"></span>${obj.timestamp} [${new Date(obj.timestamp)}]</div>
-                        </div>`;
-            }
-        }
-    }
-}
-
 const dfs = webix.protoUI({
     name: "dfs",
     async update(){
@@ -105,7 +90,7 @@ const dfs = webix.protoUI({
                 DfsViewBodyHeader,
                 DfsViewBodyMain,
                 {view:"resizer"},
-                newDfsViewBodyBottom()
+                newXenvServerLog()
             ]
         }
     },
