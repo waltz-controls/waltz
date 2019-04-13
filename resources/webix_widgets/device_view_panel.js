@@ -8,294 +8,324 @@
  * @module DeviceViewPanel
  * @memberof ui
  */
-import newSearch from "./search.js";
+import {newComplexSearch} from "./search.js";
 
-(function(){
-    /**
-     * @constant
-     * @type {string}
-     * @memberof ui.DeviceViewPanel
-     */
-    const kDevicePanelHeader = "<span class='webix_icon fa-keyboard-o'></span> Device: ";
+/**
+ * @constant
+ * @type {string}
+ * @memberof ui.DeviceViewPanel
+ */
+const kDevicePanelHeader = "<span class='webix_icon fa-keyboard-o'></span> Device: ";
 
-    /**
-     * More info: {@link https://docs.webix.com/api__refs__ui.list.html webix.ui.list}
-     * @augments webix.ui.list
-     * @name DeviceTreeList
-     * @type {protoUI}
-     * @memberof ui.DeviceViewPanel
-     *
-     * @author Igor Khokhriakov <igor.khokhriakov@hzg.de>
-     * @since 9/10/18
-     */
-    var DeviceTreeList = webix.protoUI(
-        {
-            name: 'device_tree_list',
-            $init:function(config){
+/**
+ * More info: {@link https://docs.webix.com/api__refs__ui.list.html webix.ui.list}
+ * @augments webix.ui.list
+ * @name device_tree_list
+ * @type {protoUI}
+ * @memberof ui.DeviceViewPanel
+ *
+ * @author Igor Khokhriakov <igor.khokhriakov@hzg.de>
+ * @since 9/10/18
+ */
+const device_tree_list = webix.protoUI(
+    {
+        name: 'device_tree_list',
+        $init: function (config) {
+        },
+        defaults: {
+            select: true,
+            drag: "source",
+            template: function (obj) {
+                return "<span class='webix_icon " + obj.getIcon() + "'></span>" + obj.display_name;
             },
-            defaults: {
-                select: true,
-                drag: "source",
-                template: function(obj){
-                    return "<span class='webix_icon "+ obj.getIcon() + "'></span>"+ obj.display_name;
+            on: {
+                onItemClick(id) {
+                    if (this.getSelectedId() === id)
+                        this.callEvent("onAfterSelect", [id]);
+                    return true;
                 },
-                on: {
-                    onItemClick(id){
-                        if(this.getSelectedId() === id)
-                            this.callEvent("onAfterSelect",[id]);
-                        return true;
-                    },
-                    /**
-                     *
-                     * @param device
-                     * @return {boolean}
-                     * @memberof ui.DeviceViewPanel.DeviceTreeList
-                     */
-                    onBindApply: function (device) {
-                        if (device.id === undefined) return false;
-                        this.clearAll();
-                        $$("device_tree").config.header = webix.template(function () {
-                            return kDevicePanelHeader + device.display_name;
-                        });
-                        $$("device_tree").refresh();
-                        this.showProgress({
-                            type: 'icon'
-                        });
-                        device["fetch" + MVC.String.classize(this.config.$id)]()
-                            .fail(function(err){
-                                if(err.errors && err.errors[0].reason === 'TangoApi_NOT_SUPPORTED') return [];
-                                else throw err;
-                            })
-                            .then(function () {
+                /**
+                 *
+                 * @param device
+                 * @return {boolean}
+                 * @memberof ui.DeviceViewPanel.DeviceTreeList
+                 */
+                onBindApply: function (device) {
+                    if (device.id === undefined) return false;
+                    this.clearAll();
+                    $$("device_tree").config.header = webix.template(function () {
+                        return kDevicePanelHeader + device.display_name;
+                    });
+                    $$("device_tree").refresh();
+                    this.showProgress({
+                        type: 'icon'
+                    });
+                    device["fetch" + MVC.String.classize(this.config.$id)]()
+                        .fail(function (err) {
+                            if (err.errors && err.errors[0].reason === 'TangoApi_NOT_SUPPORTED') return [];
+                            else throw err;
+                        })
+                        .then(function () {
                             return device;
                         })
-                            .then(function(device){
-                                this.data.importData(device[this.config.$id]);
-                                this.sort("#display_name#", "asc", "string");
-                                this.hideProgress();
-                            }.bind(this));
-                    },
+                        .then(function (device) {
+                            this.data.importData(device[this.config.$id]);
+                            this.sort("#display_name#", "asc", "string");
+                            this.define("yCount", Math.min(10, this.count()));
+                            this.refresh();
+                            this.hideProgress();
+                        }.bind(this));
+                },
+                /**
+                 * Fires {@link event:item_selected}
+                 *
+                 * @fires item_selected
+                 * @param {string} id
+                 * @memberof ui.DeviceViewPanel.DeviceTreeList
+                 */
+                onAfterSelect: function (id) {
                     /**
-                     * Fires {@link event:item_selected}
-                     *
-                     * @fires item_selected
-                     * @param {string} id
-                     * @memberof ui.DeviceViewPanel.DeviceTreeList
+                     * @event tango_webapp.item_selected
+                     * @type {OpenAjax}
+                     * @property {{id:string,kind:string}} data
+                     * @memberof ui
                      */
-                    onAfterSelect: function (id) {
-                        /**
-                         * @event tango_webapp.item_selected
-                         * @type {OpenAjax}
-                         * @property {{id:string,kind:string}} data
-                         * @memberof ui
-                         */
-                        OpenAjax.hub.publish("tango_webapp.item_selected", {
-                            data: {
-                                id: id,
-                                kind: this.config.$id
-                            }
-                        });
-                    },
-                    /**
-                     * Expands DeviceControlPanel
-                     *
-                     * @param id
-                     * @memberof ui.DeviceViewPanel.DeviceTreeList
-                     */
-                    onItemDblClick:function(id){
-                        const item = this.getItem(id);
-
-                        if(item.Class.className === 'tango_attribute') {
-                            const attr = item;
-                            if (attr.info.data_format === "SPECTRUM") {
-                                UserAction.readAttribute(attr)
-                                    .then(openSpectrumWindow.bind(attr));
-                            } else if (attr.info.data_format === "IMAGE") {
-                                UserAction.readAttribute(attr)
-                                    .then(openImageWindow.bind(attr));
-                            } else if (attr.info.data_format === "SCALAR") {
-                                UserAction.readAttribute(attr)
-                                    .then(openScalarWindow.bind(attr));
-                            } else {
-                                TangoWebappHelpers.error("Unsupported data format: " + this.attr.info.data_format);
-                            }
-                        } else if(item.Class.className === 'tango_command'){
-                            const cmd = item;
-                            openCommandWindow(cmd);
-                        } else if(item.Class.className === 'tango_pipe'){
-                            const pipe = item;
-                            UserAction.readPipe(pipe)
-                                .then(openPipeWindow.bind(pipe));
+                    OpenAjax.hub.publish("tango_webapp.item_selected", {
+                        data: {
+                            id: id,
+                            kind: this.config.$id
                         }
+                    });
+                },
+                /**
+                 * Expands DeviceControlPanel
+                 *
+                 * @param id
+                 * @memberof ui.DeviceViewPanel.DeviceTreeList
+                 */
+                onItemDblClick: function (id) {
+                    const item = this.getItem(id);
 
-                        $$('info_control_panel_header').expand()
-                    },
-                    "left_panel_toolbar.click.refresh subscribe"(){
-                        if(this.isVisible())
-                            PlatformContext.devices.refreshCursor();
+                    if (item.Class.className === 'tango_attribute') {
+                        const attr = item;
+                        if (attr.info.data_format === "SPECTRUM") {
+                            UserAction.readAttribute(attr)
+                                .then(openSpectrumWindow.bind(attr));
+                        } else if (attr.info.data_format === "IMAGE") {
+                            UserAction.readAttribute(attr)
+                                .then(openImageWindow.bind(attr));
+                        } else if (attr.info.data_format === "SCALAR") {
+                            UserAction.readAttribute(attr)
+                                .then(openScalarWindow.bind(attr));
+                        } else {
+                            TangoWebappHelpers.error("Unsupported data format: " + this.attr.info.data_format);
+                        }
+                    } else if (item.Class.className === 'tango_command') {
+                        const cmd = item;
+                        openCommandWindow(cmd);
+                    } else if (item.Class.className === 'tango_pipe') {
+                        const pipe = item;
+                        UserAction.readPipe(pipe)
+                            .then(openPipeWindow.bind(pipe));
                     }
+
+                    $$('info_control_panel_header').expand()
+                },
+                "left_panel_toolbar.click.refresh subscribe"() {
+                    if (this.isVisible())
+                        PlatformContext.devices.refreshCursor();
                 }
             }
-        }, TangoWebappPlatform.mixin.OpenAjaxListener, webix.ProgressBar, webix.ui.list);
-
-    /**
-     * See {@link https://docs.webix.com/api__refs__ui.form.html webix.ui.layout}
-     * 
-     * @augments webix.ui.layout
-     * @memberof ui.DeviceViewPanel
-     * @name device_info_panel
-     * @type {protoUI}
-     * @property {info_datatable} info
-     * @property {DeviceTreeList} commands
-     * @property {DeviceTreeList} attrs
-     * @property {DeviceTreeList} pipes
-     * @see {@link https://docs.webix.com/api__refs__ui.form.html webix.ui.layout}
-     *
-     * @author Igor Khokhriakov <igor.khokhriakov@hzg.de>
-     * @since 9/10/18
-     */
-    var device_view_panel = webix.protoUI({
-        name: 'device_view_panel',
-        $init:function(config){
-            this.$ready.push(function(){
-                this.$$('commands').bind(config.context.devices);
-                this.$$('attrs').bind(config.context.devices);
-                this.$$('pipes').bind(config.context.devices);
-            }.bind(this));
         }
-    }, webix.IdSpace, webix.ui.tabview);
+    }, TangoWebappPlatform.mixin.OpenAjaxListener, webix.ProgressBar, webix.ui.list);
 
 
+function filter() {
+    const value = this.getValue();
 
+    let cmd_filter = value;
+    let attr_filter = value;
+    let pipe_filter = value;
+    if (value.startsWith("cmd:"))
+        cmd_filter = value.substring(4);
+    if (value.startsWith("attr:"))
+        attr_filter = value.substring(5);
+    if (value.startsWith("pipe:"))
+        pipe_filter = value.substring(5);
 
-    function getHeader(device){
-        return `<span class='webix_icon ${this.getIcon()}'></span>[<span class='webix_strong'>${device.display_name}/${this.display_name}</span>]`;
+    this.getTopParentView().$$("commands").filter("#name#", cmd_filter);
+    this.getTopParentView().$$("attrs").filter("#name#", attr_filter);
+    this.getTopParentView().$$("pipes").filter("#name#", pipe_filter);
+}
+
+const device_control_attr = webix.protoUI({
+    name: "device_control_attr",
+    defaults:{
+        elements:[
+            {name:""}
+        ]
     }
+},webix.ui.form);
 
-
-    //TODO make instance functions
-    function openTab(view, resp) {
-            let $$tab = $$(this.id);
-            if (!$$tab || !$$tab.isVisible()) {
-                const device = PlatformContext.devices.getItem(this.device_id);
-                PlatformApi.PlatformUIController().openTangoHostTab(device.host, view);
-
-                $$tab = $$(this.id);
-            }
-
-            $$tab.show();
-            $$tab.plot.update(resp);
-        }
-
-    //TODO send Open Ajax event and handle it in main_controller
-    function openSpectrumWindow(resp) {
-        var device = PlatformContext.devices.getItem(this.device_id);
-        openTab.bind(this)({
-            header: getHeader.call(this, device),
-            close: true,
-            borderless: true,
-            body: TangoWebapp.ui.newSpectrumView(this)
-        }, resp);
-    }
-
-    //TODO send Open Ajax event and handle it in main_controller
-    function openImageWindow(resp) {
-        var device = PlatformContext.devices.getItem(this.device_id);
-        openTab.bind(this)({
-            header: getHeader.call(this,device),
-            close: true,
-            borderless: true,
-            body: TangoWebapp.ui.newImageView(webix.extend({id: this.id}, resp))
-        }, resp);
-    }
-
-    function openScalarWindow(resp) {
-        const device = PlatformContext.devices.getItem(this.device_id);
-        openTab.bind(this)({
-            header: getHeader.call(this,device),
-            close: true,
-            borderless: true,
-            body: TangoWebapp.ui.newScalarView(webix.extend({id: this.id}, resp))
-        }, resp)
-    }
-
-    function openPipeWindow(resp) {
-        const device = PlatformContext.devices.getItem(this.device_id);
-        openTab.bind(this)({
-            header: getHeader.call(this,device),
-            close: true,
-            borderless: true,
-            body: TangoWebapp.ui.newPipeView(webix.extend({id: this.id}, resp))
-        }, resp)
-    }
-
-    function openCommandWindow(cmd) {
-        var device = PlatformContext.devices.getItem(cmd.device_id);
-        openTab.bind(cmd)({
-            header: getHeader.call(cmd, device),
-            close: true,
-            borderless: true,
-            body: TangoWebapp.ui.newCommandView(cmd)
-        }, undefined)
-    }
-
-    /**
-     * Factory function for {@link DeviceViewPanel}
-     *
-     * @param context
-     * @return {DeviceViewPanel}
-     * @memberof ui.DeviceViewPanel
-     */
-    TangoWebapp.ui.newDeviceViewPanel = function(context){
+const device_control_panel = webix.protoUI({
+    name:"device_control_panel",
+    _ui(){
         return {
-            header: kDevicePanelHeader,
-            id: 'device_tree',
-            body: {
-                context: context,
-                id: 'device_view_panel',
-                view: 'device_view_panel',
-                cells: [
-                    {
-                        header: "Commands",
-                        body: {
-                            rows: [
-                                newSearch("commands", "#name#"),
-                                {
-                                    id: 'commands',
-                                    view: 'device_tree_list'
-                                }
-                            ]
-                        }
-                    },
-                    {
-                        header: "Attributes",
-                        body: {
-                            rows: [
-                                newSearch("attrs", "#name#"),
-                                {
-                                    id: 'attrs',
-                                    view: 'device_tree_list'
-                                }
-                            ]
-                        }
-                    },
-                    {
-                        header: "Pipes",
-                        body: {
-                            rows: [
-                                newSearch("pipes", "#name#"),
-                                {
-                                    id: 'pipes',
-                                    view: 'device_tree_list'
-                                }
-                            ]
-                        }
-                    }
-                ]
-            }
+            cells:[
+                {id:"attr",view:"device_control_attr"},
+                {id:"View2", template:"<i>Info about the Form</i>"}
+            ]
         }
-    };
+    },
+    _config(){
+        return {
+            maxHeight: 120
+        }
+    },
+    $init(config){
+        webix.extend(config, this._ui());
+        webix.extend(config, this._config());
+    }
+},webix.ui.multiview);
+
+/**
+ * See {@link https://docs.webix.com/api__refs__ui.form.html webix.ui.layout}
+ *
+ * @augments webix.ui.layout
+ * @memberof ui.DeviceViewPanel
+ * @name device_info_panel
+ * @type {protoUI}
+ * @property {info_datatable} info
+ * @property {DeviceTreeList} commands
+ * @property {DeviceTreeList} attrs
+ * @property {DeviceTreeList} pipes
+ * @see {@link https://docs.webix.com/api__refs__ui.form.html webix.ui.layout}
+ *
+ * @author Igor Khokhriakov <igor.khokhriakov@hzg.de>
+ * @since 9/10/18
+ */
+const device_view_panel = webix.protoUI({
+    name: 'device_view_panel',
+    _ui() {
+        return {
+            rows: [
+                newComplexSearch(filter),
+                {
+                    id: 'commands',
+                    view: 'device_tree_list'
+                },
+                {
+                    id: 'attrs',
+                    view: 'device_tree_list'
+                },
+                {
+                    id: 'pipes',
+                    view: 'device_tree_list'
+                },
+                {
+                    view: 'device_control_panel'
+                }
+            ]
+        }
+    },
+    $init: function (config) {
+        webix.extend(config, this._ui());
+
+        this.$ready.push(function () {
+            this.$$('commands').bind(config.context.devices);
+            this.$$('attrs').bind(config.context.devices);
+            this.$$('pipes').bind(config.context.devices);
+        }.bind(this));
+    }
+}, webix.IdSpace, webix.ui.layout);
 
 
+function getHeader(device) {
+    return `<span class='webix_icon ${this.getIcon()}'></span>[<span class='webix_strong'>${device.display_name}/${this.display_name}</span>]`;
+}
 
-})();
+
+//TODO make instance functions
+function openTab(view, resp) {
+    let $$tab = $$(this.id);
+    if (!$$tab || !$$tab.isVisible()) {
+        const device = PlatformContext.devices.getItem(this.device_id);
+        PlatformApi.PlatformUIController().openTangoHostTab(device.host, view);
+
+        $$tab = $$(this.id);
+    }
+
+    $$tab.show();
+    $$tab.plot.update(resp);
+}
+
+//TODO send Open Ajax event and handle it in main_controller
+function openSpectrumWindow(resp) {
+    var device = PlatformContext.devices.getItem(this.device_id);
+    openTab.bind(this)({
+        header: getHeader.call(this, device),
+        close: true,
+        borderless: true,
+        body: TangoWebapp.ui.newSpectrumView(this)
+    }, resp);
+}
+
+//TODO send Open Ajax event and handle it in main_controller
+function openImageWindow(resp) {
+    var device = PlatformContext.devices.getItem(this.device_id);
+    openTab.bind(this)({
+        header: getHeader.call(this, device),
+        close: true,
+        borderless: true,
+        body: TangoWebapp.ui.newImageView(webix.extend({id: this.id}, resp))
+    }, resp);
+}
+
+function openScalarWindow(resp) {
+    const device = PlatformContext.devices.getItem(this.device_id);
+    openTab.bind(this)({
+        header: getHeader.call(this, device),
+        close: true,
+        borderless: true,
+        body: TangoWebapp.ui.newScalarView(webix.extend({id: this.id}, resp))
+    }, resp)
+}
+
+function openPipeWindow(resp) {
+    const device = PlatformContext.devices.getItem(this.device_id);
+    openTab.bind(this)({
+        header: getHeader.call(this, device),
+        close: true,
+        borderless: true,
+        body: TangoWebapp.ui.newPipeView(webix.extend({id: this.id}, resp))
+    }, resp)
+}
+
+function openCommandWindow(cmd) {
+    var device = PlatformContext.devices.getItem(cmd.device_id);
+    openTab.bind(cmd)({
+        header: getHeader.call(cmd, device),
+        close: true,
+        borderless: true,
+        body: TangoWebapp.ui.newCommandView(cmd)
+    }, undefined)
+}
+
+/**
+ * Factory function for {@link DeviceViewPanel}
+ *
+ * @param context
+ * @return {DeviceViewPanel}
+ * @memberof ui.DeviceViewPanel
+ */
+TangoWebapp.ui.newDeviceViewPanel = function (context) {
+    return {
+        header: kDevicePanelHeader,
+        id: 'device_tree',
+        body: {
+            context: context,
+            id: 'device_view_panel',
+            view: 'device_view_panel'
+        }
+    }
+};
