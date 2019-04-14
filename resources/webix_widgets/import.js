@@ -6,6 +6,7 @@ import "./settings.js";
 import "./user_log.js";
 import "./devices_tree.js";
 import "./tango_host_info_panel.js";
+import "./device_controls.js";
 import "./device_info_panel.js";
 import "./command_info_panel.js";
 import "./attr_info_panel.js";

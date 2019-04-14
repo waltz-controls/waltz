@@ -68,6 +68,7 @@ TangoWebapp.MainController = class extends MVC.Controller{
     "tango_webapp.device_loaded subscribe"(event){
         const device = event.data;
         device.fetchInfo();
+        device.fetchPipes();
         device.fetchProperties();
         webix.promise.all(
             [device.fetchAttrs(),

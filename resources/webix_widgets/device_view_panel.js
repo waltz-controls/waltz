@@ -53,10 +53,7 @@ const device_tree_list = webix.protoUI(
                 onBindApply: function (device) {
                     if (device.id === undefined) return false;
                     this.clearAll();
-                    $$("device_tree").config.header = webix.template(function () {
-                        return kDevicePanelHeader + device.display_name;
-                    });
-                    $$("device_tree").refresh();
+
                     this.showProgress({
                         type: 'icon'
                     });
@@ -158,14 +155,7 @@ function filter() {
     this.getTopParentView().$$("pipes").filter("#name#", pipe_filter);
 }
 
-const device_control_attr = webix.protoUI({
-    name: "device_control_attr",
-    defaults:{
-        elements:[
-            {name:""}
-        ]
-    }
-},webix.ui.form);
+
 
 const device_control_panel = webix.protoUI({
     name:"device_control_panel",
@@ -206,6 +196,7 @@ const device_control_panel = webix.protoUI({
  */
 const device_view_panel = webix.protoUI({
     name: 'device_view_panel',
+    device: null,
     _ui() {
         return {
             rows: [
@@ -220,22 +211,70 @@ const device_view_panel = webix.protoUI({
                 },
                 {
                     id: 'pipes',
-                    view: 'device_tree_list'
+                    view: 'device_tree_list',
+                    yCount: 1
                 },
                 {
-                    view: 'device_control_panel'
+                    view: 'device_control_attr',
+                    id: "device_control_attr"
+                },
+                {
+                    view: "device_control_command",
+                    id: "device_control_command"
+                },
+                {
+                    view: "device_control_pipe",
+                    id: "device_control_pipe"
                 }
             ]
         }
     },
+    clearAll(){
+        this.$$('device_control_attr').clear();
+        this.$$('device_control_command').clear();
+        this.$$('device_control_pipe').clear();
+    },
+    _sync(device){
+        this.$$('commands').data.sync(device.commands);
+        this.$$('attrs').data.sync(device.attrs);
+        this.$$('pipes').data.sync(device.pipes);
+    },
+    updateHeader(device){
+        $$("device_tree").config.header = webix.template(function () {
+            return kDevicePanelHeader + device.display_name;
+        });
+        $$("device_tree").refresh();
+    },
+    /**
+     *
+     * @param {TangoDevice} device
+     */
+    setDevice(device){
+        this.clearAll();
+
+        if(!device || device.id === undefined) return;
+        this._sync(device);
+
+        this.updateHeader(device);
+    },
     $init: function (config) {
         webix.extend(config, this._ui());
 
-        this.$ready.push(function () {
-            this.$$('commands').bind(config.context.devices);
-            this.$$('attrs').bind(config.context.devices);
-            this.$$('pipes').bind(config.context.devices);
-        }.bind(this));
+        const master = this;
+        this.device = new webix.DataRecord({
+            on:{
+                onBindApply(device){
+                    master.setDevice(device);
+                }
+            }
+        });
+
+        this.$ready.push(() => {
+            this.device.bind(config.context.devices);
+            this.$$('device_control_attr').bind(this.$$('attrs'));
+            this.$$('device_control_command').bind(this.$$('commands'));
+            this.$$('device_control_pipe').bind(this.$$('pipes'));
+        })
     }
 }, webix.IdSpace, webix.ui.layout);
 
