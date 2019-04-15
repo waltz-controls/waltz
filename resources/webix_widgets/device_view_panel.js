@@ -87,10 +87,6 @@ const device_tree_list = webix.protoUI(
                     }
 
                     $$('info_control_panel_header').expand()
-                },
-                "left_panel_toolbar.click.refresh subscribe"() {
-                    if (this.isVisible())
-                        PlatformContext.devices.refreshCursor();
                 }
             }
         }
@@ -190,6 +186,9 @@ const device_view_panel = webix.protoUI({
         }
     },
     clearAll(){
+        this.$$('attrs').clearAll();
+        this.$$('commands').clearAll();
+        this.$$('pipes').clearAll();
         this.$$('device_control_attr').clear();
         this.$$('device_control_command').clear();
         this.$$('device_control_pipe').clear();
@@ -217,11 +216,15 @@ const device_view_panel = webix.protoUI({
      */
     setDevice(device){
         this.clearAll();
+        this.enable();
+        this.updateHeader(device);
+        if(!device || device.id === undefined || !device.info.exported){
+            this.disable()                                              ;
+            return;
+        }
 
         if(!device || device.id === undefined) return;
         this._sync(device);
-
-        this.updateHeader(device);
     },
     $init: function (config) {
         webix.extend(config, this._ui());
@@ -241,8 +244,19 @@ const device_view_panel = webix.protoUI({
             this.$$('device_control_command').bind(this.$$('commands'));
             this.$$('device_control_pipe').bind(this.$$('pipes'));
         })
+    },
+    defaults: {
+        on:{
+            "left_panel_toolbar.click.refresh subscribe"() {
+                if($$('left_panel').getChildViews()[1] === this.getParentView() &&
+                    !$$('left_panel').getChildViews()[1].config.collapsed) {
+                    OpenAjax.hub.publish("tango_webapp.device_loaded", {data: this.device.data});
+                    this.setDevice(this.device.data);
+                }
+            }
+        }
     }
-}, webix.IdSpace, webix.ui.layout);
+}, TangoWebappPlatform.mixin.OpenAjaxListener, webix.IdSpace, webix.ui.layout);
 
 /**
  * Factory function for {@link DeviceViewPanel}

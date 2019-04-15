@@ -411,7 +411,9 @@ import newSearch from "./search.js";
                         this.updateRoot(event.data.context);
                     },
                     "left_panel_toolbar.click.refresh subscribe"(){
-                        if(this.isVisible())
+                        //TODO avoid this hardcoded if statement; isVisible always true
+                        if($$('left_panel').getChildViews()[0] === this.getParentView().getParentView() &&
+                            !$$('left_panel').getChildViews()[0].config.collapsed)
                             this.updateRoot();
                     }
                 }
