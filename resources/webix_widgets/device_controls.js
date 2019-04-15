@@ -167,7 +167,9 @@ export const device_control_command = webix.protoUI({
             onBindApply(command){
                 if(command === null) return;
                 if(command.info.in_type !== 'DevVoid') {
+                    const value = this.$$input ? this.$$input.getValue(): undefined;
                     this.$$input = $$(webix.ui([{view: "command_input", cmd: command, type: "mini"}], this.$$('input_holder'))[0].id);
+                    this.$$input.setValue(value);
                     this.$$('input_holder').show();
                 } else {
                     this.$$('input_holder').hide();

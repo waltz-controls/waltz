@@ -33,6 +33,12 @@ const command_output = webix.protoUI(
 
 const command_input = webix.protoUI({
     name: 'command_input',
+    getValue(){
+        return this.elements.argin.getValue(); //TODO clever logic here
+    },
+    setValue(value){
+        this.elements.argin.setValue(value);
+    },
     _normal_view(command){
         const argin = {};
         if (command.info.in_type !== 'DevVoid') {
@@ -104,10 +110,11 @@ export function commandExecutionHelper(command, $$input){
     let argin;
     if(command.info.in_type !== 'DevVoid') {
         if (!$$input.validate()) return;
-        argin = $$input.elements.argin.getValue(); //TODO clever logic here
+        argin = $$input.getValue();
     } else {
         argin = undefined;
     }
+    //TODO check type
 
     return UserAction.executeCommand(command, argin);
 }
