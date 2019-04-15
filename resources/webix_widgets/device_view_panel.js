@@ -216,14 +216,17 @@ const device_view_panel = webix.protoUI({
      */
     setDevice(device){
         this.clearAll();
-        this.enable();
+        if(!device || device.id === undefined){return}
+
         this.updateHeader(device);
-        if(!device || device.id === undefined || !device.info.exported){
+
+        if(!device.info.exported){
             this.disable()                                              ;
             return;
+        } else {
+            this.enable();
         }
 
-        if(!device || device.id === undefined) return;
         this._sync(device);
     },
     $init: function (config) {
