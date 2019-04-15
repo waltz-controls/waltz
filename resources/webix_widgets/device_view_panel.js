@@ -9,7 +9,7 @@
  * @memberof ui
  */
 import {newComplexSearch} from "./search.js";
-import {openCommandWindow,openPipeWindow, openScalarWindow, openSpectrumWindow, openImageWindow} from "./device_controls.js";
+import {openCommandWindow,openPipeWindow, openAttributeWindow} from "./device_controls.js";
 
 /**
  * @constant
@@ -106,18 +106,7 @@ const device_tree_list = webix.protoUI(
 
                     if (item.Class.className === 'tango_attribute') {
                         const attr = item;
-                        if (attr.info.data_format === "SPECTRUM") {
-                            UserAction.readAttribute(attr)
-                                .then(openSpectrumWindow.bind(attr));
-                        } else if (attr.info.data_format === "IMAGE") {
-                            UserAction.readAttribute(attr)
-                                .then(openImageWindow.bind(attr));
-                        } else if (attr.info.data_format === "SCALAR") {
-                            UserAction.readAttribute(attr)
-                                .then(openScalarWindow.bind(attr));
-                        } else {
-                            TangoWebappHelpers.error("Unsupported data format: " + this.attr.info.data_format);
-                        }
+                        openAttributeWindow(attr);
                     } else if (item.Class.className === 'tango_command') {
                         const cmd = item;
                         openCommandWindow(cmd);

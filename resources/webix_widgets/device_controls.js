@@ -75,32 +75,41 @@ export function openCommandWindow(cmd) {
     }, undefined)
 }
 
+export function openAttributeWindow(attr) {
+    if (attr.info.data_format === "SPECTRUM") {
+        return UserAction.readAttribute(attr)
+            .then(openSpectrumWindow.bind(attr));
+    } else if (attr.info.data_format === "IMAGE") {
+        return UserAction.readAttribute(attr)
+            .then(openImageWindow.bind(attr));
+    } else if (attr.info.data_format === "SCALAR") {
+        return UserAction.readAttribute(attr)
+            .then(openScalarWindow.bind(attr));
+    } else {
+        TangoWebappHelpers.error("Unsupported data format: " + attr.info.data_format);
+    }
+}
+
 export const device_control_attr = webix.protoUI({
     name: "device_control_attr",
     read(){
-        if(this.attr === null || !this.validate()) return;
-        //TODO update this value
+        if(this.attr === null) return;
+        this.attr.read().then(resp => this.$$input.setValue(resp.value));
     },
     plot(){
-        if(!this.validate()) return;
-        //TODO open plot
+        if(this.attr === null) return;
+        openAttributeWindow(this.attr);
     },
     plot_hist(){
         if(!this.validate()) return;
-        //TODO open plot + read history
+        UserAction.readAttributeHistory(this.attr)
+            .then(() => {
+                return openAttributeWindow(this.attr);
+            }).then(()=>{
+                $$(this.attr.id).plot.updateMulti(this.attr.history);
+            });
     },
-    write_minus(){
-        if(!this.validate()) return;
-        //TODO write current value -
-    },
-    write_plus(){
-        if(!this.validate()) return;
-        //TODO write current value +
-    },
-    write(){
-        if(!this.validate()) return;
-        //TODO write
-    },
+
     defaults:{
         elements:[
             {cols:[
@@ -116,11 +125,8 @@ export const device_control_attr = webix.protoUI({
                 ]
             },
             {
-                cols:[
-                    {view:"text", name:"value", gravity:2},
-                    {view:"button",value:"-", width: 20, click(){ this.getFormView().write_minus()}},
-                    {view:"button",value:"+", width: 20, click(){ this.getFormView().write_plus()}},
-                    {view:"button",value:"write", click(){ this.getFormView().write()}}
+                id: "input_holder", rows:[
+                    {}
                 ]
             }
 
@@ -133,14 +139,19 @@ export const device_control_attr = webix.protoUI({
                 if(!attr) return;
                 this.clearValidation();
                 this.attr = attr;
-                //TODO set validation rules
-                //TODO hide input if read only
-                //TODO update value
-                debugger
+                if(attr.info.writable.includes('WRITE') && attr.info.data_format !== "IMAGE") {
+                    this.$$input = $$(webix.ui([{view: "scalar_input", attr, type: "compact", borderless: true}], this.$$('input_holder'))[0].id);
+
+                    this.$$('input_holder').show();
+                } else {
+                    this.$$('input_holder').hide();
+                }
+
+                attr.read().then(resp => this.$$input.setValue(resp.value));
             }
         }
     }
-},webix.ui.form);
+},webix.IdSpace, webix.ui.form);
 
 export const device_control_command = webix.protoUI({
     name: "device_control_command",
@@ -166,15 +177,16 @@ export const device_control_command = webix.protoUI({
         on:{
             onBindApply(command){
                 if(command === null) return;
+                this.clearValidation();
+                this.command = command;
                 if(command.info.in_type !== 'DevVoid') {
                     const value = this.$$input ? this.$$input.getValue(): undefined;
-                    this.$$input = $$(webix.ui([{view: "command_input", cmd: command, type: "mini"}], this.$$('input_holder'))[0].id);
+                    this.$$input = $$(webix.ui([{view: "command_input", cmd: command, type: "mini", borderless: true}], this.$$('input_holder'))[0].id);
                     this.$$input.setValue(value);
                     this.$$('input_holder').show();
                 } else {
                     this.$$('input_holder').hide();
                 }
-                this.command = command;
             }
         }
     }
