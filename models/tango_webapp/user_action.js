@@ -243,7 +243,7 @@ UserAction = TangoWebapp.UserAction = MVC.Model.extend('user_action',
                         timestamp: +new Date()
                     });
                     this.publish('log', {data: instance});
-                    return result;
+                    return webix.extend(result, {input: argin});
                 }.bind(this))
                 .fail(this.failure.bind(this));
         },

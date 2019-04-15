@@ -9,6 +9,7 @@
  * @memberof ui
  */
 import {newComplexSearch} from "./search.js";
+import {openCommandWindow,openPipeWindow, openScalarWindow, openSpectrumWindow, openImageWindow} from "./device_controls.js";
 
 /**
  * @constant
@@ -277,78 +278,6 @@ const device_view_panel = webix.protoUI({
         })
     }
 }, webix.IdSpace, webix.ui.layout);
-
-
-function getHeader(device) {
-    return `<span class='webix_icon ${this.getIcon()}'></span>[<span class='webix_strong'>${device.display_name}/${this.display_name}</span>]`;
-}
-
-
-//TODO make instance functions
-function openTab(view, resp) {
-    let $$tab = $$(this.id);
-    if (!$$tab || !$$tab.isVisible()) {
-        const device = PlatformContext.devices.getItem(this.device_id);
-        PlatformApi.PlatformUIController().openTangoHostTab(device.host, view);
-
-        $$tab = $$(this.id);
-    }
-
-    $$tab.show();
-    $$tab.plot.update(resp);
-}
-
-//TODO send Open Ajax event and handle it in main_controller
-function openSpectrumWindow(resp) {
-    var device = PlatformContext.devices.getItem(this.device_id);
-    openTab.bind(this)({
-        header: getHeader.call(this, device),
-        close: true,
-        borderless: true,
-        body: TangoWebapp.ui.newSpectrumView(this)
-    }, resp);
-}
-
-//TODO send Open Ajax event and handle it in main_controller
-function openImageWindow(resp) {
-    var device = PlatformContext.devices.getItem(this.device_id);
-    openTab.bind(this)({
-        header: getHeader.call(this, device),
-        close: true,
-        borderless: true,
-        body: TangoWebapp.ui.newImageView(webix.extend({id: this.id}, resp))
-    }, resp);
-}
-
-function openScalarWindow(resp) {
-    const device = PlatformContext.devices.getItem(this.device_id);
-    openTab.bind(this)({
-        header: getHeader.call(this, device),
-        close: true,
-        borderless: true,
-        body: TangoWebapp.ui.newScalarView(webix.extend({id: this.id}, resp))
-    }, resp)
-}
-
-function openPipeWindow(resp) {
-    const device = PlatformContext.devices.getItem(this.device_id);
-    openTab.bind(this)({
-        header: getHeader.call(this, device),
-        close: true,
-        borderless: true,
-        body: TangoWebapp.ui.newPipeView(webix.extend({id: this.id}, resp))
-    }, resp)
-}
-
-function openCommandWindow(cmd) {
-    var device = PlatformContext.devices.getItem(cmd.device_id);
-    openTab.bind(cmd)({
-        header: getHeader.call(cmd, device),
-        close: true,
-        borderless: true,
-        body: TangoWebapp.ui.newCommandView(cmd)
-    }, undefined)
-}
 
 /**
  * Factory function for {@link DeviceViewPanel}
