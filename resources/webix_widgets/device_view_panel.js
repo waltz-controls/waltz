@@ -106,9 +106,25 @@ function filter() {
     if (value.startsWith("pipe"))
         pipe_filter = value.substring(4);
 
-    this.getTopParentView().$$("commands").filter("#name#", cmd_filter);
-    this.getTopParentView().$$("attrs").filter("#name#", attr_filter);
-    this.getTopParentView().$$("pipes").filter("#name#", pipe_filter);
+    const $$commands = this.getTopParentView().$$("commands");
+    const $$attrs = this.getTopParentView().$$("attrs");
+    const $$pipes = this.getTopParentView().$$("pipes");
+
+    $$commands.filter("#name#", cmd_filter);
+    $$attrs.filter("#name#", attr_filter);
+    $$pipes.filter("#name#", pipe_filter);
+
+    if($$commands.count() === 0) $$commands.hide();
+    else $$commands.show();
+    if($$attrs.count() === 0) $$attrs.hide();
+    else $$attrs.show();
+    if($$pipes.count() === 0) $$pipes.hide();
+    else $$pipes.show();
+
+    if($$commands.count() + $$attrs.count() + $$pipes.count() === 0)
+        this.getTopParentView().$$('dummy').show();
+    else
+        this.getTopParentView().$$('dummy').hide();
 }
 
 
@@ -158,30 +174,40 @@ const device_view_panel = webix.protoUI({
             rows: [
                 newComplexSearch(filter),
                 {
-                    id: 'attrs',
-                    view: 'device_tree_list'
+                    gravity: 4,
+                    rows:[
+                        {
+                            gravity: 2,
+                        id: 'attrs',
+                        view: 'device_tree_list'
+                    },
+                        {
+                            gravity: 2,
+                            id: 'commands',
+                            view: 'device_tree_list'
+                        },
+                        {
+                            id: 'pipes',
+                            view: 'device_tree_list'
+                        },
+                        {
+                            id:"dummy",
+                            hidden: true
+                        }
+                    ]
                 },
-                {
-                    id: 'commands',
-                    view: 'device_tree_list'
-                },
-                {
-                    id: 'pipes',
-                    view: 'device_tree_list',
-                    yCount: 3
-                },
-                {
-                    view: 'device_control_attr',
-                    id: "device_control_attr"
-                },
-                {
-                    view: "device_control_command",
-                    id: "device_control_command"
-                },
-                {
-                    view: "device_control_pipe",
-                    id: "device_control_pipe"
-                }
+                        {
+                            view: 'device_control_attr',
+                            id: "device_control_attr",
+                        },
+                        {
+                            view: "device_control_command",
+                            id: "device_control_command"
+                        },
+                        {
+                            view: "device_control_pipe",
+                            id: "device_control_pipe"
+                        }
             ]
         }
     },
