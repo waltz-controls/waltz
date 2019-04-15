@@ -99,12 +99,12 @@ function filter() {
     let cmd_filter = value;
     let attr_filter = value;
     let pipe_filter = value;
-    if (value.startsWith("cmd"))
-        cmd_filter = value.substring(3);
-    if (value.startsWith("attr"))
-        attr_filter = value.substring(4);
-    if (value.startsWith("pipe"))
-        pipe_filter = value.substring(4);
+    if (value.startsWith("c:"))
+        cmd_filter = value.substring(2);
+    if (value.startsWith("a:"))
+        attr_filter = value.substring(2);
+    if (value.startsWith("p:"))
+        pipe_filter = value.substring(2);
 
     const $$commands = this.getTopParentView().$$("commands");
     const $$attrs = this.getTopParentView().$$("attrs");
