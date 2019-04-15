@@ -89,8 +89,16 @@ export function openAttributeWindow(attr) {
     }
 }
 
+const LabelUpdater = {
+    updateLabel(value = ""){
+        this.$$('label').define("label",`${this._label_prefix} ${value}`);
+        this.$$('label').refresh();
+    }
+};
+
 export const device_control_attr = webix.protoUI({
     name: "device_control_attr",
+    _label_prefix:"Attribute:",
     read(){
         if(this.attr === null) return;
         this.attr.read().then(resp => this.$$input.setValue(resp.value));
@@ -100,7 +108,7 @@ export const device_control_attr = webix.protoUI({
         openAttributeWindow(this.attr);
     },
     plot_hist(){
-        if(!this.validate()) return;
+        if(this.attr === null) return;
         UserAction.readAttributeHistory(this.attr)
             .then(() => {
                 return openAttributeWindow(this.attr);
@@ -109,6 +117,7 @@ export const device_control_attr = webix.protoUI({
             });
     },
     showInfo(){
+        if(this.attr === null) return;
         OpenAjax.hub.publish("tango_webapp.item_selected", {
             data: {
                 id: this.attr.id,
@@ -119,7 +128,12 @@ export const device_control_attr = webix.protoUI({
         $$('info_control_panel_header').expand();
     },
     goto(){
+        if(this.attr === null) return;
         openAttributeWindow(this.attr);
+    },
+    reset(){
+        this.attr = null;
+        this.updateLabel();
     },
     defaults:{
         elements:[
@@ -163,22 +177,23 @@ export const device_control_attr = webix.protoUI({
                     this.$$('input_holder').hide();
                 }
 
-                this.$$('label').define("label",`Attribute: ${attr.display_name}`);
-                this.$$('label').refresh();
+                this.updateLabel(attr.display_name);
 
                 attr.read().then(resp => this.$$input.setValue(resp.value));
             }
         }
     }
-},webix.IdSpace, webix.ui.form);
+}, LabelUpdater,webix.IdSpace, webix.ui.form);
 
 export const device_control_command = webix.protoUI({
     name: "device_control_command",
+    _label_prefix:"Command:",
     execute(){
         if(!this.command) return;
         commandExecutionHelper(this.command, this.$$input);
     },
     showInfo(){
+        if(!this.command) return;
         OpenAjax.hub.publish("tango_webapp.item_selected", {
             data: {
                 id: this.command.id,
@@ -189,7 +204,12 @@ export const device_control_command = webix.protoUI({
         $$('info_control_panel_header').expand();
     },
     goto(){
+        if(!this.command) return;
         openCommandWindow(this.command);
+    },
+    reset(){
+        this.command = null;
+        this.updateLabel();
     },
     defaults:{
         elements:[
@@ -221,21 +241,22 @@ export const device_control_command = webix.protoUI({
                     this.$$('input_holder').hide();
                 }
 
-                this.$$('label').define("label",`Command: ${command.display_name}`);
-                this.$$('label').refresh();
+                this.updateLabel(command.display_name);
             }
         }
     }
-},webix.IdSpace, webix.ui.form);
+},LabelUpdater,webix.IdSpace, webix.ui.form);
 
 export const device_control_pipe = webix.protoUI({
     name: "device_control_pipe",
+    _label_prefix:"Pipe:",
     read(){
-        if(!this.validate() || this.pipe === null) return;
+        if(this.pipe === null) return;
         UserAction.readPipe(this.pipe)
             .then(openPipeWindow.bind(this.pipe));
     },
     showInfo(){
+        if(this.pipe === null) return;
         OpenAjax.hub.publish("tango_webapp.item_selected", {
             data: {
                 id: this.pipe.id,
@@ -246,7 +267,12 @@ export const device_control_pipe = webix.protoUI({
         $$('info_control_panel_header').expand();
     },
     goto(){
+        if(this.pipe === null) return;
         openPipeWindow(this.pipe);
+    },
+    reset(){
+        this.pipe = null;
+        this.updateLabel();
     },
     defaults:{
         elements:[
@@ -265,9 +291,9 @@ export const device_control_pipe = webix.protoUI({
             onBindApply(pipe){
                 this.pipe = pipe;
                 if(!pipe) return;
-                this.$$('label').define("label",`Pipe: ${pipe.display_name}`);
-                this.$$('label').refresh();
+
+                this.updateLabel(pipe.display_name);
             }
         }
     }
-}, webix.IdSpace,webix.ui.form);
+},LabelUpdater, webix.IdSpace,webix.ui.form);

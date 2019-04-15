@@ -189,9 +189,9 @@ const device_view_panel = webix.protoUI({
         this.$$('attrs').clearAll();
         this.$$('commands').clearAll();
         this.$$('pipes').clearAll();
-        this.$$('device_control_attr').clear();
-        this.$$('device_control_command').clear();
-        this.$$('device_control_pipe').clear();
+        this.$$('device_control_attr').reset();
+        this.$$('device_control_command').reset();
+        this.$$('device_control_pipe').reset();
     },
     _sync(device){
         device.commands.waitData.then(()=>{
@@ -221,7 +221,7 @@ const device_view_panel = webix.protoUI({
         this.updateHeader(device);
 
         if(!device.info.exported){
-            this.disable()                                              ;
+            this.disable();
             return;
         } else {
             this.enable();
