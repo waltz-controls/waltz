@@ -1,7 +1,7 @@
 import {commandExecutionHelper} from "./command_view.js";
 
 function showInfo(){
-    
+    $$('info_control_panel_header').expand();
 }
 
 function getHeader(device) {

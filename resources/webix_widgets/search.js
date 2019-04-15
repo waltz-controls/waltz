@@ -27,6 +27,7 @@ export default function newSearch(target, filter){
 export function newComplexSearch(filter){
     return {
         view: "search",
+        id:"search",
         placeholder: "type to filter",
         borderless: true,
         value: "",

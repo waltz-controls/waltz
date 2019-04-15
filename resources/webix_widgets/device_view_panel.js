@@ -43,36 +43,6 @@ const device_tree_list = webix.protoUI(
                 onItemClick(id) {
                     if (this.getSelectedId() === id)
                         this.callEvent("onAfterSelect", [id]);
-                    return true;
-                },
-                /**
-                 *
-                 * @param device
-                 * @return {boolean}
-                 * @memberof ui.DeviceViewPanel.DeviceTreeList
-                 */
-                onBindApply: function (device) {
-                    if (device.id === undefined) return false;
-                    this.clearAll();
-
-                    this.showProgress({
-                        type: 'icon'
-                    });
-                    device["fetch" + MVC.String.classize(this.config.$id)]()
-                        .fail(function (err) {
-                            if (err.errors && err.errors[0].reason === 'TangoApi_NOT_SUPPORTED') return [];
-                            else throw err;
-                        })
-                        .then(function () {
-                            return device;
-                        })
-                        .then(function (device) {
-                            this.data.importData(device[this.config.$id]);
-                            this.sort("#display_name#", "asc", "string");
-                            this.define("yCount", Math.min(10, this.count()));
-                            this.refresh();
-                            this.hideProgress();
-                        }.bind(this));
                 },
                 /**
                  * Fires {@link event:item_selected}
@@ -133,12 +103,12 @@ function filter() {
     let cmd_filter = value;
     let attr_filter = value;
     let pipe_filter = value;
-    if (value.startsWith("cmd:"))
-        cmd_filter = value.substring(4);
-    if (value.startsWith("attr:"))
-        attr_filter = value.substring(5);
-    if (value.startsWith("pipe:"))
-        pipe_filter = value.substring(5);
+    if (value.startsWith("cmd"))
+        cmd_filter = value.substring(3);
+    if (value.startsWith("attr"))
+        attr_filter = value.substring(4);
+    if (value.startsWith("pipe"))
+        pipe_filter = value.substring(4);
 
     this.getTopParentView().$$("commands").filter("#name#", cmd_filter);
     this.getTopParentView().$$("attrs").filter("#name#", attr_filter);
@@ -192,17 +162,17 @@ const device_view_panel = webix.protoUI({
             rows: [
                 newComplexSearch(filter),
                 {
-                    id: 'commands',
+                    id: 'attrs',
                     view: 'device_tree_list'
                 },
                 {
-                    id: 'attrs',
+                    id: 'commands',
                     view: 'device_tree_list'
                 },
                 {
                     id: 'pipes',
                     view: 'device_tree_list',
-                    yCount: 1
+                    yCount: 3
                 },
                 {
                     view: 'device_control_attr',
@@ -225,9 +195,15 @@ const device_view_panel = webix.protoUI({
         this.$$('device_control_pipe').clear();
     },
     _sync(device){
-        this.$$('commands').data.sync(device.commands);
-        this.$$('attrs').data.sync(device.attrs);
-        this.$$('pipes').data.sync(device.pipes);
+        device.commands.waitData.then(()=>{
+            this.$$('commands').data.importData(device.commands.data);
+        });
+        device.attrs.waitData.then(()=>{
+            this.$$('attrs').data.importData(device.attrs.data);
+        });
+        device.pipes.waitData.then(()=>{
+            this.$$('pipes').data.importData(device.pipes.data);
+        });
     },
     updateHeader(device){
         $$("device_tree").config.header = webix.template(function () {
