@@ -262,14 +262,19 @@ TangoDevice = TangoWebappPlatform.TangoDevice = TangoWebappPlatform.DataCollecti
          * @returns {Promise}
          */
         fetchPipes: function () {
-            return this.toTangoRestApiRequest().pipes().get().then(function (resp) {
-                var pipes = TangoPipe.create_many_as_existing(
-                    resp.map(function (it) {
-                        return MVC.Object.extend(it, this._get_extension(it))
-                    }.bind(this)));
-                this.pipes.parse(pipes);
-                return pipes;
-            }.bind(this));
+            return this.toTangoRestApiRequest().pipes().get()
+                .fail(function (err) {
+                    if (err.errors && err.errors[0].reason === 'TangoApi_NOT_SUPPORTED') return [];
+                    else throw err;
+                })
+                .then(function (resp) {
+                    var pipes = TangoPipe.create_many_as_existing(
+                        resp.map(function (it) {
+                            return MVC.Object.extend(it, this._get_extension(it))
+                        }.bind(this)));
+                    this.pipes.parse(pipes);
+                    return pipes;
+                }.bind(this));
         },
         /**
          *

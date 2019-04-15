@@ -19,3 +19,21 @@ export default function newSearch(target, filter){
         }
     }
 }
+
+/**
+ *
+ * @param {function} filter
+ */
+export function newComplexSearch(filter){
+    return {
+        view: "search",
+        id:"search",
+        placeholder: "type to filter",
+        borderless: true,
+        value: "",
+        on: {
+            onTimedKeyPress: filter,
+            onFocus: filter
+        }
+    }
+}
