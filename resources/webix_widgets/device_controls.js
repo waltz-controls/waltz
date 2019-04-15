@@ -1,9 +1,5 @@
 import {commandExecutionHelper} from "./command_view.js";
 
-function showInfo(){
-    $$('info_control_panel_header').expand();
-}
-
 function getHeader(device) {
     return `<span class='webix_icon ${this.getIcon()}'></span>[<span class='webix_strong'>${device.display_name}/${this.display_name}</span>]`;
 }
@@ -56,16 +52,18 @@ export function openScalarWindow(resp) {
 }
 
 export function openPipeWindow(resp) {
-    const device = PlatformContext.devices.getItem(this.device_id);
-    openTab.bind(this)({
-        header: getHeader.call(this, device),
+    if(!resp) return;
+    const device = PlatformContext.devices.getItem(resp.device_id);
+    openTab.bind(resp)({
+        header: getHeader.call(resp, device),
         close: true,
         borderless: true,
-        body: TangoWebapp.ui.newPipeView(webix.extend({id: this.id}, resp))
+        body: TangoWebapp.ui.newPipeView(webix.extend({id: resp.id}, resp))
     }, resp)
 }
 
 export function openCommandWindow(cmd) {
+    if(!cmd) return;
     var device = PlatformContext.devices.getItem(cmd.device_id);
     openTab.bind(cmd)({
         header: getHeader.call(cmd, device),
@@ -76,6 +74,7 @@ export function openCommandWindow(cmd) {
 }
 
 export function openAttributeWindow(attr) {
+    if(!attr) return;
     if (attr.info.data_format === "SPECTRUM") {
         return UserAction.readAttribute(attr)
             .then(openSpectrumWindow.bind(attr));
@@ -109,12 +108,25 @@ export const device_control_attr = webix.protoUI({
                 $$(this.attr.id).plot.updateMulti(this.attr.history);
             });
     },
+    showInfo(){
+        OpenAjax.hub.publish("tango_webapp.item_selected", {
+            data: {
+                id: this.attr.id,
+                kind: "attrs"
+            }
+        });
 
+        $$('info_control_panel_header').expand();
+    },
+    goto(){
+        openAttributeWindow(this.attr);
+    },
     defaults:{
         elements:[
             {cols:[
-                    {view:"text", name:"name", label:"Attribute",labelPosition:"top",readonly:true},
-                    {view:"button",type:"icon",icon:"info-circle", width:30}
+                    {view:"label",id:"label", label:"Attribute:"},
+                    {view:"button",type:"icon",icon:"info-circle", width:30, click(){this.getFormView().showInfo()}},
+                    {view:"button",type:"icon",icon:"eye", width:30, click(){this.getFormView().goto()}}
                 ]
             },
             {
@@ -136,16 +148,23 @@ export const device_control_attr = webix.protoUI({
         },
         on:{
             onBindApply(attr){
-                if(!attr) return;
-                this.clearValidation();
                 this.attr = attr;
+                if(!attr) return;
+
                 if(attr.info.writable.includes('WRITE') && attr.info.data_format !== "IMAGE") {
                     this.$$input = $$(webix.ui([{view: "scalar_input", attr, type: "compact", borderless: true}], this.$$('input_holder'))[0].id);
+
+                    this.$$('input_holder').show();
+                } else if(attr.info.data_format !== "IMAGE") {
+                    this.$$input = $$(webix.ui([{view: "text", readonly:true, borderless: true}], this.$$('input_holder'))[0].id);
 
                     this.$$('input_holder').show();
                 } else {
                     this.$$('input_holder').hide();
                 }
+
+                this.$$('label').define("label",`Attribute: ${attr.display_name}`);
+                this.$$('label').refresh();
 
                 attr.read().then(resp => this.$$input.setValue(resp.value));
             }
@@ -159,11 +178,25 @@ export const device_control_command = webix.protoUI({
         if(!this.command) return;
         commandExecutionHelper(this.command, this.$$input);
     },
+    showInfo(){
+        OpenAjax.hub.publish("tango_webapp.item_selected", {
+            data: {
+                id: this.command.id,
+                kind: "commands"
+            }
+        });
+
+        $$('info_control_panel_header').expand();
+    },
+    goto(){
+        openCommandWindow(this.command);
+    },
     defaults:{
         elements:[
             {cols:[
-                    {view:"text", name:"name", label:"Command", labelPosition: "top", readonly:true},
-                    {view:"button",type:"icon",icon:"info-circle", width:30}
+                    {view:"label",id:"label", label:"Command: "},
+                    {view:"button",type:"icon",icon:"info-circle", width:30, click(){this.getFormView().showInfo()}},
+                    {view:"button",type:"icon",icon:"eye", width:30, click(){this.getFormView().goto()}}
                 ]
             },
             {id:"input_holder",rows:[
@@ -176,9 +209,9 @@ export const device_control_command = webix.protoUI({
         },
         on:{
             onBindApply(command){
-                if(command === null) return;
-                this.clearValidation();
                 this.command = command;
+                if(command === null) return;
+
                 if(command.info.in_type !== 'DevVoid') {
                     const value = this.$$input ? this.$$input.getValue(): undefined;
                     this.$$input = $$(webix.ui([{view: "command_input", cmd: command, type: "mini", borderless: true}], this.$$('input_holder'))[0].id);
@@ -187,6 +220,9 @@ export const device_control_command = webix.protoUI({
                 } else {
                     this.$$('input_holder').hide();
                 }
+
+                this.$$('label').define("label",`Command: ${command.display_name}`);
+                this.$$('label').refresh();
             }
         }
     }
@@ -199,11 +235,25 @@ export const device_control_pipe = webix.protoUI({
         UserAction.readPipe(this.pipe)
             .then(openPipeWindow.bind(this.pipe));
     },
+    showInfo(){
+        OpenAjax.hub.publish("tango_webapp.item_selected", {
+            data: {
+                id: this.pipe.id,
+                kind: "pipes"
+            }
+        });
+
+        $$('info_control_panel_header').expand();
+    },
+    goto(){
+        openPipeWindow(this.pipe);
+    },
     defaults:{
         elements:[
             {cols:[
-                    {view:"text", name:"name", label:"Pipe", labelPosition: "top", readonly:true},
-                    {view:"button",type:"icon",icon:"info-circle", width:30}
+                    {view:"label",id:"label", label:"Pipe:"},
+                    {view:"button",type:"icon",icon:"info-circle", width:30, click(){this.getFormView().showInfo()}},
+                    {view:"button",type:"icon",icon:"eye", width:30, click(){this.getFormView().goto()}}
                 ]
             },
             {view:"button",value:"read", click(){this.getFormView().read();}}
@@ -214,7 +264,10 @@ export const device_control_pipe = webix.protoUI({
         on:{
             onBindApply(pipe){
                 this.pipe = pipe;
+                if(!pipe) return;
+                this.$$('label').define("label",`Pipe: ${pipe.display_name}`);
+                this.$$('label').refresh();
             }
         }
     }
-},webix.ui.form);
+}, webix.IdSpace,webix.ui.form);
