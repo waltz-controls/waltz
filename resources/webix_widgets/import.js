@@ -30,4 +30,5 @@ import "./attrs_monitor_toolbar.js"
 import "./attrs_monitor_view.js";
 import "./device_monitor_view.js";
 import "./scripting_console.js";
+import "./svg.js";
 

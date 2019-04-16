@@ -120,10 +120,12 @@
                 <include name="*.gif"/>
                 <include name="*.png"/>
                 <include name="*.jpg"/>
+                <include name="*.svg"/>
                 <!--app images-->
                 <include name="**/${application.name}/*.gif"/>
                 <include name="**/${application.name}/*.png"/>
                 <include name="**/${application.name}/*.jpg"/>
+                <include name="**/${application.name}/*.svg"/>
             </fileset>
         </copy>
     </target>

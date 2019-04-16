@@ -284,44 +284,31 @@ import newSearch from "./search.js";
                      * @return {boolean}
                      * @memberof ui.DevicesTree.tree
                      */
-                    onAfterSelect: function (id) {
-                        var item = this.getItem(id);
+                    async onAfterSelect(id) {
+                        const item = this.getItem(id);
                         if (!item) return false;//TODO or true
-                        var tango_host = TangoHost.find_one(this._get_tango_host_id(item));
-                        PlatformContext.tango_hosts.setCursor(tango_host.id);
-                        OpenAjax.hub.publish("tango_webapp.item_selected", {
-                            data: {
-                                id: tango_host.id,
-                                kind: "tango_host"
-                            }
-                        });
-                        var promise_device;
+                        const tango_host_id = this._get_tango_host_id(item);
+                        const tango_host = await PlatformContext.loadAndSetTangoHost(tango_host_id);
+
+                        let device_name;
                         if ((item.isAlias && item.device_name !== undefined) || item.isMember) {
-                            promise_device = tango_host.fetchDevice(item.device_name)
+                            device_name = item.device_name;
                         }
                         else if (item.isAlias && item.device_name === undefined) {
                             //TODO send event handle event in controller
-                            promise_device = tango_host
+                            device_name = await tango_host
                                 .fetchDatabase()
                                 .then(function (db) {
                                     return db.getAliasDevice(item.value);
-                                })
-                                .then(function (device_name) {
-                                    item.device_name = device_name;
-                                    return tango_host.fetchDevice(device_name);
                                 });
                         } else {
+                            tango_host.fetchDatabase().then(db=> {
+                                PlatformContext.devices.setCursor(db.id);
+                            });
+
                             return false;
                         }
-                        promise_device.then(function (device) {
-                            PlatformContext.devices.setCursor(device.id);
-                            OpenAjax.hub.publish("tango_webapp.item_selected", {
-                                data: {
-                                    id: device.id,
-                                    kind: "device"
-                                }
-                            });
-                        });
+                        PlatformContext.loadAndSetDevice(`${tango_host_id}/${device_name}`);
                     },
                     /**
                      * Event listener.
