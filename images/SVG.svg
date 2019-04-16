@@ -14,7 +14,7 @@
    viewBox="0 0 210 297"
    version="1.1"
    id="svg8"
-   inkscape:version="0.92.3 (2405546, 2018-03-11)"
+   inkscape:version="0.48.5 r10040"
    sodipodi:docname="SVG.svg">
   <defs
      id="defs2">
@@ -39,10 +39,10 @@
      inkscape:document-units="mm"
      inkscape:current-layer="layer1"
      showgrid="false"
-     inkscape:window-width="1366"
-     inkscape:window-height="703"
-     inkscape:window-x="1920"
-     inkscape:window-y="312"
+     inkscape:window-width="1920"
+     inkscape:window-height="1145"
+     inkscape:window-x="-2"
+     inkscape:window-y="-3"
      inkscape:window-maximized="1" />
   <metadata
      id="metadata5">
@@ -63,7 +63,7 @@
      style="display:inline">
     <ellipse
        style="opacity:0.5;fill:#8e0025;fill-opacity:1;stroke:#0000ba;stroke-width:0.79374999;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
-       id="pik"
+       id="device-pik"
        cx="45.435818"
        cy="80.778946"
        rx="21.648832"
@@ -72,7 +72,7 @@
     <path
        sodipodi:type="star"
        style="opacity:0.5;fill:#39af25;fill-opacity:1;stroke:#00e2ba;stroke-width:0.79374999;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
-       id="green"
+       id="device-green"
        sodipodi:sides="5"
        sodipodi:cx="141.9201"
        sodipodi:cy="82.115295"
@@ -90,7 +90,7 @@
        inkscape:label="device" />
     <rect
        style="opacity:0.5;fill:#3906d3;fill-opacity:1;stroke:#0309ba;stroke-width:0.79374999;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
-       id="blue"
+       id="device-blue"
        width="68.475174"
        height="5.2007556"
        x="62.808334"

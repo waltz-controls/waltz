@@ -156,6 +156,48 @@ TangoWebappPlatform.PlatformContext = MVC.Model.extend('platform_context',
             this.UserContext.save();
             //TODO clear all data
             PlatformContext = null;
+        },
+        /**
+         *
+         * @param {string} id
+         * @return {Promise<TangoHost>}
+         */
+        loadAndSetTangoHost(id){
+            return this.rest.fetchHost(id).then((tango_host)=>{
+                PlatformContext.tango_hosts.setCursor(tango_host.id);
+                OpenAjax.hub.publish("tango_webapp.item_selected", {
+                    data: {
+                        id,
+                        kind: "tango_host"
+                    }
+                });
+                return tango_host;
+            });
+        },
+        /**
+         *
+         * @param {string} id
+         * @return {Promise<TangoDevice>}
+         */
+        loadAndSetDevice(id){
+            const parts = id.split('/');
+            webix.assert(parts.length = 4, "4 parts are expected here: tango_host/domain/family/member");
+
+            const tango_host_id = parts.shift();
+            const device_name = parts.join('/');
+
+            return this.rest.fetchHost(tango_host_id)
+                .then(tango_host => tango_host.fetchDevice(device_name))
+                .then((device)=>{
+                    PlatformContext.devices.setCursor(id);
+                    OpenAjax.hub.publish("tango_webapp.item_selected", {
+                        data: {
+                            id,
+                            kind: "device"
+                        }
+                    });
+                    return device;
+                });
         }
     }
 );

@@ -22,7 +22,8 @@ include.functional_tests(
     'tango_webapp/device_attr_config',
     'tango_webapp/device_logging',
     'tango_webapp/device_monitor',
-    'tango_webapp/attrs_monitor_view'
+    'tango_webapp/attrs_monitor_view',
+    'tango_webapp/svg_widget'
 
     // 'device_tree',
     // 'webix_ui'

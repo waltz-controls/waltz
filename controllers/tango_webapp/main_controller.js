@@ -38,13 +38,6 @@ TangoWebapp.MainController = class extends MVC.Controller{
 
         ui_builder.add_mainview_item(
             {
-                header: "<span class='webix_icon fa-dashboard'></span> SVG",
-                borderless: true,
-                body: TangoWebapp.ui.newSVGboard({id: 'svg'})
-            });
-
-        ui_builder.add_mainview_item(
-            {
                 header: "<span class='webix_icon fa-dashboard'></span> Dashboard",
                 borderless: true,
                 body: TangoWebapp.ui.newStatefulAttrsMonitorView({id: 'configurable_monitor'})
