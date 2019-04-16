@@ -32,6 +32,7 @@ const status_server_view = webix.protoUI({
                 this.$$('log').add(event,0);
             },
             onViewShow(){
+                if(this.config.configurationManager.device == null) return;
                 this.update();
             }
         }
