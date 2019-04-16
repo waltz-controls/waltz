@@ -8,7 +8,7 @@ addons:
 script:
   - chmod 777 ./jmvcc
   - ./jmvcc jmvc/assemble
-  - test -e build/distributions/TangoWebapp.war
+  - test -e build/distributions/waltz.war
 after_success:
   - git fetch --unshallow --quiet
   - sonar-scanner -Dsonar.projectKey=org.tango-controls:TangoWebapp -Dsonar.sources=. -Dsonar.exclusions=build/**,jmvc/**,docs/**,apps/**
@@ -16,7 +16,7 @@ deploy:
   - provider: releases
     prerelease: true
     api_key: $GITHUB_OAUTH_TOKEN
-    file: "build/distributions/TangoWebapp.war"
+    file: "build/distributions/waltz.war"
     skip_cleanup: true
     on:
       tags: true

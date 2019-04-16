@@ -241,6 +241,6 @@
     </target>
 
     <target name="war">
-        <zip destfile="${build.dir}/../distributions/TangoWebapp.war" basedir="${build.dir}"/>
+        <zip destfile="${build.dir}/../distributions/waltz.war" basedir="${build.dir}"/>
     </target>
 </project>

@@ -12,7 +12,7 @@ export VERSION=$TRAVIS_BRANCH
 
 ./jmvcc jmvc/assemble
 
-mv build/distributions/TangoWebapp.war build/distributions/$TRAVIS_BRANCH.war
+mv build/distributions/waltz.war build/distributions/$TRAVIS_BRANCH.war
 
 #decrypt
 openssl aes-256-cbc -K $encrypted_2f30ea6ab509_key -iv $encrypted_2f30ea6ab509_iv -in ./.travis/IngvordESRF.pem.enc -out ./.travis/IngvordESRF.pem -d

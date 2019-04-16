@@ -62,7 +62,7 @@ Pass: tango
 
 ## Getting started ##
 
-1. Download the latest [TangoWebapp.war](https://github.com/tango-controls/tango-webapp/releases) file.
+1. Download the latest [waltz.war](https://github.com/tango-controls/tango-webapp/releases) file.
 2. Copy it into your webserver's web applications root folder, e.g. {CATALINA_HOME}/webapps
 3. Define a tomcat user who has the role "mtango-rest".
 4. Restart server
