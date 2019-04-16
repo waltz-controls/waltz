@@ -33,6 +33,8 @@ const svg = webix.protoUI(
             webix.assert(this.alphasvg != null,"svg must be not null at this point");
             this.alphasvg.setAttribute("width",width);
             this.alphasvg.setAttribute("height",height);
+
+            if(this.svg) this.svg.resize();
         },
         /**
          *
@@ -48,7 +50,7 @@ const svg = webix.protoUI(
 
             devices.each((ndx, el)=>{
                 el.addEventListener("click",function(){
-                    PlatformContext.loadAndSetDevice(el.id.substring(7));
+                    PlatformContext.loadAndSetDevice(el.id.substring(7).replace(/__/g,"/"));
                 }, false);
             });
         },
@@ -67,7 +69,6 @@ const svg = webix.protoUI(
 
                         webix.event(window, "resize", ()=>{
                             this.setViewPort(this.$width,this.$height);
-                            this.svg.resize();
                         });
 
                         this._process_devices();
