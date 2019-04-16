@@ -5,10 +5,12 @@ function updatePollableHelper(pollable){
         pollables = device.commands;
     else if(pollable.Class.className === 'tango_attribute')
         pollables = device.attrs;
-    pollables.updateItem(pollable.id, {
-        polled: pollable.polled,
-        poll_rate: pollable.poll_rate
-    })
+    else return;
+    if(pollables.getItem(pollable.id) != null)//TODO currently this can happen with db device
+        pollables.updateItem(pollable.id, {
+            polled: pollable.polled,
+            poll_rate: pollable.poll_rate
+        });
 }
 
 /**
