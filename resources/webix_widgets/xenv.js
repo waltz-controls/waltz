@@ -17,8 +17,17 @@ const kServerFieldMap = {
 };
 
 
+function newXenvSVGTab(){
+    return {
+        header: "<span class='webix_icon fa-map-o'></span> Xenv HQ SVG",
+        borderless: true,
+        body: TangoWebapp.ui.newSVGboard({id: 'hq-svg', svg:"Xenv.svg"})
+    }
+}
+
 export const XenvHqController = class extends MVC.Controller {
     buildUI(platform_api) {
+        platform_api.ui_builder.add_mainview_item(newXenvSVGTab());
         platform_api.ui_builder.add_mainview_item(newXenvHeadQuarterTab());
     }
     /**
