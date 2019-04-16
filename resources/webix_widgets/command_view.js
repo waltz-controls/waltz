@@ -95,6 +95,8 @@ const command_input = webix.protoUI({
 const btnExecute = {
     view:"button",
     value:"Execute",
+    tooltip:"Hotkey: Ctrl + Enter",
+    hotkey: "ctrl+enter",
     maxWidth:120,
     click(){
         this.getTopParentView().execute();

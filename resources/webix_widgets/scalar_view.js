@@ -204,9 +204,9 @@ const scalar = webix.protoUI(
         }
     }, webix.IdSpace, webix.ui.view);
 
-const btnMinus = {view:"button",value:"-", tooltip:"Hotkey: Ctrl + numpad(-)", hotkey: "ctrl+109", width: 20, click(){ this.getFormView()._write_minus()}};
-const btnPlus = {view:"button",value:"+", tooltip:"Hotkey: Ctrl + numpad(+)", hotkey: "ctrl+107", width: 20, click(){ this.getFormView()._write_plus()}};
-const btnWrite = {view:"button", maxWidth:120, value:"Write", tooltip:"Hotkey: Enter", hotkey: "enter",click(){this.getFormView()._write() }};
+const btnMinus = {view:"button",value:"-", width: 20, click(){ this.getFormView()._write_minus()}};
+const btnPlus = {view:"button",value:"+", width: 20, click(){ this.getFormView()._write_plus()}};
+const btnWrite = {view:"button", maxWidth:120, value:"Write",click(){this.getFormView()._write() }};
 
 const scalar_input = webix.protoUI({
     name:"scalar_input",
@@ -280,9 +280,12 @@ const scalar_input = webix.protoUI({
         ];
 
         if(attr.info.data_format === "SCALAR")
-            cols.push(btnMinus, btnPlus);
+            cols.push(
+                webix.extend(btnMinus,{tooltip:"Hotkey: Ctrl + numpad(-)", hotkey: "ctrl+109"}),
+                webix.extend(btnPlus, {tooltip:"Hotkey: Ctrl + numpad(+)", hotkey: "ctrl+107"}));
 
-        cols.push(btnWrite);
+        cols.push(
+            webix.extend(btnWrite,{tooltip:"Hotkey: Ctrl + Enter", hotkey: "ctrl+enter"}));
 
         return {
             elements:[

@@ -61,8 +61,7 @@
                 return this.info.data_format === 'SCALAR';
             },
             _handle_resp : function (resp) {
-                var result = resp[0];
-                this.update_attributes(result);
+                this.update_attributes(resp);
                 if (!this.valid())
                     throw this;
                 else return this;
@@ -71,15 +70,20 @@
              * @returns {webix.promise}
              */
             read: function () {
-                var device = PlatformContext.devices.getItem(this.device_id);
-                return device.fetchAttrValues([this.name]).then(this._handle_resp.bind(this));
+                return this.toTangoRestApiRequest().get("/value").then(this._handle_resp.bind(this));
+            },
+            /**
+             * @param value
+             * @returns {webix.promise}
+             */
+            write: function (value) {
+                return this.toTangoRestApiRequest().put("/value?v=" + value).then(this._handle_resp.bind(this));
             },
             /**
              * @returns {webix.promise}
              */
             fetchHistory:function(){
-                var device = PlatformContext.devices.getItem(this.device_id);
-                return device.toTangoRestApiRequest().attributes(this.name).get('/history')
+                return this.toTangoRestApiRequest().get('/history')
                     .then(function(resp){
                         this.update_attributes({
                             history: resp,
@@ -93,8 +97,7 @@
              * @return {Promise<AttributeInfo>}
              */
             fetchInfo(){
-                const device = PlatformContext.devices.getItem(this.device_id);
-                return device.toTangoRestApiRequest().attributes(this.name).get('/info')
+                return this.toTangoRestApiRequest().get('/info')
                     .then((resp) => {
                         this.update_attributes({
                             info: resp
@@ -103,24 +106,11 @@
                     });
             },
             /**
-             * @param value
-             * @returns {webix.promise}
-             */
-            write: function (value) {
-                var device = PlatformContext.devices.getItem(this.device_id);
-
-                var values = {};
-                values[this.name] = value;
-                this.value = value;
-                return device.putAttrValues(values);
-            },
-            /**
              * @returns {*|webix.promise}
              */
             //TODO extract AttributeInfo (aka MVC.Model.JSON) and move this method there
             putInfo: function () {
-                var device = PlatformContext.devices.getItem(this.device_id);
-                return device.toTangoRestApiRequest().attributes(this.name).put('/info?async=true', this.info);
+                return this.toTangoRestApiRequest().put('/info?async=true', this.info);
             },
             /**
              * @returns {'STATE'|'STATUS'|'SCALAR'|'SPECTRUM'|'IMAGE'}
@@ -146,6 +136,10 @@
                     case "IMAGE":
                         return 'fa-picture-o';
                 }
+            },
+            toTangoRestApiRequest(){
+                const device = PlatformContext.devices.getItem(this.device_id);
+                return device.toTangoRestApiRequest().attributes(this.name);
             }
         }
     );
