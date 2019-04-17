@@ -49,7 +49,7 @@ export default function newToolbar(extension = []){
             {
                 view: "toggle",
                 type: "iconButton",
-                onIcon: "stop",
+                onIcon: "pause",
                 offIcon: "play",
                 maxWidth: 30,
                 tooltip: "Update continuously",
