@@ -242,11 +242,11 @@
                         align: "left",
                         click: function () {
                             //TODO validate
-                            var value = this.getTopParentView().$$("value").getValue().split('\n');
+                            const value = this.getTopParentView().$$("value").getValue().split('\n');
                             PlatformApi.UserContextController().update_attributes({
                                 device_filters: value
                             });
-                            $$("devices-tree").updateRoot();
+                            $$('devices_tree').tree.updateRoot();
                         }
                     }
                 ]
