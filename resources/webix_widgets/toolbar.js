@@ -37,17 +37,26 @@
             view: "list",
             data: [
                 {id: "toolsScripting", value: "Scripting"},
+                {id: "toolsAstor", value: "Astor"},
                 {id: "toolsTerminal", value: "Terminal"}
             ],
             autoheight: true,
             borderless: true,
             on: {
                 onItemClick: function (id) {
-                    if (id === "toolsScripting") {
-                        PlatformApi.PlatformUIController().openScriptingTab();
-                    }
-                    if (id === "toolsTerminal") {
-                        PlatformApi.PlatformUIController().openTerminalTab();
+                    switch (id) {
+                        case "toolsScripting":
+                            PlatformApi.PlatformUIController().openScriptingTab();
+                            break;
+                        case "toolsAstor":
+                            PlatformApi.PlatformUIController().openAstorTab();
+                            break;
+                        case "toolsTerminal":
+                            PlatformApi.PlatformUIController().openTerminalTab();
+                            break;
+                        default:
+                            webix.message("Submenu click: " + id);
+                            break;
                     }
                     $$("toolsMenu").hide();
                 }
