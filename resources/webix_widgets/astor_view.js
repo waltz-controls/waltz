@@ -9,6 +9,13 @@ class TangoServer {
     }
 }
 
+class TangoDevice {
+    constructor(clazz, name) {
+        this.clazz = clazz;
+        this.name = name;
+    }
+}
+
 /**
  *
  * @author Igor Khokhriakov <igor.khokhriakov@hzg.de>
@@ -62,7 +69,24 @@ const astor = webix.protoUI({
                                     template: "<span class='webix_icon fa-server'></span>#name# #state#",
                                     on: {
                                         onAfterSelect(id) {
-                                            debugger
+                                            const server = this.getItem(id);
+                                            server.device
+                                                .then(device => {
+                                                    PlatformContext.devices.setCursor(device.id);
+                                                    return device;
+                                                })
+                                                .then(device => {
+                                                    return device.executeCommand("QueryDevice");
+                                                })
+                                                .then(resp => {
+                                                    const $$devices = this.getTopParentView().$$('devices');
+                                                    $$devices.clearAll();
+                                                    $$devices.parse(resp.output.map(el => new TangoDevice(el.split("::")[0], el.split("::")[1])));
+                                                })
+                                                .fail(() => {
+                                                    const $$devices = this.getTopParentView().$$('devices');
+                                                    $$devices.clearAll();
+                                                })
                                         }
                                     }
                                 },
@@ -104,7 +128,17 @@ const astor = webix.protoUI({
                         {
                             rows: [
                                 {
-                                    template: "devices list"
+                                    view: "list",
+                                    id: "devices",
+                                    select: true,
+                                    template: "<span class='webix_icon fa-microchip'></span>#name#",
+                                    on: {
+                                        onAfterSelect(id) {
+                                            const device = this.getItem(id);
+                                            this.getTopParentView().tango_host.fetchDevice(device.name)
+                                                .then(device => PlatformContext.devices.setCursor(device.id));
+                                        }
+                                    }
                                 },
                                 {
                                     view: "form",
@@ -178,7 +212,7 @@ const astor = webix.protoUI({
         webix.extend(config, this._ui());
 
         this.$ready.push(() => {
-            this.$$('info').bind(config.context.devices)
+            this.$$('info').bind(config.context.devices);
         })
     },
     defaults: {
