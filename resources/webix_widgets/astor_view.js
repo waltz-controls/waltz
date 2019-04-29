@@ -1,3 +1,5 @@
+import {get_device_info} from "./device_info_panel.js";
+
 class TangoServer {
     constructor(name, state, level, device) {
         this.name = name;
@@ -100,8 +102,72 @@ const astor = webix.protoUI({
                             ]
                         },
                         {
-                            id: "template",
-                            template: "#id#"
+                            rows: [
+                                {
+                                    template: "devices list"
+                                },
+                                {
+                                    view: "form",
+                                    cols: [
+                                        {},
+                                        {
+                                            view: "button",
+                                            type: "icon",
+                                            icon: "plus",
+                                            width: 30,
+                                            click() {
+                                                this.getTopParentView().addDevice();
+                                            }
+                                        },
+                                        {
+                                            view: "button",
+                                            type: "icon",
+                                            icon: "trash",
+                                            width: 30,
+                                            click() {
+                                                this.getTopParentView().removeDevice();
+                                            }
+                                        }
+                                    ]
+                                },
+                                {
+                                    template: "Device info:",
+                                    type: "header"
+                                },
+                                {
+                                    id: 'info',
+                                    view: 'datatable',
+                                    header: false,
+                                    autoheight: true,
+                                    columns: [
+                                        {id: 'info'},
+                                        {id: 'value', editor: "text", fillspace: true}
+                                    ],
+                                    on: {
+                                        onBindApply: function (device) {
+                                            if (!device || device.id === undefined) return false;
+
+                                            var info = get_device_info(device);
+                                            info.push({
+                                                id: 'alias',
+                                                info: 'Alias',
+                                                value: device.alias
+                                            });
+
+                                            this.clearAll();
+                                            this.parse(info);
+                                        }
+                                    }
+                                },
+                                {
+                                    template: "Server's log:",
+                                    type: "header"
+                                },
+                                {
+                                    template: "server log"
+                                }
+                            ]
+
                         }
                     ]
                 }
@@ -110,6 +176,10 @@ const astor = webix.protoUI({
     },
     $init(config) {
         webix.extend(config, this._ui());
+
+        this.$ready.push(() => {
+            this.$$('info').bind(config.context.devices)
+        })
     },
     defaults: {
         on: {

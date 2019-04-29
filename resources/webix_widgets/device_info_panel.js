@@ -75,7 +75,7 @@ function newDeviceInfoDatatable (){
     }
 }
 
-function get_device_info(device){
+export function get_device_info(device) {
     const result = [];
 
     kDevice_info_values.forEach(function(item){
