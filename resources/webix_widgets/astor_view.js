@@ -1,7 +1,10 @@
 import {get_device_info} from "./device_info_panel.js";
 
+const as_array = true;
+
 class TangoServer {
     constructor(name, state, level, device) {
+        this.id = name;
         this.name = name;
         this.level = level;
         this.state = state;
@@ -10,9 +13,10 @@ class TangoServer {
 }
 
 class TangoDevice {
-    constructor(clazz, name) {
+    constructor(clazz, name, server) {
         this.clazz = clazz;
         this.name = name;
+        this.server = server;
     }
 }
 
@@ -37,14 +41,55 @@ const astor = webix.protoUI({
 
         debugger
     },
-    kill() {
-
+    async run() {
+        if (this.starter != null)
+            (await this.starter.fetchAttr("Servers")).read()
+                .then(v => v.value.map(el => el.split("\t")))
+                .then(values => values.map(([name, state, controlled, level]) => new TangoServer(name, state, level, this.tango_host.fetchDevice(`dserver/${name}`))))
+                .then(servers => servers.forEach(server => this.$$('servers').updateItem(server.id, server)));
     },
-    stop() {
-
+    _execute_for_all(cmdName) {
+        webix.promise.all(
+            this.$$('servers').getSelectedItem(as_array)
+                .map(async server => {
+                    const cmd = await this.starter.fetchCommand(cmdName);
+                    UserAction.executeCommand(cmd, server.name);
+                })).then(() => this.run());
     },
-    start() {
-
+    devKill() {
+        this._execute_for_all("HardKillServer");
+    },
+    devStop() {
+        this._execute_for_all("DevStop");
+    },
+    devStart() {
+        this._execute_for_all("DevStart");
+    },
+    devAdd(newDev) {
+        const $$devices = this.$$('devices');
+        const server = $$devices.config.server;
+        const clazz = $$devices.getItem($$devices.getFirstId()).clazz;//TODO drop down list for multiple class servers
+        if (server != null)
+            this.tango_host.fetchDatabase().then(db => {
+                db.addDevice([server.name, newDev, clazz])
+            })
+    },
+    devRemove() {
+        this.$$('devices').getSelectedItem(as_array)
+            .forEach(async dev => {
+                this.tango_host.fetchDevice(dev.name)
+                    .then(function (device) {
+                        OpenAjax.hub.publish("tango_webapp.device_delete", {
+                            data: {
+                                device: device
+                            }
+                        });
+                    })
+                    .then(() => {
+                        this.$$('devices').remove(dev.id);
+                    })
+                    .fail(TangoWebappHelpers.error)
+            });
     },
     _ui() {
         return {
@@ -70,6 +115,8 @@ const astor = webix.protoUI({
                                     on: {
                                         onAfterSelect(id) {
                                             const server = this.getItem(id);
+                                            const $$devices = this.getTopParentView().$$('devices');
+                                            $$devices.config.server = server;
                                             server.device
                                                 .then(device => {
                                                     PlatformContext.devices.setCursor(device.id);
@@ -79,12 +126,10 @@ const astor = webix.protoUI({
                                                     return device.executeCommand("QueryDevice");
                                                 })
                                                 .then(resp => {
-                                                    const $$devices = this.getTopParentView().$$('devices');
                                                     $$devices.clearAll();
-                                                    $$devices.parse(resp.output.map(el => new TangoDevice(el.split("::")[0], el.split("::")[1])));
+                                                    $$devices.parse(resp.output.map(el => new TangoDevice(el.split("::")[0], el.split("::")[1], server.name)));
                                                 })
                                                 .fail(() => {
-                                                    const $$devices = this.getTopParentView().$$('devices');
                                                     $$devices.clearAll();
                                                 })
                                         }
@@ -99,7 +144,7 @@ const astor = webix.protoUI({
                                             tooltip: "Kills selected servers",
                                             type: "danger",
                                             click() {
-                                                this.getTopParentView().kill();
+                                                this.getTopParentView().devKill();
                                             }
                                         },
                                         {
@@ -107,7 +152,7 @@ const astor = webix.protoUI({
                                             value: "Stop",
                                             tooltip: "Stops selected servers",
                                             click() {
-                                                this.getTopParentView().stop();
+                                                this.getTopParentView().devStop();
                                             }
                                         },
                                         {
@@ -115,11 +160,21 @@ const astor = webix.protoUI({
                                             value: "Start",
                                             tooltip: "Starts selected servers",
                                             click() {
-                                                this.getTopParentView().start();
+                                                this.getTopParentView().devStart();
                                             }
                                         },
                                         {
                                             gravity: 2
+                                        },
+                                        {
+                                            view: "button",
+                                            type: "icon",
+                                            icon: "refresh",
+                                            tooltip: "Refresh servers list",
+                                            width: 30,
+                                            click() {
+                                                this.getTopParentView().run();
+                                            }
                                         }
                                     ]
                                 }
@@ -130,6 +185,7 @@ const astor = webix.protoUI({
                                 {
                                     view: "list",
                                     id: "devices",
+                                    server: null,
                                     select: true,
                                     template: "<span class='webix_icon fa-microchip'></span>#name#",
                                     on: {
@@ -143,14 +199,21 @@ const astor = webix.protoUI({
                                 {
                                     view: "form",
                                     cols: [
-                                        {},
+                                        {
+                                            view: "text",
+                                            name: "devNewName",
+                                            placeholder: "domain/family/member",
+                                            validate: webix.rules.isNotEmpty
+                                        },
                                         {
                                             view: "button",
                                             type: "icon",
                                             icon: "plus",
                                             width: 30,
                                             click() {
-                                                this.getTopParentView().addDevice();
+                                                const form = this.getFormView();
+                                                if (form.validate())
+                                                    this.getTopParentView().devAdd(form.elements.devNewName.getValue());
                                             }
                                         },
                                         {
@@ -159,7 +222,7 @@ const astor = webix.protoUI({
                                             icon: "trash",
                                             width: 30,
                                             click() {
-                                                this.getTopParentView().removeDevice();
+                                                this.getTopParentView().devRemove();
                                             }
                                         }
                                     ]
