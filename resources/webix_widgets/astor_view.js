@@ -312,7 +312,7 @@ const astor = webix.protoUI({
 
 TangoWebapp.ui.newAstorTab = function (context) {
     return {
-        header: "<span class='webix_icon fa-tasks'></span> Astor",
+        header: "<span class='webix_icon fa-tasks'></span> Manager",
         close: true,
         borderless: true,
         body: {

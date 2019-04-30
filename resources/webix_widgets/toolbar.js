@@ -37,7 +37,7 @@
             view: "list",
             data: [
                 {id: "toolsScripting", value: "Scripting"},
-                {id: "toolsAstor", value: "Astor"},
+                {id: "toolsAstor", value: "Manager"},
                 {id: "toolsTerminal", value: "Terminal"}
             ],
             autoheight: true,
