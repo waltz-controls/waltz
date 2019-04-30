@@ -74,6 +74,14 @@ const astor = webix.protoUI({
                 db.addDevice([server.name, newDev, clazz])
             })
     },
+    devRestart() {
+        const $$devices = this.$$('devices');
+        $$devices.getSelectedItem(as_array)
+            .forEach(async dev => {
+                const cmd = await (await $$devices.config.server.device).fetchCommand("DevRestart");
+                UserAction.executeCommand(cmd, dev.name);
+            });
+    },
     devRemove() {
         this.$$('devices').getSelectedItem(as_array)
             .forEach(async dev => {
@@ -187,6 +195,7 @@ const astor = webix.protoUI({
                                     id: "devices",
                                     server: null,
                                     select: true,
+                                    multiselect: true,
                                     template: "<span class='webix_icon fa-microchip'></span>#name#",
                                     on: {
                                         onAfterSelect(id) {
@@ -219,7 +228,18 @@ const astor = webix.protoUI({
                                         {
                                             view: "button",
                                             type: "icon",
+                                            icon: "repeat",
+                                            tooltip: "Restart selected device(s)",
+                                            width: 30,
+                                            click() {
+                                                this.getTopParentView().devRestart();
+                                            }
+                                        },
+                                        {
+                                            view: "button",
+                                            type: "icon",
                                             icon: "trash",
+                                            tooltip: "Delete selected device(s)",
                                             width: 30,
                                             click() {
                                                 this.getTopParentView().devRemove();
