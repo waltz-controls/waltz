@@ -244,6 +244,7 @@ import newSearch from "./search.js";
             defaults: {
                 type: 'lineTree',
                 select: true,
+                drag: "source",
                 on: {
                     onItemClick(id){
                         if(this.getSelectedId() === id)

@@ -41,16 +41,17 @@ export const codemirror_textarea = webix.protoUI(
                     if(this.editor != null){
                         value = this.editor.getValue();
                     }
-                    this.editor = CodeMirror.fromTextArea(this.getInputNode(),{
-                        extraKeys: {"Ctrl-Space": "autocomplete"},
-                        commands:{
-                            indentAuto:"Shift-Tab"
-                        },
-                        mode:  config.mode || "javascript",
-                        lineNumbers: true,
-                        gutter: true,
-                        lineWrapping: true
-                    });
+                    this.editor = CodeMirror.fromTextArea(this.getInputNode(),
+                        webix.extend({
+                            extraKeys: {"Ctrl-Space": "autocomplete"},
+                            commands: {
+                                indentAuto: "Ctrl-Alt-l"
+                            },
+                            mode: config.mode || "javascript",
+                            lineNumbers: true,
+                            gutter: true,
+                            lineWrapping: true
+                        }, config));
 
                     this.setValue(value);
                     if(MVC.env().match(/development|test/)) console.timeEnd('CodeMirror render');
