@@ -6,9 +6,24 @@ class TangoServer {
     constructor(name, state, level, device) {
         this.id = name;
         this.name = name;
-        this.level = level;
-        this.state = state;
+        this._level = level;
+        this._state = state;
         this.device = device;
+    }
+
+    get level() {
+        return this._level === "0" ? "Not controlled" : this._level;
+    }
+
+    get state() {
+        switch (this._state) {
+            case "MOVING":
+                return "STARTING/STOPPING";
+            case "FAULT":
+                return "NOT RUNNING/UNKNOWN";
+            default:
+                return "RUNNING";
+        }
     }
 }
 
@@ -161,7 +176,7 @@ const astor = webix.protoUI({
                                     uniteBy(obj) {
                                         return obj.level;
                                     },
-                                    template: "<span class='webix_icon fa-server'></span>#name# #state#",
+                                    template: "<span class='webix_icon fa-server'></span>#name# [#state#]",
                                     on: {
                                         onAfterSelect(id) {
                                             const server = this.getItem(id);
