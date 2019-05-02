@@ -37,8 +37,7 @@
             view: "list",
             data: [
                 {id: "toolsScripting", value: "Scripting"},
-                //TODO uncomment after terminal has been merged
-                // {id: "toolsTerminal", value: "Terminal"}
+                {id: "toolsTerminal", value: "Terminal"}
             ],
             autoheight: true,
             borderless: true,
@@ -48,7 +47,7 @@
                         PlatformApi.PlatformUIController().openScriptingTab();
                     }
                     if (id === "toolsTerminal") {
-                        webix.message("Submenu click: " + id);
+                        PlatformApi.PlatformUIController().openTerminalTab();
                     }
                     $$("toolsMenu").hide();
                 }
