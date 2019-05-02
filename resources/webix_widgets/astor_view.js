@@ -37,6 +37,13 @@ const astor = webix.protoUI({
             type: "change"
         });
     },
+    async _update_log() {
+        this.$$('log').clearAll();
+        this.$$('log').parse(
+            (await this.starter.fetchCommand("DevReadLog")).execute("Starter")
+                .then(resp => resp.output.split("\n").map(value => ({value}))
+                ));
+    },
     async initialize() {
         this.enable();
         this.$$('header').setValues(this.tango_host);
@@ -56,6 +63,8 @@ const astor = webix.protoUI({
                 .then(v => v.value.map(el => el.split("\t")))
                 .then(values => values.map(([name, state, controlled, level]) => new TangoServer(name, state, level, this.tango_host.fetchDevice(`dserver/${name}`)))));
 
+        this._update_log();
+
         PlatformContext.subscription.addEventListener({
                 host: this.tango_host.id,
                 device: `tango/admin/${this.tango_host.host}`,
@@ -64,6 +73,7 @@ const astor = webix.protoUI({
             },
             function (event) {
                 this._update_servers(event.data.map(el => el.split("\t")));
+                this._update_log();
             }.bind(this),
             function (error) {
                 TangoWebappHelpers.error(error);
@@ -74,9 +84,11 @@ const astor = webix.protoUI({
         servers.forEach(server => this.$$('servers').updateItem(server.id, server));
     },
     async run() {
-        if (this.starter != null)
+        if (this.starter != null) {
             (await this.starter.fetchAttr("Servers")).read()
                 .then(v => this._update_servers(v.value.map(el => el.split("\t"))));
+            this._update_log();
+        }
     },
     _execute_for_all(cmdName) {
         webix.promise.all(
@@ -307,14 +319,14 @@ const astor = webix.protoUI({
                                     }
                                 },
                                 {
-                                    template: "Server's log:",
+                                    template: "Log:",
                                     type: "header"
                                 },
                                 {
-                                    template: "server log"
+                                    view: "list",
+                                    id: "log"
                                 }
                             ]
-
                         }
                     ]
                 }
