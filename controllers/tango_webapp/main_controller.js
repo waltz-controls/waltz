@@ -75,6 +75,7 @@ TangoWebapp.MainController = class extends MVC.Controller{
              device.fetchCommands()]).then(() => device.pollStatus());
     }
 
+    //TODO replace with direct call
     "tango_webapp.device_add subscribe"(event) {
         const device = event.data.device;
 
