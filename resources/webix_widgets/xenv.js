@@ -60,7 +60,8 @@ export const XenvHqController = class extends MVC.Controller {
     }
 };
 
-XenvHqController.initialize();
+//disable Xenv widget for master
+// XenvHqController.initialize();
 
 const xenvHq = webix.protoUI({
     name: "xenv-hq",
