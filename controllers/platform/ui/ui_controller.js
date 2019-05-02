@@ -75,6 +75,21 @@ TangoWebappPlatform.UIController = class extends MVC.Controller {
         return $$('scripting_console');
     }
     /**
+     * Opens astor tab
+     *
+     */
+    openAstorTab() {
+        if ($$('astor') === undefined) {
+            $$("main-tabview").addView(
+                TangoWebapp.ui.newAstorTab(PlatformContext)
+            );
+        }
+        $$('astor').show();
+
+        return $$('astor');
+    }
+
+    /**
      * Opens terminal tab
      *
      */

@@ -43,6 +43,9 @@ export class Event{
     }
 }
 
+const kEventSourceOpenTimeout = 3000;
+const kOpenFailureThreshold = 5;
+
 export class Subscription{
     constructor(id, events = [], failures = [], url){
         this.id = id;
@@ -51,17 +54,25 @@ export class Subscription{
         this.url = url;
         this.source = null;
         this.action = new MVC.Controller.Action.Subscribe("platform_context.set_rest subscribe",this.set_rest.bind(this));
+        this.openFailures = 0;
     }
 
     open(){
+        if (this.openFailures >= kOpenFailureThreshold) {
+            TangoWebappHelpers.error(`Failed to open event-stream to ${this.url}/tango/subscriptions/${this.id}/event-stream. Event system won't work! Try to refresh the page...`);
+            return;
+        }
+
         this.source = new EventSource(new TangoWebappPlatform.TangoRestApiRequest({url: this.url + "/tango"}).subscriptions(this.id).url + "/event-stream",{
             withCredentials: true
         });
 
         this.source.onerror = function(error){
+            TangoWebappHelpers.error("EventSource error!", error);
             console.error(error);
-            debugger
-        }
+            this.openFailures++;
+            setTimeout(this.open.bind(this), kEventSourceOpenTimeout);
+        }.bind(this);
     }
 
     close(){
@@ -109,13 +120,27 @@ export class Subscription{
             } else {
                 success({
                     timestamp: parseInt(event.lastEventId),
-                    data: event.data
+                    data: JSON.parse(event.data)
                 })
             }
         };
 
         event.listeners.push(listener);
         this.source.addEventListener(event.id, listener);
+    }
+
+    removeEventListener(target) {
+        const event = this.events.find(this._getPredicate(target));
+        if (event === undefined) return;
+
+
+        //remove listener
+        event.listeners.forEach(listener => {
+            this.source.removeEventListener(event.id, listener)
+        });
+        //clear listeners
+        event.listeners.length = 0;
+        //TODO unsubscribe
     }
 
     _getPredicate(target) {

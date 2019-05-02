@@ -101,15 +101,19 @@
          */
         _create_devices: function (data) {
             webix.promise.all(
-                data.values.devices.map(function (it) {
-                    return data.host.fetchDatabase()
-                        .then(function (db) {
-                            return db.addDevice([data.values.server, it, data.values.className])
-                        })
-                        .then(TangoWebappHelpers.log.bind(null, "Device " + it + " has been added"))
-                        .fail(TangoWebappHelpers.error.bind(null, "Failed to add device " + it));
+                data.values.devices.map(function (name) {
+                    OpenAjax.hub.publish("tango_webapp.device_add", {
+                        data: {
+                            device: {
+                                server: data.values.server,
+                                name,
+                                clazz: data.values.className
+                            },
+                            host: data.host
+                        }
+                    });
                 })
-            ).then($$('devices_tree').tree.updateRoot.bind($$('devices_tree').tree, PlatformContext));
+            );
         },
         _ui: function () {
             return {
