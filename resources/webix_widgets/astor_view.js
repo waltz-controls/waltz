@@ -29,9 +29,26 @@ const astor = webix.protoUI({
     name: 'astor',
     tango_host: null,
     starter: null,
+    cleanSubscriptions() {
+        PlatformContext.subscription.removeEventListener({
+            host: this.tango_host.id,
+            device: `tango/admin/${this.tango_host.host}`,
+            attribute: "Servers",
+            type: "change"
+        });
+    },
     async initialize() {
+        this.enable();
         this.$$('header').setValues(this.tango_host);
-        this.starter = await this.tango_host.fetchDevice(`tango/admin/${this.tango_host.host}`);
+        if (this.tango_host && this.starter) this.cleanSubscriptions();
+        try {
+            this.starter = await this.tango_host.fetchDevice(`tango/admin/${this.tango_host.host}`);
+        } catch (e) {
+            //TODO show overlay - starter is not defined
+            TangoWebappHelpers.error("Starter is not installed or host name does not match!", e);
+            this.disable();
+            return;
+        }
 
         this.$$('servers').clearAll();
         this.$$('servers').parse(
@@ -39,14 +56,27 @@ const astor = webix.protoUI({
                 .then(v => v.value.map(el => el.split("\t")))
                 .then(values => values.map(([name, state, controlled, level]) => new TangoServer(name, state, level, this.tango_host.fetchDevice(`dserver/${name}`)))));
 
-        debugger
+        PlatformContext.subscription.addEventListener({
+                host: this.tango_host.id,
+                device: `tango/admin/${this.tango_host.host}`,
+                attribute: "Servers",
+                type: "change"
+            },
+            function (event) {
+                this._update_servers(event.data.map(el => el.split("\t")));
+            }.bind(this),
+            function (error) {
+                TangoWebappHelpers.error(error);
+            }.bind(this));
+    },
+    _update_servers(values) {
+        const servers = values.map(([name, state, controlled, level]) => new TangoServer(name, state, level, this.tango_host.fetchDevice(`dserver/${name}`)));
+        servers.forEach(server => this.$$('servers').updateItem(server.id, server));
     },
     async run() {
         if (this.starter != null)
             (await this.starter.fetchAttr("Servers")).read()
-                .then(v => v.value.map(el => el.split("\t")))
-                .then(values => values.map(([name, state, controlled, level]) => new TangoServer(name, state, level, this.tango_host.fetchDevice(`dserver/${name}`))))
-                .then(servers => servers.forEach(server => this.$$('servers').updateItem(server.id, server)));
+                .then(v => this._update_servers(v.value.map(el => el.split("\t"))));
     },
     _execute_for_all(cmdName) {
         webix.promise.all(
@@ -296,7 +326,8 @@ const astor = webix.protoUI({
 
         this.$ready.push(() => {
             this.$$('info').bind(config.context.devices);
-        })
+            //TODO bind devices to servers
+        });
     },
     defaults: {
         on: {
