@@ -122,14 +122,20 @@ const astor = webix.protoUI({
     devStart() {
         this._execute_for_all("DevStart");
     },
-    devAdd(newDev) {
+    devAdd(name, clazz) {
         const $$devices = this.$$('devices');
         const server = $$devices.config.server;
-        const clazz = $$devices.getItem($$devices.getFirstId()).clazz;//TODO drop down list for multiple class servers
         if (server != null)
-            this.tango_host.fetchDatabase().then(db => {
-                db.addDevice([server.name, newDev, clazz])
-            })
+            OpenAjax.hub.publish("tango_webapp.device_add", {
+                data: {
+                    device: {
+                        server: server.name,
+                        name,
+                        clazz
+                    },
+                    host: this.tango_host
+                }
+            });
     },
     devRestart() {
         const $$devices = this.$$('devices');
@@ -264,11 +270,19 @@ const astor = webix.protoUI({
                                 },
                                 {
                                     view: "form",
+                                    id: "frmNewDevice",
                                     cols: [
                                         {
                                             view: "text",
-                                            name: "devNewName",
+                                            name: "name",
                                             placeholder: "domain/family/member",
+                                            validate: webix.rules.isNotEmpty,
+                                            gravity: 2
+                                        },
+                                        {
+                                            view: "text",
+                                            name: "clazz",
+                                            placeholder: "Tango class",
                                             validate: webix.rules.isNotEmpty
                                         },
                                         {
@@ -279,7 +293,9 @@ const astor = webix.protoUI({
                                             click() {
                                                 const form = this.getFormView();
                                                 if (form.validate())
-                                                    this.getTopParentView().devAdd(form.elements.devNewName.getValue());
+                                                    this.getTopParentView().devAdd(
+                                                        form.elements.name.getValue(),
+                                                        form.elements.clazz.getValue());
                                             }
                                         },
                                         {
@@ -353,6 +369,7 @@ const astor = webix.protoUI({
 
         this.$ready.push(() => {
             this.$$('info').bind(config.context.devices);
+            this.$$('frmNewDevice').bind(this.$$("devices"));
             //TODO bind devices to servers
         });
     },
