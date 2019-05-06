@@ -12,7 +12,7 @@ Login.MainController = class extends MVC.Controller {
             rows:[
                 {
                     borderless: true,
-                    autoheight:true,
+                    height:240,
                     template: function () {
                         return "<div style='padding-top: 3em; width:100%'>" +
                             "<img style=' display:block; margin:auto; max-width: 100%; max-height: 100%;" +
@@ -20,7 +20,6 @@ Login.MainController = class extends MVC.Controller {
                     }
                 },
                 {
-                    gravity: 3,
                     rows: [
                         {},
                         {
