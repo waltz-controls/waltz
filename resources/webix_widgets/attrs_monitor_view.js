@@ -40,17 +40,9 @@ import {kNonPlottableDataTypes} from "./plot.js";
                     view:"fieldset",
                     label: "Show/hide columns",
                     body: {
-                        cols: [
-                            {view: "checkbox", label: "Device", labelPosition: "top", name: "device_id", value: 1},
-                            {view: "checkbox", label: "Attribute", labelPosition: "top", name: "label", value: 1},
-                            {view: "checkbox", label: "Value", labelPosition: "top", name: "value", value: 1},
-                            {view: "checkbox", label: "Quality", labelPosition: "top", name: "quality"},
-                            {view: "checkbox", label: "Last updated", labelPosition: "top", name: "timestamp"},
-                            {view: "checkbox", label: "Unit", labelPosition: "top", name: "unit"},
-                            {view: "checkbox", label: "Description", labelPosition: "top", name: "description"},
-                            {view: "checkbox", label: "Plot", labelPosition: "top", name: "stream"},
-                            {view: "checkbox", label: "Remove", labelPosition: "top", name: "remove", value: 1}
-                        ]
+                        cols: kScalarsColumns
+                                .filter(column => !column.hidden)
+                                .map(column => ({view: "checkbox", label: column.label ? column.label : column.header, labelPosition: "top", name: column.id}))
                     }
                 },
                 {
@@ -69,6 +61,56 @@ import {kNonPlottableDataTypes} from "./plot.js";
         }
     };
 
+    const kScalarsColumns = [
+        {
+            id: 'device_id',
+            // header: ["Device", {content: "textFilter"}], //TODO custom filter https://docs.webix.com/datatable__headers_footers.html#customheaderandfootercontent
+            header: "Device",
+            width: TangoWebappPlatform.consts.NAME_COLUMN_WIDTH,
+            sort: "string", fillspace:true,
+            template:function(obj){
+                return PlatformContext.devices.getItem(obj.device_id).display_name;
+            }
+        },
+        {
+            id: "label",
+            header: ["Attribute", {content: "textFilter"}],
+            width: TangoWebappPlatform.consts.NAME_COLUMN_WIDTH,
+            sort: "string", fillspace:true,
+            label: "Attribute"
+        },
+        {id: "value", header: "Value", editor: "inline-text", fillspace:true, template(obj){
+                return `<input type='text' value='${obj.value}' style="width: 100%">`;
+            }},
+        {id: "value_w", hidden: true},
+        {id: "save", tooltip: "Save all",header: '', label: '<span class="webix_icon fa-save"></span>', width: 30, template: '<span class="save webix_icon fa-save"></span>'},
+        {id: "quality", header: "Quality", width: 180, sort: "string"},
+        {
+            id: "timestamp", header: "Last updated", width: 180, fillspace:true, template: function (obj) {
+                return TangoWebappPlatform.consts.LOG_DATE_FORMATTER(new Date(obj.timestamp));
+            }
+        },
+        {id: "unit", header: "Unit", width: 60},
+        {id: "description", header: "Description",fillspace:true},
+        {id: "data_type", hidden:true},
+        {
+            id: "stream", header: "", width: 30, template: function (obj) {
+                if(kNonPlottableDataTypes.includes(obj.data_type)) return "<span class='webix_icon fa-ban'></span>";
+                if (obj.plotted)
+                    return "<span class='chart webix_icon fa-times-circle-o'></span>";
+                else
+                    return "<span class='chart webix_icon fa-line-chart'></span>";
+            },
+            label: "Plot"
+        },
+        {
+            id: "remove", header: "<span class='remove-all webix_icon fa-trash'></span>", width: 30,
+            tooltip: "Remove all",
+            template: function (obj) {
+                return "<span class='remove webix_icon fa-trash'></span>";
+            }
+        }
+    ];
 
     /**
      * @function
@@ -94,6 +136,7 @@ import {kNonPlottableDataTypes} from "./plot.js";
                 device_id: 1,
                 label: 1,
                 value: 1,
+                save: 1,
                 stream: 1,
                 quality: 0,
                 timestamp: 0,
@@ -118,50 +161,7 @@ import {kNonPlottableDataTypes} from "./plot.js";
                         else delete item.$css;
                     }
                 },
-                columns: [
-                    {
-                        id: 'device_id',
-                        // header: ["Device", {content: "textFilter"}], //TODO custom filter https://docs.webix.com/datatable__headers_footers.html#customheaderandfootercontent
-                        header: "Device",
-                        width: TangoWebappPlatform.consts.NAME_COLUMN_WIDTH,
-                        sort: "string", fillspace:true,
-                        template:function(obj){
-                            return PlatformContext.devices.getItem(obj.device_id).display_name;
-                        }
-                    },
-                    {
-                        id: "label",
-                        header: ["Attribute", {content: "textFilter"}],
-                        width: TangoWebappPlatform.consts.NAME_COLUMN_WIDTH,
-                        sort: "string", fillspace:true
-                    },
-                    {id: "value", header: "Value", width: 200, editor: "attr_value_editor", fillspace:true},
-                    {id: "quality", header: "Quality", width: 180, sort: "string"},
-                    {
-                        id: "timestamp", header: "Last updated", width: 180, fillspace:true, template: function (obj) {
-                            return TangoWebappPlatform.consts.LOG_DATE_FORMATTER(new Date(obj.timestamp));
-                        }
-                    },
-                    {id: "unit", header: "Unit", width: 60},
-                    {id: "description", header: "Description",fillspace:true},
-                    {id: "data_type", hidden:true, fillspace:true},
-                    {
-                        id: "stream", header: "", width: 30, template: function (obj) {
-                            if(kNonPlottableDataTypes.includes(obj.data_type)) return "<span class='webix_icon fa-ban'></span>";
-                            if (obj.plotted)
-                                return "<span class='chart webix_icon fa-times-circle-o'></span>";
-                            else
-                                return "<span class='chart webix_icon fa-line-chart'></span>";
-                        }
-                    },
-                    {
-                        id: "remove", header: "<span class='remove-all webix_icon fa-trash'></span>", width: 30,
-                        tooltip: "Remove all",
-                        template: function (obj) {
-                            return "<span class='remove webix_icon fa-trash'></span>";
-                        }
-                    }
-                ],
+                columns: kScalarsColumns,
                 on: {
                     onHeaderClick(obj){
                         if(obj.column === 'remove'){
@@ -172,6 +172,13 @@ import {kNonPlottableDataTypes} from "./plot.js";
                             });
                             return false;
                         }
+                        if(obj.column === 'save'){
+                            debugger
+                            return false;
+                        }
+                    },
+                    onBeforeEditStop(state, editor){
+                        this.getItem(editor.row).value_w = state.value;
                     }
                 }
             }
@@ -287,6 +294,11 @@ import {kNonPlottableDataTypes} from "./plot.js";
                     this.getTopParentView().removeItem(id.row);
 
                     return false;
+                },
+                "save":function(event, id){
+                    this.editStop();
+                    this.getTopParentView().writeAttribute(id.row, this.getItem(id.row).value_w);
+                    return false;
                 }
             }
         };
@@ -360,6 +372,18 @@ import {kNonPlottableDataTypes} from "./plot.js";
                 body
             });
             this._view_id_to_attr_id[id] = attr.id;
+        },
+        writeAttribute(id, value){
+            const attr = TangoAttribute.find_one(id);
+
+            if(attr.info.writable.includes('WRITE'))
+                UserAction.writeAttribute(attr, value)
+                    .then(function(){
+                        debugger
+                    })
+                    .fail(function(err){
+                        TangoWebappHelpers.error("Failed to write attribute", err);
+                    });
         },
         /**
          * @param id
