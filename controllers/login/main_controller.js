@@ -11,13 +11,17 @@ Login.MainController = class extends MVC.Controller {
             view: 'layout',
             rows:[
                 {
-                    type: "header",
-                    height: 252,
+                    borderless: true,
+                    autoheight:true,
                     template: function () {
-                        return "<div style='height:232px; padding-top: 10px; padding-bottom: 10px; width:100%'><img style='display:block; margin:auto; max-width: 100%; max-height: 100%;' src='../../images/platform/tango_in_color.png'/></div>";
+                        return "<div style='padding-top: 3em; width:100%'>" +
+                            "<img style=' display:block; margin:auto; max-width: 100%; max-height: 100%;" +
+                            "' src='../../images/platform/logo_Waltz.svg'/></div>";
                     }
                 },
-                {rows: [
+                {
+                    gravity: 3,
+                    rows: [
                         {},
                         {
                             cols: [{}, {
