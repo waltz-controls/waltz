@@ -10,6 +10,7 @@ export class Subscriptions {
     }
 
     async set_rest(event){
+        console.log("Subscriptions.instance.set_rest");
         this.url = event.data.rest.url;
         event.data.subscription = await Subscriptions.createSubscription();
         event.data.subscription.open()
@@ -41,6 +42,8 @@ export class Event{
         this.target = target;
         this.listeners = [];
     }
+
+    //TODO subscribe
 }
 
 const kEventSourceOpenTimeout = 3000;
@@ -54,15 +57,9 @@ export class Subscription{
         this.url = url;
         this.source = null;
         this.action = new MVC.Controller.Action.Subscribe("platform_context.set_rest subscribe",this.set_rest.bind(this));
-        this.openFailures = 0;
     }
 
     open(){
-        if (this.openFailures >= kOpenFailureThreshold) {
-            TangoWebappHelpers.error(`Failed to open event-stream to ${this.url}/tango/subscriptions/${this.id}/event-stream. Event system won't work! Try to refresh the page...`);
-            return;
-        }
-
         this.source = new EventSource(new TangoWebappPlatform.TangoRestApiRequest({url: this.url + "/tango"}).subscriptions(this.id).url + "/event-stream",{
             withCredentials: true
         });
@@ -70,13 +67,28 @@ export class Subscription{
         this.source.onerror = function(error){
             TangoWebappHelpers.error("EventSource error!", error);
             console.error(error);
-            this.openFailures++;
-            setTimeout(this.open.bind(this), kEventSourceOpenTimeout);
+            //TODO refactor resubscription
+            setTimeout(webix.once(function () {
+                Subscriptions.instance.set_rest({
+                    data: PlatformContext
+                });
+
+                this.events.forEach(event => PlatformContext.subscription._subscribe(event.target));
+
+                PlatformContext.subscription.addEventListeners(this._events2Listeners());
+            }.bind(this)), kEventSourceOpenTimeout);
         }.bind(this);
     }
 
     close(){
         this.source.close();
+    }
+
+    _events2Listeners() {
+        return this.events.map(event => event.listeners.map(listener => {
+            return {id: event.id, listener}
+        }))
+            .reduce((acc, val) => acc.concat(val), [])
     }
 
     set_rest(event){
@@ -86,12 +98,24 @@ export class Subscription{
         this.url = event.data.rest.url;
         this.open();
 
-        const listeners = this.events.map(event => event.listeners.map(listener => {return {id: event.id, listener}}))
-            .reduce((acc,val) => acc.concat(val), []);
+        const listeners = this._events2Listeners();
+
+        this.addEventListeners(listeners);
+    }
+
+    addEventListeners(listeners) {
         listeners.forEach(listener => {
             webix.message("restore addEventListener", "debug");
             this.source.addEventListener(listener.id, listener.listener);
         });
+    }
+
+    async _subscribe(target) {
+        const response = await new TangoWebappPlatform.TangoRestApiRequest({url: this.url + "/tango"}).subscriptions(this.id).put("", [target]);
+        this.events.push.apply(this.events, response.map(event => new Event(event.id, event.target)));
+        const event = this.events.find(this._getPredicate(target));
+        if (event === undefined) throw new Error("failed to subscribe...");
+        return event;
     }
 
     /**
@@ -105,10 +129,7 @@ export class Subscription{
         let event = this.events.find(this._getPredicate(target));
 
         if(event === undefined){
-            const response = await new TangoWebappPlatform.TangoRestApiRequest({url: this.url + "/tango"}).subscriptions(this.id).put("", [target]);
-            this.events.push.apply(this.events,response.map(event => new Event(event.id, event.target)));
-            event = this.events.find(this._getPredicate(target));
-            if(event === undefined) throw new Error("failed to subscribe...");
+            event = await this._subscribe(target);
         }
 
         const listener = function(event){
