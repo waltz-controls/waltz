@@ -14,6 +14,38 @@ const filterDataSourcesList = (dataSource, value)=>{
     return dataSource.src.includes(value) || dataSource.nxPath.includes(value);
 };
 
+function newSortButton(by) {
+    return {
+        view: "button",
+        //TODO requires webix 6.x
+        // css: "webix_transparent",
+        type: "icon",
+        label: `<span class='webix_strong'>${MVC.String.classize(by)}</span>`,
+        dir: "asc",
+        click() {
+            this.getTopParentView().$$('listDataSources').sort(by, this.config.dir);
+            this.config.dir = this.config.dir === "asc" ? "desc" : "asc";
+        }
+    }
+}
+
+function newSort() {
+    return {
+        view: "form",
+        height: 30,
+        cols: [
+            {
+                view: "label",
+                label: "Sort by:",
+                maxWidth: 80,
+            },
+            newSortButton('src'),
+            newSortButton('nxPath'),
+            {}
+        ]
+    }
+}
+
 const dataSourcesView = {
     padding: 15,
     rows: [
@@ -21,6 +53,7 @@ const dataSourcesView = {
             template: "Nexus file data sources",
             type: "header"
         },
+        newSort(),
         newSearch("listDataSources", filterDataSourcesList),
         {
             view: "list",
