@@ -220,14 +220,11 @@ const device_view_panel = webix.protoUI({
         this.$$('device_control_pipe').reset();
     },
     _sync(device){
-        device.commands.waitData.then(()=>{
-            this.$$('commands').data.importData(device.commands.data);
-        });
-        device.attrs.waitData.then(()=>{
-            this.$$('attrs').data.importData(device.attrs.data);
-        });
-        device.pipes.waitData.then(()=>{
-            this.$$('pipes').data.importData(device.pipes.data);
+        ['commands','attrs','pipes'].forEach(kind => {
+            device[kind].waitData.then(()=>{
+                this.$$(kind).data.importData(device[kind].data);
+                this.$$(kind).waitData.resolve();
+            });
         });
     },
     updateHeader(device){
@@ -282,6 +279,13 @@ const device_view_panel = webix.protoUI({
                     OpenAjax.hub.publish("tango_webapp.device_loaded", {data: this.device.data});
                     this.setDevice(this.device.data);
                 }
+            },
+            "tango_webapp.item_selected subscribe"(event){
+                if(!["attrs","commands","pipes"].includes(event.data.kind)) return;
+                const $$kind = this.$$(event.data.kind);
+                $$kind.waitData.then(()=>{
+                    $$kind.select(event.data.id)
+                });
             }
         }
     }

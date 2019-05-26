@@ -179,6 +179,25 @@ import {kNonPlottableDataTypes} from "./plot.js";
                     },
                     onBeforeEditStop(state, editor){
                         this.getItem(editor.row).value_w = state.value;
+                    },
+                    /**
+                     * Fires {@link event:item_selected}
+                     *
+                     * @fires "tango_webapp.item_selected"
+                     * @param id
+                     * @memberof  ui.AttrsMonitorView.scalars
+                     */
+                    onAfterSelect:function(id){
+                        const item = this.getItem(id.id);
+
+                        PlatformContext.devices.setCursor(item.device_id);
+
+                        OpenAjax.hub.publish("tango_webapp.item_selected", {
+                            data: {
+                                id: id.id,
+                                kind: 'attrs'
+                            }
+                        });
                     }
                 }
             }
@@ -243,29 +262,7 @@ import {kNonPlottableDataTypes} from "./plot.js";
         },
         defaults: {
             select: true,
-            resizeColumn: true,
-            on: {
-                /**
-                 * Fires {@link event:item_selected}
-                 *
-                 * @fires "tango_webapp.item_selected"
-                 * @param id
-                 * @memberof  ui.AttrsMonitorView.scalars
-                 */
-                onAfterSelect:function(id){
-                    var item = this.getItem(id.id);
-
-
-                    PlatformContext.devices.setCursor(item.device_id);
-
-                    OpenAjax.hub.publish("tango_webapp.item_selected", {
-                        data: {
-                            id: id.id,
-                            kind: 'attrs'
-                        }
-                    });
-                }
-            }
+            resizeColumn: true
         }
     }, TangoWebappPlatform.mixin.Stateful, webix.EventSystem, webix.OverlayBox, webix.ui.datatable);
     
