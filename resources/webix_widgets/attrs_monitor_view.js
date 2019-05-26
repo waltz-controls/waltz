@@ -180,6 +180,10 @@ import {kNonPlottableDataTypes} from "./plot.js";
                     onBeforeEditStop(state, editor){
                         this.getItem(editor.row).value_w = state.value;
                     },
+                    onItemClick(id) {
+                        if (this.getSelectedId().row === id.row)
+                            this.callEvent("onAfterSelect", [id]);
+                    },
                     /**
                      * Fires {@link event:item_selected}
                      *
@@ -188,13 +192,13 @@ import {kNonPlottableDataTypes} from "./plot.js";
                      * @memberof  ui.AttrsMonitorView.scalars
                      */
                     onAfterSelect:function(id){
-                        const item = this.getItem(id.id);
+                        const item = this.getItem(id.row);
 
                         PlatformContext.devices.setCursor(item.device_id);
 
                         OpenAjax.hub.publish("tango_webapp.item_selected", {
                             data: {
-                                id: id.id,
+                                id: item.id,
                                 kind: 'attrs'
                             }
                         });
