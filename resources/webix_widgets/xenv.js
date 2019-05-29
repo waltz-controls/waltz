@@ -86,6 +86,7 @@ const xenvHq = webix.protoUI({
             if(state.data[server])
                 await this.dropDevice(state.data[server]);
         }
+            this.$$('main_tab').run();
         this.hideProgress();
         
         await this.loadProfiles();
