@@ -113,6 +113,12 @@ const astor = webix.protoUI({
             this.tango_host.fetchDatabase()
                 .then(db => db.getDeviceMemberList('tango/admin/*'))
                 .then(resp => resp.output.map(name => new TangoAdmin(`${this.tango_host.id}/tango/admin/${name}`,name)))
+                .then(admins => {
+                    if(admins.length > 0)
+                        return admins;
+                    else
+                        throw new Error(`Tango host ${this.tango_host.name} does not have any admin devices!`);
+                })
                 .fail(err => {
                     TangoWebappHelpers.error("Failed to load Tango admin(s)!", err);
                     this.disable()
