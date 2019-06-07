@@ -27,6 +27,13 @@ class TangoServer {
     }
 }
 
+class TangoAdmin {
+    constructor(id, name) {
+        this.id = id;
+        this.name = name;
+    }
+}
+
 class TangoDevice {
     constructor(clazz, name, server) {
         this.clazz = clazz;
@@ -59,12 +66,14 @@ const astor = webix.protoUI({
                 .then(resp => resp.output.split("\n").map(value => ({value}))
                 ));
     },
-    async initialize() {
-        this.enable();
-        this.$$('header').setValues(this.tango_host);
-        if (this.tango_host && this.starter) this.cleanSubscriptions();
+    /**
+     *
+     * @param {TangoAdmin} admin
+     * @return {Promise<void>}
+     */
+    async initializeAdmin(admin){
         try {
-            this.starter = await this.tango_host.fetchDevice(`tango/admin/${this.tango_host.host}`);
+            this.starter = await this.tango_host.fetchDevice(`tango/admin/${admin.name}`);
         } catch (e) {
             //TODO show overlay - starter is not defined
             TangoWebappHelpers.error("Starter is not installed or host name does not match!", e);
@@ -82,7 +91,7 @@ const astor = webix.protoUI({
 
         PlatformContext.subscription.addEventListener({
                 host: this.tango_host.id,
-                device: `tango/admin/${this.tango_host.host}`,
+                device: `tango/admin/${admin.name}`,
                 attribute: "Servers",
                 type: "change"
             },
@@ -93,6 +102,24 @@ const astor = webix.protoUI({
             function (error) {
                 TangoWebappHelpers.error(error);
             }.bind(this));
+    },
+    async initialize() {
+        this.enable();
+        this.$$('header').setValues(this.tango_host);
+        if (this.tango_host && this.starter) this.cleanSubscriptions();
+
+        this.$$('hosts').clearAll();
+        this.$$('hosts').parse(
+            this.tango_host.fetchDatabase()
+                .then(db => db.getDeviceMemberList('tango/admin/*'))
+                .then(resp => resp.output.map(name => new TangoAdmin(`${this.tango_host.id}/tango/admin/${name}`,name)))
+                .fail(err => {
+                    TangoWebappHelpers.error("Failed to load Tango admin(s)!", err);
+                    this.disable()
+                })
+        );
+
+
     },
     _update_servers(values) {
         const servers = values.map(([name, state, controlled, level]) => new TangoServer(name, state, level, this.tango_host.fetchDevice(`dserver/${name}`)));
@@ -174,6 +201,30 @@ const astor = webix.protoUI({
                     cols: [
                         {
                             rows: [
+                                {
+                                    view: "list",
+                                    id: "hosts",
+                                    select: true,
+                                    autoheight:true,
+                                    template: "<span class='webix_icon fa-desktop'></span>#name#",
+                                    on: {
+                                        onAfterSelect(id) {
+                                            const admin = this.getItem(id);
+
+
+                                            this.getTopParentView().initializeAdmin(admin).then(() => {
+                                                PlatformContext.devices.setCursor(admin.id);
+                                            });
+                                        }
+                                    },
+                                    click(id){
+                                        PlatformContext.devices.setCursor(id);
+                                    }
+                                },
+                                {
+                                    template: "Tango DServers:",
+                                    type: "header"
+                                },
                                 {
                                     view: "unitlist",
                                     id: "servers",
