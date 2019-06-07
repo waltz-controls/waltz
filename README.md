@@ -1,11 +1,15 @@
-[![logo](http://www.tango-controls.org/static/tango/img/logo_tangocontrols.png)](http://www.tango-controls.org)
+[![](images/logo_Waltz_small.png)](http://www.waltz-controls.space/?badge=latest)
+
+
+[![logo](http://www.tango-controls.org/static/tango/img/logo_tangocontrols.png)](http://www.tango-controls.org) 
+
 
 [![Codacy Badge](https://api.codacy.com/project/badge/Grade/512287ad5da94ac7af157a94eec80c5a)](https://www.codacy.com/app/tango-controls/tango-webapp?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=tango-controls/tango-webapp&amp;utm_campaign=Badge_Grade)
 [![codebeat badge](https://codebeat.co/badges/23388ba2-feda-479d-a8c8-abf68eb7b01a)](https://codebeat.co/projects/github-com-tango-controls-tango-webapp-master)
 [![Build Status](https://travis-ci.org/tango-controls/waltz.svg?branch=master)](https://travis-ci.org/tango-controls/waltz)
 
 [![Docs](https://img.shields.io/badge/Generated-Docs-green.svg)](https://tango-controls.github.io/waltz/)
-[![Documentation Status](https://readthedocs.org/projects/waltz-docs/badge/?version=latest)](https://waltz-docs.readthedocs.io/en/latest/?badge=latest)
+[![Documentation Status](https://readthedocs.org/projects/waltz-docs/badge/?version=latest)](http://www.waltz-controls.space?badge=latest)
 
 [![release](https://img.shields.io/github/release/tango-controls/tango-webapp.svg?style=flat)](https://github.com/tango-controls/tango-webapp/releases/latest)
 
@@ -29,8 +33,8 @@ This project is an attempt to implement Tango Controls Roadmap Feature Request #
 
 # Documentation
 
-[Waltz User/Developer guides](https://waltz-docs.readthedocs.io/en/latest/?badge=latest)
-
+[Waltz User/Developer guides](http://www.waltz-controls.space/?badge=latest)
+ 
 [WaltzPlatform API reference](https://tango-controls.github.io/waltz/)
 
 ## Other useful resources
