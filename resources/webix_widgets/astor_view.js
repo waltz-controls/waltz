@@ -31,6 +31,7 @@ class TangoAdmin {
     constructor(id, name) {
         this.id = id;
         this.name = name;
+        this.servers = [];
     }
 }
 
@@ -41,6 +42,65 @@ class TangoDevice {
         this.server = server;
     }
 }
+
+const hosts = {
+    view: "list",
+    id: "hosts",
+    select: true,
+    autoheight:true,
+    template: "<span class='webix_icon fa-desktop'></span>#name#",
+    on: {
+        onAfterSelect(id) {
+            const admin = this.getItem(id);
+
+
+            this.getTopParentView().initializeAdmin(admin).then(() => {
+                PlatformContext.devices.setCursor(admin.id);
+            });
+        },
+        onAfterLoad(){
+            if(this.count() === 1){
+                this.select(this.getFirstId());
+            }
+        }
+    },
+    click(id){
+        PlatformContext.devices.setCursor(id);
+    }
+};
+
+const servers = {
+    view: "unitlist",
+    id: "servers",
+    select: true,
+    multiselect: true,
+    uniteBy(obj) {
+        return obj.level;
+    },
+    template: "<span class='webix_icon fa-server'></span>#name# [#state#]",
+    on: {
+        onAfterSelect(id) {
+            const server = this.getItem(id);
+            const $$devices = this.getTopParentView().$$('devices');
+            $$devices.config.server = server;
+            server.device
+                .then(device => {
+                    PlatformContext.devices.setCursor(device.id);
+                    return device;
+                })
+                .then(device => {
+                    return device.executeCommand("QueryDevice");
+                })
+                .then(resp => {
+                    $$devices.clearAll();
+                    $$devices.parse(resp.output.map(el => new TangoDevice(el.split("::")[0], el.split("::")[1], server.name)));
+                })
+                .fail(() => {
+                    $$devices.clearAll();
+                })
+        }
+    }
+};
 
 /**
  *
@@ -207,62 +267,12 @@ const astor = webix.protoUI({
                     cols: [
                         {
                             rows: [
-                                {
-                                    view: "list",
-                                    id: "hosts",
-                                    select: true,
-                                    autoheight:true,
-                                    template: "<span class='webix_icon fa-desktop'></span>#name#",
-                                    on: {
-                                        onAfterSelect(id) {
-                                            const admin = this.getItem(id);
-
-
-                                            this.getTopParentView().initializeAdmin(admin).then(() => {
-                                                PlatformContext.devices.setCursor(admin.id);
-                                            });
-                                        }
-                                    },
-                                    click(id){
-                                        PlatformContext.devices.setCursor(id);
-                                    }
-                                },
+                                hosts,
                                 {
                                     template: "Tango DServers:",
                                     type: "header"
                                 },
-                                {
-                                    view: "unitlist",
-                                    id: "servers",
-                                    select: true,
-                                    multiselect: true,
-                                    uniteBy(obj) {
-                                        return obj.level;
-                                    },
-                                    template: "<span class='webix_icon fa-server'></span>#name# [#state#]",
-                                    on: {
-                                        onAfterSelect(id) {
-                                            const server = this.getItem(id);
-                                            const $$devices = this.getTopParentView().$$('devices');
-                                            $$devices.config.server = server;
-                                            server.device
-                                                .then(device => {
-                                                    PlatformContext.devices.setCursor(device.id);
-                                                    return device;
-                                                })
-                                                .then(device => {
-                                                    return device.executeCommand("QueryDevice");
-                                                })
-                                                .then(resp => {
-                                                    $$devices.clearAll();
-                                                    $$devices.parse(resp.output.map(el => new TangoDevice(el.split("::")[0], el.split("::")[1], server.name)));
-                                                })
-                                                .fail(() => {
-                                                    $$devices.clearAll();
-                                                })
-                                        }
-                                    }
-                                },
+                                servers,
                                 {
                                     view: "toolbar",
                                     cols: [
