@@ -66,6 +66,8 @@ const table_datatable = webix.protoUI({
                             return `<span class="webix_icon fa-exclamation-triangle" style="color: red"></span>`;
                         case "ATTR_WARNING":
                             return `<span class="webix_icon fa-exclamation-triangle" style="color: orange"></span>`;
+                        case "FAILURE":
+                            return `<span class="webix_icon fa-exclamation" style="color: red"></span>`;
                         case "VALID":
                         default:
                             return "";
@@ -78,6 +80,7 @@ const table_datatable = webix.protoUI({
         });
         this.refreshColumns();
     },
+    _tracked_attrs:new Set([]),
     /**
      *
      * @param {TangoAttribute} attr
@@ -95,21 +98,24 @@ const table_datatable = webix.protoUI({
                 [attr.name]: "",
                 [attr.name + "_quality"]: "",
                 _device: attr.getDevice(),
-                _attrs:[]
+                _attrs:new Set(this._tracked_attrs)
             });
 
-        this.data.each(item => item._attrs.push(attr.name));
+        this._tracked_attrs.add(attr.name);
+        this.data.each(item => item._attrs.add(attr.name));
 
         this.run();
     },
     run(){
         this.data.each(item => {
-            item._device.fetchAttrValues(item._attrs).then(resp => {
+            item._device.fetchAttrValues([...item._attrs]).then(resp => {
                 const update = {};
                 resp.forEach(output => {
                     update[output.name] = output.value;
                     update[output.name + "_quality"] = output.quality;
                 });
+
+                //TODO remove failed attrs
 
                 this.updateItem(item.id, update);
             })
