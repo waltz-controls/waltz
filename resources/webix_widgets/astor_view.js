@@ -28,9 +28,11 @@ class TangoServer {
 }
 
 class TangoAdmin {
-    constructor(id, name) {
+    constructor(id, name, promiseDevice) {
         this.id = id;
         this.name = name;
+        this.state = -1;//see esrf.DevState.java
+        this.promiseDevice = promiseDevice;
         this.servers = [];
     }
 }
@@ -48,7 +50,22 @@ const hosts = {
     id: "hosts",
     select: true,
     autoheight:true,
-    template: "<span class='webix_icon fa-desktop'></span>#name#",
+    template: "<span class='webix_icon fa-desktop' style='color: {common.highlightColor()}'></span><span style='color: {common.highlightColor()}'>#name#</span>",
+    type: {
+        highlightColor(obj){
+            switch (obj.state) {
+                case 6://MOVING
+                    return "blue";
+                case 8://FAULT
+                    return "red";
+                case 0://ON
+                    return "green";
+                case -1://UNKNOWN
+                default:
+                    return "gray";
+            }
+        }
+    },
     on: {
         onAfterSelect(id) {
             const admin = this.getItem(id);
@@ -59,6 +76,8 @@ const hosts = {
             });
         },
         onAfterLoad(){
+            this.getTopParentView().run();
+
             if(this.count() === 1){
                 this.select(this.getFirstId());
             }
@@ -77,7 +96,21 @@ const servers = {
     uniteBy(obj) {
         return obj.level;
     },
-    template: "<span class='webix_icon fa-server'></span>#name# [#state#]",
+    template: "<span class='webix_icon fa-server' style='color: {common.highlightColor()}'></span><span style='color: {common.highlightColor()}'>#name#</span>",
+    type: {
+        highlightColor(obj){
+            switch (obj._state) {
+                case "MOVING":
+                    return "blue";
+                case "FAULT":
+                    return "red";
+                case "ON":
+                    return "green";
+                default:
+                    return "gray";
+            }
+        }
+    },
     on: {
         onAfterSelect(id) {
             const server = this.getItem(id);
@@ -112,12 +145,15 @@ const astor = webix.protoUI({
     tango_host: null,
     starter: null,
     cleanSubscriptions() {
-        PlatformContext.subscription.removeEventListener({
-            host: this.tango_host.id,
-            device: `tango/admin/${this.tango_host.host}`,
-            attribute: "Servers",
-            type: "change"
+        this.$$('hosts').data.each(admin => {
+            PlatformContext.subscription.removeEventListener({
+                host: this.tango_host.id,
+                device: admin.id,
+                attribute: "Servers",
+                type: "change"
+            });
         });
+
     },
     async _update_log() {
         this.$$('log').clearAll();
@@ -125,6 +161,22 @@ const astor = webix.protoUI({
             (await this.starter.fetchCommand("DevReadLog")).execute("Starter")
                 .then(resp => resp.output.split("\n").map(value => ({value}))
                 ));
+    },
+    initializeSubscription(admin){
+        PlatformContext.subscription.addEventListener({
+                host: this.tango_host.id,
+                device: `tango/admin/${admin.name}`,
+                attribute: "Servers",
+                type: "change"
+            },
+            function (event) {
+                this._update_servers(event.data.map(el => el.split("\t")));
+                this._update_log();
+                console.debug(event);
+            }.bind(this),
+            function (error) {
+                TangoWebappHelpers.error(error);
+            }.bind(this));
     },
     /**
      *
@@ -149,19 +201,7 @@ const astor = webix.protoUI({
 
         this._update_log();
 
-        PlatformContext.subscription.addEventListener({
-                host: this.tango_host.id,
-                device: `tango/admin/${admin.name}`,
-                attribute: "Servers",
-                type: "change"
-            },
-            function (event) {
-                this._update_servers(event.data.map(el => el.split("\t")));
-                this._update_log();
-            }.bind(this),
-            function (error) {
-                TangoWebappHelpers.error(error);
-            }.bind(this));
+        this.initializeSubscription(admin);
     },
     async initialize() {
         this.enable();
@@ -172,7 +212,7 @@ const astor = webix.protoUI({
         this.$$('hosts').parse(
             this.tango_host.fetchDatabase()
                 .then(db => db.getDeviceMemberList('tango/admin/*'))
-                .then(resp => resp.output.map(name => new TangoAdmin(`${this.tango_host.id}/tango/admin/${name}`,name)))
+                .then(resp => resp.output.map(name => new TangoAdmin(`${this.tango_host.id}/tango/admin/${name}`,name, this.tango_host.fetchDevice(`tango/admin/${name}`))))
                 .then(admins => {
                     if(admins.length > 0)
                         return admins;
@@ -192,6 +232,11 @@ const astor = webix.protoUI({
         servers.forEach(server => this.$$('servers').updateItem(server.id, server));
     },
     async run() {
+        this.$$('hosts').data.each(admin => {
+            admin.promiseDevice.then(device => device.fetchAttrValue("HostState")
+                                                    .then(v => this.$$('hosts').updateItem(admin.id, {state:v})))
+        });
+
         if (this.starter != null) {
             (await this.starter.fetchAttr("Servers")).read()
                 .then(v => this._update_servers(v.value.map(el => el.split("\t"))));

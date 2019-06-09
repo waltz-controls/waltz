@@ -216,6 +216,14 @@ TangoDevice = TangoWebappPlatform.TangoDevice = TangoWebappPlatform.DataCollecti
                 });
         },
         /**
+        *
+        * @param attr
+        * @return {Promise<AttributeValue>}
+        */
+        fetchAttrValue(attr){
+            return this.fetchAttr(attr).then(attr => attr.read()).then(resp => resp.value);
+        },
+        /**
          *
          * @param attrs
          * @returns {Promise}
