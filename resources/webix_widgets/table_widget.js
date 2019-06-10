@@ -16,10 +16,10 @@ export const TableWidgetController = class extends MVC.Controller {
         let attr = await device.fetchAttr("double_scalar");
 
 
-        $$('table_widget').$$('datatable').addAttribute(attr);
+        $$('table_widget').addAttribute(attr);
 
         attr = await device.fetchAttr("long_scalar");
-        $$('table_widget').$$('datatable').addAttribute(attr);
+        $$('table_widget').addAttribute(attr);
 
     }
 };
@@ -133,6 +133,19 @@ const table_datatable = webix.protoUI({
 
         this.run();
     },
+    removeAttribute(name){
+        const col = this.config.columns.find(col => col.header[0].text.includes(name));
+        const index = this.config.columns.indexOf(col);
+        if (index > -1) {
+            this.config.columns.splice(index, 1);
+        } else {
+            throw new Error("assertion error");
+        }
+
+        this.refreshColumns();
+
+        this._tracked_attrs.delete(col.id)
+    },
     async addDevice(id){
         let device = TangoDevice.find_one(id);
         if(device == null) {
@@ -147,6 +160,7 @@ const table_datatable = webix.protoUI({
             }
         }
 
+        if(this.exists(device.id)) return;
         this.add({
             id: device.id,
             device: device.display_name,
@@ -172,6 +186,109 @@ const table_datatable = webix.protoUI({
     $init(config) {
         webix.extend(config, this._config());
 
+
+    }
+}, webix.ui.datatable);
+
+function newTableWidgetTable(){
+    return {
+        id:"datatable",
+        view:"table_datatable",
+        onClick: {
+            "remove-single":function(event, id){
+                this.remove(id.row);
+                if(this.count() === 0) this.removeColumns();
+                return false;
+            }
+        }
+    }
+}
+
+const settings = webix.protoUI({
+    name: "table_widget_settings",
+    _config(){
+        return {
+            cols:[{}]
+        }
+    },
+    removeAttribute(name){
+        const col = this.queryView({label:name});
+        this.removeView(col);
+    },
+    addAttribute(attr){
+        this.addView({
+            view:"button",
+            type:"icon",
+            icon:"trash",
+            label: attr.display_name,
+            click(){
+                this.getTopParentView().removeAttribute(this.data.label);
+            }
+        });
+    },
+    addDevice(id){
+        //NOP
+    },
+    $init(config){
+        webix.extend(config, this._config());
+    }
+    },webix.ui.form);
+
+function newSettings() {
+    return {
+        view: "table_widget_settings",
+        id: "settings",
+        hidden: true
+    };
+}
+
+//TODO extract
+function toolbar_extension(){
+    return [{
+        view: "button",
+        type: "icon",
+        icon: "cog",
+        maxWidth: 30,
+        tooltip: "Show/hide settings",
+        click: function () {
+            const $$settings = this.getTopParentView().$$('settings');
+            if($$settings.isVisible())
+                $$settings.hide();
+            else
+                $$settings.show();
+        }
+    }];
+}
+
+const table_widget = webix.protoUI({
+    name: "table_widget",
+    _ui(){
+        return {
+            rows:[
+                newTableWidgetTable(),
+                newSettings(),
+                newToolbar(toolbar_extension())
+            ]
+        }
+    },
+    removeAttribute(name){
+        this.$$('datatable').removeAttribute(name);
+        this.$$('settings').removeAttribute(name);
+    },
+    addAttribute(attr){
+        this.$$('datatable').addAttribute(attr);
+        this.$$('settings').addAttribute(attr);
+    },
+    addDevice(id){
+        this.$$('datatable').addDevice(id);
+        this.$$('settings').addDevice(id);
+    },
+    run(){
+        this.$$('datatable').run();
+    },
+    $init(config){
+        webix.extend(config, this._ui());
+
         this.addDrop(this.getNode(),{
             /**
              * @function
@@ -193,40 +310,8 @@ const table_datatable = webix.protoUI({
             }.bind(this)
         });
     }
-}, webix.DragControl, webix.ui.datatable);
 
-function newTableWidgetTable(){
-    return {
-        id:"datatable",
-        view:"table_datatable",
-        onClick: {
-            "remove-single":function(event, id){
-                this.remove(id.row);
-                if(this.count() === 0) this.removeColumns();
-                return false;
-            }
-        }
-    }
-}
-
-const table_widget = webix.protoUI({
-    name: "table_widget",
-    _ui(){
-        return {
-            rows:[
-                newTableWidgetTable(),
-                newToolbar()
-            ]
-        }
-    },
-    run(){
-        this.$$('datatable').run();
-    },
-    $init(config){
-        webix.extend(config, this._ui())
-    }
-
-}, TangoWebappPlatform.mixin.Runnable, webix.IdSpace, webix.ui.layout);
+}, TangoWebappPlatform.mixin.Runnable, webix.DragControl, webix.IdSpace, webix.ui.layout);
 
 export function newTableWidgetTab(){
     return {
