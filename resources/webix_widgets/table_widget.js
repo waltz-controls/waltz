@@ -113,7 +113,6 @@ const table_datatable = webix.protoUI({
      * @param {TangoAttribute} attr
      */
     addAttribute(attr){
-        if(!attr.isScalar()) return;
         if(this.config.columns.filter(column => column.id === attr.name).length === 0)
             this.addColumn(attr);
 
@@ -144,7 +143,8 @@ const table_datatable = webix.protoUI({
 
         this.refreshColumns();
 
-        this._tracked_attrs.delete(col.id)
+        this._tracked_attrs.delete(col.id);
+        this.data.each(item => item._attrs.delete(col.id));
     },
     async addDevice(id){
         let device = TangoDevice.find_one(id);
@@ -216,6 +216,8 @@ const settings = webix.protoUI({
         this.removeView(col);
     },
     addAttribute(attr){
+        const col = this.queryView({label:attr.display_name});
+        if(col !== null) return;
         this.addView({
             view:"button",
             type:"icon",
@@ -276,6 +278,10 @@ const table_widget = webix.protoUI({
         this.$$('settings').removeAttribute(name);
     },
     addAttribute(attr){
+        if(!attr.isScalar()) {
+            webix.message("Only SCALAR attributes are supported by this widget!");
+            return;
+        }
         this.$$('datatable').addAttribute(attr);
         this.$$('settings').addAttribute(attr);
     },
