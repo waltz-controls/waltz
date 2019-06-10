@@ -209,12 +209,12 @@ const table_datatable = webix.protoUI({
 const stateful_table_datatable = webix.protoUI({
     name:"stateful_table_datatable",
     initial_state: {
-        attrs: {},
-        devices: {}
+        attrs: [],
+        devices: []
     },
     restoreState(state){
-        Object.keys(state.data.devices).forEach(device_id => {
-            Object.keys(state.data.attrs)
+        state.data.devices.forEach(device_id => {
+            state.data.attrs
                 .map(name => device_id + "/" + name)
                 .forEach(async attrId => {
                     PlatformContext.rest.fetchAttr(attrId)
@@ -225,29 +225,43 @@ const stateful_table_datatable = webix.protoUI({
     clear(){
         webix.ui.table_datatable.prototype.clear.apply(this, arguments);
         this.state.setState({
-            attrs: {},
-            devices: {}
+            attrs: [],
+            devices: []
         });
     },
     addAttribute(attr){
         webix.ui.table_datatable.prototype.addAttribute.call(this, attr);
-        this.state.data.attrs[attr.name] = "";
-        this.state.data.devices[attr.device_id] = "";
+        const attrs = this.state.data.attrs;
+        if(!attrs.includes(attr.name))
+            attrs.push(attr.name);
+        const devices = this.state.data.devices;
+        if(!devices.includes(attr.device_id))
+            devices.push(attr.device_id);
         this.state.setState(this.state.data);
     },
     removeAttribute(display_name){
         const name = webix.ui.table_datatable.prototype.removeAttribute.call(this, display_name);
-        delete this.state.data.attrs[name];
+        const attrs = this.state.data.attrs;
+        const index = attrs.indexOf(name);
+        if (index > -1) {
+            attrs.splice(index, 1);
+        }
         this.state.setState(this.state.data);
     },
     addDevice(id){
         webix.ui.table_datatable.prototype.addDevice.call(this, id);
-        this.state.data.devices[id] = "";
+        const devices = this.state.data.devices;
+        if(!devices.includes(id))
+            devices.push(id);
         this.state.setState(this.state.data);
     },
     removeDevice(id){
         webix.ui.table_datatable.prototype.removeDevice.call(this, id);
-        delete this.state.data.devices[id];
+        const devices = this.state.data.devices;
+        const index = devices.indexOf(id);
+        if (index > -1) {
+            devices.splice(index, 1);
+        }
         this.state.setState(this.state.data);
     }
 },TangoWebappPlatform.mixin.Stateful,table_datatable);
