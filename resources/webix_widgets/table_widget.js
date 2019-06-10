@@ -167,6 +167,8 @@ const table_datatable = webix.protoUI({
             _device: device,
             _attrs:new Set(this._tracked_attrs)
         });
+
+        this.run();
     },
     run(){
         this.data.each(item => {
