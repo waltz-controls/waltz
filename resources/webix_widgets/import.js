@@ -14,6 +14,7 @@ import "./pipe_info_panel.js";
 import "./info_control_panel.js";
 import "./device_view_panel.js";
 import "./plot.js";
+import "./scalar_input.js";
 import "./scalar_view.js";
 import "./spectrum_view.js";
 import "./image_view.js";

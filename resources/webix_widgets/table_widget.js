@@ -59,12 +59,15 @@ const table_datatable = webix.protoUI({
 
                     if(kPersistentColumns.includes(attr_name)) return;
 
+                    const attrId = `${device_id}/${attr_name}`;
                     OpenAjax.hub.publish("tango_webapp.item_selected", {
                         data: {
-                            id: `${device_id}/${attr_name}`,
+                            id: attrId,
                             kind: 'attrs'
                         }
                     });
+
+                    this.getTopParentView().selectAttribute(attrId);
                 }
             }
         }
@@ -264,16 +267,78 @@ function toolbar_extension(){
     }];
 }
 
+const input_holder = webix.protoUI({
+    name: "table_widget_input",
+    _ui(){
+        return {
+            hidden: true,
+            rows:[
+                {
+                    maxHeight:20,
+                    cols:[
+                        {},
+                        {
+                            view:"button",
+                            type:"icon",
+                            icon:"times",
+                            width:20,
+                            click(){
+                                this.getFormView().hide();
+                            }
+                        }
+                    ]
+                },
+                {
+                id: "input_holder", rows:[
+                    {}
+                ]
+            }]
+        }
+    },
+    setAttribute(attr){
+        this.attr = attr;
+        if(!attr) return;
+
+        if(attr.info.writable.includes('WRITE')) {
+            this.$$input = $$(webix.ui([{view: "scalar_input", attr, borderless: true}], this.$$('input_holder'))[0].id);
+
+            this.show();
+        } else {
+            this.hide();
+        }
+
+        attr.read().then(resp => this.$$input.setValue(resp.value));
+    },
+    $init(config) {
+        webix.extend(config, this._ui());
+    },
+},webix.IdSpace,webix.ui.form);
+
+function newScalarInput(){
+    return {
+        view: 'table_widget_input',
+        id: 'input'
+
+    }
+}
+
 const table_widget = webix.protoUI({
     name: "table_widget",
     _ui(){
         return {
             rows:[
                 newTableWidgetTable(),
+                newScalarInput(),
                 newSettings(),
                 newToolbar(toolbar_extension())
             ]
         }
+    },
+    selectAttribute(id){
+        const attr = TangoAttribute.find_one(id);
+        if(attr === null) throw new Error("assertion error");
+
+        this.$$('input').setAttribute(attr);
     },
     removeAttribute(name){
         this.$$('datatable').removeAttribute(name);
@@ -296,6 +361,12 @@ const table_widget = webix.protoUI({
     },
     $init(config){
         webix.extend(config, this._ui());
+
+        this.$ready.push(()=>{
+            webix.event(this.getNode(), "click", function(e){
+                this.run();
+            }, {bind:this});
+        });
 
         this.addDrop(this.getNode(),{
             /**
