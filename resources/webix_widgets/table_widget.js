@@ -4,22 +4,22 @@ const kPersistentColumns = ["id", "device", "remove"];
 
 export const TableWidgetController = class extends MVC.Controller {
     buildUI(platform_api) {
-        platform_api.ui_builder.add_mainview_item(newTableWidgetTab());
+        platform_api.ui_builder.add_mainview_item(newTableWidgetTab({id:'table_widget'}));
     }
     /**
      *
      * @param {PlatformApi} platform_api
      */
     async initialize(platform_api){
-        const host = await PlatformContext.rest.fetchHost("localhost:10000");
-        const device = await host.fetchDevice("sys/tg_test/1");
-        let attr = await device.fetchAttr("double_scalar");
-
-
-        $$('table_widget').addAttribute(attr);
-
-        attr = await device.fetchAttr("long_scalar");
-        $$('table_widget').addAttribute(attr);
+        // const host = await PlatformContext.rest.fetchHost("localhost:10000");
+        // const device = await host.fetchDevice("sys/tg_test/1");
+        // let attr = await device.fetchAttr("double_scalar");
+        //
+        //
+        // $$('table_widget').addAttribute(attr);
+        //
+        // attr = await device.fetchAttr("long_scalar");
+        // $$('table_widget').addAttribute(attr);
 
     }
 };
@@ -135,6 +135,11 @@ const table_datatable = webix.protoUI({
 
         this.run();
     },
+    /**
+     *
+     * @param name
+     * @return {string} removed attr name
+     */
     removeAttribute(name){
         const col = this.config.columns.find(col => col.header[0].text.includes(name));
         const index = this.config.columns.indexOf(col);
@@ -148,6 +153,7 @@ const table_datatable = webix.protoUI({
 
         this._tracked_attrs.delete(col.id);
         this.data.each(item => item._attrs.delete(col.id));
+        return col.id;
     },
     async addDevice(id){
         let device = TangoDevice.find_one(id);
@@ -173,6 +179,9 @@ const table_datatable = webix.protoUI({
 
         this.run();
     },
+    removeDevice(id){
+        this.remove(id);
+    },
     run(){
         this.data.each(item => {
             item._device.fetchAttrValues([...item._attrs]).then(resp => {
@@ -195,13 +204,61 @@ const table_datatable = webix.protoUI({
     }
 }, webix.ui.datatable);
 
+
+
+const stateful_table_datatable = webix.protoUI({
+    name:"stateful_table_datatable",
+    initial_state: {
+        attrs: {},
+        devices: {}
+    },
+    restoreState(state){
+        Object.keys(state.data.devices).forEach(device_id => {
+            Object.keys(state.data.attrs)
+                .map(name => device_id + "/" + name)
+                .forEach(async attrId => {
+                    PlatformContext.rest.fetchAttr(attrId)
+                        .then(attr => this.getTopParentView().addAttribute(attr));
+                })
+        })
+    },
+    clear(){
+        webix.ui.table_datatable.prototype.clear.apply(this, arguments);
+        this.state.setState({
+            attrs: {},
+            devices: {}
+        });
+    },
+    addAttribute(attr){
+        webix.ui.table_datatable.prototype.addAttribute.call(this, attr);
+        this.state.data.attrs[attr.name] = "";
+        this.state.data.devices[attr.device_id] = "";
+        this.state.setState(this.state.data);
+    },
+    removeAttribute(display_name){
+        const name = webix.ui.table_datatable.prototype.removeAttribute.call(this, display_name);
+        delete this.state.data.attrs[name];
+        this.state.setState(this.state.data);
+    },
+    addDevice(id){
+        webix.ui.table_datatable.prototype.addDevice.call(this, id);
+        this.state.data.devices[id] = "";
+        this.state.setState(this.state.data);
+    },
+    removeDevice(id){
+        webix.ui.table_datatable.prototype.removeDevice.call(this, id);
+        delete this.state.data.devices[id];
+        this.state.setState(this.state.data);
+    }
+},TangoWebappPlatform.mixin.Stateful,table_datatable);
+
 function newTableWidgetTable(){
     return {
         id:"datatable",
-        view:"table_datatable",
+        view:"stateful_table_datatable",
         onClick: {
             "remove-single":function(event, id){
-                this.remove(id.row);
+                this.removeDevice(id.row);
                 if(this.count() === 0) this.removeColumns();
                 return false;
             }
@@ -392,14 +449,18 @@ const table_widget = webix.protoUI({
 
 }, TangoWebappPlatform.mixin.Runnable, webix.DragControl, webix.IdSpace, webix.ui.layout);
 
-export function newTableWidgetTab(){
+export function newTableWidgetBody(config){
+    return webix.extend({
+                view: "table_widget"
+
+    },config);
+}
+
+export function newTableWidgetTab(config){
     return {
         header: "<span class='webix_icon fa-table'></span> TableWidget",
         borderless: true,
-        body:
-            {
-                id: "table_widget",
-                view: "table_widget"
-            }
+        body: newTableWidgetBody(config)
+
     };
 }
