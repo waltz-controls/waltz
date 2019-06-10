@@ -1,3 +1,5 @@
+import newToolbar from "./attrs_monitor_toolbar.js";
+
 const kPersistentColumns = ["id", "device", "remove"];
 
 export const TableWidgetController = class extends MVC.Controller {
@@ -212,15 +214,19 @@ const table_widget = webix.protoUI({
     _ui(){
         return {
             rows:[
-                newTableWidgetTable()
+                newTableWidgetTable(),
+                newToolbar()
             ]
         }
+    },
+    run(){
+        this.$$('datatable').run();
     },
     $init(config){
         webix.extend(config, this._ui())
     }
 
-}, webix.IdSpace, webix.ui.layout);
+}, TangoWebappPlatform.mixin.Runnable, webix.IdSpace, webix.ui.layout);
 
 export function newTableWidgetTab(){
     return {
