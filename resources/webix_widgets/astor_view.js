@@ -53,9 +53,12 @@ const hosts = {
     template: "<span class='webix_icon fa-desktop' style='color: {common.highlightColor()}'></span><span style='color: {common.highlightColor()}'>#name#</span>",
     type: {
         highlightColor(obj){
+            console.debug(`host state = ${obj.state}`);
             switch (obj.state) {
                 case 6://MOVING
                     return "blue";
+                case 11://ALARM
+                    return "orangered";
                 case 8://FAULT
                     return "red";
                 case 0://ON
@@ -76,11 +79,8 @@ const hosts = {
             });
         },
         onAfterLoad(){
-            this.getTopParentView().run();
-
-            if(this.count() === 1){
-                this.select(this.getFirstId());
-            }
+            webix.assert(this.count() !== 0, "assertion error: hosts.count() !== 0");
+            this.select(this.getFirstId());
         }
     },
     click(id){
@@ -170,6 +170,7 @@ const astor = webix.protoUI({
                 type: "change"
             },
             function (event) {
+                this._update_hosts();
                 this._update_servers(event.data.map(el => el.split("\t")));
                 this._update_log();
                 console.debug(event);
@@ -201,6 +202,8 @@ const astor = webix.protoUI({
 
         this._update_log();
 
+        this._update_hosts();
+
         this.initializeSubscription(admin);
     },
     async initialize() {
@@ -208,6 +211,7 @@ const astor = webix.protoUI({
         this.$$('header').setValues(this.tango_host);
         if (this.tango_host && this.starter) this.cleanSubscriptions();
 
+        this.$$('servers').clearAll();
         this.$$('hosts').clearAll();
         this.$$('hosts').parse(
             this.tango_host.fetchDatabase()
@@ -227,15 +231,18 @@ const astor = webix.protoUI({
 
 
     },
+    _update_hosts() {
+        this.$$('hosts').data.each(admin => {
+            admin.promiseDevice.then(device => device.fetchAttrValue("HostState")
+                .then(v => this.$$('hosts').updateItem(admin.id, {state: v})))
+        });
+    },
     _update_servers(values) {
         const servers = values.map(([name, state, controlled, level]) => new TangoServer(name, state, level, this.tango_host.fetchDevice(`dserver/${name}`)));
         servers.forEach(server => this.$$('servers').updateItem(server.id, server));
     },
     async run() {
-        this.$$('hosts').data.each(admin => {
-            admin.promiseDevice.then(device => device.fetchAttrValue("HostState")
-                                                    .then(v => this.$$('hosts').updateItem(admin.id, {state:v})))
-        });
+        this._update_hosts();
 
         if (this.starter != null) {
             (await this.starter.fetchAttr("Servers")).read()
