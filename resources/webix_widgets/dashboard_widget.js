@@ -41,6 +41,7 @@ function newDashboardToolbar() {
                 id: "profiles",
                 label: "Profile",
                 options: {
+                    template: "#value# (#type#)",
                     data:[]
                 },
                 on: {
