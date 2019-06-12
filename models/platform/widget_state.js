@@ -46,7 +46,7 @@ TangoWebappPlatform.WidgetState = MVC.Model.extend('widget_state',
          * Updates existing state
          * @param {Object} state
          */
-        updateState:function(state){
+        updateState: function (state = {}) {
             this.update_attributes({
                 data: MVC.Object.extend(this.data, state)
             });

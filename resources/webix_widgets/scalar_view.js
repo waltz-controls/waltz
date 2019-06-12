@@ -201,6 +201,12 @@ const scalar = webix.protoUI(
                     }
                 });
             }.bind(this));
+            this.$ready.push(() => {
+                const node = this.getNode();
+                node.on('plotly_legendclick', (eventData) => {
+                    this.getTopParentView().callEvent("onPlotlyLegendClick", [eventData.curveNumber]);
+                });
+            });
         }
     }, webix.IdSpace, webix.ui.view);
 

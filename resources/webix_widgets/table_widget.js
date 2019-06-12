@@ -1,4 +1,5 @@
 import newToolbar from "./attrs_monitor_toolbar.js";
+import {newRemoveAttributeSettings, toolbar_extension} from "./remove_attribute_toolbar.js";
 
 const kPersistentColumns = ["id", "device", "remove"];
 
@@ -280,64 +281,6 @@ function newTableWidgetTable(){
     }
 }
 
-const settings = webix.protoUI({
-    name: "table_widget_settings",
-    _config(){
-        return {
-            cols:[{}]
-        }
-    },
-    removeAttribute(name){
-        const col = this.queryView({label:name});
-        this.removeView(col);
-    },
-    addAttribute(attr){
-        const col = this.queryView({label:attr.display_name});
-        if(col !== null) return;
-        this.addView({
-            view:"button",
-            type:"icon",
-            icon:"trash",
-            label: attr.display_name,
-            click(){
-                this.getTopParentView().removeAttribute(this.data.label);
-            }
-        });
-    },
-    addDevice(id){
-        //NOP
-    },
-    $init(config){
-        webix.extend(config, this._config());
-    }
-    },webix.ui.form);
-
-function newSettings() {
-    return {
-        view: "table_widget_settings",
-        id: "settings",
-        hidden: true
-    };
-}
-
-//TODO extract
-function toolbar_extension(){
-    return [{
-        view: "button",
-        type: "icon",
-        icon: "cog",
-        maxWidth: 30,
-        tooltip: "Show/hide settings",
-        click: function () {
-            const $$settings = this.getTopParentView().$$('settings');
-            if($$settings.isVisible())
-                $$settings.hide();
-            else
-                $$settings.show();
-        }
-    }];
-}
-
 const input_holder = webix.protoUI({
     name: "table_widget_input",
     _ui(){
@@ -400,7 +343,7 @@ const table_widget = webix.protoUI({
             rows:[
                 newTableWidgetTable(),
                 newScalarInput(),
-                newSettings(),
+                newRemoveAttributeSettings(),
                 newToolbar(toolbar_extension())
             ]
         }
@@ -421,7 +364,7 @@ const table_widget = webix.protoUI({
             return;
         }
         this.$$('datatable').addAttribute(attr);
-        this.$$('settings').addAttribute(attr);
+        this.$$('settings').addAttribute(attr.display_name);
     },
     addDevice(id){
         this.$$('datatable').addDevice(id);
