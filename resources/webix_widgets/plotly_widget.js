@@ -1,6 +1,7 @@
 import newToolbar from "./attrs_monitor_toolbar.js";
 import {newRemoveAttributeSettings, toolbar_extension} from "./remove_attribute_toolbar.js";
 import {kNonPlottableDataTypes} from "./plot.js";
+import {openAttributeWindow} from "./device_controls.js";
 
 /**
  *
@@ -126,7 +127,7 @@ const plotly_widget = webix.protoUI({
             else
                 this.run();
         } else {
-            //TODO open window
+            openAttributeWindow(attr);
         }
     },
     removeAttribute(id) {
