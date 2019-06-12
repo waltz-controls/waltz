@@ -54,6 +54,9 @@
                 attrs.display_name = attrs.display_name || attrs.name;
                 this._super(attrs);
             },
+            getDevice(){
+                return PlatformContext.devices.getItem(this.device_id);
+            },
             /**
              * @return {boolean}
              */
