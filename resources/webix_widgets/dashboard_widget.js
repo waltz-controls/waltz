@@ -4,6 +4,7 @@
  * @since 6/12/19
  */
 import {newTableWidgetBody} from "./table_widget.js";
+import {newPlotlyWidgetBody} from "./plotly_widget.js";
 
 export const DashboardWidgetController = class extends MVC.Controller {
     buildUI(platform_api) {
@@ -36,14 +37,19 @@ function newDashboardToolbar() {
         maxHeight: 30,
         cols: [
             {
-                view: "select",
+                view: "richselect",
                 id: "profiles",
                 label: "Profile",
-                options: [],
+                options: {
+                    data:[]
+                },
                 on: {
-                    onChange: function (profile) {
-                        this.getTopParentView().selectProfile(profile);
-                        webix.message(`Select profile ${profile}`);
+                    onChange: function (profileId) {
+                        const profile = this.getList().getItem(profileId);
+                        if(profile) {//prevent undefined when deleting
+                            this.getTopParentView().selectProfile(profile);
+                            webix.message(`Select profile ${profile.value}`);
+                        }
                     }
                 }
             },
@@ -75,18 +81,26 @@ function newProfileForm() {
                 cols: [
                     {
                         view: "text",
+                        id: "profileId",
+                        name: "id",
+                        hidden: true
+                    },
+                    {
+                        view: "text",
                         id: "profile",
-                        name: "profile",
+                        name: "value",
                         label: "Name",
                         labelAlign: "right",
                         validate: webix.rules.isNotEmpty
                     },
                     {
-                        view: "text",//TODO select
-                        id: "instance_name",
-                        name: "instance_name",
-                        label: "Instance",
+                        view: "richselect",
+                        id: "type",
+                        name: "type",
+                        label: "Type",
                         labelAlign: "right",
+                        options:["table","plot"],
+                        value: "table",
                         validate: webix.rules.isNotEmpty
                     }
                 ]
@@ -100,13 +114,13 @@ function newProfileForm() {
                         type: "icon",
                         icon: "save",
                         maxWidth: 30,
-                        click: async function () {
+                        click() {
                             const $$frm = this.getFormView();
                             if (!$$frm.validate()) return;
 
                             const values = $$frm.getValues();
 
-                            await this.getTopParentView().createProfile(values.profile, values.tango_host, values.instance_name);
+                            this.getTopParentView().createProfile(values);
                         }
                     },
                     {
@@ -115,12 +129,12 @@ function newProfileForm() {
                         type: "icon",
                         icon: "trash",
                         maxWidth: 30,
-                        click: async function () {
+                        click() {
                             const $$frm = this.getFormView();
                             if (!$$frm.validate()) return;
 
                             const values = $$frm.getValues();
-                            await this.getTopParentView().deleteProfile(values.profile, values.tango_host, values.instance_name);
+                            this.getTopParentView().deleteProfile(values.id);
                         }
                     }
                 ]
@@ -129,8 +143,63 @@ function newProfileForm() {
     }
 }
 
+class Profile{
+    constructor(id, value, type, viewId = undefined){
+        this.id = id;
+        this.value = value;
+        this.type = type;
+        this.viewId = viewId;
+    }
+}
+
+function createInnerWidget(type, config){
+    switch (type) {
+        case "table":
+            return newTableWidgetBody(config);
+        case "plot":
+            return newPlotlyWidgetBody(config);
+    }
+}
+
 const dashboard_widget = webix.protoUI({
     name: "dashboard_widget",
+    initial_state:[
+        new Profile(webix.uid(), "default", "table")],
+    restoreState(state){
+        state.data.forEach(profile => {
+            profile.viewId = this.$$("multiview").addView(createInnerWidget(profile.type, {id: profile.id}))
+        });
+        this.$$("profiles").getList().parse(state.data);
+        this.$$("profiles").setValue(state.data[0].id);
+
+    },
+    selectProfile(profile){
+        this.$$('frmProfileSettings').setValues(profile);
+        $$(profile.viewId).show();
+    },
+    createProfile({value,type}){
+        const profile = new Profile(webix.uid(), value, type);
+
+        profile.viewId = this.$$("multiview").addView(createInnerWidget(profile.type, {id: profile.id}));
+        this.state.data.push(profile);
+        this.state.updateState();
+
+        const $$profiles = this.$$('profiles');
+        $$profiles.getList().add(profile);
+        $$profiles.setValue(profile.id);
+    },
+    deleteProfile(id){
+        const profile = this.state.data.find(profile => profile.id === id);
+        const index = this.state.data.indexOf(profile);
+        webix.assert(index > -1, "assertion error: there is no profile with id=" + id);
+        this.state.data.splice(index, 1);
+        this.state.updateState();
+
+        const $$profiles = this.$$('profiles');
+        $$profiles.getList().remove(id);
+
+        this.$$("multiview").removeView(profile.viewId);
+    },
     _ui() {
         return {
             rows: [
@@ -138,8 +207,12 @@ const dashboard_widget = webix.protoUI({
                 newProfileForm(),
                 {
                     view: "multiview",
+                    id: "multiview",
                     cells: [
-                        newTableWidgetBody({id: "default"})
+                        {
+                            id: "loading",
+                            template: "<span class='webix_icon fa-refresh fa-spin'></span>"
+                        }
                     ]
                 }
             ]
@@ -148,7 +221,7 @@ const dashboard_widget = webix.protoUI({
     $init(config) {
         webix.extend(config, this._ui());
     }
-}, webix.IdSpace, webix.ui.layout);
+}, TangoWebappPlatform.mixin.Stateful, webix.IdSpace, webix.ui.layout);
 
 function newDashboardWidgetBody(config) {
     return webix.extend({
