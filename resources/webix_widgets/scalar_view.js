@@ -84,6 +84,32 @@ const scalar = webix.protoUI(
             });
         },
         /**
+         * @param {Array<string>} traces names
+         * @param {[]} x timestamps
+         * @param {[]} y values
+         * @memberof ui.Plot.scalar_plot
+         */
+        addTraces: function (traces, x, y) {
+            Plotly.addTraces(this.getNode(),
+                traces.map((trace, index) => {
+                    return {
+                        x: x[index].map(function (time) {
+                            return new Date(time);
+                        }),
+                        y: y[index],
+                        name: trace
+                    }
+                }));
+
+            this._traces.push(...traces);
+            this._relayout({
+                autosize: false,
+                width: this.$width,
+                height: this.$height,
+                margin: kMargins
+            });
+        },
+        /**
          * @param {int} ndx same as used in addTrace
          * @memberof ui.Plot.scalar_plot
          */

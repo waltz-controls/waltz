@@ -73,11 +73,17 @@ const plotly_widget = webix.protoUI({
         }
     },
     restoreState(state) {
-        state.data.forEach(async attrId => {
-            const attr = await PlatformContext.rest.fetchAttr(attrId);
-            this._add_scalar(attr);
-            this.$$('settings').addAttribute(attr.id);
-        })
+        webix.promise.all(
+            state.data.map(attrId => PlatformContext.rest.fetchAttr(attrId))).then(attrs => {
+            const $$plot = this.$$('plot');
+            $$plot.addTraces(
+                attrs.map(attr => attr.getDevice().display_name + "/" + attr.info.label),
+                attrs.map(attr => []), attrs.map(attr => []));
+            attrs.forEach(attr => this.$$('settings').addAttribute(attr.id));
+            this.run();
+        });
+
+
     },
     _add_scalar(scalar) {
         scalar.read().then(() => {
