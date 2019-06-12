@@ -13,6 +13,12 @@ const settings = webix.protoUI({
     removeAttribute(name) {
         const col = this.queryView({label: name});
         this.removeView(col);
+        if (this.getChildViews().length === 1) {
+            this.getChildViews()[0].define({
+                width: 0
+            });
+            this.getChildViews()[0].resize();
+        }
     },
     addAttribute(label) {
         const col = this.queryView({label: label});
@@ -26,6 +32,12 @@ const settings = webix.protoUI({
                 this.getTopParentView().removeAttribute(this.data.label);
             }
         });
+        if (this.getChildViews().length === 2) {
+            this.getChildViews()[0].define({
+                width: 1
+            });
+            this.getChildViews()[0].resize();
+        }
     },
     addDevice(id) {
         //TODO?
