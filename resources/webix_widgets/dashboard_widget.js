@@ -164,8 +164,10 @@ function createInnerWidget(type, config){
 
 const dashboard_widget = webix.protoUI({
     name: "dashboard_widget",
-    initial_state:[
-        new Profile(webix.uid(), "default", "table")],
+    getInitialState(){
+        return [
+            new Profile(webix.uid(), "default", "table")]
+    },
     restoreState(state){
         state.data.forEach(profile => {
             profile.viewId = this.$$("multiview").addView(createInnerWidget(profile.type, {id: profile.id}))

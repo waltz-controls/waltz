@@ -63,7 +63,9 @@ function groupAttributesByDeviceId(attrs) {
 
 const plotly_widget = webix.protoUI({
     name: "plotly_widget",
-    initial_state: [],
+    getInitialState(){
+        return [];
+    },
     _ui() {
         return {
             rows: [

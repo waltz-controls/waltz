@@ -150,7 +150,7 @@ TangoWebappPlatform.mixin = {
                 if(this.state === null) {
                     this.state = new this.config.state_class({
                         id: this.config.id,
-                        data: Object.assign({}, this.initial_state) || {}
+                        data: this.getInitialState() || {}
                     })
                 }
                 this.restoreState(this.state);

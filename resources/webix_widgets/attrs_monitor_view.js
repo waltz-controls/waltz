@@ -132,17 +132,19 @@ import {kNonPlottableDataTypes} from "./plot.js";
     var scalars = webix.protoUI(
         /** @lends scalars.prototype */
         {
-            initial_state:{
-                device_id: 1,
-                label: 1,
-                value: 1,
-                save: 1,
-                stream: 1,
-                quality: 0,
-                timestamp: 0,
-                unit: 0,
-                description: 0,
-                remove: 1
+            getInitialState(){
+                return {
+                    device_id: 1,
+                    label: 1,
+                    value: 1,
+                    save: 1,
+                    stream: 1,
+                    quality: 0,
+                    timestamp: 0,
+                    unit: 0,
+                    description: 0,
+                    remove: 1
+                };
             },
         name: 'scalars',
         _config: function () {

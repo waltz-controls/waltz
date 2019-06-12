@@ -209,9 +209,11 @@ const table_datatable = webix.protoUI({
 
 const stateful_table_datatable = webix.protoUI({
     name:"stateful_table_datatable",
-    initial_state: {
-        attrs: [],
-        devices: []
+    getInitialState(){
+        return {
+            attrs: [],
+            devices: []
+        }
     },
     restoreState(state){
         state.data.devices.forEach(device_id => {
