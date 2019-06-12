@@ -36,3 +36,4 @@ import "./terminal_view.js";
 import "./astor_view.js";
 import "./table_widget.js";
 import "./plotly_widget.js";
+import "./dashboard_widget.js";
