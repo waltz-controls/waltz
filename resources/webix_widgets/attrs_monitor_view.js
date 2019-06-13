@@ -163,7 +163,7 @@ import {kNonPlottableDataTypes} from "./plot.js";
                         else delete item.$css;
                     }
                 },
-                columns: kScalarsColumns,
+                columns: kScalarsColumns.slice(),
                 on: {
                     onHeaderClick(obj){
                         if(obj.column === 'remove'){
