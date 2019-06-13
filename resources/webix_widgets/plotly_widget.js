@@ -32,7 +32,7 @@ export const PlotlyWidgetController = class extends MVC.Controller {
 };
 
 //disable Xenv widget for master
-PlotlyWidgetController.initialize();
+// PlotlyWidgetController.initialize();
 
 
 function newPlotlyContainer() {

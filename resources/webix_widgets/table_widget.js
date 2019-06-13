@@ -26,7 +26,7 @@ export const TableWidgetController = class extends MVC.Controller {
 };
 
 //disable Xenv widget for master
-TableWidgetController.initialize();
+// TableWidgetController.initialize();
 
 const table_datatable = webix.protoUI({
     name:"table_datatable",
