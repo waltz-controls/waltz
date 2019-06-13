@@ -266,12 +266,16 @@ const stateful_table_datatable = webix.protoUI({
             devices.splice(index, 1);
         }
         this.state.setState(this.state.data);
+    },
+    getStateId() {
+        return this.config.stateId;
     }
 },TangoWebappPlatform.mixin.Stateful,table_datatable);
 
-function newTableWidgetTable(){
+function newTableWidgetTable(config) {
     return {
         id:"datatable",
+        stateId: config.stateId,
         view:"stateful_table_datatable",
         onClick: {
             "remove-single":function(event, id){
@@ -340,10 +344,10 @@ function newScalarInput(){
 
 const table_widget = webix.protoUI({
     name: "table_widget",
-    _ui(){
+    _ui(config) {
         return {
             rows:[
-                newTableWidgetTable(),
+                newTableWidgetTable(config),
                 newScalarInput(),
                 newRemoveAttributeSettings(),
                 newToolbar(toolbar_extension())
@@ -376,7 +380,7 @@ const table_widget = webix.protoUI({
         this.$$('datatable').run();
     },
     $init(config){
-        webix.extend(config, this._ui());
+        webix.extend(config, this._ui(config));
 
         this.$ready.push(()=>{
             webix.event(this.getNode(), "click", function(e){

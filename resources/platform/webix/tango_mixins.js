@@ -140,17 +140,22 @@ TangoWebappPlatform.mixin = {
      * @memberof mixins
      */
     Stateful: {
-        initial_state: null,
+        getInitialState() {
+            return Object.create(null)
+        },
+        getStateId() {
+            return this.config.id;
+        },
         state: null,
 
         $init:function(config){
             config.state_class = config.state_class || TangoWebappPlatform.WidgetState;
             this.$ready.push(function(){
-                this.state = this.config.state_class.find_one(this.config.id);
+                this.state = this.config.state_class.find_one(this.getStateId());
                 if(this.state === null) {
                     this.state = new this.config.state_class({
-                        id: this.config.id,
-                        data: this.getInitialState ? this.getInitialState() : {}
+                        id: this.getStateId(),
+                        data: this.getInitialState()
                     })
                 }
                 this.restoreState(this.state);
