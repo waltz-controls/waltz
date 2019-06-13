@@ -159,7 +159,7 @@ TangoWebappPlatform.mixin = {
                     })
                 }
                 this.restoreState(this.state);
-                TangoWebappHelpers.log("Widget["+this.config.id+"] state is restored.");
+                TangoWebappHelpers.log(`Widget[${this.config.id}] state[${this.getStateId()}] is restored.`);
             }.bind(this));
         }
     }

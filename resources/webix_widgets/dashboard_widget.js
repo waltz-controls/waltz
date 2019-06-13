@@ -171,8 +171,7 @@ const dashboard_widget = webix.protoUI({
     restoreState(state){
         state.data.forEach(profile => {
             profile.viewId = this.$$("multiview").addView(createInnerWidget(profile.type, {
-                id: profile.id,
-                stateId: profile.id
+                id: profile.id
             }))
         });
         this.$$("profiles").getList().parse(state.data);
