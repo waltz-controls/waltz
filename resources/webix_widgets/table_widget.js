@@ -72,6 +72,8 @@ const table_datatable = webix.protoUI({
                     this.getTopParentView().selectAttribute(attrId);
                 },
                 onAfterEditStop(value, editor) {
+                    if (value.value == value.old) return;
+
                     const id = `${editor.row}/${editor.column}`;
 
                     const attr = TangoAttribute.find_one(id);
