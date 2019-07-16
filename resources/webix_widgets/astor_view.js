@@ -293,14 +293,14 @@ const astor = webix.protoUI({
     devRemove() {
         this.$$('devices').getSelectedItem(as_array)
             .forEach(async dev => {
-                this.tango_host.fetchDevice(dev.name)
-                    .then(function (device) {
-                        OpenAjax.hub.publish("tango_webapp.device_delete", {
-                            data: {
-                                device: device
-                            }
-                        });
-                    })
+                const db = await this.tango_host.fetchDatabase();
+                db.deleteDevice(dev.name).then(function () {
+                    OpenAjax.hub.publish("tango_webapp.device_delete", {
+                        data: {
+                            device: dev
+                        }
+                    });
+                })
                     .then(() => {
                         this.$$('devices').remove(dev.id);
                     })

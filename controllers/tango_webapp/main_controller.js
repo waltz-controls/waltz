@@ -87,14 +87,7 @@ TangoWebapp.MainController = class extends MVC.Controller{
             }).fail(TangoWebappHelpers.error);
     }
     "tango_webapp.device_delete subscribe"(event) {
-        var device = event.data.device;
-
-        return device.host.fetchDatabase()
-        .then(function (db) {
-            return db.deleteDevice(device.name);
-        }).then(function () {
-            $$('devices_tree').tree.updateRoot();
-        }).fail(TangoWebappHelpers.error);
+        $$('devices_tree').tree.updateRoot();
     }
     "tango_webapp.attr_add_to_monitor subscribe"(event){
         var attr = event.data;

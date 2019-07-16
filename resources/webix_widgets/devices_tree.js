@@ -19,9 +19,7 @@ import newSearch from "./search.js";
         id: "devices_tree_context_menu",
         data: [
             {id: 'configure', value: 'Configure'},
-            {id: 'view', value: 'Monitor'},
-            {$template: 'Separator'},
-            {id: 'delete', value: 'Delete'}
+            {id: 'view', value: 'Monitor'}
         ],
         on: {
             /**
