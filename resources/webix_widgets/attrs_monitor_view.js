@@ -40,7 +40,7 @@ import {kNonPlottableDataTypes} from "./plot.js";
                     view:"fieldset",
                     label: "Show/hide columns",
                     body: {
-                        cols: kScalarsColumns
+                        cols: newScalarsColumns()
                                 .filter(column => !column.hidden)
                                 .map(column => ({view: "checkbox", label: column.label ? column.label : column.header, labelPosition: "top", name: column.id}))
                     }
@@ -61,56 +61,67 @@ import {kNonPlottableDataTypes} from "./plot.js";
         }
     };
 
-    const kScalarsColumns = [
-        {
-            id: 'device_id',
-            // header: ["Device", {content: "textFilter"}], //TODO custom filter https://docs.webix.com/datatable__headers_footers.html#customheaderandfootercontent
-            header: "Device",
-            width: TangoWebappPlatform.consts.NAME_COLUMN_WIDTH,
-            sort: "string", fillspace:true,
-            template:function(obj){
-                return PlatformContext.devices.getItem(obj.device_id).display_name;
-            }
-        },
-        {
-            id: "label",
-            header: ["Attribute", {content: "textFilter"}],
-            width: TangoWebappPlatform.consts.NAME_COLUMN_WIDTH,
-            sort: "string", fillspace:true,
-            label: "Attribute"
-        },
-        {id: "value", header: "Value", editor: "inline-text", fillspace:true, template(obj){
-                return `<input type='text' value='${obj.value}' style="width: 100%">`;
-            }},
-        {id: "value_w", hidden: true},
-        {id: "save", tooltip: "Save all",header: '', label: '<span class="webix_icon fa-save"></span>', width: 30, template: '<span class="save webix_icon fa-save"></span>'},
-        {id: "quality", header: "Quality", width: 180, sort: "string"},
-        {
-            id: "timestamp", header: "Last updated", width: 180, fillspace:true, template: function (obj) {
-                return TangoWebappPlatform.consts.LOG_DATE_FORMATTER(new Date(obj.timestamp));
-            }
-        },
-        {id: "unit", header: "Unit", width: 60},
-        {id: "description", header: "Description",fillspace:true},
-        {id: "data_type", hidden:true},
-        {
-            id: "stream", header: "", width: 30, template: function (obj) {
-                if(kNonPlottableDataTypes.includes(obj.data_type)) return "<span class='webix_icon fa-ban'></span>";
-                if (obj.plotted)
-                    return "<span class='chart webix_icon fa-times-circle-o'></span>";
-                else
-                    return "<span class='chart webix_icon fa-line-chart'></span>";
+    function newScalarsColumns() {
+        return [
+            {
+                id: 'device_id',
+                // header: ["Device", {content: "textFilter"}], //TODO custom filter https://docs.webix.com/datatable__headers_footers.html#customheaderandfootercontent
+                header: "Device",
+                width: TangoWebappPlatform.consts.NAME_COLUMN_WIDTH,
+                sort: "string", fillspace: true,
+                template: function (obj) {
+                    return PlatformContext.devices.getItem(obj.device_id).display_name;
+                }
             },
-            label: "Plot"
-        },
-        {
-            id: "remove", header: "<span class='remove-all webix_icon fa-trash'></span>", width: 30,
-            tooltip: "Remove all",
-            template: function (obj) {
-                return "<span class='remove webix_icon fa-trash'></span>";
+            {
+                id: "label",
+                header: ["Attribute", {content: "textFilter"}],
+                width: TangoWebappPlatform.consts.NAME_COLUMN_WIDTH,
+                sort: "string", fillspace: true,
+                label: "Attribute"
+            },
+            {
+                id: "value", header: "Value", editor: "inline-text", fillspace: true, template(obj) {
+                    return `<input type='text' value='${obj.value}' style="width: 100%">`;
+                }
+            },
+            {id: "value_w", hidden: true},
+            {
+                id: "save",
+                tooltip: "Save all",
+                header: '',
+                label: '<span class="webix_icon fa-save"></span>',
+                width: 30,
+                template: '<span class="save webix_icon fa-save"></span>'
+            },
+            {id: "quality", header: "Quality", width: 180, sort: "string"},
+            {
+                id: "timestamp", header: "Last updated", width: 180, fillspace: true, template: function (obj) {
+                    return TangoWebappPlatform.consts.LOG_DATE_FORMATTER(new Date(obj.timestamp));
+                }
+            },
+            {id: "unit", header: "Unit", width: 60},
+            {id: "description", header: "Description", fillspace: true},
+            {id: "data_type", hidden: true},
+            {
+                id: "stream", header: "", width: 30, template: function (obj) {
+                    if (kNonPlottableDataTypes.includes(obj.data_type)) return "<span class='webix_icon fa-ban'></span>";
+                    if (obj.plotted)
+                        return "<span class='chart webix_icon fa-times-circle-o'></span>";
+                    else
+                        return "<span class='chart webix_icon fa-line-chart'></span>";
+                },
+                label: "Plot"
+            },
+            {
+                id: "remove", header: "<span class='remove-all webix_icon fa-trash'></span>", width: 30,
+                tooltip: "Remove all",
+                template: function (obj) {
+                    return "<span class='remove webix_icon fa-trash'></span>";
+                }
             }
-        }
-    ];
+        ];
+    }
 
     /**
      * @function
@@ -163,7 +174,7 @@ import {kNonPlottableDataTypes} from "./plot.js";
                         else delete item.$css;
                     }
                 },
-                columns: kScalarsColumns.slice(),
+                columns: newScalarsColumns(),
                 on: {
                     onHeaderClick(obj){
                         if(obj.column === 'remove'){
@@ -327,22 +338,24 @@ import {kNonPlottableDataTypes} from "./plot.js";
         }
     };
 
-    const toolbar_settings = {
-        view: "button",
-        type: "icon",
-        icon: "cog",
-        align: 'left',
-        width: 30,
-        tooltip: "Show/hide scalar settings",
-        click: function () {
-            const $$scalarSettings = this.getTopParentView().$$('scalar-settings');
-            $$scalarSettings.setValues(this.getTopParentView().$$('scalars').state.data);
-            if($$scalarSettings.isVisible())
-                $$scalarSettings.hide();
-            else
-                $$scalarSettings.show();
+    function newToolbarSettings() {
+        return {
+            view: "button",
+            type: "icon",
+            icon: "cog",
+            align: 'left',
+            width: 30,
+            tooltip: "Show/hide scalar settings",
+            click: function () {
+                const $$scalarSettings = this.getTopParentView().$$('scalar-settings');
+                $$scalarSettings.setValues(this.getTopParentView().$$('scalars').state.data);
+                if ($$scalarSettings.isVisible())
+                    $$scalarSettings.hide();
+                else
+                    $$scalarSettings.show();
+            }
         }
-    };
+    }
 
     /**
      * Extends {@link https://docs.webix.com/api__refs__ui.layout.html webix.ui.layout}
@@ -583,7 +596,7 @@ import {kNonPlottableDataTypes} from "./plot.js";
                     newAttributes(),
                     newScalarSettings(),
                     newToolbar(
-                        toolbar_settings
+                        newToolbarSettings()
                     )
                 ]
             }

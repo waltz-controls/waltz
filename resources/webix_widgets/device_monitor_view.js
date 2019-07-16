@@ -51,13 +51,13 @@
             //TODO sync with device.attrs
             return device.fetchAttrs().then(function (attrs) {
                 var scalars = attrs.filter(function(attr){
-                    return attr.info.data_format === 'SCALAR';
+                    return attr.isScalar();
                 });
 
                 this._add_scalars(scalars);
 
                 var others = attrs.filter(function(attr){
-                    return attr.info.data_format !== 'SCALAR';
+                    return !attr.isScalar();
                 });
 
                 others.forEach(function (attr) {
