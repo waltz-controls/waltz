@@ -642,15 +642,6 @@ import {kNonPlottableDataTypes} from "./plot.js";
                     return false;
                 }.bind(this)
             });
-        },
-        defaults:{
-            on:{
-                "tango_webapp.item_selected subscribe":function(event){
-                    if(event.data.kind !== 'attrs') return;
-                    if(this.$$('scalars').exists(event.data.id) && this.$$('scalars').getSelectedId() !== event.data.id)
-                        this.$$('scalars').select(event.data.id);
-                }
-            }
         }
     },
         TangoWebappPlatform.mixin.Runnable, TangoWebappPlatform.mixin.OpenAjaxListener,
