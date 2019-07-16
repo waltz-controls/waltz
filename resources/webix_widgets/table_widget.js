@@ -32,6 +32,7 @@ const table_datatable = webix.protoUI({
     name:"table_datatable",
     _config() {
         return {
+            editable: true,
             columns: [
                 {id: "id", hidden: true},
                 {id: "device", header: "Device", fillspace: true},
@@ -69,6 +70,12 @@ const table_datatable = webix.protoUI({
                     });
 
                     this.getTopParentView().selectAttribute(attrId);
+                },
+                onAfterEditStop(value, editor) {
+                    const id = `${editor.row}/${editor.column}`;
+
+                    const attr = TangoAttribute.find_one(id);
+                    UserAction.writeAttribute(attr, value.value);
                 }
             }
         }
@@ -85,11 +92,12 @@ const table_datatable = webix.protoUI({
     },
     addColumn(attr){
         const columns = this.config.columns;
-        columns.splice(columns.length - 1,0,{
+        const attrColumnConfig = {
             device_id: attr.device_id,
             id: attr.name,
             header: `${attr.display_name} (${attr.info.display_unit})`,
             template:function(obj){
+                //TODO move to schema type
                 function getQualityIcon(obj){
                     switch (obj[attr.name + "_quality"]) {
                         case "ATTR_ALARM":
@@ -108,7 +116,11 @@ const table_datatable = webix.protoUI({
                 return `${getQualityIcon(obj)}${obj[attr.name]}`;
             },
             fillspace: true
+        };
+        if (attr.isWritable()) webix.extend(attrColumnConfig, {
+            editor: "text"
         });
+        columns.splice(columns.length - 1, 0, attrColumnConfig);
         this.refreshColumns();
     },
     _tracked_attrs:new Set([]),

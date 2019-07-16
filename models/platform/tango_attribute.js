@@ -57,6 +57,12 @@
             getDevice(){
                 return PlatformContext.devices.getItem(this.device_id);
             },
+            isReadOnly() {
+                return this.info.writable.indexOf('WRITE') === -1;
+            },
+            isWritable() {
+                return !this.isReadOnly();
+            },
             /**
              * @return {boolean}
              */
