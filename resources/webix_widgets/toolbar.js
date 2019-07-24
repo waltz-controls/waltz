@@ -67,13 +67,13 @@
     var helpMenu = webix.ui({
         view: "popup",
         id: "helpMenu",
-        width: 100,
+        minWidth: 100,
         body: {
             view: "list",
             data: [
                 {id: "helpAbout", value: "About"},
                 {id: "helpDocs", value: "User docs"},
-                {id: "reportIssue", value: "Report an issue"}
+                {id: "reportIssue", value: "Report an issue", icon: "github"}
             ],
             autoheight: true,
             borderless: true,
