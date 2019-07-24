@@ -112,6 +112,14 @@ const servers = {
         }
     },
     on: {
+        onItemClick(id){
+            if(this.getSelectedId() === id){
+                this.unselectAll();
+            } else {
+                this.select(id);
+            }
+            return false;
+        },
         onAfterSelect(id) {
             const server = this.getItem(id);
             const $$devices = this.getTopParentView().$$('devices');
@@ -321,7 +329,7 @@ const astor = webix.protoUI({
                             rows: [
                                 hosts,
                                 {
-                                    template: "Tango DServers:",
+                                    template: "Tango Servers:",
                                     type: "header"
                                 },
                                 servers,
@@ -373,19 +381,8 @@ const astor = webix.protoUI({
                         {
                             rows: [
                                 {
-                                    view: "list",
-                                    id: "devices",
-                                    server: null,
-                                    select: true,
-                                    multiselect: true,
-                                    template: "<span class='webix_icon fa-microchip'></span>#name#",
-                                    on: {
-                                        onAfterSelect(id) {
-                                            const device = this.getItem(id);
-                                            this.getTopParentView().tango_host.fetchDevice(device.name)
-                                                .then(device => PlatformContext.devices.setCursor(device.id));
-                                        }
-                                    }
+                                    template: "Tango Devices:",
+                                    type: "header"
                                 },
                                 {
                                     view: "form",
@@ -438,6 +435,21 @@ const astor = webix.protoUI({
                                             }
                                         }
                                     ]
+                                },
+                                {
+                                    view: "list",
+                                    id: "devices",
+                                    server: null,
+                                    select: true,
+                                    multiselect: true,
+                                    template: "<span class='webix_icon fa-microchip'></span>#name#",
+                                    on: {
+                                        onAfterSelect(id) {
+                                            const device = this.getItem(id);
+                                            this.getTopParentView().tango_host.fetchDevice(device.name)
+                                                .then(device => PlatformContext.devices.setCursor(device.id));
+                                        }
+                                    }
                                 },
                                 {
                                     template: "Device info:",
