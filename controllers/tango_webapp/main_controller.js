@@ -36,13 +36,6 @@ TangoWebapp.MainController = class extends MVC.Controller{
 
         ui_builder.set_right_item(TangoWebapp.ui.newUserLogPanel(platform_api.context));
 
-        ui_builder.add_mainview_item(
-            {
-                header: "<span class='webix_icon fa-dashboard'></span> Dashboard",
-                borderless: true,
-                body: TangoWebapp.ui.newStatefulAttrsMonitorView({id: 'configurable_monitor'})
-            });
-
         ui_builder.set_bottom_toolbar(TangoWebapp.ui.newBottomToolbar());
     }
     initialize(platform_api){
