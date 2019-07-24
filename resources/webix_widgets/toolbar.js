@@ -79,10 +79,10 @@
             on: {
                 onItemClick: function (id) {
                     if (id === "helpAbout") {
-                        window.open("https://waltz-docs.readthedocs.io/en/latest/", "_blank");
+                        window.open("https://www.waltz-controls.space/en/latest/", "_blank");
                     }
                     if (id === "helpDocs") {
-                        window.open("https://waltz-docs.readthedocs.io/en/latest/user_guide/", "_blank");
+                        window.open("https://www.waltz-controls.space/en/latest/user_guide/", "_blank");
                     }
                     $$("helpMenu").hide();
                 }
