@@ -452,7 +452,7 @@ const astor = webix.protoUI({
                                     }
                                 },
                                 {
-                                    template: "Device info:",
+                                    template: "Selected Device info:",
                                     type: "header"
                                 },
                                 {
@@ -481,7 +481,7 @@ const astor = webix.protoUI({
                                     }
                                 },
                                 {
-                                    template: "Log:",
+                                    template: "Manager's Log:",
                                     type: "header"
                                 },
                                 {
