@@ -72,7 +72,8 @@
             view: "list",
             data: [
                 {id: "helpAbout", value: "About"},
-                {id: "helpDocs", value: "User docs"}
+                {id: "helpDocs", value: "User docs"},
+                {id: "reportIssue", value: "Report an issue"}
             ],
             autoheight: true,
             borderless: true,
@@ -83,6 +84,9 @@
                     }
                     if (id === "helpDocs") {
                         window.open("https://www.waltz-controls.space/en/latest/user_guide/", "_blank");
+                    }
+                    if (id === "reportIssue") {
+                        window.open("https://github.com/tango-controls/waltz/issues/new", "_blank");//TODO issue template ?template=issue.md; put issue.md into .github/ISSUE_TEMPLATE
                     }
                     $$("helpMenu").hide();
                 }
