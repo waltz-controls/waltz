@@ -73,7 +73,7 @@
             data: [
                 {id: "helpAbout", value: "About"},
                 {id: "helpDocs", value: "User docs"},
-                {id: "reportIssue", value: "Report an issue", icon: "github"}
+                {id: "reportIssue", value: "New issue", icon: "github"}
             ],
             autoheight: true,
             borderless: true,
