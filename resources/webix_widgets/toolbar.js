@@ -215,13 +215,6 @@
                         width: 36,
                         popup: 'log',
                         align: "right"
-                    },
-                    {
-                        type: "header",
-                        width: 36,
-                        tooltip: 'Report an issue...',
-                        borderless: true,
-                        template: "<a target='_blank' href='http://github.com/tango-controls/tango-webapp'><span class='webix_icon fa-github' style='color: #606060;'></span></a>"
                     }
                 ]
             }
