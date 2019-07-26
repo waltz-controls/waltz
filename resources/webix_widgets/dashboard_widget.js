@@ -169,6 +169,8 @@ const dashboard_widget = webix.protoUI({
             new Profile(webix.uid(), "default", "table")]
     },
     restoreState(state){
+        if (state.data[0] === undefined) return;
+
         state.data.forEach(profile => {
             profile.viewId = this.$$("multiview").addView(createInnerWidget(profile.type, {
                 id: profile.id
@@ -196,7 +198,7 @@ const dashboard_widget = webix.protoUI({
     deleteProfile(id){
         const profile = this.state.data.find(profile => profile.id === id);
         const index = this.state.data.indexOf(profile);
-        webix.assert(index > -1, "assertion error: there is no profile with id=" + id);
+        if (index === -1) return;
         this.state.data.splice(index, 1);
         this.state.updateState();
 
