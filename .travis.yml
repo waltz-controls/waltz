@@ -1,6 +1,10 @@
 dist: trusty
 language: java
 sudo: false
+env:
+  - REGISTRY_USER=ingvord
+services:
+  - docker
 addons:
   sonarcloud:
     organization: "tango-controls" # the key of the org you chose at step #3
@@ -13,7 +17,18 @@ script:
 after_success:
   - git fetch --unshallow --quiet
   - sonar-scanner -Dsonar.projectKey=org.tango-controls:TangoWebapp -Dsonar.sources=. -Dsonar.exclusions=build/**,jmvc/**,docs/**,apps/**
+before_deploy:
+  - docker login -u "$REGISTRY_USER" -p "$REGISTRY_PASS"
+  - docker build --pull --tag "tangocs/waltz" .
 deploy:
+  - provider: script
+    script: bash .travis/docker_push.sh latest
+    on:
+      branch: master
+  - provider: script
+    script: bash .travis/docker_push.sh $TRAVIS_TAG
+    on:
+      tags: true
   - provider: releases
     prerelease: true
     api_key: $GITHUB_OAUTH_TOKEN
