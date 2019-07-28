@@ -21,7 +21,7 @@ before_deploy:
   - docker login -u "$REGISTRY_USER" -p "$REGISTRY_PASS"
 deploy:
   - provider: script
-    script: docker_push.sh latest
+    script: bash .travis/docker_push.sh latest
     on:
       branch: master
   - provider: script
