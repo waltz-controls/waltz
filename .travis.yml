@@ -2,7 +2,7 @@ dist: trusty
 language: java
 sudo: false
 env:
-  - DOCKER_IMAGE_NAME=tangocs/waltz REGISTRY_USER=ingvord
+  - REGISTRY_USER=ingvord
 services:
   - docker
 addons:
@@ -18,9 +18,7 @@ after_success:
   - git fetch --unshallow --quiet
   - sonar-scanner -Dsonar.projectKey=org.tango-controls:TangoWebapp -Dsonar.sources=. -Dsonar.exclusions=build/**,jmvc/**,docs/**,apps/**
 before_deploy:
-  - docker build --pull --tag "$DOCKER_IMAGE_NAME" .
   - docker login -u "$REGISTRY_USER" -p "$REGISTRY_PASS"
-  - docker tag "$DOCKER_IMAGE_NAME" "${DOCKER_IMAGE_NAME}:${TRAVIS_BRANCH}"
 deploy:
   - provider: script
     script: docker_push.sh latest

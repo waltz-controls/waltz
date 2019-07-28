@@ -1,7 +1,11 @@
 #!/bin/bash
 
+set -e
+
 DOCKER_TAG=$1
 
-docker tag "$DOCKER_IMAGE_NAME" "${DOCKER_IMAGE_NAME}:${DOCKER_TAG}"
+docker build --pull --tag "tangocs/waltz" .
 
-docker push "${DOCKER_IMAGE_NAME}:${DOCKER_TAG}"
+docker tag "tangocs/waltz" "tangocs/waltz:${DOCKER_TAG}"
+
+docker push "tangocs/waltz:${DOCKER_TAG}"
