@@ -20,7 +20,7 @@ after_success:
 before_deploy:
   - docker build --pull --tag "$DOCKER_IMAGE_NAME" .
   - docker login -u "$REGISTRY_USER" -p "$REGISTRY_PASS"
-  - docker tag "$DOCKER_IMAGE_NAME" "${DOCKER_IMAGE_NAME}:${TRAVIS_TAG}"
+  - docker tag "$DOCKER_IMAGE_NAME" "${DOCKER_IMAGE_NAME}:${TRAVIS_BRANCH}"
 deploy:
   - provider: script
     script: docker push "${DOCKER_IMAGE_NAME}:${TRAVIS_TAG}"
