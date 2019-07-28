@@ -23,7 +23,11 @@ before_deploy:
   - docker tag "$DOCKER_IMAGE_NAME" "${DOCKER_IMAGE_NAME}:${TRAVIS_BRANCH}"
 deploy:
   - provider: script
-    script: docker push "${DOCKER_IMAGE_NAME}:${TRAVIS_TAG}"
+    script: docker_push.sh latest
+    on:
+      branch: master
+  - provider: script
+    script: docker_push.sh $TRAVIS_TAG
     on:
       tags: true
   - provider: releases
