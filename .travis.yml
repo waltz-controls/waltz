@@ -19,6 +19,7 @@ after_success:
   - sonar-scanner -Dsonar.projectKey=org.tango-controls:TangoWebapp -Dsonar.sources=. -Dsonar.exclusions=build/**,jmvc/**,docs/**,apps/**
 before_deploy:
   - docker login -u "$REGISTRY_USER" -p "$REGISTRY_PASS"
+  - docker build --pull --tag "tangocs/waltz" .
 deploy:
   - provider: script
     script: bash .travis/docker_push.sh latest
