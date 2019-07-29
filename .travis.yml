@@ -17,16 +17,17 @@ script:
 after_success:
   - git fetch --unshallow --quiet
   - sonar-scanner -Dsonar.projectKey=org.tango-controls:TangoWebapp -Dsonar.sources=. -Dsonar.exclusions=build/**,jmvc/**,docs/**,apps/**
+  - docker build --pull --tag "tangocs/waltz" .
 before_deploy:
   - docker login -u "$REGISTRY_USER" -p "$REGISTRY_PASS"
-  - docker build --pull --tag "tangocs/waltz" .
+  - docker tag "tangocs/waltz" "tangocs/waltz:$TRAVIS_BRANCH"
 deploy:
   - provider: script
-    script: bash .travis/docker_push.sh latest
+    script: docker push "tangocs/waltz:latest"
     on:
       branch: master
   - provider: script
-    script: bash .travis/docker_push.sh $TRAVIS_TAG
+    script: docker push "tangocs/waltz:$TRAVIS_TAG"
     on:
       tags: true
   - provider: releases

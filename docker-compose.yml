@@ -7,9 +7,10 @@ services:
     environment:
     - MYSQL_ROOT_PASSWORD=root
   tango-cs:
-    image: da1abf3b1877
+    image: ingvord/tango-cs-with-rest:1.14
     ports:
     - "10000:10000"
+    - "10001:10001"
     environment:
     - TANGO_HOST=localhost:10000
     - MYSQL_HOST=tango-db:3306
@@ -18,6 +19,12 @@ services:
     - MYSQL_DATABASE=tango
     depends_on:
     - tango-db
+  tango-test:
+    image: tangocs/tango-test
+    environment:
+    - TANGO_HOST=tango-cs:10000
+    depends_on:
+    - tango-cs
   waltz:
     image: tangocs/waltz:v0.7.3
     ports:
