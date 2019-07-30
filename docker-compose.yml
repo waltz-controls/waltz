@@ -1,5 +1,9 @@
-version: '3.2'
+version: '3.7'
+
 services:
+  epics-sim:
+    image: lnlssol/epics-sim
+    entrypoint: /root/runIocsFG.sh
   tango-db:
     image: tangocs/mysql:9.2.2
     ports:
@@ -7,7 +11,7 @@ services:
     environment:
     - MYSQL_ROOT_PASSWORD=root
   tango-cs:
-    image: ingvord/tango-cs-with-rest:1.14
+    image: ingvord/tango-cs-with-rest
     ports:
     - "10000:10000"
     - "10001:10001"
@@ -26,11 +30,12 @@ services:
     depends_on:
     - tango-cs
   tango-epics:
-    image: ingvord/tango-epics:9.2.5-with-starter
+    image: ingvord/tango-epics
     environment:
     - TANGO_HOST=tango-cs:10000
     depends_on:
     - tango-cs
+    - epics-sim
   waltz:
     image: tangocs/waltz:v0.7.3
     ports:
