@@ -58,22 +58,18 @@ Pass: tango
 
 [![](https://github.com/tango-controls/tango-webapp/wiki/images/live.png)](http://ec2-35-156-104-8.eu-central-1.compute.amazonaws.com:8080/master/)
 
-## Requirements ##
+## Getting started ##
+
+1. Execute `docker-copmpose.yml` using [`docker-compose`](https://docs.docker.com/compose/install/) i.e. `docker-compose up`
+2. Open browser and navigate to `http://localhost:8080/waltz`
+3. Login using tango-cs/tango
+4. Explore Tango Controls via Waltz...
+
+## Developer requirements ##
 
 * Tango Controls environment (tested on Tango 8 and Tango 9)
 * Tango REST Server that supports API spec version rc4 (tested on [rest-server-1.6](https://github.com/tango-controls/rest-server/releases/tag/rest-server-1.6))
 * Web server that can handle .war files (tested on Apache Tomcat 8&9)
-
-## Getting started ##
-
-1. Download the latest [waltz.war](https://github.com/tango-controls/tango-webapp/releases) file.
-2. Copy it into your webserver's web applications root folder, e.g. {CATALINA_HOME}/webapps
-3. Define a tomcat user who has the role "mtango-rest".
-4. Restart server
-5. Open browser and navigate to <your_host>/TangoWebapp
-6. Adjust TANGO_REST_URL (must point to a valid Tango REST server, e.g. `http://{host}:{port}`) and TANGO_HOST values in the left top corner of the app
-7. Press refresh button
-8. Explore your Tango devices...
 
 ## Build ##
 
