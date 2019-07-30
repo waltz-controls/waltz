@@ -100,7 +100,7 @@ function newProfileForm() {
                         name: "type",
                         label: "Type",
                         labelAlign: "right",
-                        options:["table","plot"],
+                        options:["table","plot","list"],
                         value: "table",
                         validate: webix.rules.isNotEmpty
                     }
@@ -159,6 +159,8 @@ function createInnerWidget(type, config){
             return newTableWidgetBody(config);
         case "plot":
             return newPlotlyWidgetBody(config);
+        case "list":
+            return TangoWebapp.ui.newStatefulAttrsMonitorView(config);
     }
 }
 
