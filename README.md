@@ -9,6 +9,7 @@
 [![Build Status](https://travis-ci.org/tango-controls/waltz.svg?branch=master)](https://travis-ci.org/tango-controls/waltz)
 
 [![release](https://img.shields.io/github/release/tango-controls/tango-webapp.svg?style=flat)](https://github.com/tango-controls/tango-webapp/releases/latest)
+[![License](https://img.shields.io/badge/License-Apache%202.0-yellowgreen.svg)](https://opensource.org/licenses/Apache-2.0)
 
 ## SonarCloud
 
