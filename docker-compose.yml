@@ -25,6 +25,12 @@ services:
     - TANGO_HOST=tango-cs:10000
     depends_on:
     - tango-cs
+  tango-epics:
+    image: ingvord/tango-epics:9.2.5-with-starter
+    environment:
+    - TANGO_HOST=tango-cs:10000
+    depends_on:
+    - tango-cs
   waltz:
     image: tangocs/waltz:v0.7.3
     ports:
