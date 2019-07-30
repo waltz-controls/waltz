@@ -47,7 +47,7 @@ const table_datatable = webix.protoUI({
             on:{
                 onHeaderClick(obj){
                     if(obj.column === 'remove'){
-                        this.clear();
+                        this.getTopParentView().clear();
                     }
                 },
                 onItemClick(id) {
@@ -196,6 +196,9 @@ const table_datatable = webix.protoUI({
     },
     removeDevice(id){
         this.remove(id);
+        if(this.count() === 0)
+            this.removeColumns();
+        return false;
     },
     run(){
         this.data.each(item => {
@@ -235,7 +238,7 @@ const stateful_table_datatable = webix.protoUI({
                 .map(name => device_id + "/" + name)
                 .forEach(async attrId => {
                     PlatformContext.rest.fetchAttr(attrId)
-                        .then(attr => this.getTopParentView().addAttribute(attr));
+                        .then(attr => this.getTopParentView().addAttribute(attr, true));
                 })
         })
     },
@@ -293,9 +296,7 @@ function newTableWidgetTable(config) {
         view:"stateful_table_datatable",
         onClick: {
             "remove-single":function(event, id){
-                this.removeDevice(id.row);
-                if(this.count() === 0) this.removeColumns();
-                return false;
+                this.getTopParentView().removeDevice(id.row);
             }
         }
     }
@@ -375,20 +376,38 @@ const table_widget = webix.protoUI({
         this.$$('input').setAttribute(attr);
     },
     removeAttribute(name){
+        const readonly = !this.$$('settings').getValues().editable;
+        if(readonly) return;
         this.$$('datatable').removeAttribute(name);
         this.$$('settings').removeAttribute(name);
     },
-    addAttribute(attr){
+    addAttribute(attr, force = false){
+        const readonly = !this.$$('settings').getValues().editable;
+        if(readonly && !force) return;
         if(!attr.isScalar()) {
             webix.message("Only SCALAR attributes are supported by this widget!");
             return;
         }
-        this.$$('datatable').addAttribute(attr);
-        this.$$('settings').addAttribute(attr.display_name);
+        this.$$('datatable').addAttribute(attr, force);
+        this.$$('settings').addAttribute(attr.display_name, force);
     },
     addDevice(id){
+        const readonly = !this.$$('settings').getValues().editable;
+        if(readonly) return;
         this.$$('datatable').addDevice(id);
         this.$$('settings').addDevice(id);
+    },
+    removeDevice(id){
+        const readonly = !this.$$('settings').getValues().editable;
+        if(readonly) return;
+        this.$$('datatable').removeDevice(id);
+        if(this.$$('datatable').count() === 0) this.$$('settings').clear();
+    },
+    clear(){
+        const readonly = !this.$$('settings').getValues().editable;
+        if(readonly) return;
+        this.$$('datatable').clear();
+        this.$$('settings').clear();
     },
     run(){
         this.$$('datatable').run();

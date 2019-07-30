@@ -3,24 +3,35 @@
  * @author Igor Khokhriakov <igor.khokhriakov@hzg.de>
  * @since 6/12/19
  */
-const settings = webix.protoUI({
+const widget_settings = webix.protoUI({
     name: "widget_settings",
     _config() {
         return {
-            cols: [{}]
+            cols: [{
+                name: "editable",
+                view: "checkbox",
+                label: "Editable",
+                labelPosition: "top",
+                tooltip: "Enables/disables changes of this table i.e. add/remove attributes etc",
+                value: false
+            }]
         }
+    },
+    clear(){
+        if(this.getChildViews().length === 1) return;
+        do {
+            this.removeView(this.getChildViews()[this.getChildViews().length - 1]);
+        } while(this.getChildViews().length > 1);
     },
     removeAttribute(name) {
+        const readonly = !this.getValues().editable;
+        if(readonly) return;
         const col = this.queryView({label: name});
         this.removeView(col);
-        if (this.getChildViews().length === 1) {
-            this.getChildViews()[0].define({
-                width: 0
-            });
-            this.getChildViews()[0].resize();
-        }
     },
-    addAttribute(label) {
+    addAttribute(label, force) {
+        const readonly = !this.getValues().editable;
+        if(readonly && !force) return;
         const col = this.queryView({label: label});
         if (col !== null) return;
         this.addView({
@@ -32,12 +43,6 @@ const settings = webix.protoUI({
                 this.getTopParentView().removeAttribute(this.data.label);
             }
         });
-        if (this.getChildViews().length === 2) {
-            this.getChildViews()[0].define({
-                width: 1
-            });
-            this.getChildViews()[0].resize();
-        }
     },
     addDevice(id) {
         //TODO?
@@ -50,8 +55,7 @@ const settings = webix.protoUI({
 export function newRemoveAttributeSettings() {
     return {
         view: "widget_settings",
-        id: "settings",
-        hidden: true
+        id: "settings"
     };
 }
 
