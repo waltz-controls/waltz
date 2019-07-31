@@ -17,12 +17,6 @@ const widget_settings = webix.protoUI({
             }]
         }
     },
-    clear(){
-        if(this.getChildViews().length === 1) return;
-        do {
-            this.removeView(this.getChildViews()[this.getChildViews().length - 1]);
-        } while(this.getChildViews().length > 1);
-    },
     removeAttribute(name) {
         const readonly = !this.getValues().editable;
         if(readonly) return;

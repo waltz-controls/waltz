@@ -84,13 +84,6 @@ const table_datatable = webix.protoUI({
     },
     clear(){
         this.clearAll();
-        this._tracked_attrs = new Set([]);
-        this.removeColumns();
-    },
-    removeColumns(){
-        const columns = this.config.columns;
-        this.config.columns = columns.filter(column => kPersistentColumns.includes(column.id));
-        this.refreshColumns();
     },
     addColumn(attr){
         const columns = this.config.columns;
@@ -196,8 +189,6 @@ const table_datatable = webix.protoUI({
     },
     removeDevice(id){
         this.remove(id);
-        if(this.count() === 0)
-            this.removeColumns();
         return false;
     },
     run(){
@@ -244,8 +235,7 @@ const stateful_table_datatable = webix.protoUI({
     },
     clear(){
         webix.ui.table_datatable.prototype.clear.apply(this, arguments);
-        this.state.setState({
-            attrs: [],
+        this.state.updateState({
             devices: []
         });
     },
@@ -401,13 +391,11 @@ const table_widget = webix.protoUI({
         const readonly = !this.$$('settings').getValues().editable;
         if(readonly) return;
         this.$$('datatable').removeDevice(id);
-        if(this.$$('datatable').count() === 0) this.$$('settings').clear();
     },
     clear(){
         const readonly = !this.$$('settings').getValues().editable;
         if(readonly) return;
         this.$$('datatable').clear();
-        this.$$('settings').clear();
     },
     run(){
         this.$$('datatable').run();
