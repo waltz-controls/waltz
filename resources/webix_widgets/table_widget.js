@@ -2,6 +2,7 @@ import newToolbar from "./attrs_monitor_toolbar.js";
 import {newRemoveAttributeSettings, toolbar_extension} from "./remove_attribute_toolbar.js";
 
 const kPersistentColumns = ["id", "device", "remove"];
+const kOverlayDelayTimeout = 3000;
 
 export const TableWidgetController = class extends MVC.Controller {
     buildUI(platform_api) {
@@ -224,6 +225,12 @@ const stateful_table_datatable = webix.protoUI({
         }
     },
     restoreState(state){
+        if(state.data.devices.length === 0 && state.data.attrs.length > 0) //this may happen when user cleared tha table and then refreshed the app
+            this.state.setState({
+                attrs: [],
+                devices: []
+            });
+
         state.data.devices.forEach(device_id => {
             state.data.attrs
                 .map(name => device_id + "/" + name)
@@ -359,6 +366,16 @@ const table_widget = webix.protoUI({
             ]
         }
     },
+    showOverlay(msg){
+        const $$datatable = this.$$('datatable');
+        $$datatable.disable();
+        // $$datatable.showOverlay(msg);
+        webix.message({expire:kOverlayDelayTimeout, text:msg});
+        setTimeout(() => {
+            $$datatable.enable();
+            // $$datatable.hideOverlay();
+        },kOverlayDelayTimeout);
+    },
     selectAttribute(id){
         const attr = TangoAttribute.find_one(id);
         if(attr === null) throw new Error("assertion error");
@@ -366,35 +383,55 @@ const table_widget = webix.protoUI({
         this.$$('input').setAttribute(attr);
     },
     removeAttribute(name){
-        const readonly = !this.$$('settings').getValues().editable;
-        if(readonly) return;
-        this.$$('datatable').removeAttribute(name);
-        this.$$('settings').removeAttribute(name);
-    },
-    addAttribute(attr, force = false){
-        const readonly = !this.$$('settings').getValues().editable;
-        if(readonly && !force) return;
-        if(!attr.isScalar()) {
-            webix.message("Only SCALAR attributes are supported by this widget!");
+        const $$settings = this.$$('settings');
+        const $$datatable = this.$$('datatable');
+        const readonly = !$$settings.getValues().editable;
+        if(readonly) {
+            this.showOverlay("<span class='webix_icon fa-trash'></span>TableWidget is not editable...\n Please check 'Editable' box!");
             return;
         }
-        this.$$('datatable').addAttribute(attr, force);
-        this.$$('settings').addAttribute(attr.display_name, force);
+        $$datatable.removeAttribute(name);
+        $$settings.removeAttribute(name);
+    },
+    addAttribute(attr, force = false){
+        const $$datatable = this.$$('datatable');
+        const $$settings = this.$$('settings');
+        const readonly = !$$settings.getValues().editable;
+        if(readonly && !force) {
+            this.showOverlay("TableWidget is not editable...\n Please check 'Editable' box!");
+            return;
+        }
+        if(!attr.isScalar()) {
+            this.showOverlay("Only SCALAR attributes are supported by this widget!");
+            return;
+        }
+
+        $$datatable.addAttribute(attr, force);
+        $$settings.addAttribute(attr.display_name, force);
     },
     addDevice(id){
         const readonly = !this.$$('settings').getValues().editable;
-        if(readonly) return;
+        if(readonly) {
+            this.showOverlay("TableWidget is not editable...\n Please check 'Editable' box!");
+            return;
+        }
         this.$$('datatable').addDevice(id);
         this.$$('settings').addDevice(id);
     },
     removeDevice(id){
         const readonly = !this.$$('settings').getValues().editable;
-        if(readonly) return;
+        if(readonly) {
+            this.showOverlay("TableWidget is not editable...\n Please check 'Editable' box!");
+            return;
+        }
         this.$$('datatable').removeDevice(id);
     },
     clear(){
         const readonly = !this.$$('settings').getValues().editable;
-        if(readonly) return;
+        if(readonly) {
+            this.showOverlay("TableWidget is not editable...\n Please check 'Editable' box!");
+            return;
+        }
         this.$$('datatable').clear();
     },
     run(){
@@ -422,10 +459,12 @@ const table_widget = webix.protoUI({
                     if (attr == null) return false;
 
                     this.addAttribute(attr);
-                }
-                if(dnd.from.config.view === 'devices_tree_tree'){
+                } else if(dnd.from.config.view === 'devices_tree_tree'){
                     this.addDevice(dnd.source[0]);
+                } else {
+                    this.showOverlay(`${dnd.from.config.$id} are not supported by this widget`);
                 }
+                
                 return false;
             }.bind(this)
         });
