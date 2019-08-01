@@ -26,6 +26,8 @@ jobs:
     -
       name: "Deploy to Amazon cloud"
       script:
+        - . .travis/.env.amazon
+        - echo $REST_API_HOST
         - .travis/build.sh
         - mv build/distributions/waltz.war build/distributions/$TRAVIS_BRANCH.war
       deploy:
