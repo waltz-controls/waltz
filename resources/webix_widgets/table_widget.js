@@ -229,12 +229,13 @@ const stateful_table_datatable = webix.protoUI({
     },
     restoreState(state){
         if(state.data.devices.length === 0 && state.data.attrs.length > 0) //this may happen when user cleared tha table and then refreshed the app
-            this.state.setState({
+            this.state.updateState({
                 attrs: [],
                 devices: []
             });
 
         state.data.devices.forEach(device_id => {
+            this.getTopParentView().addDevice(device_id);
             state.data.attrs
                 .map(name => device_id + "/" + name)
                 .forEach(async attrId => {
