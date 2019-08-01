@@ -1,8 +1,11 @@
 dist: trusty
 language: java
 sudo: false
-env:
-  - REGISTRY_USER=ingvord
+jdk:
+  - openjdk8
+cache:
+  directories:
+    - '$HOME/.m2/repository'
 services:
   - docker
 addons:
@@ -10,40 +13,53 @@ addons:
     organization: "tango-controls" # the key of the org you chose at step #3
     token:
       secure: $SONAR_TOKEN
-script:
-  - chmod 777 ./jmvcc
-  - ./jmvcc jmvc/assemble
-  - test -e build/distributions/waltz.war
-after_success:
-  - git fetch --unshallow --quiet
-  - sonar-scanner -Dsonar.projectKey=org.tango-controls:TangoWebapp -Dsonar.sources=. -Dsonar.exclusions=build/**,jmvc/**,docs/**,apps/**
-  - docker build --pull --tag "tangocs/waltz" .
-before_deploy:
-  - docker login -u "$REGISTRY_USER" -p "$REGISTRY_PASS"
-  - docker tag "tangocs/waltz" "tangocs/waltz:$TRAVIS_BRANCH"
-deploy:
-  - provider: script
-    script: docker push "tangocs/waltz:latest"
-    on:
-      branch: master
-  - provider: script
-    script: docker push "tangocs/waltz:$TRAVIS_TAG"
-    on:
-      tags: true
-  - provider: releases
-    prerelease: true
-    api_key: $GITHUB_OAUTH_TOKEN
-    file: "build/distributions/waltz.war"
-    skip_cleanup: true
-    on:
-      tags: true
-  - provider: script
-    script: bash .travis/deploy.sh
-    skip_cleanup: true
-    on:
-      all_branches: true
-jdk:
-  - openjdk8
-cache:
-  directories:
-    - '$HOME/.m2/repository'
+jobs:
+  include:
+    - stage: build
+      script: .travis/build.sh
+    - stage: deploy
+      name: "Deploy to SonarCloud"
+      script:
+        - .travis/build.sh
+        - git fetch --unshallow --quiet
+        - sonar-scanner -Dsonar.projectKey=org.tango-controls:TangoWebapp -Dsonar.sources=. -Dsonar.exclusions=build/**,jmvc/**,docs/**,apps/**
+    -
+      name: "Deploy to Amazon cloud"
+      script:
+        - .travis/build.sh
+        - mv build/distributions/waltz.war build/distributions/$TRAVIS_BRANCH.war
+      deploy:
+        - provider: script
+          script: bash .travis/deploy.sh
+          skip_cleanup: true
+          on:
+            all_branches: true
+    -
+      name: "Deploy to GitHub releases"
+      script: .travis/build.sh
+      deploy:
+        - provider: releases
+          prerelease: true
+          api_key: $GITHUB_OAUTH_TOKEN
+          file: "build/distributions/waltz.war"
+          skip_cleanup: true
+          on:
+            tags: true
+    -
+      name: "Deploy to docker hub"
+      env:
+        - REGISTRY_USER=ingvord DOCKER_IMAGE=tangocs/waltz
+      script:
+        - .travis/build.sh
+        - docker build --pull --tag "$DOCKER_IMAGE" .
+        - docker login -u "$REGISTRY_USER" -p "$REGISTRY_PASS"
+        - docker tag "$DOCKER_IMAGE" "$DOCKER_IMAGE:$TRAVIS_BRANCH"
+      deploy:
+        - provider: script
+          script: docker push "$DOCKER_IMAGE:latest"
+          on:
+            branch: master
+        - provider: script
+          script: docker push "$DOCKER_IMAGE:$TRAVIS_TAG"
+          on:
+            tags: true
