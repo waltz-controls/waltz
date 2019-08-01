@@ -25,8 +25,14 @@ jobs:
         - sonar-scanner -Dsonar.projectKey=org.tango-controls:TangoWebapp -Dsonar.sources=. -Dsonar.exclusions=build/**,jmvc/**,docs/**,apps/**
     -
       name: "Deploy to Amazon cloud"
-      before_script:
-        - cp .travis/.env.amazon .env
+      env:
+        - REST_API_PROTOCOL="http"
+        - REST_API_HOST="ec2-35-156-104-8.eu-central-1.compute.amazonaws.com"
+        - REST_API_PORT=8080
+        - REST_API_VERSION="rc4"
+        - TANGO_HOST="ip-172-31-30-179"
+        - TANGO_PORT=10000
+        - VERSION="$TRAVIS_BRANCH"
       script:
         - .travis/build.sh
         - mv build/distributions/waltz.war build/distributions/$TRAVIS_BRANCH.war
