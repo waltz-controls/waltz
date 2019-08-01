@@ -151,16 +151,42 @@ TangoWebappPlatform.mixin = {
         $init:function(config){
             config.state_class = config.state_class || TangoWebappPlatform.WidgetState;
             this.$ready.push(function(){
-                this.state = this.config.state_class.find_one(this.getStateId());
-                if(this.state === null) {
-                    this.state = new this.config.state_class({
-                        id: this.getStateId(),
-                        data: this.getInitialState()
-                    })
-                }
-                this.restoreState(this.state);
-                TangoWebappHelpers.log(`Widget[${this.config.id}] state[${this.getStateId()}] is restored.`);
+                setTimeout(()=>{
+                    this.state = this.config.state_class.find_one(this.getStateId());
+                    if(this.state === null) {
+                        this.state = new this.config.state_class({
+                            id: this.getStateId(),
+                            data: this.getInitialState()
+                        })
+                    }
+                    this.restoreState(this.state);
+                    TangoWebappHelpers.log(`Widget[${this.config.id}] state[${this.getStateId()}] is restored.`);
+                },0);
             }.bind(this));
+        }
+    },
+    ToggleSettings:{
+        toggleSettings(){
+            const $$settings = this.$$('settings');
+            if($$settings.isVisible()){
+                this.hideSettings();
+            } else {
+                this.showSettings();
+            }
+        },
+        hideSettings(){
+            const $$settings = this.$$('settings');
+            $$settings.hide();
+            this.state.updateState({
+                hide_settings : true
+            });
+        },
+        showSettings(){
+            const $$settings = this.$$('settings');
+            $$settings.show();
+            this.state.updateState({
+                hide_settings : false
+            });
         }
     }
 };

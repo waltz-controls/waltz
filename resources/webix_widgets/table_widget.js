@@ -3,6 +3,7 @@ import {newRemoveAttributeSettings, toolbar_extension} from "./remove_attribute_
 
 const kPersistentColumns = ["id", "device", "remove"];
 const kOverlayDelayTimeout = 3000;
+const kFrozenOverlayMessage = "<span class='webix_icon fa-bell'></span>This TableWidget's configuration is frozen...<br/> Please uncheck 'Frozen' box!";
 
 export const TableWidgetController = class extends MVC.Controller {
     buildUI(platform_api) {
@@ -220,6 +221,8 @@ const stateful_table_datatable = webix.protoUI({
     name:"stateful_table_datatable",
     getInitialState(){
         return {
+            hide_settings: false,
+            frozen: false,
             attrs: [],
             devices: []
         }
@@ -238,7 +241,17 @@ const stateful_table_datatable = webix.protoUI({
                     PlatformContext.rest.fetchAttr(attrId)
                         .then(attr => this.getTopParentView().addAttribute(attr, true));
                 })
-        })
+        });
+
+        this.getTopParentView().frozen = state.data.frozen;
+
+        if(state.data.hide_settings)
+            this.getTopParentView().hideSettings();
+    },
+    setFrozen(value){
+        this.state.updateState({
+            frozen: value
+        });
     },
     clear(){
         webix.ui.table_datatable.prototype.clear.apply(this, arguments);
@@ -356,6 +369,18 @@ function newScalarInput(){
 
 const table_widget = webix.protoUI({
     name: "table_widget",
+    get frozen(){
+        return this.$$('settings').getValues().frozen
+    },
+    set frozen(value){
+        this.$$('datatable').setFrozen(value);
+        this.$$('settings').setValues({
+            frozen: value
+        })
+    },
+    get state(){
+        return this.$$('datatable').state;
+    },
     _ui(config) {
         return {
             rows:[
@@ -385,9 +410,8 @@ const table_widget = webix.protoUI({
     removeAttribute(name){
         const $$settings = this.$$('settings');
         const $$datatable = this.$$('datatable');
-        const readonly = !$$settings.getValues().editable;
-        if(readonly) {
-            this.showOverlay("<span class='webix_icon fa-trash'></span>TableWidget is not editable...\n Please check 'Editable' box!");
+        if(this.frozen) {
+            this.showOverlay(kFrozenOverlayMessage);
             return;
         }
         $$datatable.removeAttribute(name);
@@ -396,9 +420,8 @@ const table_widget = webix.protoUI({
     addAttribute(attr, force = false){
         const $$datatable = this.$$('datatable');
         const $$settings = this.$$('settings');
-        const readonly = !$$settings.getValues().editable;
-        if(readonly && !force) {
-            this.showOverlay("TableWidget is not editable...\n Please check 'Editable' box!");
+        if(this.frozen && !force) {
+            this.showOverlay(kFrozenOverlayMessage);
             return;
         }
         if(!attr.isScalar()) {
@@ -410,26 +433,23 @@ const table_widget = webix.protoUI({
         $$settings.addAttribute(attr.display_name, force);
     },
     addDevice(id){
-        const readonly = !this.$$('settings').getValues().editable;
-        if(readonly) {
-            this.showOverlay("TableWidget is not editable...\n Please check 'Editable' box!");
+        if(this.frozen) {
+            this.showOverlay(kFrozenOverlayMessage);
             return;
         }
         this.$$('datatable').addDevice(id);
         this.$$('settings').addDevice(id);
     },
     removeDevice(id){
-        const readonly = !this.$$('settings').getValues().editable;
-        if(readonly) {
-            this.showOverlay("TableWidget is not editable...\n Please check 'Editable' box!");
+        if(this.frozen) {
+            this.showOverlay(kFrozenOverlayMessage);
             return;
         }
         this.$$('datatable').removeDevice(id);
     },
     clear(){
-        const readonly = !this.$$('settings').getValues().editable;
-        if(readonly) {
-            this.showOverlay("TableWidget is not editable...\n Please check 'Editable' box!");
+        if(this.frozen) {
+            this.showOverlay(kFrozenOverlayMessage);
             return;
         }
         this.$$('datatable').clear();
@@ -444,6 +464,23 @@ const table_widget = webix.protoUI({
             webix.event(this.getNode(), "click", function(e){
                 this.run();
             }, {bind:this});
+
+            const $$settings = this.$$('settings');
+            $$settings.addView({
+                name: "frozen",
+                view: "checkbox",
+                label: "Frozen",
+                labelPosition: "top",
+                tooltip: "Enables/disables changes of this table i.e. add/remove attributes etc",
+                value: false,
+                click(){
+                    this.getTopParentView().frozen = this.getValue();//TODO bind to table_widget field
+                }
+            });
+            $$settings.getChildViews()[0].define({
+                width: 1
+            });
+            $$settings.getChildViews()[0].resize();
         });
 
         this.addDrop(this.getNode(),{
@@ -470,7 +507,7 @@ const table_widget = webix.protoUI({
         });
     }
 
-}, TangoWebappPlatform.mixin.Runnable, webix.DragControl, webix.IdSpace, webix.ui.layout);
+},/*TODO Statefull*/ TangoWebappPlatform.mixin.Runnable, TangoWebappPlatform.mixin.ToggleSettings, webix.DragControl, webix.IdSpace, webix.ui.layout);
 
 export function newTableWidgetBody(config){
     return webix.extend({

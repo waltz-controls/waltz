@@ -7,25 +7,22 @@ const widget_settings = webix.protoUI({
     name: "widget_settings",
     _config() {
         return {
-            cols: [{
-                name: "editable",
-                view: "checkbox",
-                label: "Editable",
-                labelPosition: "top",
-                tooltip: "Enables/disables changes of this table i.e. add/remove attributes etc",
-                value: false
-            }]
+            cols: [{}]
         }
     },
     removeAttribute(name) {
-        const readonly = !this.getValues().editable;
-        if(readonly) return;
+        if(this.getTopParentView().frozen) return;
         const col = this.queryView({label: name});
         this.removeView(col);
+        if (this.getChildViews().length === 1) {
+            this.getChildViews()[0].define({
+                width: 0
+            });
+            this.getChildViews()[0].resize();
+        }
     },
     addAttribute(label, force) {
-        const readonly = !this.getValues().editable;
-        if(readonly && !force) return;
+        if(this.getTopParentView().frozen && !force) return;
         const col = this.queryView({label: label});
         if (col !== null) return;
         this.addView({
@@ -37,6 +34,12 @@ const widget_settings = webix.protoUI({
                 this.getTopParentView().removeAttribute(this.data.label);
             }
         });
+        if (this.getChildViews().length === 2) {
+            this.getChildViews()[0].define({
+                width: 1
+            });
+            this.getChildViews()[0].resize();
+        }
     },
     addDevice(id) {
         //TODO?
@@ -61,11 +64,7 @@ export function toolbar_extension() {
         maxWidth: 30,
         tooltip: "Show/hide settings",
         click: function () {
-            const $$settings = this.getTopParentView().$$('settings');
-            if ($$settings.isVisible())
-                $$settings.hide();
-            else
-                $$settings.show();
+            this.getTopParentView().toggleSettings();
         }
     }];
 }

@@ -64,7 +64,10 @@ function groupAttributesByDeviceId(attrs) {
 const plotly_widget = webix.protoUI({
     name: "plotly_widget",
     getInitialState(){
-        return [];
+        return {
+            hide_settings: false,
+            attrs: []
+        };
     },
     _ui() {
         return {
@@ -77,7 +80,7 @@ const plotly_widget = webix.protoUI({
     },
     restoreState(state) {
         webix.promise.all(
-            state.data.map(attrId => PlatformContext.rest.fetchAttr(attrId))).then(attrs => {
+            state.data.attrs.map(attrId => PlatformContext.rest.fetchAttr(attrId))).then(attrs => {
             const $$plot = this.$$('plot');
             $$plot.addTraces(
                 attrs.map(attr => attr.getDevice().display_name + "/" + attr.info.label),
@@ -86,12 +89,13 @@ const plotly_widget = webix.protoUI({
             this.run();
         });
 
-
+        if(state.data.hide_settings)
+            this.hideSettings();
     },
     _add_scalar(scalar) {
         scalar.read().then(() => {
             const $$plot = this.$$('plot');
-            $$plot.addTrace(scalar.getDevice().display_name + "/" + scalar.info.label, [scalar.timestamp], [scalar.value], this.state.data.indexOf(scalar.id));
+            $$plot.addTrace(scalar.getDevice().display_name + "/" + scalar.info.label, [scalar.timestamp], [scalar.value], this.state.data.attrs.indexOf(scalar.id));
         });
     },
     _add_new_scalar(scalar) {
@@ -99,13 +103,13 @@ const plotly_widget = webix.protoUI({
             webix.message(`Can not plot attr[${scalar.name}] of type ${scalar.info.data_type}`);
             return;
         }
-        this.state.data.push(scalar.id);
+        this.state.data.attrs.push(scalar.id);
         this.state.updateState();
         this._add_scalar(scalar);
         this.$$('settings').addAttribute(scalar.id);
     },
     _plotly_legendclick(ndx) {
-        const attrId = this.state.data[ndx];
+        const attrId = this.state.data.attrs[ndx];
         const attr = TangoAttribute.find_one(attrId);
 
         PlatformContext.devices.setCursor(attr.device_id);
@@ -124,7 +128,7 @@ const plotly_widget = webix.protoUI({
      */
     addAttribute(attr) {
         if (attr.isScalar()) {
-            if (this.state.data.indexOf(attr.id) < 0)
+            if (this.state.data.attrs.indexOf(attr.id) < 0)
                 this._add_new_scalar(attr);
             else
                 this.run();
@@ -133,17 +137,17 @@ const plotly_widget = webix.protoUI({
         }
     },
     removeAttribute(id) {
-        const index = this.state.data.indexOf(id);
+        const index = this.state.data.attrs.indexOf(id);
         webix.assert(index > -1, `assertion error: attr[${id}] is not found in this widget`);
 
         this.$$('plot').deleteTrace(index);
         this.$$('settings').removeAttribute(id);
 
-        this.state.data.splice(index, 1);
+        this.state.data.attrs.splice(index, 1);
         this.state.updateState();
     },
     async run() {
-        const grouped = groupAttributesByDeviceId(this.state.data.map(attrId => TangoAttribute.find_one(attrId)));
+        const grouped = groupAttributesByDeviceId(this.state.data.attrs.map(attrId => TangoAttribute.find_one(attrId)));
         let update = await webix.promise.all(
             Array.from(grouped.keys())
                 .map(device => device.fetchAttrValues(
@@ -159,7 +163,7 @@ const plotly_widget = webix.protoUI({
 
         update.forEach(update => {
             if (update.quality === 'FAILURE') return;
-            const indexOf = this.state.data.indexOf(`${update.device_id}/${update.name}`);
+            const indexOf = this.state.data.attrs.indexOf(`${update.device_id}/${update.name}`);
             traces.push(indexOf);
             times.push(update.timestamp);
             values.push(update.value);
@@ -197,7 +201,7 @@ const plotly_widget = webix.protoUI({
             }
         }
     }
-}, TangoWebappPlatform.mixin.Stateful, TangoWebappPlatform.mixin.Runnable, webix.EventSystem, webix.DragControl, webix.IdSpace, webix.ui.layout);
+}, TangoWebappPlatform.mixin.Stateful, TangoWebappPlatform.mixin.ToggleSettings, TangoWebappPlatform.mixin.Runnable, webix.EventSystem, webix.DragControl, webix.IdSpace, webix.ui.layout);
 
 export function newPlotlyWidgetBody(config) {
     return webix.extend({
