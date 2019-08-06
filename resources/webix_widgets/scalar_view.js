@@ -130,21 +130,20 @@ const scalar = webix.protoUI(
          * @memberof ui.Plot.scalar_plot
          */
         updateTraces: function (traces, times, data) {
-            Plotly.extendTraces(this.getNode(), {
+            const layout = {
+                autosize: false,
+                width: this.$width,
+                height: this.$height,
+                margin: kMargins
+            };
+            Plotly.update(this.getNode(), {
                 x: times.map(function (time) {
                     return [new Date(time)];
                 }),
                 y: data.map(function (data) {
                     return [data];
                 })
-            }, traces);
-            //TODO check if required
-            this._relayout({
-                autosize: false,
-                width: this.$width,
-                height: this.$height,
-                margin: kMargins
-            });
+            }, layout, traces);
         },
         /**
          * Updates this plot with single data item

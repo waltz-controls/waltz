@@ -47,8 +47,7 @@ var spectrum = webix.protoUI(
                 margin: kMargins
             };
 
-            Plotly.relayout(this.getNode(), layout);
-            Plotly.restyle(this.getNode(), 'y', [data.value]);
+            Plotly.update(this.getNode(), {y: [data.value]}, layout)
         },
         /**
          * @constructor

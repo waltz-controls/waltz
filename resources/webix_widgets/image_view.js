@@ -38,8 +38,7 @@ var image = webix.protoUI(
                 margin: kMargins
             };
 
-            Plotly.relayout(this.getNode(), layout);
-            Plotly.restyle(this.getNode(), 'z', [data]);
+            Plotly.update(this.getNode(), {z: [data]}, layout);
         },
         /**
          * @memberof ui.Plot.image_plot
