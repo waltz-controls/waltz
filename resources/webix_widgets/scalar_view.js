@@ -136,14 +136,15 @@ const scalar = webix.protoUI(
                 height: this.$height,
                 margin: kMargins
             };
-            Plotly.update(this.getNode(), {
+            Plotly.extendTraces(this.getNode(), {
                 x: times.map(function (time) {
                     return [new Date(time)];
                 }),
                 y: data.map(function (data) {
                     return [data];
                 })
-            }, layout, traces);
+            }, traces);
+            this._relayout(layout);
         },
         /**
          * Updates this plot with single data item
@@ -192,11 +193,17 @@ const scalar = webix.protoUI(
         },
         _newPlot: function (config) {
             this._traces = [];
-            Plotly.newPlot(this.getNode(), [], {
-                width: this.$width,
-                height: this.$height,
-                showlegend: true
-            });
+            try {
+                Plotly.newPlot(this.getNode(), [], {
+                    type: 'scattergl',
+                    mode: 'lines',
+                    width: this.$width,
+                    height: this.$height,
+                    showlegend: true
+                });
+            }catch(e){
+                TangoWebappHelpers.error("Failed to initialize Plotly", e)
+            }
         },
         /**
          * @memberof ui.Plot.scalar_plot

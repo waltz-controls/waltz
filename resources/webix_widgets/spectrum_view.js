@@ -56,11 +56,15 @@ var spectrum = webix.protoUI(
         $init: function (config) {
             // webix.extend(config, this._ui(config));
             this.$ready.push(function () {
-                Plotly.newPlot(this.getNode(), [{
-                    y: [],
-                    // line: {shape: 'spline'},
-                    type: 'scatter'
-                }]);
+                try {
+                    Plotly.newPlot(this.getNode(), [{
+                        y: [],
+                        // line: {shape: 'spline'},
+                        type: 'scattergl'
+                    }]);
+                } catch (e) {
+                    TangoWebappHelpers.error("Failed to initialize Plotly", e)
+                }
             }.bind(this));
         }
     }, webix.IdSpace, webix.ui.view);
