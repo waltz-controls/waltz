@@ -46,10 +46,14 @@ var image = webix.protoUI(
          */
         $init: function (config) {
             this.$ready.push(function () {
-                Plotly.newPlot(this.getNode(), [{
-                    z: [],
-                    type: 'heatmap'
-                }]);
+                try {
+                    Plotly.newPlot(this.getNode(), [{
+                        z: [[0]],
+                        type: 'heatmapgl'
+                    }]);
+                } catch (e){
+                    TangoWebappHelpers.error("Failed to initialize Plotly heatmapgl", e)
+                }
             });
         }
     }, webix.IdSpace, webix.ui.view);
