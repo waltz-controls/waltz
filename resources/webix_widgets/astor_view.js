@@ -176,16 +176,18 @@ const astor = webix.protoUI({
                 device: `tango/admin/${admin.name}`,
                 attribute: "Servers",
                 type: "change"
-            },
-            function (event) {
-                this._update_hosts();
-                this._update_servers(event.data.map(el => el.split("\t")));
-                this._update_log();
-                console.debug(event);
-            }.bind(this),
-            function (error) {
-                TangoWebappHelpers.error(error);
-            }.bind(this));
+            });
+
+        OpenAjax.hub.subscribe(`${this.tango_host.id}/tango/admin/${admin.name}/Servers.change`,(event)=>{
+            this._update_hosts();
+            this._update_servers(event.data.map(el => el.split("\t")));
+            this._update_log();
+            console.debug(event);
+        });
+
+        OpenAjax.hub.subscribe(`${this.tango_host.id}/tango/admin/${admin.name}/Servers.change_error`,(error)=>{
+            TangoWebappHelpers.error(error);
+        });
     },
     /**
      *
