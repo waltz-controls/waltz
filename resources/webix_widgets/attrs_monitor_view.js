@@ -265,7 +265,7 @@ import {kNonPlottableDataTypes} from "./plot.js";
                     this.showColumn(checkbox[0]);
             });
 
-            this.state.updateState(values);
+            if(this.state !== null) this.state.updateState(values);
         },
          /**
           * @memberof  ui.AttrsMonitorView.scalars
