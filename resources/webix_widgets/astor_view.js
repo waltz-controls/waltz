@@ -1,4 +1,4 @@
-import {get_device_info} from "./device_info_panel.js";
+import {_ui} from "./astor_view_ui.js";
 
 const as_array = true;
 
@@ -45,103 +45,7 @@ class TangoDevice {
     }
 }
 
-const hosts = {
-    view: "list",
-    id: "hosts",
-    select: true,
-    autoheight:true,
-    template: "<span class='webix_icon fa-desktop' style='color: {common.highlightColor()}'></span><span style='color: {common.highlightColor()}'>#name#</span>",
-    type: {
-        highlightColor(obj){
-            console.debug(`host state = ${obj.state}`);
-            switch (obj.state) {
-                case 6://MOVING
-                    return "blue";
-                case 11://ALARM
-                    return "orangered";
-                case 8://FAULT
-                    return "red";
-                case 0://ON
-                    return "green";
-                case -1://UNKNOWN
-                default:
-                    return "gray";
-            }
-        }
-    },
-    on: {
-        onAfterSelect(id) {
-            const admin = this.getItem(id);
 
-
-            this.getTopParentView().initializeAdmin(admin).then(() => {
-                PlatformContext.devices.setCursor(admin.id);
-            });
-        },
-        onAfterLoad(){
-            webix.assert(this.count() !== 0, "assertion error: hosts.count() !== 0");
-            this.select(this.getFirstId());
-        }
-    },
-    click(id){
-        PlatformContext.devices.setCursor(id);
-    }
-};
-
-const servers = {
-    view: "unitlist",
-    id: "servers",
-    select: true,
-    multiselect: true,
-    uniteBy(obj) {
-        return obj.level;
-    },
-    template: "<span class='webix_icon fa-server' style='color: {common.highlightColor()}'></span><span style='color: {common.highlightColor()}'>#name#</span>",
-    type: {
-        highlightColor(obj){
-            switch (obj._state) {
-                case "MOVING":
-                    return "blue";
-                case "FAULT":
-                    return "red";
-                case "ON":
-                    return "green";
-                default:
-                    return "gray";
-            }
-        }
-    },
-    on: {
-        onItemClick(id){
-            if(this.getSelectedId() === id){
-                this.unselectAll();
-            } else {
-                this.select(id);
-            }
-            return false;
-        },
-        onAfterSelect(id) {
-            const server = this.getItem(id);
-            const $$devices = this.getTopParentView().$$('devices');
-            $$devices.config.server = server;
-            server.device
-                .then(device => {
-                    PlatformContext.devices.setCursor(device.id);
-                    return device;
-                })
-                .then(device => {
-                    return device.executeCommand("QueryDevice");
-                })
-                .then(resp => {
-                    $$devices.clearAll();
-                    $$devices.parse(resp.output.map(el => new TangoDevice(el.split("::")[0], el.split("::")[1], server.name)));
-                })
-                .fail(() => {
-                    $$devices.clearAll();
-                })
-        }
-    }
-};
 
 /**
  *
@@ -154,7 +58,7 @@ const astor = webix.protoUI({
     starter: null,
     cleanSubscriptions() {
         this.$$('hosts').data.each(admin => {
-            PlatformContext.subscription.removeEventListener({
+            PlatformContext.subscription.unsubscribe({
                 host: this.tango_host.id,
                 device: admin.id,
                 attribute: "Servers",
@@ -171,21 +75,21 @@ const astor = webix.protoUI({
                 ));
     },
     initializeSubscription(admin){
-        PlatformContext.subscription.addEventListener({
+        PlatformContext.subscription.subscribe({
                 host: this.tango_host.id,
                 device: `tango/admin/${admin.name}`,
                 attribute: "Servers",
                 type: "change"
-            },
-            function (event) {
-                this._update_hosts();
-                this._update_servers(event.data.map(el => el.split("\t")));
-                this._update_log();
-                console.debug(event);
-            }.bind(this),
-            function (error) {
-                TangoWebappHelpers.error(error);
-            }.bind(this));
+            },(event)=>{
+            this._update_hosts();
+            this._update_servers(event.data.map(el => el.split("\t")));
+            this.$$("servers").getSelectedItem(as_array).forEach(server =>
+                this._update_devices(server)
+            );
+            this._update_log();
+        },(error)=>{
+            TangoWebappHelpers.error(error);
+        });
     },
     /**
      *
@@ -249,12 +153,28 @@ const astor = webix.protoUI({
         const servers = values.map(([name, state, controlled, level]) => new TangoServer(name, state, level, this.tango_host.fetchDevice(`dserver/${name}`)));
         servers.forEach(server => this.$$('servers').updateItem(server.id, server));
     },
+    _update_devices(server){
+        const $$devices = this.$$('devices');
+        $$devices.config.server = server;
+        $$devices.clearAll();
+        return server.device
+            .then(device => {
+                return device.executeCommand("QueryDevice");
+            }).then(resp => {
+                $$devices.parse(resp.output.map(el => new TangoDevice(el.split("::")[0], el.split("::")[1], server.name)));
+            }).fail((err) => {
+                TangoWebappHelpers.error(`Failed to query device for server ${server.name}`, err)
+            });
+    },
     async run() {
         this._update_hosts();
 
         if (this.starter != null) {
             (await this.starter.fetchAttr("Servers")).read()
                 .then(v => this._update_servers(v.value.map(el => el.split("\t"))));
+            this.$$("servers").getSelectedItem(as_array).forEach(server =>
+                this._update_devices(server)
+            );
             this._update_log();
         }
     },
@@ -315,188 +235,8 @@ const astor = webix.protoUI({
                     .fail(TangoWebappHelpers.error)
             });
     },
-    _ui() {
-        return {
-            rows: [
-                {
-                    id: "header",
-                    template: "<span class='webix_icon fa-database'></span> #id#",
-                    type: "header"
-                },
-                {
-                    cols: [
-                        {
-                            rows: [
-                                hosts,
-                                {
-                                    template: "Tango Servers:",
-                                    type: "header"
-                                },
-                                servers,
-                                {
-                                    view: "toolbar",
-                                    cols: [
-                                        {
-                                            view: "button",
-                                            value: "Kill",
-                                            tooltip: "Kills selected servers",
-                                            type: "danger",
-                                            click() {
-                                                this.getTopParentView().devKill();
-                                            }
-                                        },
-                                        {
-                                            view: "button",
-                                            value: "Stop",
-                                            tooltip: "Stops selected servers",
-                                            click() {
-                                                this.getTopParentView().devStop();
-                                            }
-                                        },
-                                        {
-                                            view: "button",
-                                            value: "Start",
-                                            tooltip: "Starts selected servers",
-                                            click() {
-                                                this.getTopParentView().devStart();
-                                            }
-                                        },
-                                        {
-                                            gravity: 2
-                                        },
-                                        {
-                                            view: "button",
-                                            type: "icon",
-                                            icon: "refresh",
-                                            tooltip: "Refresh servers list",
-                                            width: 30,
-                                            click() {
-                                                this.getTopParentView().run();
-                                            }
-                                        }
-                                    ]
-                                }
-                            ]
-                        },
-                        {
-                            rows: [
-                                {
-                                    template: "Tango Devices:",
-                                    type: "header"
-                                },
-                                {
-                                    view: "form",
-                                    id: "frmNewDevice",
-                                    cols: [
-                                        {
-                                            view: "text",
-                                            name: "name",
-                                            placeholder: "domain/family/member",
-                                            validate: webix.rules.isNotEmpty,
-                                            gravity: 2
-                                        },
-                                        {
-                                            view: "text",
-                                            name: "clazz",
-                                            placeholder: "Tango class",
-                                            validate: webix.rules.isNotEmpty
-                                        },
-                                        {
-                                            view: "button",
-                                            type: "icon",
-                                            icon: "plus",
-                                            width: 30,
-                                            click() {
-                                                const form = this.getFormView();
-                                                if (form.validate())
-                                                    this.getTopParentView().devAdd(
-                                                        form.elements.name.getValue(),
-                                                        form.elements.clazz.getValue());
-                                            }
-                                        },
-                                        {
-                                            view: "button",
-                                            type: "icon",
-                                            icon: "repeat",
-                                            tooltip: "Restart selected device(s)",
-                                            width: 30,
-                                            click() {
-                                                this.getTopParentView().devRestart();
-                                            }
-                                        },
-                                        {
-                                            view: "button",
-                                            type: "icon",
-                                            icon: "trash",
-                                            tooltip: "Delete selected device(s)",
-                                            width: 30,
-                                            click() {
-                                                this.getTopParentView().devRemove();
-                                            }
-                                        }
-                                    ]
-                                },
-                                {
-                                    view: "list",
-                                    id: "devices",
-                                    server: null,
-                                    select: true,
-                                    multiselect: true,
-                                    template: "<span class='webix_icon fa-microchip'></span>#name#",
-                                    on: {
-                                        onAfterSelect(id) {
-                                            const device = this.getItem(id);
-                                            this.getTopParentView().tango_host.fetchDevice(device.name)
-                                                .then(device => PlatformContext.devices.setCursor(device.id));
-                                        }
-                                    }
-                                },
-                                {
-                                    template: "Selected Device info:",
-                                    type: "header"
-                                },
-                                {
-                                    id: 'info',
-                                    view: 'datatable',
-                                    header: false,
-                                    autoheight: true,
-                                    columns: [
-                                        {id: 'info'},
-                                        {id: 'value', editor: "text", fillspace: true}
-                                    ],
-                                    on: {
-                                        onBindApply: function (device) {
-                                            if (!device || device.id === undefined) return false;
-
-                                            var info = get_device_info(device);
-                                            info.push({
-                                                id: 'alias',
-                                                info: 'Alias',
-                                                value: device.alias
-                                            });
-
-                                            this.clearAll();
-                                            this.parse(info);
-                                        }
-                                    }
-                                },
-                                {
-                                    template: "Manager's Log:",
-                                    type: "header"
-                                },
-                                {
-                                    view: "list",
-                                    id: "log"
-                                }
-                            ]
-                        }
-                    ]
-                }
-            ]
-        }
-    },
     $init(config) {
-        webix.extend(config, this._ui());
+        webix.extend(config, _ui());
 
         this.$ready.push(() => {
             this.$$('info').bind(config.context.devices);
@@ -513,7 +253,7 @@ const astor = webix.protoUI({
             }
         }
     }
-}, TangoWebappPlatform.mixin.OpenAjaxListener, webix.IdSpace, webix.ui.layout);
+}, TangoWebappPlatform.mixin.OpenAjaxListener, TangoWebappPlatform.mixin.Runnable, webix.IdSpace, webix.ui.layout);
 
 
 TangoWebapp.ui.newAstorTab = function (context) {
