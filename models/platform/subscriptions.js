@@ -1,4 +1,5 @@
 //import openajax
+import MultiMap from "../../resources/platform/multimap.js";
 
 const kOpenAjaxEventName_Waltz_Subscription_open = "waltz.subscription.open";
 const kEventSourceOpenTimeout = 3000;
@@ -33,6 +34,7 @@ export class Subscription {
         this.id = 0;
         this.events = [];
         this.failures = [];
+        this.listeners = new MultiMap();
     }
 
     reconnect(){
@@ -62,7 +64,9 @@ export class Subscription {
 
     async open(){
         this.events.forEach(event => {
-            this.addEventListener(event.target)
+            this.listeners.get(event.id).forEach(listener =>
+                this.addEventListener(event, listener)
+            )
         })
     }
 
@@ -82,7 +86,14 @@ export class Subscription {
         return event;
     }
 
-    async addEventListener(target){
+    /**
+     *
+     * @param {Target} target
+     * @param {Function({timestamp, data}): void} success
+     * @param {Function({timestamp, data}): void} failure
+     * @return {Promise<void>}
+     */
+    async subscribe(target, success, failure){
         let event = this.events.find(findEventByTarget(target));
 
         if(event === undefined){
@@ -91,21 +102,41 @@ export class Subscription {
         }
 
         const listener = function(event){
-            const name = `${target.host}/${target.device}/${target.attribute}.${target.type}`;
             if(event.data.startsWith("error")){
-                OpenAjax.hub.publish(`${name}_error`,{
+                failure({
                     timestamp: parseInt(event.lastEventId),
                     data: event.data
                 });
             } else {
-                OpenAjax.hub.publish(name,{
+                success({
                     timestamp: parseInt(event.lastEventId),
                     data: JSON.parse(event.data)
                 })
             }
         };
 
-        this.source.stream.addEventListener(event.id, listener);
+        //TODO return listener -> client preserves listener; client listens for open event and re-adds listeners
+        this.listeners.put(event.id, listener);
+        this.addEventListener(event, listener);
+    }
+
+    unsubscribe(target){
+        let event = this.events.find(findEventByTarget(target));
+
+        if(event === undefined){
+            return;
+        }
+
+        const listeners = this.listeners.get(event.id);
+        listeners.forEach(listener =>
+            this.source.stream.removeEventListener(event.id, listener)
+        );
+
+        //TODO delete event from subscriptions
+    }
+
+    async addEventListener(event, listener){
+        this.source.addEventListener(event.id, listener);
     }
 }
 
@@ -132,6 +163,10 @@ export class EventStream{
             this.stream.close();
             this.subscription.reconnect();
         }.bind(this);
+    }
+
+    addEventListener(id, listener){
+        this.stream.addEventListener(id, listener)
     }
 }
 
