@@ -7,8 +7,14 @@ const kOpenFailureThreshold = 5;
 
 
 OpenAjax.hub.subscribe("platform_context.set_rest", (msg, event)=>{
-    event.data.subscription = new Subscription(event.data.rest.url + "/tango");
-    event.data.subscription.reconnect();
+    const context = event.data;
+    const url = context.rest.url + "/tango";
+    if(context.subscription === undefined) {
+        context.subscription = new Subscription(url);
+    } else {
+        context.subscription.url = url;
+    }
+    context.subscription.reconnect();
 });
 
 OpenAjax.hub.subscribe(kOpenAjaxEventName_Waltz_Subscription_open, () => {
