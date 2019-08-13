@@ -88,7 +88,7 @@ const astor = webix.protoUI({
             );
             this._update_log();
         },(error)=>{
-            TangoWebappHelpers.error(error);
+            webix.message(error.data, "error");
         });
     },
     /**
