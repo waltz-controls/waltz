@@ -35,6 +35,8 @@
 
 ## Other useful resources
 
+[![Gitter](https://badges.gitter.im/waltz-controls/community.svg)](https://gitter.im/waltz-controls/community?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge)
+
 ### Videos
 
 [1] [UI and features presentation](https://vimeo.com/268669625)
