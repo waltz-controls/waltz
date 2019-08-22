@@ -38,7 +38,7 @@
             data: [
                 {id: "toolsScripting", value: "Scripting"},
                 {id: "toolsAstor", value: "Manager"},
-                {id: "toolsTerminal", value: "Terminal"}
+                {id: "toolsTerminal", value: "Terminal", icon: "external-link"}
             ],
             autoheight: true,
             borderless: true,
@@ -52,7 +52,7 @@
                             PlatformApi.PlatformUIController().openAstorTab();
                             break;
                         case "toolsTerminal":
-                            PlatformApi.PlatformUIController().openTerminalTab();
+                            window.open("https://max-display.desy.de:3443", "_blank");
                             break;
                         default:
                             webix.message("Submenu click: " + id);
