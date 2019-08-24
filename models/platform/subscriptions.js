@@ -159,7 +159,7 @@ export class EventStream{
         });
 
         this.stream.onopen = function(){
-            TangoWebappHelpers.debug("EventStream open!");
+            TangoWebappHelpers.logWithPopup("EventStream open!");
             this.subscription.open();
         }.bind(this);
 
