@@ -194,6 +194,12 @@ const table_datatable = webix.protoUI({
         return false;
     },
     run(){
+        this.hideProgress();
+        this.showProgress({
+            type:"top",
+            delay: 500,
+            hide:true
+        });
         this.data.each(item => {
             item._device.fetchAttrValues([...item._attrs]).then(resp => {
                 const update = {};
@@ -234,15 +240,20 @@ const stateful_table_datatable = webix.protoUI({
                 devices: []
             });
 
-        state.data.devices.forEach(device_id => {
-            this.getTopParentView().addDevice(device_id);
+        this.showProgress({
+            type:"top",
+            delay: 3000,
+        });
+        state.data.devices.forEach(async device_id => {
+            await this.getTopParentView().addDevice(device_id);
+            const device = this.getItem(device_id)._device;
+            await device.fetchAttrs();
             state.data.attrs
                 .map(name => device_id + "/" + name)
-                .forEach(async attrId => {
-                    PlatformContext.rest.fetchAttr(attrId)
-                        .then(attr => this.getTopParentView().addAttribute(attr, true));
+                .forEach(attrId => {
+                    this.getTopParentView().addAttribute(device.attrs.getItem(attrId), true);
                 })
-        });
+        },this);
 
         this.getTopParentView().frozen = state.data.frozen;
 
@@ -260,8 +271,8 @@ const stateful_table_datatable = webix.protoUI({
             devices: []
         });
     },
-    addAttribute(attr){
-        webix.ui.table_datatable.prototype.addAttribute.call(this, attr);
+    async addAttribute(attr){
+        await webix.ui.table_datatable.prototype.addAttribute.call(this, attr);
         const attrs = this.state.data.attrs;
         if(!attrs.includes(attr.name))
             attrs.push(attr.name);
@@ -279,8 +290,8 @@ const stateful_table_datatable = webix.protoUI({
         }
         this.state.setState(this.state.data);
     },
-    addDevice(id){
-        webix.ui.table_datatable.prototype.addDevice.call(this, id);
+    async addDevice(id){
+        await webix.ui.table_datatable.prototype.addDevice.call(this, id);
         const devices = this.state.data.devices;
         if(!devices.includes(id))
             devices.push(id);
@@ -298,7 +309,7 @@ const stateful_table_datatable = webix.protoUI({
     getStateId() {
         return this.config.stateId || this.config.id;
     }
-},TangoWebappPlatform.mixin.Stateful,table_datatable);
+},TangoWebappPlatform.mixin.Stateful,webix.ProgressBar,table_datatable);
 
 function newTableWidgetTable(config) {
     return {
@@ -418,7 +429,7 @@ const table_widget = webix.protoUI({
         $$datatable.removeAttribute(name);
         $$settings.removeAttribute(name);
     },
-    addAttribute(attr, force = false){
+    async addAttribute(attr, force = false){
         const $$datatable = this.$$('datatable');
         const $$settings = this.$$('settings');
         if(this.frozen && !force) {
@@ -430,15 +441,15 @@ const table_widget = webix.protoUI({
             return;
         }
 
-        $$datatable.addAttribute(attr, force);
+        await $$datatable.addAttribute(attr, force);
         $$settings.addAttribute(attr.display_name, force);
     },
-    addDevice(id){
+    async addDevice(id){
         if(this.frozen) {
             this.showOverlay(kFrozenOverlayMessage);
             return;
         }
-        this.$$('datatable').addDevice(id);
+        await this.$$('datatable').addDevice(id);
         this.$$('settings').addDevice(id);
     },
     removeDevice(id){
