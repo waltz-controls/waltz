@@ -1,15 +1,27 @@
 version: '3.7'
 
+networks:
+  public_net:
+    driver: bridge
+    ipam:
+      config:
+      - subnet: 192.168.0.0/24
+      driver: default
+
 services:
   epics-sim:
     image: lnlssol/epics-sim
     entrypoint: /root/runIocsFG.sh
+    networks:
+      public_net:
+        ipv4_address: 192.168.0.10
   tango-db:
     image: tangocs/mysql:9.2.2
-    ports:
-    - "9999:3306"
     environment:
     - MYSQL_ROOT_PASSWORD=root
+    networks:
+      public_net:
+        ipv4_address: 192.168.0.20
   tango-cs:
     image: ingvord/tango-cs-with-rest
     ports:
@@ -23,12 +35,18 @@ services:
     - MYSQL_DATABASE=tango
     depends_on:
     - tango-db
+    networks:
+      public_net:
+        ipv4_address: 192.168.0.30
   tango-test:
     image: tangocs/tango-test
     environment:
     - TANGO_HOST=tango-cs:10000
     depends_on:
     - tango-cs
+    networks:
+      public_net:
+        ipv4_address: 192.168.0.40
   tango-epics:
     image: ingvord/tango-epics
     environment:
@@ -36,7 +54,39 @@ services:
     depends_on:
     - tango-cs
     - epics-sim
+    networks:
+      public_net:
+        ipv4_address: 192.168.0.50
+  epics2web:
+    image: ingvord/epics2web
+    expose:
+    - "8080"
+    environment:
+    - EPICS_CA_ADDR_LIST=192.168.0.255
+    depends_on:
+    - epics-sim
+    networks:
+      public_net:
+        ipv4_address: 192.168.0.11
   waltz:
-    image: tangocs/waltz:v0.7.3
+    build: .
+    expose:
+    - "8080"
+    networks:
+      public_net:
+        ipv4_address: 192.168.0.22
+  haproxy:
+    build: ./haproxy
+    environment:
+      EPICS2WEB_IP: 192.168.0.11
+      WALTZ_IP: 192.168.0.22
     ports:
-      - "8080:8080"
+    - "8080:8080"
+    networks:
+      public_net:
+        ipv4_address: 192.168.0.100
+    depends_on:
+    - epics2web
+    - waltz
+
+  
