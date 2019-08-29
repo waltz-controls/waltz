@@ -120,13 +120,14 @@ const epics_datatable = webix.protoUI({
                     });
                 },
                 onBeforeDrop(context) {
-                    return this === context.from ||
-                        context.from.config.$id === 'attrs';
-
+                    if (this === context.from) return true;
+                    else if (context.from.config.$id === 'attrs')
+                        context.from.copy(context.start, this.count(), this, {newId: context.start.substring(context.start.lastIndexOf('/') + 1).replace(/_/g, ":")});
+                    return false;
                 }
             },
             externalData: function (data, id) {
-                return {id: data.name.replace(/_/g, ':')};
+                return {id};
             }
         }
     },
