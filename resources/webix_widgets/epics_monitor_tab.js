@@ -94,7 +94,15 @@ const epics_datatable = webix.protoUI({
                     this.epics2web.then(conn => {
                         conn.clearPvs([id])
                     });
+                },
+                onBeforeDrop(context) {
+                    return this === context.from ||
+                        context.from.config.$id === 'attrs';
+
                 }
+            },
+            externalData: function (data, id) {
+                return {id: data.name.replace(/_/g, ':')};
             }
         }
     },
@@ -102,7 +110,9 @@ const epics_datatable = webix.protoUI({
         webix.extend(config, this._config());
     },
     defaults: {
-        resizeColumn: true
+        resizeColumn: true,
+        drag: true,
+        dragColumn: true
     }
 }, webix.ui.datatable);
 
@@ -142,6 +152,9 @@ const epics_monitor = webix.protoUI({
             ]
         }
     },
+    monitorPv(pv) {
+        this.$$('datatable').add({id: pv})
+    },
     $init(config) {
         webix.extend(config, this._ui());
 
@@ -149,7 +162,7 @@ const epics_monitor = webix.protoUI({
             this.$$('form').bind(this.$$('datatable'));
         });
     }
-}, webix.IdSpace, webix.ui.layout);
+}, webix.DragControl, webix.IdSpace, webix.ui.layout);
 
 export function newEpicsMonitorTab() {
     return {
