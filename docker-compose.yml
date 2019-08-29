@@ -69,7 +69,7 @@ services:
       public_net:
         ipv4_address: 192.168.0.11
   waltz:
-    build: .
+    image: ingvord/waltz:epics-demo-29082019
     expose:
     - "8080"
     networks:
