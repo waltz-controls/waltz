@@ -5,7 +5,7 @@ networks:
     driver: bridge
     ipam:
       config:
-      - subnet: 192.168.0.0/24
+      - subnet: 192.169.0.0/24
       driver: default
 
 services:
@@ -14,14 +14,14 @@ services:
     entrypoint: /root/runIocsFG.sh
     networks:
       public_net:
-        ipv4_address: 192.168.0.10
+        ipv4_address: 192.169.0.10
   tango-db:
     image: tangocs/mysql:9.2.2
     environment:
     - MYSQL_ROOT_PASSWORD=root
     networks:
       public_net:
-        ipv4_address: 192.168.0.20
+        ipv4_address: 192.169.0.20
   tango-cs:
     image: ingvord/tango-cs-with-rest
     ports:
@@ -37,7 +37,7 @@ services:
     - tango-db
     networks:
       public_net:
-        ipv4_address: 192.168.0.30
+        ipv4_address: 192.169.0.30
   tango-test:
     image: tangocs/tango-test
     environment:
@@ -46,7 +46,7 @@ services:
     - tango-cs
     networks:
       public_net:
-        ipv4_address: 192.168.0.40
+        ipv4_address: 192.169.0.40
   tango-epics:
     image: ingvord/tango-epics
     environment:
@@ -56,35 +56,35 @@ services:
     - epics-sim
     networks:
       public_net:
-        ipv4_address: 192.168.0.50
+        ipv4_address: 192.169.0.50
   epics2web:
     image: ingvord/epics2web
     expose:
     - "8080"
     environment:
-    - EPICS_CA_ADDR_LIST=192.168.0.255
+    - EPICS_CA_ADDR_LIST=192.169.0.255
     depends_on:
     - epics-sim
     networks:
       public_net:
-        ipv4_address: 192.168.0.11
+        ipv4_address: 192.169.0.11
   waltz:
     image: ingvord/waltz:epics-demo-29082019
     expose:
     - "8080"
     networks:
       public_net:
-        ipv4_address: 192.168.0.22
+        ipv4_address: 192.169.0.22
   haproxy:
     build: ./haproxy
     environment:
-      EPICS2WEB_IP: 192.168.0.11
-      WALTZ_IP: 192.168.0.22
+      EPICS2WEB_IP: 192.169.0.11
+      WALTZ_IP: 192.169.0.22
     ports:
     - "8080:8080"
     networks:
       public_net:
-        ipv4_address: 192.168.0.100
+        ipv4_address: 192.169.0.100
     depends_on:
     - epics2web
     - waltz
