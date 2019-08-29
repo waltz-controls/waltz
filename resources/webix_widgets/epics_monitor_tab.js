@@ -18,6 +18,22 @@ function connectEpics2Web() {
     });
 }
 
+function toggleEpics2WebStatusIcon($$epics2web, status) {
+    if (status === 'pong') {
+        $$epics2web.define({
+            icon: 'heartbeat',
+            css: {"color": "green"}
+        });
+        $$epics2web.refresh()
+    } else {
+        $$epics2web.define({
+            icon: 'heart',
+            css: {}
+        });
+        $$epics2web.refresh();
+    }
+}
+
 export const EpicsMonitorController = class extends MVC.Controller {
     buildUI(platform_api) {
         platform_api.ui_builder.add_mainview_item(newEpicsMonitorTab());
@@ -30,9 +46,17 @@ export const EpicsMonitorController = class extends MVC.Controller {
     async initialize(platform_api) {
         const $$hq = $$('epics');
         const $$datatable = $$hq.$$('datatable');
+        const $$epics2web = $$hq.$$('epics2web');
 
 
         $$datatable.epics2web = connectEpics2Web().then(conn => {
+            conn.addEventListener('pong', () => {
+                toggleEpics2WebStatusIcon($$epics2web, 'pong');
+                setTimeout(() => {
+                    toggleEpics2WebStatusIcon($$epics2web, 'ping');
+                }, 500);
+            });
+
             conn.addEventListener('info', ({detail: {pv, connected, datatype, labels}}) => {
                 $$datatable.updateItem(pv, {
                     status: connected,
@@ -116,6 +140,35 @@ const epics_datatable = webix.protoUI({
     }
 }, webix.ui.datatable);
 
+function newEpicsMonitorForm(config = {}) {
+    return webix.extend({
+        maxHeight: 25,
+        view: 'form',
+        id: 'form',
+        cols: [
+            {view: 'text', name: 'id', placeholder: 'EPICS PV name'},
+            {
+                view: 'button', type: "icon", icon: "plus", value: 'Add', maxWidth: 40, click() {
+                    if (this.getFormView().validate())
+                        this.getFormView().save();
+                }
+            },
+            {
+                id: "epics2web",
+                view: "button",
+                type: "icon",
+                icon: "heart",
+                tooltip: "Indicates Epics2Web heartbeat messages",
+                maxWidth: 25
+            }
+        ],
+        rules:
+            {
+                id: webix.rules.isNotEmpty
+            }
+    }, config);
+}
+
 function newEpicsDatatable(config = {}) {
     return webix.extend({
         id: 'datatable',
@@ -133,21 +186,7 @@ const epics_monitor = webix.protoUI({
     _ui() {
         return {
             rows: [
-                {
-                    //TODO header
-                    maxHeight: 25,
-                    view: 'form',
-                    id: 'form',
-                    cols: [
-                        {view: 'text', name: 'id', placeholder: 'EPICS PV name'},
-                        {
-                            view: 'button', type: "icon", icon: "save", value: 'Add', maxWidth: 40, click() {
-                                this.getFormView().save();
-                            }
-                        }
-                    ]
-
-                },
+                newEpicsMonitorForm(),
                 newEpicsDatatable()
             ]
         }
