@@ -11,8 +11,7 @@ services:
 addons:
   sonarcloud:
     organization: "waltz-controls" # the key of the org you chose at step #3
-    token:
-      secure: $SONAR_TOKEN
+    
 jobs:
   include:
     - stage: build
@@ -22,7 +21,7 @@ jobs:
       script:
         - .travis/build.sh
         - git fetch --unshallow --quiet
-        - sonar-scanner -Dsonar.projectKey=waltz-controls_waltz -Dsonar.projectName=waltz -Dsonar.projectVersion=$TRAVIS_BRANCH -Dsonar.sources=. -Dsonar.exclusions=build/**,jmvc/**,docs/**,apps/**
+        - sonar-scanner -Dsonar.login=${SONAR_TOKEN} -Dsonar.projectKey=waltz-controls_waltz -Dsonar.projectName=waltz -Dsonar.projectVersion=$TRAVIS_BRANCH -Dsonar.sources=. -Dsonar.exclusions=build/**,jmvc/**,docs/**,apps/**
     -
       name: "Deploy to Amazon cloud"
       env:
