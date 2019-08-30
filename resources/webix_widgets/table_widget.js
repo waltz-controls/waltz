@@ -35,6 +35,9 @@ const table_datatable = webix.protoUI({
     _config() {
         return {
             editable: true,
+            drag: true,
+            resizeColumn: true,
+            dragColumn: true,
             columns: [
                 {id: "id", hidden: true},
                 {id: "device", header: "Device", fillspace: true},
@@ -80,6 +83,21 @@ const table_datatable = webix.protoUI({
 
                     const attr = TangoAttribute.find_one(id);
                     UserAction.writeAttribute(attr, value.value);
+                },
+                onBeforeDrop(context){
+                    if(context.from === this) return true;
+                    if(context.from.config.$id === 'attrs') {
+                        const attr = TangoAttribute.find_one(context.source[0]);
+                        if (attr != null) {
+                            this.getTopParentView().addAttribute(attr);
+                        }
+                    } else if(context.from.config.view === 'devices_tree_tree'){
+                        this.getTopParentView().addDevice(context.source[0]);
+                    } else {
+                        this.getTopParentView().showOverlay(`${context.from.config.$id} are not supported by this widget`);
+                    }
+
+                    return false;
                 }
             }
         }
@@ -494,32 +512,9 @@ const table_widget = webix.protoUI({
             });
             $$settings.getChildViews()[0].resize();
         });
-
-        this.addDrop(this.getNode(),{
-            /**
-             * @function
-             * @memberof  ui.AttrsMonitorView.attrs_monitor_view
-             * @see {@link https://docs.webix.com/api__dragitem_onbeforedrop_event.html| onBeforeDrop}
-             */
-            $drop:function(source, target){
-                const dnd = webix.DragControl.getContext();
-                if(dnd.from.config.$id === 'attrs') {
-                    const attr = TangoAttribute.find_one(dnd.source[0]);
-                    if (attr == null) return false;
-
-                    this.addAttribute(attr);
-                } else if(dnd.from.config.view === 'devices_tree_tree'){
-                    this.addDevice(dnd.source[0]);
-                } else {
-                    this.showOverlay(`${dnd.from.config.$id} are not supported by this widget`);
-                }
-                
-                return false;
-            }.bind(this)
-        });
     }
 
-},/*TODO Statefull*/ TangoWebappPlatform.mixin.Runnable, TangoWebappPlatform.mixin.ToggleSettings, webix.DragControl, webix.IdSpace, webix.ui.layout);
+},/*TODO Statefull*/ TangoWebappPlatform.mixin.Runnable, TangoWebappPlatform.mixin.ToggleSettings, webix.IdSpace, webix.ui.layout);
 
 export function newTableWidgetBody(config){
     return webix.extend({
