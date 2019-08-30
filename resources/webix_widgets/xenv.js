@@ -233,7 +233,7 @@ const xenvHq = webix.protoUI({
             });
         },
         addStateAndStatusListeners: function (server) {
-            PlatformContext.subscription.addEventListener({
+            PlatformContext.subscription.subscribe({
                     host: server.device.host.id,
                     device: server.device.name,
                     attribute: "status",
@@ -249,7 +249,7 @@ const xenvHq = webix.protoUI({
                     webix.message(error.data, "error")
                 }.bind(this));
 
-            PlatformContext.subscription.addEventListener({
+            PlatformContext.subscription.subscribe({
                     host: server.device.host.id,
                     device: server.device.name,
                     attribute: "state",

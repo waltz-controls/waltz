@@ -134,9 +134,12 @@
 
                 this.loadAttributes(config.device);
 
-                this.$$('attributes').$$('scalars').applySettings({
-                    device_id: 0
-                });
+                setTimeout(()=>{
+                    this.$$('attributes').$$('scalars').applySettings({
+                        device_id: 0
+                    });
+                },0)
+
             }.bind(this));
 
             // this.$ready.push(this.start.mvc_bind(this));

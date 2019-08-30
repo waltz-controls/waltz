@@ -161,6 +161,7 @@ import {kNonPlottableDataTypes} from "./plot.js";
         _config: function () {
             return {
                 editable: true,
+                drag: true,
                 scheme: {
                     value: NaN,
                     quality: 'N/A',
@@ -215,6 +216,16 @@ import {kNonPlottableDataTypes} from "./plot.js";
                                 kind: 'attrs'
                             }
                         });
+                    },
+                    onBeforeDrop(context) {
+                        if (context.from === this) return true;
+                        if (context.from.config.$id === 'attrs') {
+                            const attr = TangoAttribute.find_one(context.source[0]);
+                            if (attr != null) {
+                                this.getTopParentView().addAttribute(attr);
+                            }
+                        }
+                        return false;
                     }
                 }
             }
@@ -265,7 +276,7 @@ import {kNonPlottableDataTypes} from "./plot.js";
                     this.showColumn(checkbox[0]);
             });
 
-            this.state.updateState(values);
+            if(this.state !== null) this.state.updateState(values);
         },
          /**
           * @memberof  ui.AttrsMonitorView.scalars
@@ -624,29 +635,10 @@ import {kNonPlottableDataTypes} from "./plot.js";
                     this.removeItem(attrId);
                 }.bind(this));
             }.bind(this));
-
-            this.addDrop(this.getNode(),{
-                /**
-                 * @function
-                 * @memberof  ui.AttrsMonitorView.attrs_monitor_view
-                 * @see {@link https://docs.webix.com/api__dragitem_onbeforedrop_event.html| onBeforeDrop}
-                 */
-                $drop:function(source, target){
-                    var dnd = webix.DragControl.getContext();
-                    if(dnd.from.config.$id !== 'attrs') return false;
-
-                    var attr = TangoAttribute.find_one(dnd.source[0]);
-                    if(attr == null) return false;
-
-                    this.addAttribute(attr);
-                    return false;
-                }.bind(this)
-            });
         }
     },
         TangoWebappPlatform.mixin.Runnable, TangoWebappPlatform.mixin.OpenAjaxListener,
-        webix.EventSystem, webix.IdSpace, webix.DragControl,
-        webix.ui.layout);
+        webix.EventSystem, webix.IdSpace, webix.ui.layout);
     /**
      * @param context
      * @augments TangoWebapp.ui.newAttrsMonitorView
