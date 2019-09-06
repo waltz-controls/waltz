@@ -27,7 +27,7 @@ function newXenvSVGTab(){
 
 export const XenvHqController = class extends MVC.Controller {
     buildUI(platform_api) {
-        platform_api.ui_builder.add_mainview_item(newXenvSVGTab());
+        // platform_api.ui_builder.add_mainview_item(newXenvSVGTab());
         platform_api.ui_builder.add_mainview_item(newXenvHeadQuarterTab());
     }
     /**
@@ -61,7 +61,7 @@ export const XenvHqController = class extends MVC.Controller {
 };
 
 //disable Xenv widget for master
-// XenvHqController.initialize();
+XenvHqController.initialize();
 
 const xenvHq = webix.protoUI({
     name: "xenv-hq",
