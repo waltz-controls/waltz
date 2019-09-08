@@ -60,30 +60,40 @@ function newDataSourceForm(parent){
                 cols: [
                     {},
                     {
-                        view: "button", width: 30, type: "icon", icon: "save", tooltip: "save", click: obj => {
-                            const $$form = parent.$$('frmDataSource');
-                            $$form.save();
-                            //reset form, so it will be counted as unsaved
-                            if ($$form.setDirty)
-                                $$form.setDirty(true);
+                        view: "button", width: 30, type: "icon", icon: "save", tooltip: "save", click() {
+                            const $$form = this.getFormView();
+                            // $$form.save();
+
+                            if (!$$form.validate()) return;
+
+                            const obj = $$form.getValues();
+                            if (parent.$$("listDataSources").getSelectedId() == obj.id) {
+                                parent.updateDataSource(obj);
+                            } else {
+                                obj.id = webix.uid();
+                                parent.addDataSource(obj);
+                            }
                         }
                     },
                     {
-                        view: "button", width: 30, type: "icon", icon: "clone", tooltip: "clone", click: obj => {
-                            if(!parent.$$('frmDataSource').validate()) return;
+                        view: "button", width: 30, type: "icon", icon: "clone", tooltip: "clone", click(){
+                            const $$form = this.getFormView();
+                            if(!$$form.validate()) return;
 
-                            const cloned = parent.$$('frmDataSource').getValues();
+                            const cloned = $$form.getValues();
                             cloned.id = webix.uid();
 
-                            parent.datasources.add(cloned);
+                            parent.addDataSource(cloned);
                         }
                     },
                     {
-                        view: "button", width: 30, type: "icon", icon: "trash", tooltip: "delete", click: obj => {
-                            const $$frm = parent.$$('frmDataSource');
-                            const id = $$frm.getValues().id;
-                            $$frm.clear();
-                            parent.datasources.remove(id);
+                        view: "button", width: 30, type: "icon", icon: "trash", tooltip: "delete", click(){
+                            const $$form = this.getFormView();
+                            const id = $$form.getValues().id;
+                            parent.deleteDataSource({id})
+                                .then(() => {
+                                    $$form.clear();
+                                });
                         }
                     }
                 ]
@@ -122,15 +132,6 @@ function newDataSourcesList(parent){
             },
             onBlur(){
                 // $$hq.pushConfiguration();
-            },
-            onAfterAdd: function (id) {
-                parent.addDataSource(this.getItem(id));
-            },
-            onDataUpdate: function (id) {
-                parent.updateDataSource(this.getItem(id));
-            },
-            onBeforeDelete: function (id) {
-                parent.removeDataSource(this.getItem(id));
             }
         }
     };
@@ -195,57 +196,59 @@ const datasources_view = webix.protoUI({
             ]
         }
     },
+    setCollection(){
+        const collection = this.$$('selectDataSources').getValue();
+        return PlatformContext.rest.request()
+            .hosts(this.config.host)
+            .devices(this.config.device)
+            .attributes("datasourcescollection")
+            .value().put("?v=" + collection)
+    },
+    processDataSource(operation, dataSource){
+        return this.setCollection()
+            .then(() => {
+                return this.config.rest.request()
+                    .hosts(this.config.host)
+                    .devices(this.config.device)
+                    .commands(`${operation}datasource`)//insert|update|delete
+                    .put("", dataSource);
+            })
+            .fail(err => {
+                TangoWebappHelpers.error(err);
+                throw err;
+            });
+    },
     async addDataSource(dataSource){
-        const collection = this.$$("selectDataSources").getValue();
-
-        // const cmd = await this.config.configurationManager.device.fetchCommand("addDataSource");
-        // UserAction.executeCommand(cmd, [collection,JSON.stringify(dataSource)]).then(()=> {
-        //     this.datasources.getItem(collection).data.push(dataSource);
-        //     this.datasources.setCursor(collection);
-        // }).fail(err => TangoWebappHelpers.error(err));
+        return this.processDataSource("insert",dataSource)
+            .then(() => {
+                this.datasources.add(dataSource)
+            })
     },
     async updateDataSource(dataSource){
-        const collection = this.$$("selectDataSources").getValue();
-
-        // const cmd = await this.config.configurationManager.device.fetchCommand("updateDataSource");
-        // UserAction.executeCommand(cmd, [collection,JSON.stringify(dataSource)]).then(()=> {
-        //     this.datasources.getItem(collection).data.push(dataSource);
-        //     this.datasources.setCursor(collection);
-        // }).fail(err => TangoWebappHelpers.error(err));
+        return this.processDataSource("update", dataSource)
+            .then(() => {
+                this.datasources.updateItem(dataSource.id, dataSource);
+            })
+    },
+    async deleteDataSource(dataSource){
+        return this.processDataSource("delete", dataSource).
+            then(() => {
+                this.datasources.remove(dataSource.id);
+        })
     },
     $init(config){
         webix.extend(config,this._ui());
+        webix.extend(config, {
+            rest: PlatformContext.rest,
+            host: "localhost/10000",
+            device: "development/xenv/configuration"
+        });
 
         this.$ready.push(() => {
-
-
             // this.collections.load();
 
             this.collections = new webix.DataCollection({
                 url: newTangoAttributeProxy(PlatformContext.rest, "localhost/10000", "development/xenv/configuration", "datasourcecollections")
-            });
-
-
-            this.datasources = new webix.DataCollection(
-
-            );
-
-            const dp = new webix.DataProcessor({
-                url: {
-                    $proxy: true,
-                    save(view, params, dp){
-                        return dp.config.rest.request()
-                            .hosts(dp.config.host)
-                            .devices(dp.config.device)
-                            .commands(`${params.operation}datasource`)//insert|update|delete
-                            .put("", params.data);
-                    }
-                },
-                master: this.datasources,
-                rest: PlatformContext.rest,
-                host: "localhost/10000",
-                device: "development/xenv/configuration"
-
             });
 
 
