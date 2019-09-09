@@ -119,7 +119,7 @@ export const xenvHqToolbar = {
     maxHeight: 30,
     cols: [
         {
-            view: "select",
+            view: "combo",
             id: "profiles",
             label: "Profile",
             options: [],

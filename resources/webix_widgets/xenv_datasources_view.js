@@ -356,7 +356,7 @@ const datasources_view = webix.protoUI({
             .value().put("?v=" + collection)
             .then(() => {
                 this.datasources.load(
-                    newTangoAttributeProxy(PlatformContext.rest, "localhost/10000", "development/xenv/configuration", "datasources")
+                    newTangoAttributeProxy(PlatformContext.rest, this.config.host, this.config.device, "datasources")
                 );
             })
             .catch(err => TangoWebappHelpers.error(err));
@@ -371,14 +371,14 @@ const datasources_view = webix.protoUI({
             .value().put("?v=" + collection)
     },
     deleteCollection(collection){
-        return this.config.rest.request()
+        return PlatformContext.rest.request()
             .hosts(this.config.host)
             .devices(this.config.device)
             .commands('deleteCollection')
             .put("", collection);
     },
     cloneCollection(collection, source){
-        return this.config.rest.request()
+        return PlatformContext.rest.request()
             .hosts(this.config.host)
             .devices(this.config.device)
             .commands('cloneCollection')
@@ -387,7 +387,7 @@ const datasources_view = webix.protoUI({
     processDataSource(operation, dataSource){
         return this.setCollection()
             .then(() => {
-                return this.config.rest.request()
+                return PlatformContext.rest.request()
                     .hosts(this.config.host)
                     .devices(this.config.device)
                     .commands(`${operation}datasource`)//insert|update|delete
@@ -442,7 +442,6 @@ const datasources_view = webix.protoUI({
 
         OpenAjax.hub.subscribe(`ConfigurationManager.set.proxy`,(eventName,{server})=>{
             webix.extend(this.config, {
-                rest: PlatformContext.rest,
                 host: server.device.host.id.replace(':','/'),
                 device: server.ver
             });

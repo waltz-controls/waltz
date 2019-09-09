@@ -13,7 +13,7 @@ const dataSourcesView = {
         newSearch("listDataSources", "#value#"),
         {
             view: "list",
-            id: "listDataSources",
+            id: "listCollections",
             select:true,
             multiselect: true,
             template:
@@ -138,11 +138,19 @@ const main = webix.protoUI({
         return this.$$('listServers');
     },
     get data(){
-        return this.$$('listDataSources');
+        return this.$$('listCollections');
     },
-    clearAll(){
-        this.$$('listDataSources').clearAll();
-        this.$$('frmDataSource').clear();
+    applyProfile(profile){
+        this.data.data.each(item => {
+            item.markCheckbox = profile.collections[item.id];
+        });
+        this.data.refresh();
+    },
+    resetDataSources(){
+        this.$$('listCollections').data.each(item => {
+            item.markCheckbox = 0;
+        });
+        this.$$('listCollections').refresh();
     },
     run:function(){
         this.servers.data.each(async server => {
@@ -159,12 +167,11 @@ const main = webix.protoUI({
 
         OpenAjax.hub.subscribe(`ConfigurationManager.set.proxy`,(eventName,{server})=>{
             webix.extend(this.config, {
-                rest: PlatformContext.rest,
                 host: server.device.host.id.replace(':','/'),
                 device: server.ver
             });
 
-            this.$$('listDataSources').load(newTangoAttributeProxy(this.config.rest, this.config.host, this.config.device, "datasourcecollections"))
+            this.$$('listCollections').load(newTangoAttributeProxy(PlatformContext.rest, this.config.host, this.config.device, "datasourcecollections"))
         });
     }
 }, TangoWebappPlatform.mixin.Runnable, webix.ProgressBar, webix.IdSpace, webix.ui.layout);
