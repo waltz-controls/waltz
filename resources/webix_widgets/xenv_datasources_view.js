@@ -172,6 +172,41 @@ const dataSourcesProxy = {
 }
 
 
+function newToolbar(parent){
+    return {
+        view:"toolbar",
+        cols:[
+            {
+                view:"text",
+                id: "selectDataSources",
+                suggest:{
+                    id:"selectDataSourcesSuggest",
+                    data:[]
+                },
+                on:{
+                    onItemClick:function(){
+                        //link suggest to the input
+                        $$(this.config.suggest).config.master = this;
+                        //show
+                        $$(this.config.suggest).show(this.$view)
+                    }
+                }
+            },
+            {
+                view: "button",
+                type: "icon",
+                icon: "arrow-right",
+                click(){
+                    const collection = parent.$$('selectDataSources').getValue();
+                    if(!collection) webix.message("<span class='webix_icon fa-bell'></span> Please specify the collection!");
+                    else parent.selectCollection(collection);
+                }
+            },
+            {}
+        ]
+    }
+}
+
 const datasources_view = webix.protoUI({
     name: "datasources_view",
     collections: new webix.DataCollection(),
@@ -179,22 +214,27 @@ const datasources_view = webix.protoUI({
     _ui(){
         return {
             rows:[
-                {
-                    view:"toolbar",
-                    cols:[
-                        {
-                            view:"richselect",
-                            id: "selectDataSources",
-                            options:[]
-                        },
-                        {}
-                    ]
-                },
+                newToolbar(this),
                 newSearch("listDataSources", filterDataSourcesList),
                 newDataSourcesList(this),
                 newDataSourceForm(this)
             ]
         }
+    },
+    selectCollection(collection){
+        //TODO extract to proxy
+        PlatformContext.rest.request()
+            .hosts(this.config.host)
+            .devices(this.config.device)
+            .attributes("datasourcescollection")
+            .value().put("?v=" + collection)
+            .then(() => {
+                this.datasources.load(
+                    newTangoAttributeProxy(PlatformContext.rest, "localhost/10000", "development/xenv/configuration", "datasources")
+                );
+            })
+            .catch(err => TangoWebappHelpers.error(err));
+
     },
     setCollection(){
         const collection = this.$$('selectDataSources').getValue();
@@ -252,18 +292,10 @@ const datasources_view = webix.protoUI({
             });
 
 
-            const list = this.$$("selectDataSources").getPopup().getList();
-
-            list.define("template", "#id#");
+            const list = this.$$("selectDataSourcesSuggest").getList();
 
             list.attachEvent("onAfterSelect", id => {
-                PlatformContext.rest.request().hosts("localhost/10000").devices("development/xenv/configuration").attributes("datasourcescollection").value().put("?v=" + id)
-                    .then(() => {
-                        this.datasources.load(
-                            newTangoAttributeProxy(PlatformContext.rest, "localhost/10000", "development/xenv/configuration", "datasources")
-                        );
-                    })
-                    .catch(err => TangoWebappHelpers.error(err));
+                this.selectCollection(id);
             });
             list.sync(this.collections);
 
