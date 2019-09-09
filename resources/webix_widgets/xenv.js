@@ -84,7 +84,7 @@ XenvHqController.initialize();
 
 const xenvHq = webix.protoUI({
     name: "xenv-hq",
-    profile: new webix.DataRecord(),
+    profile: null,
     async applySettings(){
         for(const server of kServers){
             if(this.$$(kServerFieldMap[server]).getValue()) {
@@ -366,19 +366,16 @@ const xenvHq = webix.protoUI({
         this._init(config);
 
         webix.extend(config, this._ui());
-
-        this.$ready.push(()=> {
-            this.$$('main_tab').servers.data.sync(this.servers);
+        this.profile = new webix.DataRecord({
+            on: {
+                onAfterLoad:()=>{
+                    this.$$('main_tab').applyProfile(this.profile.getValues());
+                }
+            }
         });
 
         this.$ready.push(()=> {
             this.$$('profile').bind(this.$$('profiles'));
-        });
-
-        this.$ready.push(()=> {
-            this.profile.waitData.then(() => {
-                this.$$('main_tab').applyProfile(this.profile.getValues());
-            });
         });
 
         this.addDrop(this.getNode(),{

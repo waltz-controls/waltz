@@ -141,10 +141,11 @@ const main = webix.protoUI({
         return this.$$('listCollections');
     },
     applyProfile(profile){
-        this.data.data.each(item => {
-            item.markCheckbox = profile.collections[item.id];
+        profile.configuration.collections.forEach(collection => {
+            this.data.updateItem(collection.id,{
+                markCheckbox: collection.value
+            })
         });
-        this.data.refresh();
     },
     resetDataSources(){
         this.$$('listCollections').data.each(item => {
