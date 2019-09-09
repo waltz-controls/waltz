@@ -156,14 +156,14 @@ const main = webix.protoUI({
     },
     $init(config){
         webix.extend(config, this._ui());
-        webix.extend(config, {
-            rest: PlatformContext.rest,
-            host: "localhost/10000",
-            device: "development/xenv/configuration"
-        });
 
+        OpenAjax.hub.subscribe(`ConfigurationManager.set.proxy`,(eventName,{server})=>{
+            webix.extend(this.config, {
+                rest: PlatformContext.rest,
+                host: server.device.host.id.replace(':','/'),
+                device: server.ver
+            });
 
-        this.$ready.push(() => {
             this.$$('listDataSources').load(newTangoAttributeProxy(this.config.rest, this.config.host, this.config.device, "datasourcecollections"))
         });
     }

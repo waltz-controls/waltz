@@ -426,7 +426,9 @@ const datasources_view = webix.protoUI({
 
         const device = TangoDevice.find_one(attr.device_id);
         const $$list = this.$$('listDataSources');
-        this.addDataSource(new DataSource(`tango://${attr.id}`,
+        this.addDataSource(new DataSource(
+            webix.uid(),
+            `tango://${attr.id}`,
             `/entry/hardware/${device.name}/${attr.name}`,
             "log",
             200,
@@ -437,20 +439,18 @@ const datasources_view = webix.protoUI({
     },
     $init(config){
         webix.extend(config,this._ui());
-        webix.extend(config, {
-            rest: PlatformContext.rest,
-            host: "localhost/10000",
-            device: "development/xenv/configuration"
+
+        OpenAjax.hub.subscribe(`ConfigurationManager.set.proxy`,(eventName,{server})=>{
+            webix.extend(this.config, {
+                rest: PlatformContext.rest,
+                host: server.device.host.id.replace(':','/'),
+                device: server.ver
+            });
+
+            this.collections.load(newTangoAttributeProxy(PlatformContext.rest, this.config.host, this.config.device, "datasourcecollections"));
         });
 
         this.$ready.push(() => {
-            // this.collections.load();
-
-            this.collections = new webix.DataCollection({
-                url: newTangoAttributeProxy(PlatformContext.rest, this.config.host, this.config.device, "datasourcecollections")
-            });
-
-
             const list = this.$$("selectDataSources").getPopup().getList();
 
             list.attachEvent("onAfterSelect", id => {
