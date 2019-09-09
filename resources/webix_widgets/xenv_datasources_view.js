@@ -172,15 +172,118 @@ const dataSourcesProxy = {
 }
 
 
+function newDataSourceCollectionForm(parent){
+    return {
+        view: "form",
+        id: "frmCollectionSettings",
+        hidden: true,
+        elements: [
+            {
+                cols: [
+                    {
+                        view: "text",
+                        name: "id",
+                        label: "DataSources collection id",
+                        labelAlign: "right",
+                        labelWidth: 200,
+                        validate: webix.rules.isNotEmpty
+                    },
+                    {
+                        view: "text",
+                        id: "txtCollectionProto",
+                        name: "value",
+                        label: "Copy from",
+                        labelAlign: "right",
+                        suggest:{
+                            id:"txtCollectionProtoSuggest",
+                            data:[]
+                        },
+                        on:{
+                            onItemClick:function(){
+                                //link suggest to the input
+                                $$(this.config.suggest).config.master = this;
+                                //show
+                                $$(this.config.suggest).show(this.$view)
+                            }
+                        }
+                    }
+                ]
+            },
+            {
+                cols: [
+                    {},
+                    {
+                        view: "button",
+                        id: 'btnAddProfile',
+                        type: "icon",
+                        icon: "save",
+                        maxWidth: 30,
+                        click() {
+                            const $$frm = this.getFormView();
+                            if (!$$frm.validate()) return;
+
+                            const values = $$frm.getValues();
+
+                            let promise;
+                            if(values.value)
+                                promise = parent.cloneCollection(values.id, values.value);
+                            else
+                                promise = parent.selectCollection(values.id);
+
+                            promise.then(() => {
+                                parent.collections.add({
+                                    id: values.id,
+                                    value: values.id
+                                });
+
+                                parent.$$('selectDataSources').setValue(values.id);
+                            });
+                        }
+                    },
+                    {
+                        view: "button",
+                        id: 'btnRmProfile',
+                        type: "icon",
+                        icon: "trash",
+                        maxWidth: 30,
+                        click() {
+                            const $$frm = this.getFormView();
+                            if (!$$frm.validate()) return;
+
+                            const values = $$frm.getValues();
+
+                            //TODO #172
+                            // webix.modalbox({
+                            //     title:"<span><span class='webix_icon fa-exclamation-circle'> Attention</span>",
+                            //     buttons:["Yes", "No"],
+                            //     width:500,
+                            //     text:`<p>This will drop the ${values.id} collection and all DataSources will be deleted! Proceed?</p>`
+                            // }).then(() => {
+                                parent.deleteCollection(values.id).then(() => {
+                                    parent.collections.remove(values.id);
+                                    parent.datasources.clearAll();
+                                    parent.$$('selectDataSources').setValue("");
+                                });
+                            // });
+                        }
+                    }
+                ]
+            }
+        ]
+    };
+}
+
 function newToolbar(parent){
     return {
         view:"toolbar",
         cols:[
             {
-                view:"text",
+                view:"combo",
                 id: "selectDataSources",
-                suggest:{
-                    id:"selectDataSourcesSuggest",
+                options:{
+                    body: {
+                        template:"#id#"
+                    },
                     data:[]
                 },
                 on:{
@@ -195,11 +298,16 @@ function newToolbar(parent){
             {
                 view: "button",
                 type: "icon",
-                icon: "arrow-right",
+                icon: "plus",
                 click(){
-                    const collection = parent.$$('selectDataSources').getValue();
-                    if(!collection) webix.message("<span class='webix_icon fa-bell'></span> Please specify the collection!");
-                    else parent.selectCollection(collection);
+                    // const collection = parent.$$('selectDataSources').getValue();
+                    // if(!collection) webix.message("<span class='webix_icon fa-bell'></span> Please specify the collection!");
+                    // else parent.selectCollection(collection);
+                    const $$form = this.getTopParentView().$$('frmCollectionSettings');
+                    if($$form.isVisible())
+                        $$form.hide();
+                    else
+                        $$form.show()
                 }
             },
             {}
@@ -215,6 +323,7 @@ const datasources_view = webix.protoUI({
         return {
             rows:[
                 newToolbar(this),
+                newDataSourceCollectionForm(this),
                 newSearch("listDataSources", filterDataSourcesList),
                 newDataSourcesList(this),
                 newDataSourceForm(this)
@@ -223,7 +332,7 @@ const datasources_view = webix.protoUI({
     },
     selectCollection(collection){
         //TODO extract to proxy
-        PlatformContext.rest.request()
+        return PlatformContext.rest.request()
             .hosts(this.config.host)
             .devices(this.config.device)
             .attributes("datasourcescollection")
@@ -243,6 +352,20 @@ const datasources_view = webix.protoUI({
             .devices(this.config.device)
             .attributes("datasourcescollection")
             .value().put("?v=" + collection)
+    },
+    deleteCollection(collection){
+        return this.config.rest.request()
+            .hosts(this.config.host)
+            .devices(this.config.device)
+            .commands('deleteCollection')
+            .put("", collection);
+    },
+    cloneCollection(collection, source){
+        return this.config.rest.request()
+            .hosts(this.config.host)
+            .devices(this.config.device)
+            .commands('cloneCollection')
+            .put("", [collection,source]);
     },
     processDataSource(operation, dataSource){
         return this.setCollection()
@@ -292,13 +415,16 @@ const datasources_view = webix.protoUI({
             });
 
 
-            const list = this.$$("selectDataSourcesSuggest").getList();
+            const list = this.$$("selectDataSources").getPopup().getList();
 
             list.attachEvent("onAfterSelect", id => {
                 this.selectCollection(id);
+                this.collections.setCursor(id);
             });
             list.sync(this.collections);
 
+            this.$$("txtCollectionProtoSuggest").getList().sync(this.collections);
+            this.$$("frmCollectionSettings").bind(list);
 
 
             this.$$("listDataSources").sync(this.datasources);
