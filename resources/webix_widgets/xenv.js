@@ -25,6 +25,24 @@ function newXenvSVGTab(){
     }
 }
 
+export function newTangoAttributeProxy(rest, host, device, attr) {
+    return {
+        $proxy: true,
+        load(view, params) {
+            view.clearAll();
+            view.parse(rest.request().hosts(host).devices(device).attributes(attr).value().get()
+                .then(value => JSON.parse(value.value))
+                .catch(err => TangoWebappHelpers.error(err)));
+        },
+        save(view, params, dp) {
+            //TODO
+        },
+        result() {
+
+        }
+    };
+}
+
 export const XenvHqController = class extends MVC.Controller {
     buildUI(platform_api) {
         // platform_api.ui_builder.add_mainview_item(newXenvSVGTab());

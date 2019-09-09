@@ -5,6 +5,8 @@
  */
 
 import newSearch from "./search.js";
+import {newTangoAttributeProxy} from "./xenv.js";
+import {DataSource} from "./xenv_models.js";
 
 /**
  *
@@ -133,24 +135,6 @@ function newDataSourcesList(parent){
             onBlur(){
                 // $$hq.pushConfiguration();
             }
-        }
-    };
-}
-
-function newTangoAttributeProxy(rest, host, device, attr) {
-    return {
-        $proxy: true,
-        load(view, params) {
-            view.clearAll();
-            view.parse(rest.request().hosts(host).devices(device).attributes(attr).value().get()
-                .then(value => JSON.parse(value.value))
-                .catch(err => TangoWebappHelpers.error(err)));
-        },
-        save(view, params, dp) {
-            //TODO
-        },
-        result() {
-
         }
     };
 }
@@ -315,6 +299,38 @@ function newToolbar(parent){
     }
 }
 
+function newSortButton(by) {
+    return {
+        view: "button",
+        //TODO requires webix 6.x
+        // css: "webix_transparent",
+        type: "icon",
+        label: `<span class='webix_strong'>${MVC.String.classize(by)}</span>`,
+        dir: "asc",
+        click() {
+            this.getTopParentView().$$('listDataSources').sort(by, this.config.dir);
+            this.config.dir = this.config.dir === "asc" ? "desc" : "asc";
+        }
+    }
+}
+
+function newSort() {
+    return {
+        view: "form",
+        height: 30,
+        cols: [
+            {
+                view: "label",
+                label: "Sort by:",
+                maxWidth: 80,
+            },
+            newSortButton('src'),
+            newSortButton('nxPath'),
+            {}
+        ]
+    }
+}
+
 const datasources_view = webix.protoUI({
     name: "datasources_view",
     collections: new webix.DataCollection(),
@@ -324,6 +340,7 @@ const datasources_view = webix.protoUI({
             rows:[
                 newToolbar(this),
                 newDataSourceCollectionForm(this),
+                newSort(),//TODO replace with smart filter
                 newSearch("listDataSources", filterDataSourcesList),
                 newDataSourcesList(this),
                 newDataSourceForm(this)
@@ -381,23 +398,42 @@ const datasources_view = webix.protoUI({
                 throw err;
             });
     },
-    async addDataSource(dataSource){
+    addDataSource(dataSource){
         return this.processDataSource("insert",dataSource)
             .then(() => {
-                this.datasources.add(dataSource)
+                return this.datasources.add(dataSource)
             })
     },
-    async updateDataSource(dataSource){
+    updateDataSource(dataSource){
         return this.processDataSource("update", dataSource)
             .then(() => {
                 this.datasources.updateItem(dataSource.id, dataSource);
             })
     },
-    async deleteDataSource(dataSource){
+    deleteDataSource(dataSource){
         return this.processDataSource("delete", dataSource).
             then(() => {
                 this.datasources.remove(dataSource.id);
         })
+    },
+    /**
+     *
+     * @param {string} id
+     */
+    dropAttr(id){
+        const attr = TangoAttribute.find_one(id);
+        if(attr == null) return;
+
+        const device = TangoDevice.find_one(attr.device_id);
+        const $$list = this.$$('listDataSources');
+        this.addDataSource(new DataSource(`tango://${attr.id}`,
+            `/entry/hardware/${device.name}/${attr.name}`,
+            "log",
+            200,
+            DataSource.devDataTypeToNexus(attr.info.data_type)))
+            .then(id=>{
+                $$list.select(id);
+            });
     },
     $init(config){
         webix.extend(config,this._ui());
@@ -411,7 +447,7 @@ const datasources_view = webix.protoUI({
             // this.collections.load();
 
             this.collections = new webix.DataCollection({
-                url: newTangoAttributeProxy(PlatformContext.rest, "localhost/10000", "development/xenv/configuration", "datasourcecollections")
+                url: newTangoAttributeProxy(PlatformContext.rest, this.config.host, this.config.device, "datasourcecollections")
             });
 
 
@@ -430,8 +466,22 @@ const datasources_view = webix.protoUI({
             this.$$("listDataSources").sync(this.datasources);
             this.$$("frmDataSource").bind(this.datasources);
         });
+
+        this.addDrop(this.getNode(),{
+            /**
+             * @function
+             */
+            $drop:function(source, target){
+                var dnd = webix.DragControl.getContext();
+                if(dnd.from.config.$id === 'attrs') {
+                    this.dropAttr(dnd.source[0]);
+                }
+
+                return false;
+            }.bind(this)
+        });
     }
-},webix.IdSpace, webix.ui.layout);
+}, webix.DragControl, webix.IdSpace, webix.ui.layout);
 
 export function newDataSourcesBody(config){
     return webix.extend({
