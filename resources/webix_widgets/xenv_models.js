@@ -29,7 +29,8 @@ export class DataSource {
         }
     }
 
-    constructor(src, nxPath, type, pollRate, dataType) {
+    constructor(id, src, nxPath, type, pollRate, dataType) {
+        this.id = id;
         this.src = src;
         this.nxPath = nxPath;
         this.type = type;

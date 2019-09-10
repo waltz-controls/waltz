@@ -1,4 +1,5 @@
 import {newXenvMainBody} from "./xenv_hq_main_view.js";
+import {newDataSourcesBody} from "./xenv_datasources_view.js";
 import {newStatusServerViewBody} from "./xenv_status_server_view.js";
 import {newCamelIntegrationViewBody} from "./xenv_camel_view.js";
 import {newPredatorViewBody} from "./xenv_predator_view.js";
@@ -118,7 +119,7 @@ export const xenvHqToolbar = {
     maxHeight: 30,
     cols: [
         {
-            view: "select",
+            view: "combo",
             id: "profiles",
             label: "Profile",
             options: [],
@@ -263,6 +264,10 @@ export function newXenvHqBody(config){
             {
                 header: "Main",
                 body: newXenvMainBody(config)
+            },
+            {
+                header: "DataSources",
+                body: newDataSourcesBody(config)
             },
             {
                 header: "DataFormatServer",

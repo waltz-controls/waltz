@@ -9,24 +9,24 @@
 
 ## SonarCloud
 
-[![Quality gate](https://sonarcloud.io/api/project_badges/measure?project=org.tango-controls%3ATangoWebapp&metric=alert_status)](https://sonarcloud.io/dashboard?id=org.tango-controls%3ATangoWebapp)
+[![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=waltz-controls_waltz&metric=alert_status)](https://sonarcloud.io/dashboard?id=waltz-controls_waltz)
 
-[![Maintainability](https://sonarcloud.io/api/project_badges/measure?project=org.tango-controls%3ATangoWebapp&metric=sqale_rating)](https://sonarcloud.io/dashboard?id=org.tango-controls%3ATangoWebapp)
-[![Reliability](https://sonarcloud.io/api/project_badges/measure?project=org.tango-controls%3ATangoWebapp&metric=reliability_rating)](https://sonarcloud.io/dashboard?id=org.tango-controls%3ATangoWebapp)
-[![Security](https://sonarcloud.io/api/project_badges/measure?project=org.tango-controls%3ATangoWebapp&metric=security_rating)](https://sonarcloud.io/dashboard?id=org.tango-controls%3ATangoWebapp)
+[![Maintainability Rating](https://sonarcloud.io/api/project_badges/measure?project=waltz-controls_waltz&metric=sqale_rating)](https://sonarcloud.io/dashboard?id=waltz-controls_waltz)
+[![Reliability Rating](https://sonarcloud.io/api/project_badges/measure?project=waltz-controls_waltz&metric=reliability_rating)](https://sonarcloud.io/dashboard?id=waltz-controls_waltz)
+[![Security Rating](https://sonarcloud.io/api/project_badges/measure?project=waltz-controls_waltz&metric=security_rating)](https://sonarcloud.io/dashboard?id=waltz-controls_waltz)
 
-[![Lines Of Code](https://sonarcloud.io/api/project_badges/measure?project=org.tango-controls%3ATangoWebapp&metric=ncloc)](https://sonarcloud.io/dashboard?id=org.tango-controls%3ATangoWebapp)
-[![Technical debt](https://sonarcloud.io/api/project_badges/measure?project=org.tango-controls%3ATangoWebapp&metric=sqale_index)](https://sonarcloud.io/dashboard?id=org.tango-controls%3ATangoWebapp)
-[![Duplicate lines](https://sonarcloud.io/api/project_badges/measure?project=org.tango-controls%3ATangoWebapp&metric=duplicated_lines_density)](https://sonarcloud.io/dashboard?id=org.tango-controls%3ATangoWebapp)
+[![Lines of Code](https://sonarcloud.io/api/project_badges/measure?project=waltz-controls_waltz&metric=ncloc)](https://sonarcloud.io/dashboard?id=waltz-controls_waltz)
+[![Technical Debt](https://sonarcloud.io/api/project_badges/measure?project=waltz-controls_waltz&metric=sqale_index)](https://sonarcloud.io/dashboard?id=waltz-controls_waltz)
+[![Duplicated Lines (%)](https://sonarcloud.io/api/project_badges/measure?project=waltz-controls_waltz&metric=duplicated_lines_density)](https://sonarcloud.io/dashboard?id=waltz-controls_waltz)
 
-[![Bugs](https://sonarcloud.io/api/project_badges/measure?project=org.tango-controls%3ATangoWebapp&metric=bugs)](https://sonarcloud.io/dashboard?id=org.tango-controls%3ATangoWebapp)
-[![Vulnerabilities](https://sonarcloud.io/api/project_badges/measure?project=org.tango-controls%3ATangoWebapp&metric=vulnerabilities)](https://sonarcloud.io/dashboard?id=org.tango-controls%3ATangoWebapp)
-[![Code smells](https://sonarcloud.io/api/project_badges/measure?project=org.tango-controls%3ATangoWebapp&metric=code_smells)](https://sonarcloud.io/dashboard?id=org.tango-controls%3ATangoWebapp)
+[![Bugs](https://sonarcloud.io/api/project_badges/measure?project=waltz-controls_waltz&metric=bugs)](https://sonarcloud.io/dashboard?id=waltz-controls_waltz)
+[![Vulnerabilities](https://sonarcloud.io/api/project_badges/measure?project=waltz-controls_waltz&metric=vulnerabilities)](https://sonarcloud.io/dashboard?id=waltz-controls_waltz)
+[![Code Smells](https://sonarcloud.io/api/project_badges/measure?project=waltz-controls_waltz&metric=code_smells)](https://sonarcloud.io/dashboard?id=waltz-controls_waltz)
 
 # Documentation
 
 [![Docs](https://img.shields.io/badge/Generated-Docs-green.svg)](https://waltz-controls.github.io/waltz/)
-[![Documentation Status](https://readthedocs.org/projects/waltz-docs/badge/?version=latest)](http://www.waltz-controls.space?badge=latest)
+[![Documentation Status](https://readthedocs.org/projects/waltz-docs/badge/?version=latest)](https://www.waltz-controls.space?badge=latest)
 
 [Waltz User/Developer guides](http://www.waltz-controls.space/?badge=latest)
  
