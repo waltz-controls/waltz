@@ -371,11 +371,22 @@ const datasources_view = webix.protoUI({
             .value().put("?v=" + collection)
     },
     deleteCollection(collection){
-        return PlatformContext.rest.request()
+        return new webix.promise(function(success, fail){
+            webix.modalbox({
+                buttons:["No", "Yes"],
+                width:500,
+                text:`<span class='webix_icon fa-exclamation-circle'></span><p>This will delete data sources collection ${collection} and all associated data sources! Proceed?</p>`,
+                callback:function(result){
+                    if (result === "1") success();
+                }
+            });
+        }).then(() => {
+            return PlatformContext.rest.request()
             .hosts(this.config.host)
             .devices(this.config.device)
             .commands('deleteCollection')
-            .put("", collection);
+            .put("", collection);}
+        );
     },
     cloneCollection(collection, source){
         return PlatformContext.rest.request()

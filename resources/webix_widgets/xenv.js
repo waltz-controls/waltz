@@ -383,6 +383,10 @@ const xenvHq = webix.protoUI({
             this.$$('profile').bind(this.$$('profiles'));
         });
 
+        this.$ready.push(()=> {
+            this.$$('main_tab').servers.sync(this.servers);
+        });
+
         this.addDrop(this.getNode(),{
             /**
              * @function

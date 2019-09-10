@@ -7,7 +7,7 @@ const dataSourcesView = {
     padding: 15,
     rows: [
         {
-            template: "Nexus file data sources",
+            template: "Nexus file data source collections",
             type: "header"
         },
         newSearch("listDataSources", "#value#"),
@@ -30,6 +30,16 @@ const dataSourcesView = {
                     const item = this.getItem(id);
                     item.markCheckbox = item.markCheckbox?0:1;
                     this.updateItem(id, item);
+                    //update profile on the client side
+                    //TODO refactor
+                    const profile = this.getTopParentView().getTopParentView()
+                        .profile.getValues();
+                    const collection = profile.configuration.collections.find(collection => collection.id === id);
+                    if(collection !== undefined) collection.value = item.markCheckbox;
+                    else profile.configuration.collections.push({
+                        id,
+                        value: item.markCheckbox
+                    });
                 }
             },
             on: {
@@ -125,9 +135,10 @@ const main = webix.protoUI({
     },
     applyProfile(profile){
         profile.configuration.collections.forEach(collection => {
-            this.data.updateItem(collection.id,{
-                markCheckbox: collection.value
-            })
+            if(this.data.getItem(collection.id) !== undefined)
+                this.data.updateItem(collection.id,{
+                    markCheckbox: collection.value
+                });
         });
     },
     resetDataSources(){
