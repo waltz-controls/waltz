@@ -1,166 +1,55 @@
 import newSearch from "./search.js";
 import {DataSource} from "./xenv_models.js";
 import newToolbar from "./attrs_monitor_toolbar.js";
-
-/**
- *
- *
- * @param {DataSource} dataSource
- * @param {string} value
- * @function
- */
-const filterDataSourcesList = (dataSource, value)=>{
-    if(!value) return true;
-    return dataSource.src.includes(value) || dataSource.nxPath.includes(value);
-};
-
-function newSortButton(by) {
-    return {
-        view: "button",
-        //TODO requires webix 6.x
-        // css: "webix_transparent",
-        type: "icon",
-        label: `<span class='webix_strong'>${MVC.String.classize(by)}</span>`,
-        dir: "asc",
-        click() {
-            this.getTopParentView().$$('listDataSources').sort(by, this.config.dir);
-            this.config.dir = this.config.dir === "asc" ? "desc" : "asc";
-        }
-    }
-}
-
-function newSort() {
-    return {
-        view: "form",
-        height: 30,
-        cols: [
-            {
-                view: "label",
-                label: "Sort by:",
-                maxWidth: 80,
-            },
-            newSortButton('src'),
-            newSortButton('nxPath'),
-            {}
-        ]
-    }
-}
+import {newTangoAttributeProxy} from "./xenv.js";
 
 const dataSourcesView = {
     padding: 15,
     rows: [
         {
-            template: "Nexus file data sources",
+            template: "Nexus file data source collections",
             type: "header"
         },
-        newSort(),
-        newSearch("listDataSources", filterDataSourcesList),
+        newSearch("listDataSources", "#value#"),
         {
             view: "list",
-            id: "listDataSources",
+            id: "listCollections",
+            select:true,
+            multiselect: true,
             template:
-                "<span class='webix_strong'>Src: </span>#src#<br/>" +
-                "<span class='webix_strong'>nxPath: </span>#nxPath#",
+                "{common.markCheckbox()} #value#",
             gravity: 4,
             type: {
-                height: "auto"
+                height: "auto",
+                markCheckbox(obj){
+                    return "<span class='check webix_icon fa-"+(obj.markCheckbox?"check-":"")+"square-o'></span>";
+                }
+            },
+            onClick:{
+                "check":function(e, id){
+                    const item = this.getItem(id);
+                    item.markCheckbox = item.markCheckbox?0:1;
+                    this.updateItem(id, item);
+                    //update profile on the client side
+                    //TODO refactor
+                    const profile = this.getTopParentView().getTopParentView()
+                        .profile.getValues();
+                    const collection = profile.configuration.collections.find(collection => collection.id === id);
+                    if(collection !== undefined) collection.value = item.markCheckbox;
+                    else profile.configuration.collections.push({
+                        id,
+                        value: item.markCheckbox
+                    });
+                }
             },
             on: {
-                onItemClick(id){
-                    if(this.getSelectedId() === id){
-                        this.unselectAll();
-                    } else {
-                        this.select(id);
-                    }
-                },
-                onBlur(){
-                    const $$hq = this.getTopParentView().getTopParentView();
-                    $$hq.pushConfiguration();
-                },
-                onAfterAdd: function (obj) {
-                    const $$hq = this.getTopParentView();
-                    $$hq.addDataSource(this.getItem(obj));
-                },
-                onDataUpdate: function (obj) {
-                    const $$hq = this.getTopParentView();
-                    $$hq.addDataSource(this.getItem(obj));
-                },
-                onBeforeDelete: function (obj) {
-                    const $$hq = this.getTopParentView();
-                    $$hq.removeDataSource(this.getItem(obj));
+                /**
+                 * tick checkboxes
+                 */
+                onAfterLoad(){
+                    this.getTopParentView().applyProfile(this.getTopParentView().getTopParentView().profile.getValues());
                 }
             }
-        },
-        {
-            view: "form",
-            id: "frmDataSource",
-            on:{
-                onBindApply(obj){
-                    if(!obj) return;
-                    this.setValues({
-                        srcScheme:this.elements['srcScheme'].getList().find(option => obj.src.startsWith(option.value), true).value,
-                        srcPath  : obj.src.substring(obj.src.indexOf(':') + 1)
-                    }, true);
-                },
-                onBeforeValidate(){
-                    this.setValues({
-                        src: `${this.elements['srcScheme'].getValue()}${this.elements['srcPath'].getValue()}`
-                    },true);
-                }
-            },
-            elements: [
-                {cols:[
-                        { view: "label", label: "src", maxWidth: 80 },
-                        {view: "combo", name: "srcScheme", maxWidth: 120, options: [
-                                "tine:", "tango:", "predator:", "external:"
-                            ], validate: webix.rules.isNotEmpty},
-                        {view: "text", name: "srcPath"},
-                    ]},
-                {view: "text", name: "nxPath", label: "nxPath", validate: webix.rules.isNotEmpty},
-                {
-                    view: "radio", name: "type", label: "type", options: [
-                        "scalar", "spectrum", "log"
-                    ], validate: webix.rules.isNotEmpty
-                },
-                {view: "text", name: "pollRate", label: "pollRate", validate: webix.rules.isNumber},
-                {
-                    view: "select", name: "dataType", label: "dataType", options: [
-                        "string", "int16", "int32", "int64", "uint16", "uint32", "uint64", "float32", "float64"
-                    ]
-                },
-                {
-                    cols: [
-                        {},
-                        {
-                            view: "button", width: 30, type: "icon", icon: "save", tooltip: "save", click: obj => {
-                                const $$hq = $$(obj).getTopParentView();
-                                $$hq.$$('frmDataSource').save();
-                            }
-                        },
-                        {
-                            view: "button", width: 30, type: "icon", icon: "clone", tooltip: "clone", click: obj => {
-                                const $$hq = $$(obj).getTopParentView();
-
-                                if(!$$hq.$$('frmDataSource').validate()) return;
-
-                                const cloned = $$hq.$$('frmDataSource').getValues();
-                                cloned.id = webix.uid();
-
-                                $$hq.$$('listDataSources').add(cloned);
-                            }
-                        },
-                        {
-                            view: "button", width: 30, type: "icon", icon: "trash", tooltip: "delete", click: obj => {
-                                const $$hq = $$(obj).getTopParentView();
-                                const $$frm = $$hq.$$('frmDataSource');
-                                const id = $$frm.getValues().id;
-                                $$frm.clear();
-                                $$hq.$$('listDataSources').remove(id);
-                            }
-                        }
-                    ]
-                }
-            ]
         }
     ]
 };
@@ -242,39 +131,34 @@ const main = webix.protoUI({
         return this.$$('listServers');
     },
     get data(){
-        return this.$$('listDataSources');
+        return this.$$('listCollections');
     },
-    clearAll(){
-        this.$$('listDataSources').clearAll();
-        this.$$('frmDataSource').clear();
+    applyProfile(profile){
+        profile.configuration.collections.forEach(collection => {
+            if(this.data.getItem(collection.id) !== undefined)
+                this.data.updateItem(collection.id,{
+                    markCheckbox: collection.value
+                });
+        });
     },
-    /**
-     *
-     * @param {DataSource} dataSource
-     */
-    addDataSource: async function(dataSource){
-        const createDataSourceCmd = await this.config.configurationManager.device.fetchCommand("createDataSource");
+    resetDataSources(){
+        this.$$('listCollections').data.each(item => {
+            item.markCheckbox = 0;
+        });
+        this.$$('listCollections').refresh();
+    },
+    prepareCollections(){
+        const result = {
+            lvalue:[],
+            svalue:[]
+        };
 
-        TangoWebapp.UserAction.executeCommand(createDataSourceCmd, [
-            // PlatformContext.UserContext.user,
-            dataSource.id,
-            dataSource.nxPath,
-            dataSource.type,
-            dataSource.src,
-            dataSource.pollRate,
-            dataSource.dataType
-        ]).then(() => this.config.master.commitConfiguration());
-    },
-    /**
-     *
-     * @param {DataSource} dataSource
-     */
-    removeDataSource: async function(dataSource){
-        const deleteDataSourceCmd = await this.config.configurationManager.device.fetchCommand("removeDataSource");
+        this.data.data.each(item => {
+            result.svalue.push(item.id);
+            result.lvalue.push(item.markCheckbox);
+        });
 
-        TangoWebapp.UserAction.executeCommand(deleteDataSourceCmd,
-            dataSource.id
-        ).then(() => this.config.master.commitConfiguration());
+        return result;
     },
     run:function(){
         this.servers.data.each(async server => {
@@ -286,46 +170,27 @@ const main = webix.protoUI({
             this.servers.updateItem(server.id , {state, status});
         });
     },
-    /**
-     *
-     * @param {string} id
-     */
-    dropAttr(id){
-        const attr = TangoAttribute.find_one(id);
-        if(attr == null) return;
-
-        const device = TangoDevice.find_one(attr.device_id);
-        const $$list = this.$$('listDataSources');
-        $$list.select(
-            $$list.add(
-                new DataSource(`tango://${attr.id}`,
-                    `/entry/hardware/${device.name}/${attr.name}`,
-                    "log",
-                    200,
-                    DataSource.devDataTypeToNexus(attr.info.data_type))));
-    },
     $init(config){
         webix.extend(config, this._ui());
 
-        this.$ready.push(()=>{
-            this.$$('frmDataSource').bind(this.$$('listDataSources'));
-        });
+        OpenAjax.hub.subscribe(`ConfigurationManager.set.proxy`,(eventName,{server})=>{
+            webix.extend(this.config, {
+                host: server.device.host.id.replace(':','/'),
+                device: server.ver
+            });
 
-        this.addDrop(this.getNode(),{
-            /**
-             * @function
-             */
-            $drop:function(source, target){
-                var dnd = webix.DragControl.getContext();
-                if(dnd.from.config.$id === 'attrs') {
-                    this.dropAttr(dnd.source[0]);
-                }
-
-                return false;
-            }.bind(this)
+            this.$$('listCollections').load(newTangoAttributeProxy(PlatformContext.rest, this.config.host, this.config.device, "datasourcecollections"))
         });
+    },
+    defaults:{
+        on:{
+            onViewShow(){
+                if(this.config.configurationManager.device == null) return;
+                this.$$('listCollections').load(newTangoAttributeProxy(PlatformContext.rest, this.config.host, this.config.device, "datasourcecollections"))
+            }
+        }
     }
-}, TangoWebappPlatform.mixin.Runnable, webix.ProgressBar, webix.DragControl, webix.IdSpace, webix.ui.layout);
+}, TangoWebappPlatform.mixin.Runnable, webix.ProgressBar, webix.IdSpace, webix.ui.layout);
 
 export function newXenvMainBody(config){
     return webix.extend({

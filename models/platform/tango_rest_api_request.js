@@ -252,6 +252,12 @@ TangoWebappPlatform.TangoRestApiRequest = MVC.Model.extend('tango_rest_api_reque
             return this;
         },
 
+        value: function () {
+            //TODO check devices branch
+            this.url += '/value';
+            return this;
+        },
+
         /**
          * Fires event to OpenAjax
          * @fires tango_webapp.rest_success

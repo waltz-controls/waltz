@@ -25,9 +25,28 @@ function newXenvSVGTab(){
     }
 }
 
+export function newTangoAttributeProxy(rest, host, device, attr) {
+    return {
+        $proxy: true,
+        load(view, params) {
+            if(view.clearAll)
+                view.clearAll();
+            view.parse(rest.request().hosts(host).devices(device).attributes(attr).value().get()
+                .then(value => JSON.parse(value.value))
+                .catch(err => TangoWebappHelpers.error(err)));
+        },
+        save(view, params, dp) {
+            //TODO
+        },
+        result() {
+
+        }
+    };
+}
+
 export const XenvHqController = class extends MVC.Controller {
     buildUI(platform_api) {
-        platform_api.ui_builder.add_mainview_item(newXenvSVGTab());
+        // platform_api.ui_builder.add_mainview_item(newXenvSVGTab());
         platform_api.ui_builder.add_mainview_item(newXenvHeadQuarterTab());
     }
     /**
@@ -61,10 +80,11 @@ export const XenvHqController = class extends MVC.Controller {
 };
 
 //disable Xenv widget for master
-// XenvHqController.initialize();
+XenvHqController.initialize();
 
 const xenvHq = webix.protoUI({
     name: "xenv-hq",
+    profile: null,
     async applySettings(){
         for(const server of kServers){
             if(this.$$(kServerFieldMap[server]).getValue()) {
@@ -120,12 +140,17 @@ const xenvHq = webix.protoUI({
             return;
         }
 
+
+        const collections = this.$$('main_tab').prepareCollections();
+
+        const updateProfileCollections = await this.main.device.fetchCommand("updateProfileCollections");
         const stopAll = await this.main.device.fetchCommand("stopAll");
         const clearAll = await this.main.device.fetchCommand("clearAll");
         const updateAll = await this.main.device.fetchCommand("updateAll");
         const startAll = await this.main.device.fetchCommand("startAll");
 
-        TangoWebapp.UserAction.executeCommand(stopAll)
+        TangoWebapp.UserAction.executeCommand(updateProfileCollections, collections)
+        .then(() => TangoWebapp.UserAction.executeCommand(stopAll))
         .then(() => TangoWebapp.UserAction.executeCommand(clearAll))
         .then(() => TangoWebapp.UserAction.executeCommand(updateAll))
         .then(() => TangoWebapp.UserAction.executeCommand(startAll));
@@ -136,14 +161,21 @@ const xenvHq = webix.protoUI({
             return;
         }
 
-        const profiles = await this.configuration.device.fetchAttr("profiles")
-            .then(attr => attr.read())
-            .catch(reason => TangoWebappHelpers.error("Can not load profiles", reason));
-
-        this.$$('profiles').define({
-            options : profiles.value.map(profile => new Profile(profile))
-        });
-        this.$$('profiles').refresh();
+        this.$$('profiles').getPopup().getList().load(
+            {
+                $proxy: true,
+                load: (view, params) => {
+                    view.clearAll();
+                    view.parse(PlatformContext.rest.request()
+                        .hosts(this.configuration.device.host.id.replace(':','/'))
+                        .devices(this.configuration.ver)
+                        .attributes("profiles")
+                        .value().get()
+                        .then(value => value.value)
+                        .catch(err => TangoWebappHelpers.error(err)))
+                }
+            }
+        );
     },
     async createProfile(profile, tango_host, instance_name){
         const createProfile = await this.configuration.device.fetchCommand("createProfile");
@@ -168,7 +200,6 @@ const xenvHq = webix.protoUI({
      * @param {string|null} profile
      */
     async selectProfile(profile){
-        this.$$('main_tab').clearAll();
         if(profile === null) {
             return;
         }
@@ -176,12 +207,20 @@ const xenvHq = webix.protoUI({
             TangoWebappHelpers.error("Can not select profile: main server has not been set!");
             return;
         }
+        this.$$('main_tab').resetDataSources();
+
         const load = await this.main.device.fetchCommand("load");
 
         TangoWebapp.UserAction.executeCommand(load, profile).then(async () => {
-            const dataSourcesAttr = await this.configuration.device.fetchAttr("dataSources");
-            const dataSources = await dataSourcesAttr.read();
-            this.$$('main_tab').data.parse(dataSources.value.map(v => JSON.parse(v)));
+            this.profile.load(
+                newTangoAttributeProxy(
+                    PlatformContext.rest,
+                    this.configuration.device.host.id.replace(':','/'),
+                    this.configuration.ver,
+                    "profile"));
+
+
+            // this.$$('main_tab').applyProfile(this.profile.get());
         }).then(async () => {
             const attrs = await this.manager.device.fetchAttrValues(["tangoHost", "instanceName"]);
 
@@ -332,13 +371,20 @@ const xenvHq = webix.protoUI({
         this._init(config);
 
         webix.extend(config, this._ui());
-
-        this.$ready.push(()=> {
-            this.$$('main_tab').servers.data.sync(this.servers);
+        this.profile = new webix.DataRecord({
+            on: {
+                onAfterLoad:()=>{
+                    this.$$('main_tab').applyProfile(this.profile.getValues());
+                }
+            }
         });
 
         this.$ready.push(()=> {
             this.$$('profile').bind(this.$$('profiles'));
+        });
+
+        this.$ready.push(()=> {
+            this.$$('main_tab').servers.sync(this.servers);
         });
 
         this.addDrop(this.getNode(),{
