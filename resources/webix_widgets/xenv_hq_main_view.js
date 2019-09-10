@@ -33,28 +33,11 @@ const dataSourcesView = {
                 }
             },
             on: {
-                onItemClick(id){
-                    // if(this.getSelectedId() === id){
-                    //     this.unselectAll();
-                    // } else {
-                    //     this.select(id);
-                    // }
-                },
-                onBlur(){
-                    // const $$hq = this.getTopParentView().getTopParentView();
-                    // $$hq.pushConfiguration();
-                },
-                onAfterAdd: function (obj) {
-                    // const $$hq = this.getTopParentView();
-                    // $$hq.addDataSource(this.getItem(obj));
-                },
-                onDataUpdate: function (obj) {
-                    // const $$hq = this.getTopParentView();
-                    // $$hq.addDataSource(this.getItem(obj));
-                },
-                onBeforeDelete: function (obj) {
-                    // const $$hq = this.getTopParentView();
-                    // $$hq.removeDataSource(this.getItem(obj));
+                /**
+                 * tick checkboxes
+                 */
+                onAfterLoad(){
+                    this.getTopParentView().applyProfile(this.getTopParentView().getTopParentView().profile.getValues());
                 }
             }
         }
@@ -153,6 +136,19 @@ const main = webix.protoUI({
         });
         this.$$('listCollections').refresh();
     },
+    prepareCollections(){
+        const result = {
+            lvalue:[],
+            svalue:[]
+        };
+
+        this.data.data.each(item => {
+            result.svalue.push(item.id);
+            result.lvalue.push(item.markCheckbox);
+        });
+
+        return result;
+    },
     run:function(){
         this.servers.data.each(async server => {
             let state, status;
@@ -174,6 +170,14 @@ const main = webix.protoUI({
 
             this.$$('listCollections').load(newTangoAttributeProxy(PlatformContext.rest, this.config.host, this.config.device, "datasourcecollections"))
         });
+    },
+    defaults:{
+        on:{
+            onViewShow(){
+                if(this.config.configurationManager.device == null) return;
+                this.$$('listCollections').load(newTangoAttributeProxy(PlatformContext.rest, this.config.host, this.config.device, "datasourcecollections"))
+            }
+        }
     }
 }, TangoWebappPlatform.mixin.Runnable, webix.ProgressBar, webix.IdSpace, webix.ui.layout);
 

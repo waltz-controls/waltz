@@ -140,12 +140,17 @@ const xenvHq = webix.protoUI({
             return;
         }
 
+
+        const collections = this.$$('main_tab').prepareCollections();
+
+        const updateProfileCollections = await this.main.device.fetchCommand("updateProfileCollections");
         const stopAll = await this.main.device.fetchCommand("stopAll");
         const clearAll = await this.main.device.fetchCommand("clearAll");
         const updateAll = await this.main.device.fetchCommand("updateAll");
         const startAll = await this.main.device.fetchCommand("startAll");
 
-        TangoWebapp.UserAction.executeCommand(stopAll)
+        TangoWebapp.UserAction.executeCommand(updateProfileCollections, collections)
+        .then(() => TangoWebapp.UserAction.executeCommand(stopAll))
         .then(() => TangoWebapp.UserAction.executeCommand(clearAll))
         .then(() => TangoWebapp.UserAction.executeCommand(updateAll))
         .then(() => TangoWebapp.UserAction.executeCommand(startAll));
