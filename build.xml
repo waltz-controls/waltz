@@ -1,11 +1,11 @@
 <?xml version="1.0"?>
-<project name="JavaScriptMVC ant utilities" basedir="../..">
+<project name="Waltz" basedir=".">
     <echo>Basedir = ${basedir}</echo>
 
     <property environment="env"/>
     <property name="application.name" value="${app}"/>
     <echo>application.name = ${application.name}</echo>
-    <property name="build.dir" value="${buildDir}"/>
+    <property name="build.dir" value="build"/>
     <echo>build.dir = ${build.dir}</echo>
 
     <property name="env.REST_API_PROTOCOL" value="http"/>
@@ -242,5 +242,30 @@
 
     <target name="war">
         <zip destfile="${build.dir}/../distributions/waltz.war" basedir="${build.dir}"/>
+    </target>
+
+    <target name="assemble">
+        <antcall target="build">
+            <param name="app" value="platform"/>
+            <param name="build.dir" value="${build.dir}/work"/>
+        </antcall>
+
+        <antcall target="build">
+            <param name="app" value="login"/>
+            <param name="build.dir" value="${build.dir}/work"/>
+        </antcall>
+
+        <antcall target="build">
+            <param name="app" value="tango_webapp"/>
+            <param name="build.dir" value="${build.dir}/work"/>
+        </antcall>
+
+        <antcall target="copy-webapp">
+            <param name="build.dir" value="${build.dir}/work"/>
+        </antcall>
+
+        <antcall target="war">
+            <param name="build.dir" value="${build.dir}/work"/>
+        </antcall>
     </target>
 </project>
