@@ -1,5 +1,0 @@
-{
-    "FileUpload" : "https://bitbucket.org/api/1.0/repositories/ingvord/jmvc-engines/src/default/engines/FileUpload",
-    "MdlDialog"  : "https://bitbucket.org/api/1.0/repositories/ingvord/jmvc-engines/src/default/engines/MdlDialog",
-    "Wizard"     : "https://bitbucket.org/api/1.0/repositories/ingvord/jmvc-engines/src/default/engines/Wizard"
-}
