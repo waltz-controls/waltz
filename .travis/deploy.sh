@@ -1,7 +1,7 @@
 #!/bin/bash
 
 #decrypt
-openssl aes-256-cbc -K $encrypted_2f30ea6ab509_key -iv $encrypted_2f30ea6ab509_iv -in ./.travis/IngvordESRF.pem.enc -out ./.travis/IngvordESRF.pem -d
+openssl aes-256-cbc -K $encrypted_password -in ./.travis/IngvordAWS.enc -out ./.travis/IngvordAWS.pem -d
 
 chmod 600 ./.travis/IngvordESRF.pem
 
