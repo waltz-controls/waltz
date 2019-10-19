@@ -3,7 +3,7 @@
 #decrypt
 openssl aes-256-cbc -pass pass:$encrypted_password -in ./.travis/IngvordAWS.pem.enc -out ./.travis/IngvordAWS.pem -d
 
-chmod 400 ./.travis/IngvordAWS.pem
+chmod 600 ./.travis/IngvordAWS.pem
 
 ssh -o "StrictHostKeyChecking no" $REST_API_HOST
 
