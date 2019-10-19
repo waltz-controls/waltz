@@ -2,7 +2,7 @@
 
 #decrypt
 #openssl aes-256-cbc -pass pass:$super_secret_password -in ./.travis/IngvordAWS.pem.enc -out ./.travis/IngvordAWS.pem -d
-openssl aes-256-cbc -K $encrypted_c93bb15937a9_key -iv $encrypted_c93bb15937a9_iv -in IngvordAWS.pem.enc -out IngvordAWS.pem -d
+openssl aes-256-cbc -K $encrypted_c93bb15937a9_key -iv $encrypted_c93bb15937a9_iv -in ./.travis/IngvordAWS.pem.enc -out ./.travis/IngvordAWS.pem -d
 
 chmod 600 ./.travis/IngvordAWS.pem
 
