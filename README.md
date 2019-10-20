@@ -54,7 +54,7 @@ To run the live demo click on the image
 User: tango-cs
 Pass: tango
 
-[![](https://github.com/tango-controls/tango-webapp/wiki/images/live.png)](http://ec2-18-184-38-139.eu-central-1.compute.amazonaws.com:8080/master/)
+[![](https://github.com/tango-controls/tango-webapp/wiki/images/live.png)](http://ec2-18-184-90-206.eu-central-1.compute.amazonaws.com:8080/master/)
 
 ## Getting started ##
 
