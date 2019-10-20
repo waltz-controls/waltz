@@ -29,7 +29,7 @@ jobs:
     - REST_API_HOST="ec2-18-184-90-206.eu-central-1.compute.amazonaws.com"
     - REST_API_PORT=10001
     - REST_API_VERSION="rc4"
-    - TANGO_HOST="ip-172-31-32-97"
+    - TANGO_HOST="ip-172-31-39-180"
     - TANGO_PORT=10000
     - VERSION="$TRAVIS_BRANCH"
     script:
