@@ -232,6 +232,7 @@ const table_datatable = webix.protoUI({
             hide:true
         });
         this.data.each(item => {
+            //TODO use REST api call -> read attributes[cols] from device[item.id]
             item._device.fetchAttrValues([...item._attrs]).then(resp => {
                 const update = {};
                 resp.forEach(output => {
@@ -280,22 +281,19 @@ const stateful_table_datatable = webix.protoUI({
         columns.splice.apply(columns,[columns.length - 1, 0].concat(state.data.attrs.map(getColumnConfig)));
         this.refreshColumns();
 
-        //TODO
-        state.data.devices.forEach(async device_id => {
-            await this.getTopParentView().addDevice(device_id);
-            // const device = this.getItem(device_id)._device;
-            // await device.fetchAttrs();
-            // state.data.attrs
-            //     .map(name => device_id + "/" + name)
-            //     .forEach(attrId => {
-            //         this.getTopParentView().addAttribute(device.attrs.getItem(attrId), true);
-            //     })
-        },this);
+        this.parse(state.data.devices.map(device_id => {return {
+            id: device_id,
+            device: device_id
+        }}));
 
         this.getTopParentView().frozen = state.data.frozen;
 
         if(state.data.hide_settings)
             this.getTopParentView().hideSettings();
+
+        this.run();
+
+        //TODO load info or subscribe to an event
     },
     setFrozen(value){
         this.state.updateState({
