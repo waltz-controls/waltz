@@ -30,6 +30,42 @@ export const TableWidgetController = class extends MVC.Controller {
 //disable Xenv widget for master
 // TableWidgetController.initialize();
 
+/**
+ *
+ * @param {String} attr
+ */
+function getColumnConfig(attr){
+    return {
+        id: attr,
+        header: `${attr}`, //TODO redefine header once attr info is loaded ${attr.display_name} (${attr.info.display_unit})
+        template:function(obj){
+            //TODO move to schema type
+            function getQualityIcon(obj){
+                switch (obj[attr + "_quality"]) {
+                    case "ATTR_ALARM":
+                    case "ATTR_INVALID":
+                        return `<span class="webix_icon fa-exclamation-triangle" style="color: red"></span>`;
+                    case "ATTR_WARNING":
+                        return `<span class="webix_icon fa-exclamation-triangle" style="color: orange"></span>`;
+                    case "FAILURE":
+                        return `<span class="webix_icon fa-exclamation" style="color: red"></span>`;
+                    case "VALID":
+                    default:
+                        return "";
+                }
+            }
+
+            return `${getQualityIcon(obj)}${obj[attr]}`;
+        },
+        fillspace: true
+    };
+    //TODO set writeable once attr info is loaded
+    // if (attr.isWritable()) webix.extend(attrColumnConfig, {
+    //     editor: "text"
+    // });
+
+}
+
 const table_datatable = webix.protoUI({
     name:"table_datatable",
     _config() {
@@ -107,31 +143,8 @@ const table_datatable = webix.protoUI({
     },
     addColumn(attr){
         const columns = this.config.columns;
-        const attrColumnConfig = {
-            device_id: attr.device_id,
-            id: attr.name,
-            header: `${attr.display_name} (${attr.info.display_unit})`,
-            template:function(obj){
-                //TODO move to schema type
-                function getQualityIcon(obj){
-                    switch (obj[attr.name + "_quality"]) {
-                        case "ATTR_ALARM":
-                        case "ATTR_INVALID":
-                            return `<span class="webix_icon fa-exclamation-triangle" style="color: red"></span>`;
-                        case "ATTR_WARNING":
-                            return `<span class="webix_icon fa-exclamation-triangle" style="color: orange"></span>`;
-                        case "FAILURE":
-                            return `<span class="webix_icon fa-exclamation" style="color: red"></span>`;
-                        case "VALID":
-                        default:
-                            return "";
-                    }
-                }
-
-                return `${getQualityIcon(obj)}${obj[attr.name]}`;
-            },
-            fillspace: true
-        };
+        const attrColumnConfig = getColumnConfig(attr.name);
+        attrColumnConfig.header = `${attr.display_name} (${attr.info.display_unit})`;
         if (attr.isWritable()) webix.extend(attrColumnConfig, {
             editor: "text"
         });
@@ -262,15 +275,21 @@ const stateful_table_datatable = webix.protoUI({
             type:"top",
             delay: 3000,
         });
+
+        const columns = this.config.columns;
+        columns.splice.apply(columns,[columns.length - 1, 0].concat(state.data.attrs.map(getColumnConfig)));
+        this.refreshColumns();
+
+        //TODO
         state.data.devices.forEach(async device_id => {
             await this.getTopParentView().addDevice(device_id);
-            const device = this.getItem(device_id)._device;
-            await device.fetchAttrs();
-            state.data.attrs
-                .map(name => device_id + "/" + name)
-                .forEach(attrId => {
-                    this.getTopParentView().addAttribute(device.attrs.getItem(attrId), true);
-                })
+            // const device = this.getItem(device_id)._device;
+            // await device.fetchAttrs();
+            // state.data.attrs
+            //     .map(name => device_id + "/" + name)
+            //     .forEach(attrId => {
+            //         this.getTopParentView().addAttribute(device.attrs.getItem(attrId), true);
+            //     })
         },this);
 
         this.getTopParentView().frozen = state.data.frozen;
