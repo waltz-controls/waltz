@@ -1,5 +1,6 @@
 import newToolbar from "./attrs_monitor_toolbar.js";
 import {newRemoveAttributeSettings, toolbar_extension} from "./remove_attribute_toolbar.js";
+import {TangoId} from "../../models/platform/tango_id.js";
 
 const kPersistentColumns = ["id", "device", "remove"];
 const kOverlayDelayTimeout = 3000;
@@ -167,12 +168,10 @@ const table_datatable = webix.protoUI({
                 device: attr.getDevice().display_name,
                 [attr.name]: "",
                 [attr.name + "_quality"]: "",
-                _device: attr.getDevice(),
-                _attrs:new Set(this._tracked_attrs)
+                _device: attr.getDevice()
             });
 
         this._tracked_attrs.add(attr.name);
-        this.data.each(item => item._attrs.add(attr.name));
 
         this.run();
     },
@@ -193,7 +192,6 @@ const table_datatable = webix.protoUI({
         this.refreshColumns();
 
         this._tracked_attrs.delete(col.id);
-        this.data.each(item => item._attrs.delete(col.id));
         return col.id;
     },
     async addDevice(id){
@@ -214,8 +212,7 @@ const table_datatable = webix.protoUI({
         this.add({
             id: device.id,
             device: device.display_name,
-            _device: device,
-            _attrs:new Set(this._tracked_attrs)
+            _device: device
         });
 
         this.run();
@@ -233,18 +230,32 @@ const table_datatable = webix.protoUI({
         });
         this.data.each(item => {
             //TODO use REST api call -> read attributes[cols] from device[item.id]
-            item._device.fetchAttrValues([...item._attrs]).then(resp => {
-                const update = {};
-                resp.forEach(output => {
-                    update[output.name] = output.value;
-                    update[output.name + "_quality"] = output.quality;
+            const tangoId = TangoId.fromDeviceId(item.id);
+
+            const attrs = this.config.columns.slice(1,this.config.columns.length - 1);//skip the first: device and the last one - remove
+            PlatformContext.rest.request()
+                .hosts(tangoId.tangoHost.replace(':','/'))
+                .devices(tangoId.deviceName)
+                .attributes('value')
+                .get('?' + attrs.map(function (attr) {
+                    return "attr=" + attr.id
+                }).join('&'))
+                .then(resp => {
+                    const update = resp.reduce((update, el) => {
+                        update[el.name + "_quality"] = el.quality;
+                        if(!el.errors)
+                            update[el.name] = el.value;
+                        
+                        //TODO error
+                        return update;
+                    }, {});
+                    this.updateItem(item.id, update);
+                })
+                .fail(function (resp) {
+                    TangoWebappHelpers.error(resp);
+                    throw resp;
                 });
-
-                //TODO remove failed attrs
-
-                this.updateItem(item.id, update);
             })
-        });
     },
     $init(config) {
         webix.extend(config, this._config());
