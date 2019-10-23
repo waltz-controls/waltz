@@ -101,10 +101,14 @@ const table_datatable = webix.protoUI({
                         this.getTopParentView().clear();
                     }
                 },
-                onItemClick(id) {
+                async onItemClick(id) {
                     const device_id = id.row;
 
-                    //TODO load device if not yet done
+                    const device = PlatformContext.devices.getItem(device_id);
+                    if(device === undefined) {
+                        await PlatformContext.rest.fetchDevice(device_id)
+                    }
+
 
                     PlatformContext.devices.setCursor(device_id);
 
