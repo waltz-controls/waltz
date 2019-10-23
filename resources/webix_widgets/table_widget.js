@@ -28,6 +28,15 @@ export const TableWidgetController = class extends MVC.Controller {
     }
 };
 
+function respToUpdate(update, resp){
+    update[resp.name + "_quality"] = resp.quality;
+    if(!resp.errors)
+        update[resp.name] = resp.value;
+
+    //TODO error
+    return update;
+}
+
 //disable Xenv widget for master
 // TableWidgetController.initialize();
 
@@ -229,7 +238,6 @@ const table_datatable = webix.protoUI({
             hide:true
         });
         this.data.each(item => {
-            //TODO use REST api call -> read attributes[cols] from device[item.id]
             const tangoId = TangoId.fromDeviceId(item.id);
 
             const attrs = this.config.columns.slice(1,this.config.columns.length - 1);//skip the first: device and the last one - remove
@@ -241,14 +249,7 @@ const table_datatable = webix.protoUI({
                     return "attr=" + attr.id
                 }).join('&'))
                 .then(resp => {
-                    const update = resp.reduce((update, el) => {
-                        update[el.name + "_quality"] = el.quality;
-                        if(!el.errors)
-                            update[el.name] = el.value;
-                        
-                        //TODO error
-                        return update;
-                    }, {});
+                    const update = resp.reduce(respToUpdate, {});
                     this.updateItem(item.id, update);
                 })
                 .fail(function (resp) {
@@ -276,6 +277,20 @@ const stateful_table_datatable = webix.protoUI({
             devices: []
         }
     },
+    _restoreAttrs(attrs){
+        const columns = this.config.columns;
+        columns.splice.apply(columns,[columns.length - 1, 0].concat(attrs.map(getColumnConfig)));
+        this.refreshColumns();
+
+        const $$settings = this.getTopParentView().$$('settings');
+        attrs.forEach(attr => $$settings.addAttribute(attr, true));
+    },
+    _restoreDevices(devices){
+        this.parse(devices.map(device_id => {return {
+            id: device_id,
+            device: device_id
+        }}));
+    },
     restoreState(state){
         if(state.data.devices.length === 0 && state.data.attrs.length > 0) //this may happen when user cleared tha table and then refreshed the app
             this.state.updateState({
@@ -288,14 +303,9 @@ const stateful_table_datatable = webix.protoUI({
             delay: 3000,
         });
 
-        const columns = this.config.columns;
-        columns.splice.apply(columns,[columns.length - 1, 0].concat(state.data.attrs.map(getColumnConfig)));
-        this.refreshColumns();
+        this._restoreAttrs(state.data.attrs);
 
-        this.parse(state.data.devices.map(device_id => {return {
-            id: device_id,
-            device: device_id
-        }}));
+        this._restoreDevices(state.data.devices);
 
         this.getTopParentView().frozen = state.data.frozen;
 
@@ -303,8 +313,6 @@ const stateful_table_datatable = webix.protoUI({
             this.getTopParentView().hideSettings();
 
         this.run();
-
-        //TODO load info or subscribe to an event
     },
     setFrozen(value){
         this.state.updateState({
@@ -476,8 +484,6 @@ const table_widget = webix.protoUI({
         $$settings.removeAttribute(name);
     },
     async addAttribute(attr, force = false){
-        const $$datatable = this.$$('datatable');
-        const $$settings = this.$$('settings');
         if(this.frozen && !force) {
             this.showOverlay(kFrozenOverlayMessage);
             return;
@@ -487,7 +493,10 @@ const table_widget = webix.protoUI({
             return;
         }
 
+        const $$datatable = this.$$('datatable');
         await $$datatable.addAttribute(attr, force);
+
+        const $$settings = this.$$('settings');
         $$settings.addAttribute(attr.display_name, force);
     },
     async addDevice(id){
