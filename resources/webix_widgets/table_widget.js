@@ -104,6 +104,8 @@ const table_datatable = webix.protoUI({
                 onItemClick(id) {
                     const device_id = id.row;
 
+                    //TODO load device if not yet done
+
                     PlatformContext.devices.setCursor(device_id);
 
 
@@ -482,6 +484,7 @@ const table_widget = webix.protoUI({
                 .then(resp => {
                     return new TangoAttribute({
                         id,
+                        name: tangoId.memberName,
                         device_id: tangoId.deviceId,
                         info: resp
                     })
