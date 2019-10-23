@@ -113,14 +113,15 @@ const table_datatable = webix.protoUI({
                     if(kPersistentColumns.includes(attr_name)) return;
 
                     const attrId = `${device_id}/${attr_name}`;
-                    OpenAjax.hub.publish("tango_webapp.item_selected", {
-                        data: {
-                            id: attrId,
-                            kind: 'attrs'
-                        }
+                    this.getTopParentView().selectAttribute(attrId)
+                        .then(() => {
+                        OpenAjax.hub.publish("tango_webapp.item_selected", {
+                            data: {
+                                id: attrId,
+                                kind: 'attrs'
+                            }
+                        });
                     });
-
-                    this.getTopParentView().selectAttribute(attrId);
                 },
                 onAfterEditStop(value, editor) {
                     if (value.value == value.old) return;
@@ -469,9 +470,35 @@ const table_widget = webix.protoUI({
     },
     selectAttribute(id){
         const attr = TangoAttribute.find_one(id);
-        if(attr === null) throw new Error("assertion error");
+        if(attr === null) {
+            const tangoId = TangoId.fromAttributeId(id);
 
-        this.$$('input').setAttribute(attr);
+            //TODO extract common function loadAttribute
+            return PlatformContext.rest.request()
+                .hosts(tangoId.tangoHost.replace(':','/'))
+                .devices(tangoId.deviceName)
+                .attributes(tangoId.memberName)
+                .get('/info')
+                .then(resp => {
+                    return new TangoAttribute({
+                        id,
+                        device_id: tangoId.deviceId,
+                        info: resp
+                    })
+                })
+                .then(attr => {
+                    this.$$('input').setAttribute(attr);
+                })
+                .fail(function (resp) {
+                    TangoWebappHelpers.error(resp);
+                    throw resp;
+                });
+        } else{
+            this.$$('input').setAttribute(attr);
+            return webix.promise.resolve(attr);
+        }
+
+
     },
     removeAttribute(name){
         const $$settings = this.$$('settings');

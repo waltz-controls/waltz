@@ -37,6 +37,14 @@ export class TangoId {
         return `${this.domain}/${this.family}/${this.member}`;
     }
 
+    get deviceId(){
+        return `${this.tangoHost}/${this.domain}/${this.family}/${this.member}`;
+    }
+
+    get memberId(){
+        return `${this.tangoHost}/${this.domain}/${this.family}/${this.member}/${this.entity}`;
+    }
+
     get memberName(){
         return this.entity;
     }
@@ -46,5 +54,12 @@ export class TangoId {
         const tango_host_port = splits[0].split(':');
 
         return new TangoId(tango_host_port[0], tango_host_port[1], splits[1], splits[2], splits[3])
+    }
+
+    static fromAttributeId(attrId){
+        const splits = attrId.split(kTangoIdSeparator);
+        const tango_host_port = splits[0].split(':');
+
+        return new TangoId(tango_host_port[0], tango_host_port[1], splits[1], splits[2], splits[3], splits[4])
     }
 }
