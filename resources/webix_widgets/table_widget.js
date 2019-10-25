@@ -76,6 +76,39 @@ function getColumnConfig(attr){
 
 }
 
+async function selectDevice(deviceId){
+    const device = PlatformContext.devices.getItem(deviceId);
+    if(device === undefined) {
+        await PlatformContext.rest.fetchDevice(deviceId)
+    }
+
+
+    PlatformContext.devices.setCursor(deviceId);
+}
+
+/**
+ *
+ * @param attrId
+ * @return {Promise<TangoAttribute>}
+ */
+function loadAttribute(attrId){
+    const tangoId = TangoId.fromAttributeId(attrId);
+
+    return PlatformContext.rest.request()
+        .hosts(tangoId.tangoHost.replace(':','/'))
+        .devices(tangoId.deviceName)
+        .attributes(tangoId.memberName)
+        .get('/info')
+        .then(resp => {
+            return new TangoAttribute({
+                id: attrId,
+                name: tangoId.memberName,
+                device_id: tangoId.deviceId,
+                info: resp
+            })
+        })
+}
+
 const table_datatable = webix.protoUI({
     name:"table_datatable",
     _config() {
@@ -102,16 +135,10 @@ const table_datatable = webix.protoUI({
                     }
                 },
                 async onItemClick(id) {
+                    //TODO refactor - split and extract
                     const device_id = id.row;
 
-                    const device = PlatformContext.devices.getItem(device_id);
-                    if(device === undefined) {
-                        await PlatformContext.rest.fetchDevice(device_id)
-                    }
-
-
-                    PlatformContext.devices.setCursor(device_id);
-
+                    await selectDevice(device_id);
 
                     const attr_name = id.column;
 
@@ -293,10 +320,14 @@ const stateful_table_datatable = webix.protoUI({
         attrs.forEach(attr => $$settings.addAttribute(attr, true));
     },
     _restoreDevices(devices){
-        this.parse(devices.map(device_id => {return {
-            id: device_id,
-            device: device_id
-        }}));
+        this.parse(devices.map(device_id => {
+            const tangoId = TangoId.fromDeviceId(device_id);
+
+            return {
+                id: device_id,
+                device: tangoId.deviceName
+            }
+        }));
     },
     restoreState(state){
         if(state.data.devices.length === 0 && state.data.attrs.length > 0) //this may happen when user cleared tha table and then refreshed the app
@@ -477,21 +508,19 @@ const table_widget = webix.protoUI({
     selectAttribute(id){
         const attr = TangoAttribute.find_one(id);
         if(attr === null) {
-            const tangoId = TangoId.fromAttributeId(id);
-
             //TODO extract common function loadAttribute
-            return PlatformContext.rest.request()
-                .hosts(tangoId.tangoHost.replace(':','/'))
-                .devices(tangoId.deviceName)
-                .attributes(tangoId.memberName)
-                .get('/info')
-                .then(resp => {
-                    return new TangoAttribute({
-                        id,
-                        name: tangoId.memberName,
-                        device_id: tangoId.deviceId,
-                        info: resp
-                    })
+            return loadAttribute(id)
+                .then(attr => {
+                    const columnConfig = this.$$('datatable').getColumnConfig(attr.name);
+                    if(attr.isWritable() && columnConfig.editor !== "text"){
+                        webix.extend(
+                            columnConfig,
+                            {
+                                editor: "text"
+                            }
+                        );
+                        this.$$('datatable').refreshColumns();
+                    }
                 })
                 .then(attr => {
                     this.$$('input').setAttribute(attr);
@@ -501,11 +530,20 @@ const table_widget = webix.protoUI({
                     throw resp;
                 });
         } else{
+            const columnConfig = this.$$('datatable').getColumnConfig(attr.name);
+            if(attr.isWritable() && columnConfig.editor !== "text") {
+                webix.extend(
+                    columnConfig,
+                    {
+                        editor: "text"
+                    }
+                );
+                this.$$('datatable').refreshColumns();
+            }
+
             this.$$('input').setAttribute(attr);
             return webix.promise.resolve(attr);
         }
-
-
     },
     removeAttribute(name){
         const $$settings = this.$$('settings');
