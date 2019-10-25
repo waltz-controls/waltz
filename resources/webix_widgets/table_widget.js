@@ -508,7 +508,6 @@ const table_widget = webix.protoUI({
     selectAttribute(id){
         const attr = TangoAttribute.find_one(id);
         if(attr === null) {
-            //TODO extract common function loadAttribute
             return loadAttribute(id)
                 .then(attr => {
                     const columnConfig = this.$$('datatable').getColumnConfig(attr.name);
