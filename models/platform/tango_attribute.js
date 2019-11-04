@@ -118,7 +118,7 @@
              */
             //TODO extract AttributeInfo (aka MVC.Model.JSON) and move this method there
             putInfo: function () {
-                return this.toTangoRestApiRequest().put('info?async=true', this.info);
+                return this.toTangoRestApiRequest().put('/info?async=true', this.info);
             },
             /**
              * @returns {'STATE'|'STATUS'|'SCALAR'|'SPECTRUM'|'IMAGE'}
