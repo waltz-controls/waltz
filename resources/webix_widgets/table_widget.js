@@ -210,8 +210,7 @@ const table_datatable = webix.protoUI({
                 id: attr.device_id,
                 device: attr.getDevice().display_name,
                 [attr.name]: "",
-                [attr.name + "_quality"]: "",
-                _device: attr.getDevice()
+                [attr.name + "_quality"]: ""
             });
 
         this._tracked_attrs.add(attr.name);
@@ -254,8 +253,7 @@ const table_datatable = webix.protoUI({
         if(this.exists(device.id)) return;
         this.add({
             id: device.id,
-            device: device.display_name,
-            _device: device
+            device: device.display_name
         });
 
         this.run();
