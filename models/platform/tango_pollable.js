@@ -24,6 +24,8 @@ TangoPollable = MVC.Model.extend("pollable",
          */
         fetchPollingStatus() {
             const device = PlatformContext.devices.getItem(this.device_id);
+            if(device === undefined) return webix.promise.resolve(this);
+
             return device.fetchAdmin().then(admin => {
                 return admin.devPollStatus(device.name);
             }).then((resp) => {
@@ -66,6 +68,7 @@ TangoPollable = MVC.Model.extend("pollable",
          */
         updatePolling(polled, poll_rate){
             const device = PlatformContext.devices.getItem(this.device_id);
+            if(device === undefined) return webix.promise.resolve(this);
             return device.fetchAdmin().then(admin => {
                 return admin.updatePolling(device.name, this, polled, poll_rate)
             }).then(() => {

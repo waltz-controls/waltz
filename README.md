@@ -54,7 +54,7 @@ To run the live demo click on the image
 User: tango-cs
 Pass: tango
 
-[![](https://github.com/tango-controls/tango-webapp/wiki/images/live.png)](http://ec2-35-156-104-8.eu-central-1.compute.amazonaws.com:8080/master/)
+[![](https://github.com/tango-controls/tango-webapp/wiki/images/live.png)](http://ec2-18-184-90-206.eu-central-1.compute.amazonaws.com:8080/master/)
 
 ## Getting started ##
 
@@ -71,16 +71,20 @@ Pass: tango
 
 ## Build ##
 
-This project uses jmvcc for high level build operations:
+This project uses [ant](https://ant.apache.org) for high level build operations:
 
 ```bash
-$> ./jmvcc jmvc/clean
-$> REST_API_PROTOCOL=[http|https] REST_API_HOST=[localhost] REST_API_PORT=[10001]  \
-   TANGO_HOST=[localhost] TANGO_PORT=10000 \
-   ./jmvcc jmvc/assemble
+$> ant clean
+$> ant assemble
 ```
 
-This requires jjs to be in the $PATH (is shipped with OpenJDK8 and later)
+Extra parameters may ne passed to ant script to define default Tango REST API endpoint and/or Tango host:
+
+```bash
+$> REST_API_PROTOCOL=[http|https] REST_API_HOST=[ip/fqdn] REST_API_PORT=[e.g. 10001]  \
+   TANGO_HOST=[ip/fqdn] TANGO_PORT=[e.g. 10000] \
+   ant assemble
+```
 
 ## Implementation details
 

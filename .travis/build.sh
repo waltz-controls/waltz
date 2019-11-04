@@ -1,4 +1,4 @@
 #!/bin/bash
 
-./jmvcc jmvc/assemble
+ant assemble
 test -e build/distributions/waltz.war

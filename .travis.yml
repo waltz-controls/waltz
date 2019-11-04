@@ -2,71 +2,72 @@ dist: xenial
 language: java
 sudo: false
 jdk:
-  - openjdk8
+- openjdk8
 cache:
   directories:
-    - '$HOME/.m2/repository'
+  - "$HOME/.m2/repository"
 services:
-  - docker
+- docker
 addons:
   sonarcloud:
-    organization: "waltz-controls" # the key of the org you chose at step #3
-    
+    organization: waltz-controls
 jobs:
   include:
-    - stage: build
-      script: .travis/build.sh
-    - stage: deploy
-      name: "Deploy to SonarCloud"
-      script:
-        - .travis/build.sh
-        - git fetch --unshallow --quiet
-        - sonar-scanner -Dsonar.login=${SONAR_TOKEN} -Dsonar.projectKey=waltz-controls_waltz -Dsonar.projectName=waltz -Dsonar.projectVersion=$TRAVIS_BRANCH -Dsonar.sources=. -Dsonar.exclusions=build/**,jmvc/**,docs/**,apps/**
-    -
-      name: "Deploy to Amazon cloud"
-      env:
-        - REST_API_PROTOCOL="http"
-        - REST_API_HOST="ec2-35-156-104-8.eu-central-1.compute.amazonaws.com"
-        - REST_API_PORT=8080
-        - REST_API_VERSION="rc4"
-        - TANGO_HOST="ip-172-31-30-179"
-        - TANGO_PORT=10000
-        - VERSION="$TRAVIS_BRANCH"
-      script:
-        - .travis/build.sh
-        - mv build/distributions/waltz.war build/distributions/$TRAVIS_BRANCH.war
-      deploy:
-        - provider: script
-          script: bash .travis/deploy.sh
-          skip_cleanup: true
-          on:
-            all_branches: true
-    -
-      name: "Deploy to GitHub releases"
-      script: .travis/build.sh
-      deploy:
-        - provider: releases
-          prerelease: true
-          api_key: $GITHUB_OAUTH_TOKEN
-          file: "build/distributions/waltz.war"
-          skip_cleanup: true
-          on:
-            tags: true
-    -
-      name: "Deploy to docker hub"
-      env:
-        - REGISTRY_USER=ingvord DOCKER_IMAGE=tangocs/waltz
-      script:
-        - .travis/build.sh
-        - docker build --pull --tag "$DOCKER_IMAGE" .
-        - docker login -u "$REGISTRY_USER" -p "$REGISTRY_PASS"
-        - docker tag "$DOCKER_IMAGE" "$DOCKER_IMAGE:$TRAVIS_BRANCH"
-      deploy:
-        - provider: script
-          script: docker push "$DOCKER_IMAGE:latest"
-          on:
-            branch: master
-        - provider: script
-          script: docker push "$DOCKER_IMAGE:$TRAVIS_TAG"
-          on:
-            tags: true
+  - stage: build
+    script: ".travis/build.sh"
+  - stage: deploy
+    name: Deploy to SonarCloud
+    script:
+    - ".travis/build.sh"
+    - git fetch --unshallow --quiet
+    - sonar-scanner -Dsonar.login=${SONAR_TOKEN} -Dsonar.projectKey=waltz-controls_waltz
+      -Dsonar.projectName=waltz -Dsonar.projectVersion=$TRAVIS_BRANCH -Dsonar.sources=.
+      -Dsonar.exclusions=build/**,jmvc/**,docs/**,apps/**
+  - name: Deploy to Amazon cloud
+    env:
+    - REST_API_PROTOCOL="http"
+    - REST_API_HOST="ec2-18-184-90-206.eu-central-1.compute.amazonaws.com"
+    - REST_API_PORT=10001
+    - REST_API_VERSION="rc4"
+    - TANGO_HOST="ip-172-31-39-180"
+    - TANGO_PORT=10000
+    - VERSION="$TRAVIS_BRANCH"
+    script:
+    - ".travis/build.sh"
+    - mv build/distributions/waltz.war build/distributions/$TRAVIS_BRANCH.war
+    deploy:
+    - provider: script
+      script: bash .travis/deploy.sh
+      skip_cleanup: true
+      on:
+        all_branches: true
+  - name: Deploy to GitHub releases
+    script: ".travis/build.sh"
+    deploy:
+    - provider: releases
+      prerelease: true
+      api_key: "$GITHUB_OAUTH_TOKEN"
+      file: build/distributions/waltz.war
+      skip_cleanup: true
+      on:
+        tags: true
+  - name: Deploy to docker hub
+    env:
+    - REGISTRY_USER=ingvord DOCKER_IMAGE=tangocs/waltz
+    script:
+    - ".travis/build.sh"
+    - docker build --pull --tag "$DOCKER_IMAGE" .
+    - docker login -u "$REGISTRY_USER" -p "$REGISTRY_PASS"
+    - docker tag "$DOCKER_IMAGE" "$DOCKER_IMAGE:$TRAVIS_BRANCH"
+    deploy:
+    - provider: script
+      script: docker push "$DOCKER_IMAGE:latest"
+      on:
+        branch: master
+    - provider: script
+      script: docker push "$DOCKER_IMAGE:$TRAVIS_TAG"
+      on:
+        tags: true
+env:
+  global:
+    secure: EDvrVOdxmsbubWqr9c7eI9hU1vKoB/QE/J54Cz+SjwC5hMeKV43NpY995/FZgDMLadvPNzES1LFHchPlZDzUoLWxqOdZA6K8LzekMSWpdCmg0KVpLDtSoLWI72WKoptig3k1/2zVm/53B+ase0IUjLGI9gLAManc5kYVHbIBSh/F0IESeGZ7mS4Ixg7+S7fLdef9EGWxQOWhEqRfN4BzxufK7UmVHOV+ZFODFgqLq2c0xXrBPbDecajgjaNmAxYN7aUIURpAITcv2OKfbREGWd7GYIVcZ4OxHroxL1dehQru0obsPIzaJQLatQ2lnuP9ZbARzpMvk5320QVbqyYJ9O7WnQ9LD8deLyA5g9fpwRWi1lBrKh7rcEux4iRbmc29HuuCljoqZuOvu0yCGf6MpqkGTycaPChF69NcrkCUEDiJiXmibLVCxoTWubwcJR8vvEOoExe9gLEy525rmY6WKz6NtmVK3tjBD12aVrr8OpHFtvqvkN2wyXHtTV/+ovfjjPW52r5FJrdmLDYAJ2m+wlV57ZjyY2gGeTr1ou85CA8UhtqF1UCHe4uPCU3IiprLYNAdpO7sWPbSy8ttRepexL4PVsTWu/7W/32ac+R7voHwtI/moTEz8lQo0SQrwdqh+GyV98Islf6thNsU7EHbQLH9+W11Fbh4ooWa0j9QM9c=

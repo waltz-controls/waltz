@@ -1,5 +1,6 @@
 import newToolbar from "./attrs_monitor_toolbar.js";
 import {newRemoveAttributeSettings, toolbar_extension} from "./remove_attribute_toolbar.js";
+import {TangoId} from "../../models/platform/tango_id.js";
 
 const kPersistentColumns = ["id", "device", "remove"];
 const kOverlayDelayTimeout = 3000;
@@ -27,8 +28,86 @@ export const TableWidgetController = class extends MVC.Controller {
     }
 };
 
+function respToUpdate(update, resp){
+    update[resp.name + "_quality"] = resp.quality;
+    if(!resp.errors)
+        update[resp.name] = resp.value;
+
+    //TODO error
+    return update;
+}
+
 //disable Xenv widget for master
 // TableWidgetController.initialize();
+
+/**
+ *
+ * @param {String} attr
+ */
+function getColumnConfig(attr){
+    return {
+        id: attr,
+        header: `${attr}`, //TODO redefine header once attr info is loaded ${attr.display_name} (${attr.info.display_unit})
+        template:function(obj){
+            //TODO move to schema type
+            function getQualityIcon(obj){
+                switch (obj[attr + "_quality"]) {
+                    case "ATTR_ALARM":
+                    case "ATTR_INVALID":
+                        return `<span class="webix_icon fa-exclamation-triangle" style="color: red"></span>`;
+                    case "ATTR_WARNING":
+                        return `<span class="webix_icon fa-exclamation-triangle" style="color: orange"></span>`;
+                    case "FAILURE":
+                        return `<span class="webix_icon fa-exclamation" style="color: red"></span>`;
+                    case "VALID":
+                    default:
+                        return "";
+                }
+            }
+
+            return `${getQualityIcon(obj)}${obj[attr]}`;
+        },
+        fillspace: true
+    };
+    //TODO set writeable once attr info is loaded
+    // if (attr.isWritable()) webix.extend(attrColumnConfig, {
+    //     editor: "text"
+    // });
+
+}
+
+async function selectDevice(deviceId){
+    const device = PlatformContext.devices.getItem(deviceId);
+    if(device === undefined) {
+        await PlatformContext.rest.fetchDevice(deviceId)
+    }
+
+
+    PlatformContext.devices.setCursor(deviceId);
+}
+
+/**
+ *
+ * @param attrId
+ * @return {Promise<TangoAttribute>}
+ */
+function loadAttribute(attrId){
+    const tangoId = TangoId.fromAttributeId(attrId);
+
+    return PlatformContext.rest.request()
+        .hosts(tangoId.tangoHost.replace(':','/'))
+        .devices(tangoId.deviceName)
+        .attributes(tangoId.memberName)
+        .get('/info')
+        .then(resp => {
+            return new TangoAttribute({
+                id: attrId,
+                name: tangoId.memberName,
+                device_id: tangoId.deviceId,
+                info: resp
+            })
+        })
+}
 
 const table_datatable = webix.protoUI({
     name:"table_datatable",
@@ -55,11 +134,11 @@ const table_datatable = webix.protoUI({
                         this.getTopParentView().clear();
                     }
                 },
-                onItemClick(id) {
+                async onItemClick(id) {
+                    //TODO refactor - split and extract
                     const device_id = id.row;
 
-                    PlatformContext.devices.setCursor(device_id);
-
+                    await selectDevice(device_id);
 
                     const attr_name = id.column;
 
@@ -67,14 +146,15 @@ const table_datatable = webix.protoUI({
                     if(kPersistentColumns.includes(attr_name)) return;
 
                     const attrId = `${device_id}/${attr_name}`;
-                    OpenAjax.hub.publish("tango_webapp.item_selected", {
-                        data: {
-                            id: attrId,
-                            kind: 'attrs'
-                        }
+                    this.getTopParentView().selectAttribute(attrId)
+                        .then(() => {
+                        OpenAjax.hub.publish("tango_webapp.item_selected", {
+                            data: {
+                                id: attrId,
+                                kind: 'attrs'
+                            }
+                        });
                     });
-
-                    this.getTopParentView().selectAttribute(attrId);
                 },
                 onAfterEditStop(value, editor) {
                     if (value.value == value.old) return;
@@ -107,31 +187,8 @@ const table_datatable = webix.protoUI({
     },
     addColumn(attr){
         const columns = this.config.columns;
-        const attrColumnConfig = {
-            device_id: attr.device_id,
-            id: attr.name,
-            header: `${attr.display_name} (${attr.info.display_unit})`,
-            template:function(obj){
-                //TODO move to schema type
-                function getQualityIcon(obj){
-                    switch (obj[attr.name + "_quality"]) {
-                        case "ATTR_ALARM":
-                        case "ATTR_INVALID":
-                            return `<span class="webix_icon fa-exclamation-triangle" style="color: red"></span>`;
-                        case "ATTR_WARNING":
-                            return `<span class="webix_icon fa-exclamation-triangle" style="color: orange"></span>`;
-                        case "FAILURE":
-                            return `<span class="webix_icon fa-exclamation" style="color: red"></span>`;
-                        case "VALID":
-                        default:
-                            return "";
-                    }
-                }
-
-                return `${getQualityIcon(obj)}${obj[attr.name]}`;
-            },
-            fillspace: true
-        };
+        const attrColumnConfig = getColumnConfig(attr.name);
+        attrColumnConfig.header = `${attr.display_name} (${attr.info.display_unit})`;
         if (attr.isWritable()) webix.extend(attrColumnConfig, {
             editor: "text"
         });
@@ -153,13 +210,10 @@ const table_datatable = webix.protoUI({
                 id: attr.device_id,
                 device: attr.getDevice().display_name,
                 [attr.name]: "",
-                [attr.name + "_quality"]: "",
-                _device: attr.getDevice(),
-                _attrs:new Set(this._tracked_attrs)
+                [attr.name + "_quality"]: ""
             });
 
         this._tracked_attrs.add(attr.name);
-        this.data.each(item => item._attrs.add(attr.name));
 
         this.run();
     },
@@ -180,7 +234,6 @@ const table_datatable = webix.protoUI({
         this.refreshColumns();
 
         this._tracked_attrs.delete(col.id);
-        this.data.each(item => item._attrs.delete(col.id));
         return col.id;
     },
     async addDevice(id){
@@ -200,9 +253,7 @@ const table_datatable = webix.protoUI({
         if(this.exists(device.id)) return;
         this.add({
             id: device.id,
-            device: device.display_name,
-            _device: device,
-            _attrs:new Set(this._tracked_attrs)
+            device: device.display_name
         });
 
         this.run();
@@ -219,18 +270,25 @@ const table_datatable = webix.protoUI({
             hide:true
         });
         this.data.each(item => {
-            item._device.fetchAttrValues([...item._attrs]).then(resp => {
-                const update = {};
-                resp.forEach(output => {
-                    update[output.name] = output.value;
-                    update[output.name + "_quality"] = output.quality;
+            const tangoId = TangoId.fromDeviceId(item.id);
+
+            const attrs = this.config.columns.slice(1,this.config.columns.length - 1);//skip the first: device and the last one - remove
+            PlatformContext.rest.request()
+                .hosts(tangoId.tangoHost.replace(':','/'))
+                .devices(tangoId.deviceName)
+                .attributes('value')
+                .get('?' + attrs.map(function (attr) {
+                    return "attr=" + attr.id
+                }).join('&'))
+                .then(resp => {
+                    const update = resp.reduce(respToUpdate, {});
+                    this.updateItem(item.id, update);
+                })
+                .fail(function (resp) {
+                    TangoWebappHelpers.error(resp);
+                    throw resp;
                 });
-
-                //TODO remove failed attrs
-
-                this.updateItem(item.id, update);
             })
-        });
     },
     $init(config) {
         webix.extend(config, this._config());
@@ -251,6 +309,24 @@ const stateful_table_datatable = webix.protoUI({
             devices: []
         }
     },
+    _restoreAttrs(attrs){
+        const columns = this.config.columns;
+        columns.splice.apply(columns,[columns.length - 1, 0].concat(attrs.map(getColumnConfig)));
+        this.refreshColumns();
+
+        const $$settings = this.getTopParentView().$$('settings');
+        attrs.forEach(attr => $$settings.addAttribute(attr, true));
+    },
+    _restoreDevices(devices){
+        this.parse(devices.map(device_id => {
+            const tangoId = TangoId.fromDeviceId(device_id);
+
+            return {
+                id: device_id,
+                device: tangoId.deviceName
+            }
+        }));
+    },
     restoreState(state){
         if(state.data.devices.length === 0 && state.data.attrs.length > 0) //this may happen when user cleared tha table and then refreshed the app
             this.state.updateState({
@@ -262,21 +338,17 @@ const stateful_table_datatable = webix.protoUI({
             type:"top",
             delay: 3000,
         });
-        state.data.devices.forEach(async device_id => {
-            await this.getTopParentView().addDevice(device_id);
-            const device = this.getItem(device_id)._device;
-            await device.fetchAttrs();
-            state.data.attrs
-                .map(name => device_id + "/" + name)
-                .forEach(attrId => {
-                    this.getTopParentView().addAttribute(device.attrs.getItem(attrId), true);
-                })
-        },this);
+
+        this._restoreAttrs(state.data.attrs);
+
+        this._restoreDevices(state.data.devices);
 
         this.getTopParentView().frozen = state.data.frozen;
 
         if(state.data.hide_settings)
             this.getTopParentView().hideSettings();
+
+        this.run();
     },
     setFrozen(value){
         this.state.updateState({
@@ -433,9 +505,42 @@ const table_widget = webix.protoUI({
     },
     selectAttribute(id){
         const attr = TangoAttribute.find_one(id);
-        if(attr === null) throw new Error("assertion error");
+        if(attr === null) {
+            return loadAttribute(id)
+                .then(attr => {
+                    const columnConfig = this.$$('datatable').getColumnConfig(attr.name);
+                    if(attr.isWritable() && columnConfig.editor !== "text"){
+                        webix.extend(
+                            columnConfig,
+                            {
+                                editor: "text"
+                            }
+                        );
+                        this.$$('datatable').refreshColumns();
+                    }
+                })
+                .then(attr => {
+                    this.$$('input').setAttribute(attr);
+                })
+                .fail(function (resp) {
+                    TangoWebappHelpers.error(resp);
+                    throw resp;
+                });
+        } else{
+            const columnConfig = this.$$('datatable').getColumnConfig(attr.name);
+            if(attr.isWritable() && columnConfig.editor !== "text") {
+                webix.extend(
+                    columnConfig,
+                    {
+                        editor: "text"
+                    }
+                );
+                this.$$('datatable').refreshColumns();
+            }
 
-        this.$$('input').setAttribute(attr);
+            this.$$('input').setAttribute(attr);
+            return webix.promise.resolve(attr);
+        }
     },
     removeAttribute(name){
         const $$settings = this.$$('settings');
@@ -448,8 +553,6 @@ const table_widget = webix.protoUI({
         $$settings.removeAttribute(name);
     },
     async addAttribute(attr, force = false){
-        const $$datatable = this.$$('datatable');
-        const $$settings = this.$$('settings');
         if(this.frozen && !force) {
             this.showOverlay(kFrozenOverlayMessage);
             return;
@@ -459,7 +562,10 @@ const table_widget = webix.protoUI({
             return;
         }
 
+        const $$datatable = this.$$('datatable');
         await $$datatable.addAttribute(attr, force);
+
+        const $$settings = this.$$('settings');
         $$settings.addAttribute(attr.display_name, force);
     },
     async addDevice(id){

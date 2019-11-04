@@ -72,11 +72,15 @@ TangoWebappPlatform.TangoRestApi = MVC.Model.extend('tango_rest_api',
                     throw newHost;
                 }.bind(this));
         },
-        async fetchAttr(id){
+        async fetchDevice(id){
             const parts = id.split("/");
             const host = await this.fetchHost(parts[0]);
             const device = await host.fetchDevice([parts[1],parts[2],parts[3]].join("/"));
-            const attr = device.fetchAttr(parts[4]);
+            return device;
+        },
+        async fetchAttr(id){
+            const device = await this.fetchDevice(id.substring(0, id.lastIndexOf('/')));
+            const attr = device.fetchAttr(id.substring(id.lastIndexOf('/') + 1));
             return attr;
         },
         /**
