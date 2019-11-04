@@ -1,5 +1,6 @@
 function updatePollableHelper(pollable){
     const device = PlatformContext.devices.getItem(pollable.device_id);
+    if(device === undefined) return;
     let pollables;
     if(pollable.Class.className === 'tango_command')
         pollables = device.commands;
