@@ -31,5 +31,6 @@
   "bugs": {
     "url": "https://github.com/waltz-controls/waltz/issues"
   },
-  "homepage": "https://www.waltz-controls.space"
+  "homepage": "https://www.waltz-controls.space",
+  "dependencies": {}
 }
