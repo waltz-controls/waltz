@@ -32,5 +32,10 @@
     "url": "https://github.com/waltz-controls/waltz/issues"
   },
   "homepage": "https://www.waltz-controls.space",
-  "dependencies": {}
+  "dependencies": {
+    "codemirror": "^5.37.0",
+    "jquery": "^3.4.0",
+    "plotly.js-dist": "^1.51.1",
+    "webix": "^5.4.0"
+  }
 }
