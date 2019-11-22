@@ -38,3 +38,4 @@ import "./table_widget.js";
 import "./plotly_widget.js";
 import "./dashboard_widget.js";
 import "./xenv.js";
+import "./beamtimedb_widget.js";
