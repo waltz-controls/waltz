@@ -119,7 +119,7 @@
          * @constructor
          */
         $init: function (config) {
-            webix.assert(config.device !== undefined, "DeviceMonitor requires device to be defined!");
+            // webix.assert(config.device !== undefined, "DeviceMonitor requires device to be defined!");
             webix.extend(config, this._ui(config.device));
 
             this.$ready.push(function () {

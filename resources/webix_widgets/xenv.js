@@ -99,7 +99,7 @@ const xenvHq = webix.protoUI({
     restoreState:async function(state){
         this.showProgress({
             type:"icon",
-            icon:"refresh",
+            icon:"wxi-sync",
         });
 
         for(const server of kServers){

@@ -3,25 +3,23 @@ const search2 = webix.protoUI({
     $cssName:"search",
     $renderIcon:function(){
         const config = this.config;
+        const height = config.aheight - 2*config.inputPadding,
+            padding = (height - 18)/2 -1;
+        let html = "", pos = 2;
+        ["close", "search"].forEach(icon => {
+            html+="<span style='right:"+pos+"px;height:"
+                +(height-padding)+"px;padding-top:"+padding
+                +"px;' class='webix_input_icon wxi-"+icon+"'></span>";
 
-            const height = config.aheight - 2*config.inputPadding,
-                padding = (height - 18)/2 -1;
-            let html = "", pos = 2;
-            const icons = ["times", "search"];
-            for(var i=0; i<icons.length; i++){
-                html+="<span style='right:"+pos+"px;height:"
-                    +(height-padding)+"px;padding-top:"+padding
-                    +"px;' class='webix_input_icon fa-"+icons[i]+"'></span>";
-
-                pos+=24;
-            }
-            return html;
+            pos+=24;
+        });
+        return html;
     },
     on_click:{
-        "fa-search":function(e){
+        "wxi-search":function(e){
             return this.callEvent("onFocus",[e]);
         },
-        "fa-times":function(e){
+        "wxi-close":function(e){
             this.setValue("");
             return this.callEvent("onFocus",[e]);
         }

@@ -54,20 +54,16 @@ export function newInfoDatatableToolbar() {
         maxHeight: 30,
         cols:[
             {
-                view:"button",
-                type:"icon",
-                icon:"refresh",
-                maxWidth:30,
+                view:"icon",
+                icon:"wxi-sync",
                 click(){
                     this.getTopParentView().refresh();
                 }
             },
             {},
             {
-                view:"button",
-                type:"icon",
-                icon:"save",
-                maxWidth:30,
+                view:"icon",
+                icon:"wxi-check",
                 click(){
                     this.getTopParentView().save();
                 }

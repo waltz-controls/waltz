@@ -74,21 +74,21 @@
 /* devices_tree */
 
 .rest_host > .webix_tree_folder_open:before, .rest_host > .webix_tree_folder:before {
-    content: "\f233";
-    font-family: FontAwesome;
+    content: "\e875";
+    font-family: 'Material Icons';
 }
 .rest_host > .webix_tree_folder_open, .rest_host > .webix_tree_folder {
     background-image: none;
 }
 
 .tango_host > .webix_tree_folder_open:before, .tango_host > .webix_tree_folder:before{
-    content: "\f1c0";
-    font-family: FontAwesome;
+    content: "\e8e9";
+    font-family: 'Material Icons';
 }
 
 .aliases > .webix_tree_folder_open:before, .aliases > .webix_tree_folder:before{
-    content: "\f08e";
-    font-family: FontAwesome;
+    content: "\e157";
+    font-family: 'Material Icons';
 }
 
 .tango_host > .webix_tree_folder_open, .tango_host > .webix_tree_folder{
@@ -96,43 +96,43 @@
 }
 
 .webix_tree_folder_open:before{
-    content: "\f07c";
-    font-family: FontAwesome;
+    content: "\e2c7";
+    font-family: 'Material Icons';
 }
 .webix_tree_folder_open{
     background-image: none;
 }
 .webix_tree_folder:before{
-    content: "\f07b";
-    font-family: FontAwesome;
+    content: "\e2cc";
+    font-family: 'Material Icons';
 }
 .webix_tree_folder{
     background-image: none;
 }
 
 .webix_tree_file:before {
-    content: "\f15b";
-    font-family: FontAwesome;
+    content: "\e3c1";
+    font-family: 'Material Icons';
 }
 .webix_tree_file {
     background-image: none;
 }
 
 .member > .webix_tree_file:before {
-    content: "\f2db";
-    font-family: FontAwesome;
+    content: "\e322";
+    font-family: 'Material Icons';
 }
 
 /* device_tree */
 
 .SCALAR > .webix_tree_file:before {
     content: "\f1fa";
-    font-family: FontAwesome;
+    font-family: 'Material Icons';
 }
 
 .SPECTRUM > .webix_tree_file:before {
     content: "\f1fe";
-    font-family: FontAwesome;
+    font-family: 'Material Icons';
 }
 
 .IMAGE > .webix_tree_file:before {
@@ -142,34 +142,34 @@
 
 .STATE > .webix_tree_file:before {
     content: "\f0e4";
-    font-family: FontAwesome;
+    font-family: 'Material Icons';
 }
 
 .STATUS > .webix_tree_file:before {
     content: "\f0e4";
-    font-family: FontAwesome;
+    font-family: 'Material Icons';
 }
 
 .COMMAND > .webix_tree_file:before {
     content: "\f152";
-    font-family: FontAwesome;
+    font-family: 'Material Icons';
 }
 
 .PIPE > .webix_tree_file:before {
     content: "\f0f6";
-    font-family: FontAwesome;
+    font-family: 'Material Icons';
 }
 
 .INFO > .webix_tree_file:before {
     content: "\f111";
-    font-family: FontAwesome;
+    font-family: 'Material Icons';
     font-size: xx-small;
 }
 
 
 .info_folder > .webix_tree_folder_open:before, .info_folder > .webix_tree_folder:before {
     content: "\f05a";
-    font-family: FontAwesome;
+    font-family: 'Material Icons';
 }
 .info_folder > .webix_tree_folder_open, .info_folder > .webix_tree_folder {
     background-image: none;
@@ -186,4 +186,20 @@
 
 .CodeMirror{
     height: 100%;
+}
+
+@keyframes waltz-spin {
+    from {
+        transform:rotate(0deg);
+    }
+    to {
+        transform:rotate(360deg);
+    }
+}
+
+.waltz-spin {
+    animation-name: waltz-spin;
+    animation-duration: 1000ms;
+    animation-iteration-count: infinite;
+    animation-timing-function: linear;
 }

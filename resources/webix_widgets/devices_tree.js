@@ -428,7 +428,7 @@ import newSearch from "./search.js";
              */
             _update_header:function(tango_host){
                 $$("devices_tree_panel").config.header = webix.template(function () {
-                    return kDevicesTreePanelHeaderIcon + " Tango host: " + tango_host;
+                    return kDevicesTreePanelHeader + tango_host;
                 });
                 $$("devices_tree_panel").refresh();
             },
@@ -474,7 +474,7 @@ import newSearch from "./search.js";
      * @memberof ui.DevicesTree
      * @type {string}
      */
-    var kDevicesTreePanelHeaderIcon = "<span class='webix_icon fa-sitemap'></span>";
+    const kDevicesTreePanelHeader = "<span class='webix_icon mdi mdi-sitemap'></span>Tango hosts";
 
     /**
      *
@@ -484,7 +484,7 @@ import newSearch from "./search.js";
      */
     TangoWebapp.ui.newDevicesTree = function(context){
         return {
-            header: kDevicesTreePanelHeaderIcon + " Tango hosts",
+            header: kDevicesTreePanelHeader,
             id: "devices_tree_panel",
             body: {
                 context: context,

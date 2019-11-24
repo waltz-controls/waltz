@@ -3,7 +3,16 @@ import {newRemoveAttributeSettings, toolbar_extension} from "./remove_attribute_
 
 const kPersistentColumns = ["id", "device", "remove"];
 const kOverlayDelayTimeout = 3000;
-const kFrozenOverlayMessage = "<span class='webix_icon fa-bell'></span>This TableWidget's configuration is frozen...<br/> Please uncheck 'Frozen' box!";
+const kFrozenOverlayMessage = "<span class='webix_icon mdi mdi-bell-ring'></span>This TableWidget's configuration is" +
+    " frozen...<br/> Please uncheck 'Frozen' box!";
+const kTableWidgetHeader = "<span class='webix_icon mdi mdi-table-large'></span> TableWidget";
+const kRemoveAllHeader = "<span class='remove-all webix_icon wxi-trash'></span>";
+const kRemoveSingleHeader = "<span class='remove-single webix_icon wxi-trash'></span>";
+
+const kAlertInvalid = `<span class="webix_icon mdi mdi-alert" style="color: red"></span>`;
+const kAlertWarning = `<span class="webix_icon mdi mdi-alert" style="color: orange"></span>`;
+const kAlartFailure = `<span class="webix_icon mdi mdi-alert-octagram-outline" style="color: red"></span>`;
+
 
 export const TableWidgetController = class extends MVC.Controller {
     buildUI(platform_api) {
@@ -33,6 +42,7 @@ export const TableWidgetController = class extends MVC.Controller {
 const table_datatable = webix.protoUI({
     name:"table_datatable",
     _config() {
+
         return {
             editable: true,
             drag: true,
@@ -42,10 +52,12 @@ const table_datatable = webix.protoUI({
                 {id: "id", hidden: true},
                 {id: "device", header: "Device", fillspace: true},
                 {
-                    id: "remove", header: "<span class='remove-all webix_icon fa-trash'></span>", width: 30,
+                    id: "remove",
+                    header: kRemoveAllHeader,
+                    width: 30,
                     tooltip: "Remove all",
                     template: function (obj) {
-                        return "<span class='remove-single webix_icon fa-trash'></span>";
+                        return kRemoveSingleHeader;
                     }
                 }
             ],
@@ -117,11 +129,11 @@ const table_datatable = webix.protoUI({
                     switch (obj[attr.name + "_quality"]) {
                         case "ATTR_ALARM":
                         case "ATTR_INVALID":
-                            return `<span class="webix_icon fa-exclamation-triangle" style="color: red"></span>`;
+                            return kAlertInvalid;
                         case "ATTR_WARNING":
-                            return `<span class="webix_icon fa-exclamation-triangle" style="color: orange"></span>`;
+                            return kAlertWarning;
                         case "FAILURE":
-                            return `<span class="webix_icon fa-exclamation" style="color: red"></span>`;
+                            return kAlartFailure;
                         case "VALID":
                         default:
                             return "";
@@ -353,10 +365,8 @@ const input_holder = webix.protoUI({
                     cols:[
                         {},
                         {
-                            view:"button",
-                            type:"icon",
-                            icon:"times",
-                            width:20,
+                            view:"icon",
+                            icon:"wxi-close",
                             click(){
                                 this.getFormView().hide();
                             }
@@ -524,8 +534,9 @@ export function newTableWidgetBody(config){
 }
 
 export function newTableWidgetTab(config){
+
     return {
-        header: "<span class='webix_icon fa-table'></span> TableWidget",
+        header: kTableWidgetHeader,
         borderless: true,
         body: newTableWidgetBody(config)
 

@@ -134,16 +134,15 @@
              * @return {string} fa icon
              */
             getIcon:function(){
-                if(this.name === 'State') return 'fa-tachometer';
-                if(this.name === 'Status') return 'fa-tachometer';
+                if(this.name === 'State' || this.name === 'Status') return 'mdi mdi-heart-pulse';
 
                 switch (this.info.data_format){
                     case "SCALAR":
-                        return 'fa-at';
+                        return 'mdi mdi-at';
                     case "SPECTRUM":
-                        return 'fa-area-chart';
+                        return 'mdi mdi-chart-line';
                     case "IMAGE":
-                        return 'fa-picture-o';
+                        return 'mdi mdi-image-outline';
                 }
             },
             toTangoRestApiRequest(){

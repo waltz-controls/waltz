@@ -181,7 +181,6 @@ TangoWebappPlatform.PlatformContext = MVC.Model.extend('platform_context',
          */
         loadAndSetDevice(id){
             const parts = id.split('/');
-            webix.assert(parts.length = 4, "4 parts are expected here: tango_host/domain/family/member");
 
             const tango_host_id = parts.shift();
             const device_name = parts.join('/');

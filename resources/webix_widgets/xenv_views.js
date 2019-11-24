@@ -81,10 +81,9 @@ export const xenvProfileSettings = {
             cols: [
                 {},
                 {
-                    view: "button",
+                    view: "icon",
                     id: 'btnAddProfile',
-                    type: "icon",
-                    icon: "save",
+                    icon: "wxi-check",
                     maxWidth: 30,
                     click: async function () {
                         const $$frm = this.getFormView();
@@ -96,10 +95,9 @@ export const xenvProfileSettings = {
                     }
                 },
                 {
-                    view: "button",
+                    view: "icon",
                     id: 'btnRmProfile',
-                    type: "icon",
-                    icon: "trash",
+                    icon: "wxi-trash",
                     maxWidth: 30,
                     click: async function () {
                         const $$frm = this.getFormView();
@@ -131,9 +129,8 @@ export const xenvHqToolbar = {
             }
         },
         {
-            view: "button",
-            type: "icon",
-            icon: "plus",
+            view: "icon",
+            icon: "wxi-plus",
             maxWidth: 30,
             click: function () {
                 const $$frmProfile = this.getTopParentView().$$('frmProfileSettings');
@@ -144,25 +141,21 @@ export const xenvHqToolbar = {
             }
         },
         {
-            view: "button",
-            type: "icon",
-            icon: "refresh",
-            maxWidth: 30,
+            view: "icon",
+            icon: "wxi-sync",
             click: async function () {
                 const $$hq = this.getTopParentView();
                 $$hq.showProgress({
                     type: "icon",
-                    icon: "refresh",
+                    icon: "wxi-sync",
                 });
                 $$hq.refreshProfiles().then(() => $$hq.hideProgress());
             }
         },
         {},
         {
-            view: "button",
-            type: "icon",
-            icon: "cog",
-            maxWidth: 30,
+            view: "icon",
+            icon: "mdi mdi-settings",
             click: function () {
                 const $$HQsettings = this.getTopParentView().$$("hq-settings");
                 if ($$HQsettings.isVisible())

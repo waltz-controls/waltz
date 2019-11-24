@@ -4,10 +4,8 @@ function newPanelToolbar(side) {
         id: `${side}_panel_toolbar`,
         cols: [
             {
-                view: "button",
-                type: "icon",
-                icon: "refresh",
-                maxWidth: 30,
+                view: "icon",
+                icon: "wxi-sync",
                 click() {
                     OpenAjax.hub.publish(`${side}_panel_toolbar.click.refresh`, {});
                 }

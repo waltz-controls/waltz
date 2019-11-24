@@ -111,21 +111,17 @@ const toolbar = {
     view: "toolbar",
     cols:[
         {
-            view:"button",
-            type:"icon",
-            icon:"refresh",
-            maxWidth:30,
+            view:"icon",
+            icon:"wxi-sync",
             click(){
                 this.getTopParentView().refresh();
             }
         },
         {},
         {
-            view: "button",
+            view: "icon",
             value: "Add",
-            type: "icon",
-            icon: "eye",
-            maxWidth: 30,
+            icon: "wxi-eye",
             tooltip: "Monitor",
             click(){
                 OpenAjax.hub.publish("tango_webapp.device_view", {
@@ -136,11 +132,9 @@ const toolbar = {
             }
         },
         {
-            view: "button",
+            view: "icon",
             value: "Add",
-            type: "icon",
-            icon: "gears",
-            maxWidth: 30,
+            icon: "mdi mdi-settings",
             tooltip: "Configure",
             click(){
                 OpenAjax.hub.publish("tango_webapp.device_configure", {
@@ -151,10 +145,8 @@ const toolbar = {
             }
         },
         {
-            view: "button",
-            type: "icon",
-            maxWidth:30,
-            icon: "save",
+            view: "icon",
+            icon: "wxi-check",
             tooltip: "Save alias",
             click(){
                 this.getTopParentView().save();

@@ -1,12 +1,18 @@
 import {get_device_info} from "./device_info_panel.js";
 import newToolbar from "./attrs_monitor_toolbar.js";
 
+const kDBHeader = "<span class='webix_icon mdi mdi-database'></span> #id#";
+
+
+
+
 const hosts = {
     view: "list",
     id: "hosts",
     select: true,
     autoheight:true,
-    template: "<span class='webix_icon fa-desktop' style='color: {common.highlightColor()}'></span><span style='color: {common.highlightColor()}'>#name#</span>",
+    template: "<span class='webix_icon mdi mdi-monitor' style='color: {common.highlightColor()}'></span><span" +
+        " style='color: {common.highlightColor()}'>#name#</span>",
     type: {
         highlightColor(obj){
             console.debug(`host state = ${obj.state}`);
@@ -52,7 +58,8 @@ const servers = {
     uniteBy(obj) {
         return obj.level;
     },
-    template: "<span class='webix_icon fa-server' style='color: {common.highlightColor()}'></span><span style='color: {common.highlightColor()}'>#name#</span>",
+    template: "<span class='webix_icon mdi mdi-server' style='color: {common.highlightColor()}'></span><span" +
+        " style='color: {common.highlightColor()}'>#name#</span>",
     type: {
         highlightColor(obj){
             switch (obj._state) {
@@ -94,7 +101,7 @@ export function _ui(){
         rows: [
             {
                 id: "header",
-                template: "<span class='webix_icon fa-database'></span> #id#",
+                template: kDBHeader,
                 type: "header"
             },
             {
@@ -163,9 +170,8 @@ export function _ui(){
                                         validate: webix.rules.isNotEmpty
                                     },
                                     {
-                                        view: "button",
-                                        type: "icon",
-                                        icon: "plus",
+                                        view: "icon",
+                                        icon: "wxi-plus",
                                         width: 30,
                                         click() {
                                             const form = this.getFormView();
@@ -176,9 +182,8 @@ export function _ui(){
                                         }
                                     },
                                     {
-                                        view: "button",
-                                        type: "icon",
-                                        icon: "repeat",
+                                        view: "icon",
+                                        icon: "wxi-sync",
                                         tooltip: "Restart selected device(s)",
                                         width: 30,
                                         click() {
@@ -186,9 +191,8 @@ export function _ui(){
                                         }
                                     },
                                     {
-                                        view: "button",
-                                        type: "icon",
-                                        icon: "trash",
+                                        view: "icon",
+                                        icon: "wxi-trash",
                                         tooltip: "Delete selected device(s)",
                                         width: 30,
                                         click() {
@@ -203,7 +207,7 @@ export function _ui(){
                                 server: null,
                                 select: true,
                                 multiselect: true,
-                                template: "<span class='webix_icon fa-microchip'></span>#name#",
+                                template: "<span class='webix_icon mdi mdi-chip'></span>#name#",
                                 on: {
                                     onAfterSelect(id) {
                                         const device = this.getItem(id);
