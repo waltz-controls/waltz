@@ -369,7 +369,7 @@ const datasources_view = webix.protoUI({
             webix.modalbox({
                 buttons:["No", "Yes"],
                 width:500,
-                text:`<span class='webix_icon fa-exclamation-circle'></span><p>This will delete data sources collection ${collection} and all associated data sources! Proceed?</p>`,
+                text:`<span class='webix_icon mdi mdi-alert-circle'></span><p>This will delete data sources collection ${collection} and all associated data sources! Proceed?</p>`,
                 callback:function(result){
                     if (result === "1") success();
                 }

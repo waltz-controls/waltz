@@ -13,7 +13,7 @@
 
     TangoWebapp.ui.newTerminalViewTab = function(){
         return {
-            header: "<span class='webix_icon fa-terminal'></span> Terminal",
+            header: "<span class='webix_icon mdi mdi-code-tags-check'></span> Terminal",
             close: true,
             borderless: true,
             body: TangoWebapp.ui.newTerminalView({id: 'terminal'})

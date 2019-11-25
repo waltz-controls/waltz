@@ -41,7 +41,8 @@
                     {
                         type: 'header',
                         height: 30,
-                        template: "<span class='webix_icon fa-server'></span><span class='webix_strong'> Tango REST API URL</span>"
+                        template: "<span class='webix_icon mdi mdi-server'></span><span class='webix_strong'> Tango" +
+                            " REST API URL</span>"
                     },
                     {
                         view: 'form',
@@ -121,7 +122,8 @@
                     {
                         type: 'header',
                         height: 30,
-                        template: "<span class='webix_icon fa-magic'></span><span class='webix_strong'> Tango Server Wizard</span>"
+                        template: "<span class='webix_icon mdi mdi-auto-fix'></span><span class='webix_strong'> Tango" +
+                            " Server Wizard</span>"
                     },
                     {
                         view: 'form',

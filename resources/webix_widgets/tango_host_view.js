@@ -10,7 +10,7 @@
      */
     TangoWebapp.ui.newTangoHostTab = function (tango_host, tab) {
         return {
-            header: '<span class="webix_icon fa-database"></span> [' + tango_host.id + ']',
+            header: '<span class="webix_icon mdi mdi-database"></span> [' + tango_host.id + ']',
             body: {
                 id: 'view/' + tango_host.id,
                 view: 'tabview',

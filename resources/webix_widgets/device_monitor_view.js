@@ -154,7 +154,7 @@
      */
     TangoWebapp.ui.newDeviceMonitorView = function (config) {
         return {
-            header: "<span class='webix_icon fa-eye'></span>[<span class='webix_strong'>" + config.device.display_name + "</span>]",
+            header: "<span class='webix_icon wxi-eye'></span>[<span class='webix_strong'>" + config.device.display_name + "</span>]",
             close: true,
             borderless: true,
             body: {

@@ -11,8 +11,8 @@ const hosts = {
     id: "hosts",
     select: true,
     autoheight:true,
-    template: "<span class='webix_icon mdi mdi-monitor' style='color: {common.highlightColor()}'></span><span" +
-        " style='color: {common.highlightColor()}'>#name#</span>",
+    template: "<span class='webix_list_icon mdi mdi-monitor' style='color: {common.highlightColor()}'></span><span" +
+        " style='color: {common.highlightColor()}'> #name#</span>",
     type: {
         highlightColor(obj){
             console.debug(`host state = ${obj.state}`);
@@ -58,8 +58,8 @@ const servers = {
     uniteBy(obj) {
         return obj.level;
     },
-    template: "<span class='webix_icon mdi mdi-server' style='color: {common.highlightColor()}'></span><span" +
-        " style='color: {common.highlightColor()}'>#name#</span>",
+    template: "<span class='webix_list_icon mdi mdi-server' style='color: {common.highlightColor()}'></span><span" +
+        " style='color: {common.highlightColor()}'> #name#</span>",
     type: {
         highlightColor(obj){
             switch (obj._state) {
@@ -94,7 +94,21 @@ const servers = {
     }
 };
 
-
+const devices = {
+    view: "list",
+    id: "devices",
+    server: null,
+    select: true,
+    multiselect: true,
+    template: "<span class='webix_list_icon mdi mdi-chip'></span> #name#",
+    on: {
+        onAfterSelect(id) {
+            const device = this.getItem(id);
+            this.getTopParentView().tango_host.fetchDevice(device.name)
+                .then(device => PlatformContext.devices.setCursor(device.id));
+        }
+    }
+};
 
 export function _ui(){
     return {
@@ -121,7 +135,7 @@ export function _ui(){
                                         view: "button",
                                         value: "Kill",
                                         tooltip: "Kills selected servers",
-                                        type: "danger",
+                                        css:"webix_danger",
                                         click() {
                                             this.getTopParentView().devKill();
                                         }
@@ -201,21 +215,7 @@ export function _ui(){
                                     }
                                 ]
                             },
-                            {
-                                view: "list",
-                                id: "devices",
-                                server: null,
-                                select: true,
-                                multiselect: true,
-                                template: "<span class='webix_icon mdi mdi-chip'></span>#name#",
-                                on: {
-                                    onAfterSelect(id) {
-                                        const device = this.getItem(id);
-                                        this.getTopParentView().tango_host.fetchDevice(device.name)
-                                            .then(device => PlatformContext.devices.setCursor(device.id));
-                                    }
-                                }
-                            },
+                            devices,
                             {
                                 template: "Selected Device info:",
                                 type: "header"

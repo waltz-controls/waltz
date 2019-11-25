@@ -3,7 +3,8 @@ import {newXenvServerLog} from "./xenv_views.js";
 
 const DfsViewBodyHeader = {
     id: 'header',
-    template: "<span class='webix_strong'>DataFormatServer</span>  [<span class='webix_icon fa-microchip'></span> #ver#] | #state#",
+    template: "<span class='webix_strong'>DataFormatServer</span>  [<span class='webix_icon mdi mdi-chip'></span>" +
+        " #ver#] | #state#",
     maxHeight: 40
 };
 

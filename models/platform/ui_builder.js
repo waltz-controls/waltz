@@ -99,9 +99,6 @@ UIBuilder = MVC.Model.extend('ui_builder',
             else
                 return {
                     header: "   ",
-                    minWidth: 100,
-                    maxWidth: 300,
-                    // collapsed: true,
                     body: {
                         rows:[
                             {
@@ -133,7 +130,7 @@ UIBuilder = MVC.Model.extend('ui_builder',
 
             if (this._ui.hasOwnProperty('left')) {
                 ui.cols.push(this._build('left'));
-                ui.cols.push({width: 5});
+                ui.cols.push({view:"resizer"});
             }
 
             ui.cols.push({
@@ -154,7 +151,7 @@ UIBuilder = MVC.Model.extend('ui_builder',
             });
 
             if (this._ui.hasOwnProperty('right')) {
-                ui.cols.push({width: 5});
+                ui.cols.push({view:"resizer"});
                 ui.cols.push(this._build('right'));
             }
 

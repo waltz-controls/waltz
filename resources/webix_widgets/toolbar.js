@@ -73,7 +73,7 @@
             data: [
                 {id: "helpAbout", value: "About"},
                 {id: "helpDocs", value: "User docs"},
-                {id: "reportIssue", value: "New issue", icon: "fas fa-github"}
+                {id: "reportIssue", value: "New issue", icon: "mdi mdi-github-circle"}
             ],
             autoheight: true,
             borderless: true,
@@ -116,6 +116,7 @@
                     },
                     {
                         view: "icon",
+                        icon: "mdi mdi-tools",
                         id: "btnTools",
                         label: "Tools",
                         popup: "toolsMenu",
@@ -123,6 +124,7 @@
                     },
                     {
                         view: "icon",
+                        icon: "mdi mdi-help-circle",
                         id: "btnMenu",
                         label: "Help",
                         popup: "helpMenu",
