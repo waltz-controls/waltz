@@ -16,7 +16,7 @@ import {openCommandWindow,openPipeWindow, openAttributeWindow} from "./device_co
  * @type {string}
  * @memberof ui.DeviceViewPanel
  */
-const kDevicePanelHeader = "<span class='webix_icon mdi mdi-chip'></span> Device: ";
+const kDevicePanelHeader = "<span class='webix_icon mdi mdi-developer-board'></span> Device: ";
 
 /**
  * More info: {@link https://docs.webix.com/api__refs__ui.list.html webix.ui.list}

@@ -100,7 +100,7 @@ const devices = {
     server: null,
     select: true,
     multiselect: true,
-    template: "<span class='webix_list_icon mdi mdi-chip'></span> #name#",
+    template: "<span class='webix_list_icon mdi mdi-developer-board'></span> #name#",
     on: {
         onAfterSelect(id) {
             const device = this.getItem(id);

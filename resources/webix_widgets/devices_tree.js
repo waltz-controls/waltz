@@ -240,12 +240,28 @@ import newSearch from "./search.js";
                 return item.id;
             },
             defaults: {
-                type: 'lineTree',
+                type: {
+                    folder(obj){
+                        switch(obj.$css){
+                            case "tango_host":
+                                return "<span class='webix_icon mdi mdi-database'> </span>";
+                            case "aliases":
+                                return `<span class='webix_icon mdi mdi-${obj.$count > 0 ? "link": "crop-square"}'> </span>`;
+                            case "tango_domain":
+                            case "tango_family":
+                                return `<span class='webix_icon mdi mdi-folder${obj.open ? "-open" : ""}'> </span>`;
+                            case "member":
+                                return "<span class='webix_icon mdi mdi-developer-board'> </span>";
+                        }
+                        return "";
+                    }
+                },
                 select: true,
                 activeTitle:true,
                 drag: "source",
                 on: {
                     onItemClick(id){
+                        this.getItem(id).open = !this.getItem(id).open;
                         if(this.getSelectedId() === id)
                             this.callEvent("onAfterSelect",[id]);
                         return true;
@@ -428,7 +444,7 @@ import newSearch from "./search.js";
              */
             _update_header:function(tango_host){
                 $$("devices_tree_panel").config.header = webix.template(function () {
-                    return kDevicesTreePanelHeader + tango_host;
+                    return kDevicesTreePanelHeaderIcon + tango_host;
                 });
                 $$("devices_tree_panel").refresh();
             },
@@ -474,7 +490,13 @@ import newSearch from "./search.js";
      * @memberof ui.DevicesTree
      * @type {string}
      */
-    const kDevicesTreePanelHeader = "<span class='webix_icon mdi mdi-sitemap'></span>Tango hosts";
+    const kDevicesTreePanelHeaderIcon = "<span class='webix_icon mdi mdi-sitemap'></span>";
+    /**
+     * @constant
+     * @memberof ui.DevicesTree
+     * @type {string}
+     */
+    const kDevicesTreePanelHeader = `${kDevicesTreePanelHeaderIcon}Tango hosts`;
 
     /**
      *
