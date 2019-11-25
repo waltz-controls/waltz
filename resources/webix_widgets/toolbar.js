@@ -67,7 +67,7 @@
     var helpMenu = webix.ui({
         view: "popup",
         id: "helpMenu",
-        minWidth: 100,
+        minWidth: 120,
         body: {
             view: "list",
             data: [
@@ -106,6 +106,16 @@
             defaults: {
                 height: 32,
                 cols: [
+                    {
+                        view: "icon", icon: "mdi mdi-menu",
+                        click: function(){
+                            if( $$("left_panel_wrapper").config.collapsed){
+                                $$("left_panel_wrapper").expand();
+                            }
+                            else
+                                $$("left_panel_wrapper").collapse();
+                        }
+                    },
                     {
                         view: "icon",
                         icon: "mdi mdi-account",

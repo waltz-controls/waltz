@@ -98,7 +98,9 @@ UIBuilder = MVC.Model.extend('ui_builder',
             if (this['_set_' + what + '_item']) return this._ui[what];
             else
                 return {
-                    header: "   ",
+                    header:"",
+                    collapsed:false,
+                    id: `${what}_panel_wrapper`,
                     body: {
                         rows:[
                             {
@@ -121,7 +123,7 @@ UIBuilder = MVC.Model.extend('ui_builder',
          *
          */
         build: function () {
-            var ui = {
+            const ui = {
                 view: 'accordion',
                 id: 'ui',
                 multi: true,
