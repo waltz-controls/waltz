@@ -12,7 +12,7 @@ const kRemoveSingleHeader = "<span class='remove-single webix_icon wxi-trash'></
 
 const kAlertInvalid = `<span class="webix_icon mdi mdi-alert" style="color: red"></span>`;
 const kAlertWarning = `<span class="webix_icon mdi mdi-alert" style="color: orange"></span>`;
-const kAlartFailure = `<span class="webix_icon mdi mdi-alert-octagram-outline" style="color: red"></span>`;
+const kAlertFailure = `<span class="webix_icon mdi mdi-alert-octagram-outline" style="color: red"></span>`;
 
 
 export const TableWidgetController = class extends MVC.Controller {
@@ -60,14 +60,14 @@ function getColumnConfig(attr){
         template:function(obj){
             //TODO move to schema type
             function getQualityIcon(obj){
-                switch (obj[attr.name + "_quality"]) {
+                switch (obj[attr + "_quality"]) {
                     case "ATTR_ALARM":
                     case "ATTR_INVALID":
                         return kAlertInvalid;
                     case "ATTR_WARNING":
                         return kAlertWarning;
                     case "FAILURE":
-                        return kAlartFailure;
+                        return kAlertFailure;
                     case "VALID":
                     default:
                         return "";

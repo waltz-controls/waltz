@@ -33,28 +33,28 @@ const hint = {
             event:"click"
         },
         {
-            el: "$accordionitem1",
+            el: "left_panel_wrapper",
             title: "Left side panel!",
             text: "This panel has: " +
-                "<ol><li><span class='webix_icon fa-sitemap'></span> Tango devices tree - currently open (expand Tango host to see devices)</li>" +
-                "<li><span class='webix_icon fa-keyboard-o'></span>Tango device control panel - collapsed. Once device has been selected in the tree the control panel will show its attributes, commands and pipes</li>" +
-                "<li><span class='webix_icon fa-info'></span>Info panel - collapsed. This one show information about currently selected entity (host, device, attribute, command, pipe)</li>",
+                "<ol><li><span class='webix_icon mdi mdi-sitemap'></span> Tango devices tree - currently open (expand Tango host to see devices)</li>" +
+                "<li><span class='webix_icon mdi mdi-developer-board'></span>Tango device control panel - <b>collapsed</b>. Once device has been selected in the tree the control panel will show its attributes, commands and pipes</li>" +
+                "<li><span class='webix_icon mdi mdi-information-variant'></span>Info panel - <b>collapsed</b>. This one show information about currently selected entity (host, device, attribute, command, pipe)</li>",
             event:"click"
         },
         {
             el: "main-tabview",
             title: "Main view!",
-            text: "By default there is only one tab open - <span class='webix_icon fa-dashboard'></span>DashboardWidget. Here you can create custom dashboard profiles. Just drag and drop devices or attributes here from the left panel...",
+            text: "By default there is only one tab open - <span class='webix_icon mdi mdi-gauge'></span>Dashboard. Here you can create custom dashboard profiles. Just drag and drop devices or attributes here from the left panel...",
             event:"click"
         },
         {
-            el: "$button48",
+            el: ".add_profile_icon",
             title: "Create more Dashboard profiles!",
             text: "Click on this button shows control widget where you can create new Dashboard profiles.",
             event:"click"
         },
         {
-            el: "$accordionitem3",
+            el: "right_panel_wrapper",
             title: "Right panel!",
             text: "Displays user actions log",
             event:"click"
@@ -66,7 +66,7 @@ const hint = {
             event:"click"
         },
         {
-            el: "$button3",
+            el: ".help_menu_icon",
             title: "Need more help?",
             text: "Checkout 'Help' menu for more information!",
             event:"click"

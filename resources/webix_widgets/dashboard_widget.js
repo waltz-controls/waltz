@@ -59,6 +59,7 @@ function newDashboardToolbar() {
             },
             {
                 view: "icon",
+                css:"add_profile_icon",
                 icon: "wxi-plus-square",
                 maxWidth: 30,
                 click: function () {

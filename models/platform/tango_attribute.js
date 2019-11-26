@@ -105,7 +105,7 @@
              * @return {Promise<AttributeInfo>}
              */
             fetchInfo(){
-                return this.toTangoRestApiRequest().get('info')
+                return this.toTangoRestApiRequest().get('/info')
                     .then((resp) => {
                         this.update_attributes({
                             info: resp

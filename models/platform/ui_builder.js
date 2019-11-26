@@ -95,7 +95,9 @@ UIBuilder = MVC.Model.extend('ui_builder',
             this._ui._bottom = bottom_toolbar;
         },
         _build: function (what) {
-            if (this['_set_' + what + '_item']) return this._ui[what];
+            if (this['_set_' + what + '_item']) return webix.extend(this._ui[what],{
+                id:`${what}_panel_wrapper`
+            });
             else
                 return {
                     header:"",

@@ -135,6 +135,7 @@
                     {
                         view: "icon",
                         icon: "mdi mdi-help-circle",
+                        css: "help_menu_icon",
                         id: "btnMenu",
                         label: "Help",
                         popup: "helpMenu",
