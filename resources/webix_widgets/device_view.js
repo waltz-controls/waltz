@@ -32,7 +32,7 @@
      */
 TangoWebapp.ui.newDeviceView = function (config) {
     return {
-        header: "<span class='webix_icon fa-microchip'></span>[<span class='webix_strong'>" + config.device.display_name + "</span>]",
+        header: "<span class='webix_icon mdi mdi-chip'></span>[<span class='webix_strong'>" + config.device.display_name + "</span>]",
         close : true,
         borderless: true,
         body  : {

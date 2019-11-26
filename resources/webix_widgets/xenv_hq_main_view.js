@@ -22,7 +22,7 @@ const dataSourcesView = {
             type: {
                 height: "auto",
                 markCheckbox(obj){
-                    return "<span class='check webix_icon fa-"+(obj.markCheckbox?"check-":"")+"square-o'></span>";
+                    return "<span class='check webix_icon mdi mdi-checkbox-"+(obj.markCheckbox?"marked-":"blank-")+"outline'></span>";
                 }
             },
             onClick:{

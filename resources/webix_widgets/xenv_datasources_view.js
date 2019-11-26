@@ -62,7 +62,7 @@ function newDataSourceForm(parent){
                 cols: [
                     {},
                     {
-                        view: "button", width: 30, type: "icon", icon: "save", tooltip: "save", click() {
+                        view: "icon", icon: "wxi-check", tooltip: "save", click() {
                             const $$form = this.getFormView();
                             // $$form.save();
 
@@ -78,7 +78,7 @@ function newDataSourceForm(parent){
                         }
                     },
                     {
-                        view: "button", width: 30, type: "icon", icon: "clone", tooltip: "clone", click(){
+                        view: "icon", icon: "mdi mdi-checkbox-multiple-blank", tooltip: "clone", click(){
                             const $$form = this.getFormView();
                             if(!$$form.validate()) return;
 
@@ -89,7 +89,7 @@ function newDataSourceForm(parent){
                         }
                     },
                     {
-                        view: "button", width: 30, type: "icon", icon: "trash", tooltip: "delete", click(){
+                        view: "button", width: 30, type: "icon", icon: "wxi-trash", tooltip: "delete", click(){
                             const $$form = this.getFormView();
                             const id = $$form.getValues().id;
                             parent.deleteDataSource({id})
@@ -197,11 +197,9 @@ function newDataSourceCollectionForm(parent){
                 cols: [
                     {},
                     {
-                        view: "button",
+                        view: "icon",
                         id: 'btnAddProfile',
-                        type: "icon",
-                        icon: "save",
-                        maxWidth: 30,
+                        icon: "wxi-check",
                         click() {
                             const $$frm = this.getFormView();
                             if (!$$frm.validate()) return;
@@ -225,11 +223,9 @@ function newDataSourceCollectionForm(parent){
                         }
                     },
                     {
-                        view: "button",
+                        view: "icon",
                         id: 'btnRmProfile',
-                        type: "icon",
-                        icon: "trash",
-                        maxWidth: 30,
+                        icon: "wxi-trash",
                         click() {
                             const $$frm = this.getFormView();
                             if (!$$frm.validate()) return;
@@ -280,9 +276,8 @@ function newToolbar(parent){
                 }
             },
             {
-                view: "button",
-                type: "icon",
-                icon: "plus",
+                view: "icon",
+                icon: "wxi-plus",
                 click(){
                     // const collection = parent.$$('selectDataSources').getValue();
                     // if(!collection) webix.message("<span class='webix_icon fa-bell'></span> Please specify the collection!");
@@ -301,10 +296,9 @@ function newToolbar(parent){
 
 function newSortButton(by) {
     return {
-        view: "button",
+        view: "icon",
         //TODO requires webix 6.x
         // css: "webix_transparent",
-        type: "icon",
         label: `<span class='webix_strong'>${MVC.String.classize(by)}</span>`,
         dir: "asc",
         click() {
@@ -375,7 +369,7 @@ const datasources_view = webix.protoUI({
             webix.modalbox({
                 buttons:["No", "Yes"],
                 width:500,
-                text:`<span class='webix_icon fa-exclamation-circle'></span><p>This will delete data sources collection ${collection} and all associated data sources! Proceed?</p>`,
+                text:`<span class='webix_icon mdi mdi-alert-circle'></span><p>This will delete data sources collection ${collection} and all associated data sources! Proceed?</p>`,
                 callback:function(result){
                     if (result === "1") success();
                 }

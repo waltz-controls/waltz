@@ -89,7 +89,7 @@
                 view: "button",
                 id: "btnReset",
                 value: "Reset",
-                type: "danger",
+                css:"webix_danger",
                 width: 100,
                 align: "left",
                 click() {

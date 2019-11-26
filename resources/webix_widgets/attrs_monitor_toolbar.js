@@ -15,8 +15,34 @@ export default function newToolbar(extension = []){
             //     maxWidth: 20,
             //     align: "right"
             // },
+                        {
+                view: "icon",
+                icon: "wxi-sync",
+                click: function () {
+                    this.getTopParentView().run();
+                }
+            },
             {
-                view: "counter", id: "refresh", step: 10, value: 1000, min: 10, max: 100000, width: 90,
+                view: "icon",
+                icon: "mdi mdi-play",
+                value: false,
+                click: function () {
+                    if (this.config.value) {
+                        this.config.value = false;
+                        this.define("icon", "mdi mdi-play");
+                        this.refresh();
+                        // webix.html.removeCss( this.$$('status').getNode(), "fa-spin");
+                        this.getTopParentView().stop();
+                    } else {
+                        this.config.value = true;
+                        this.define("icon", "mdi mdi-pause");
+                        this.refresh();
+                        // webix.html.addCss( this.$$('status').getNode(), "fa-spin");
+                        this.getTopParentView().start();
+                    }
+                }
+            },{
+                view: "counter", id: "refresh", step: 100, value: 1000, min: 10, max: 100000,
                 tooltip: "Update refresh rate",
                 on: {
                     onChange(){
@@ -32,34 +58,6 @@ export default function newToolbar(extension = []){
                             this.getTopParentView().stop();
                             this.getTopParentView().start();
                         }
-                    }
-                }
-            },
-            {
-                view: "button",
-                type: "iconButton",
-                icon: "refresh",
-                align: 'right',
-                width: 30,
-                tooltip: "Update",
-                click: function () {
-                    this.getTopParentView().run();
-                }
-            },
-            {
-                view: "toggle",
-                type: "iconButton",
-                onIcon: "pause",
-                offIcon: "play",
-                maxWidth: 30,
-                tooltip: "Update continuously",
-                click: function () {
-                    if (this.getValue()) {
-                        // webix.html.removeCss( this.$$('status').getNode(), "fa-spin");
-                        this.getTopParentView().stop();
-                    } else {
-                        // webix.html.addCss( this.$$('status').getNode(), "fa-spin");
-                        this.getTopParentView().start();
                     }
                 }
             },

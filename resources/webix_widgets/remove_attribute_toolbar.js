@@ -28,7 +28,7 @@ const widget_settings = webix.protoUI({
         this.addView({
             view: "button",
             type: "icon",
-            icon: "trash",
+            icon: "wxi-trash",
             label: label,
             click() {
                 this.getTopParentView().removeAttribute(this.data.label);
@@ -58,10 +58,8 @@ export function newRemoveAttributeSettings() {
 
 export function toolbar_extension() {
     return [{
-        view: "button",
-        type: "icon",
-        icon: "cog",
-        maxWidth: 30,
+        view: "icon",
+        icon: "mdi mdi-settings",
         tooltip: "Show/hide settings",
         click: function () {
             this.getTopParentView().toggleSettings();

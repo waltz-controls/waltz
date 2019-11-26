@@ -11,7 +11,7 @@
             view: "list",
             data: [
                 {id: "userSettings", value: "Settings"},
-                {id: "userSignOut", value: "Sign out", icon: "sign-out"}
+                {id: "userSignOut", value: "Sign out", icon: "mdi mdi-logout"}
             ],
             autoheight: true,
             borderless: true,
@@ -67,13 +67,13 @@
     var helpMenu = webix.ui({
         view: "popup",
         id: "helpMenu",
-        minWidth: 100,
+        minWidth: 120,
         body: {
             view: "list",
             data: [
                 {id: "helpAbout", value: "About"},
                 {id: "helpDocs", value: "User docs"},
-                {id: "reportIssue", value: "New issue", icon: "github"}
+                {id: "reportIssue", value: "New issue", icon: "mdi mdi-github-circle"}
             ],
             autoheight: true,
             borderless: true,
@@ -107,32 +107,39 @@
                 height: 32,
                 cols: [
                     {
-                        type: "icon",
-                        icon: "user",
+                        view: "icon", icon: "mdi mdi-menu",
+                        click: function(){
+                            if( $$("left_panel_wrapper").config.collapsed){
+                                $$("left_panel_wrapper").expand();
+                            }
+                            else
+                                $$("left_panel_wrapper").collapse();
+                        }
+                    },
+                    {
+                        view: "icon",
+                        icon: "mdi mdi-account",
                         id: "btnUsername",
-                        view: 'button',
                         label: "#name#",
                         popup: "userMenu",
-                        borderless: true,
-                        width: 80,
+                        borderless: true
                     },
                     {
-                        type: "icon",
+                        view: "icon",
+                        icon: "mdi mdi-tools",
                         id: "btnTools",
-                        view: 'button',
                         label: "Tools",
                         popup: "toolsMenu",
-                        borderless: true,
-                        width: 55
+                        borderless: true
                     },
                     {
-                        type: "icon",
+                        view: "icon",
+                        icon: "mdi mdi-help-circle",
+                        css: "help_menu_icon",
                         id: "btnMenu",
-                        view: 'button',
                         label: "Help",
                         popup: "helpMenu",
-                        borderless: true,
-                        width: 55
+                        borderless: true
                     }
                 ],
                 on: {
@@ -206,13 +213,11 @@
                     },
                     //TODO rest api call result
                     {
-                        view: "button",
+                        view: "icon",
                         id: "btnLog",
-                        type: "icon",
                         tooltip: "Log console",
                         //TODO add label
-                        icon: "info-circle",
-                        width: 36,
+                        icon: "mdi mdi-information",
                         popup: 'log',
                         align: "right"
                     }

@@ -3,7 +3,8 @@
  * @type {string}
  * @memberof ui.DeviceViewPanel
  */
-const kInfoControlPanelHeader = "<span class='webix_icon fa-info'></span> Info Control Panel";
+const kInfoControlPanelHeaderIcon = "<span class='webix_icon mdi mdi-information-variant'></span>";
+const kInfoControlPanelHeader = kInfoControlPanelHeaderIcon + " Info Control Panel";
 
 /**
  * More info: {@link https://docs.webix.com/api__refs__ui.view.html webix.ui.view}

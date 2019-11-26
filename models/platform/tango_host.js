@@ -274,7 +274,7 @@ TangoWebappPlatform.TangoHost = MVC.Model.extend("tango_host",
          * @return {string}
          */
         getIcon:function(){
-           return 'fa-database' ;
+           return 'mdi mdi-database' ;
         }
     }
 );

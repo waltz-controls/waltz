@@ -6,6 +6,9 @@
 import {newTableWidgetBody} from "./table_widget.js";
 import {newPlotlyWidgetBody} from "./plotly_widget.js";
 
+const kDashboardHeader = "<span class='webix_icon mdi mdi-gauge'></span> Dashboard";
+
+
 export const DashboardWidgetController = class extends MVC.Controller {
     buildUI(platform_api) {
         platform_api.ui_builder.add_mainview_item(newDashboardWidgetTab({id: 'dashboard_widget'}));
@@ -55,9 +58,9 @@ function newDashboardToolbar() {
                 }
             },
             {
-                view: "button",
-                type: "icon",
-                icon: "plus",
+                view: "icon",
+                css:"add_profile_icon",
+                icon: "wxi-plus-square",
                 maxWidth: 30,
                 click: function () {
                     const $$frmProfile = this.getTopParentView().$$('frmProfileSettings');
@@ -103,17 +106,11 @@ function newProfileForm() {
                         options:["table","plot","list"],
                         value: "table",
                         validate: webix.rules.isNotEmpty
-                    }
-                ]
-            },
-            {
-                cols: [
-                    {},
+                    },
                     {
-                        view: "button",
+                        view: "icon",
                         id: 'btnAddProfile',
-                        type: "icon",
-                        icon: "save",
+                        icon: "wxi-check",
                         maxWidth: 30,
                         click() {
                             const $$frm = this.getFormView();
@@ -125,10 +122,9 @@ function newProfileForm() {
                         }
                     },
                     {
-                        view: "button",
+                        view: "icon",
                         id: 'btnRmProfile',
-                        type: "icon",
-                        icon: "trash",
+                        icon: "wxi-trash",
                         maxWidth: 30,
                         click() {
                             const $$frm = this.getFormView();
@@ -220,7 +216,7 @@ const dashboard_widget = webix.protoUI({
                     cells: [
                         {
                             id: "loading",
-                            template: "<span class='webix_icon fa-refresh fa-spin'></span>"
+                            template: "<span class='webix_icon wxi-sync waltz-spin'></span>"
                         }
                     ]
                 }
@@ -240,7 +236,7 @@ function newDashboardWidgetBody(config) {
 
 export function newDashboardWidgetTab(config) {
     return {
-        header: "<span class='webix_icon fa-dashboard'></span> DashboardWidget",
+        header: kDashboardHeader,
         borderless: true,
         body: newDashboardWidgetBody(config)
 

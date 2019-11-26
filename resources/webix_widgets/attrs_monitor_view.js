@@ -90,9 +90,8 @@ import {kNonPlottableDataTypes} from "./plot.js";
                 id: "save",
                 tooltip: "Save all",
                 header: '',
-                label: '<span class="webix_icon fa-save"></span>',
-                width: 30,
-                template: '<span class="save webix_icon fa-save"></span>'
+                label: '<span class="webix_icon wxi-check"></span>',
+                template: '<span class="save webix_icon wxi-check"></span>'
             },
             {id: "quality", header: "Quality", width: 180, sort: "string"},
             {
@@ -104,20 +103,21 @@ import {kNonPlottableDataTypes} from "./plot.js";
             {id: "description", header: "Description", fillspace: true},
             {id: "data_type", hidden: true},
             {
-                id: "stream", header: "", width: 30, template: function (obj) {
-                    if (kNonPlottableDataTypes.includes(obj.data_type)) return "<span class='webix_icon fa-ban'></span>";
+                id: "stream", header: "", template: function (obj) {
+                    if (kNonPlottableDataTypes.includes(obj.data_type)) return "<span class='webix_icon" +
+                        " mdi mdi-cancel'></span>";
                     if (obj.plotted)
-                        return "<span class='chart webix_icon fa-times-circle-o'></span>";
+                        return "<span class='chart webix_icon mdi mdi-close-circle'></span>";
                     else
-                        return "<span class='chart webix_icon fa-line-chart'></span>";
+                        return "<span class='chart webix_icon mdi mdi-chart-line'></span>";
                 },
                 label: "Plot"
             },
             {
-                id: "remove", header: "<span class='remove-all webix_icon fa-trash'></span>", width: 30,
+                id: "remove", header: "<span class='remove-all webix_icon wxi-trash'></span>",
                 tooltip: "Remove all",
                 template: function (obj) {
-                    return "<span class='remove webix_icon fa-trash'></span>";
+                    return "<span class='remove webix_icon wxi-trash'></span>";
                 }
             }
         ];
@@ -351,11 +351,9 @@ import {kNonPlottableDataTypes} from "./plot.js";
 
     function newToolbarSettings() {
         return {
-            view: "button",
-            type: "icon",
-            icon: "cog",
+            view: "icon",
+            icon: "mdi mdi-settings",
             align: 'left',
-            width: 30,
             tooltip: "Show/hide scalar settings",
             click: function () {
                 const $$scalarSettings = this.getTopParentView().$$('scalar-settings');

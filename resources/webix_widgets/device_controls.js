@@ -139,8 +139,8 @@ export const device_control_attr = webix.protoUI({
         elements:[
             {cols:[
                     {view:"label",id:"label", label:"Attribute:"},
-                    {view:"button",type:"icon",icon:"info-circle", width:30, click(){this.getFormView().showInfo()}},
-                    {view:"button",type:"icon",icon:"eye", width:30, click(){this.getFormView().goto()}}
+                    // {view:"button",type:"icon",icon:"mdi mdi-info", width:30, click(){this.getFormView().showInfo()}},
+                    {view:"icon",icon:"wxi-eye", click(){this.getFormView().goto()}}
                 ]
             },
             {
@@ -215,8 +215,8 @@ export const device_control_command = webix.protoUI({
         elements:[
             {cols:[
                     {view:"label",id:"label", label:"Command: "},
-                    {view:"button",type:"icon",icon:"info-circle", width:30, click(){this.getFormView().showInfo()}},
-                    {view:"button",type:"icon",icon:"eye", width:30, click(){this.getFormView().goto()}}
+                    // {view:"icon",icon:"fas fa-database fa-xs", click(){this.getFormView().showInfo()}},
+                    {view:"icon",icon:"wxi-eye", click(){this.getFormView().goto()}}
                 ]
             },
             {id:"input_holder",rows:[
@@ -278,8 +278,8 @@ export const device_control_pipe = webix.protoUI({
         elements:[
             {cols:[
                     {view:"label",id:"label", label:"Pipe:"},
-                    {view:"button",type:"icon",icon:"info-circle", width:30, click(){this.getFormView().showInfo()}},
-                    {view:"button",type:"icon",icon:"eye", width:30, click(){this.getFormView().goto()}}
+                    // {view:"button",type:"icon",icon:"fas fa-info-circle", width:30, click(){this.getFormView().showInfo()}},
+                    {view:"icon",icon:"wxi-eye", click(){this.getFormView().goto()}}
                 ]
             },
             {view:"button",value:"read", click(){this.getFormView().read();}}
