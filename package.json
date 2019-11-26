@@ -1,0 +1,41 @@
+{
+  "name": "waltz",
+  "version": "0.8.0",
+  "description": "Waltz controls - lightweight SCADA web frontend",
+  "main": "index.jsp",
+  "directories": {
+    "doc": "docs",
+    "test": "test"
+  },
+  "scripts": {
+    "clean": "ant clean",
+    "assemble": "ant assemble",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/waltz-controls/waltz.git"
+  },
+  "keywords": [
+    "waltz",
+    "waltz-controls",
+    "tango-controls",
+    "web",
+    "jive",
+    "astor",
+    "epics",
+    "tine"
+  ],
+  "author": "Ingvord",
+  "license": "Apache-2.0",
+  "bugs": {
+    "url": "https://github.com/waltz-controls/waltz/issues"
+  },
+  "homepage": "https://www.waltz-controls.space",
+  "dependencies": {
+    "codemirror": "^5.37.0",
+    "jquery": "^3.4.0",
+    "plotly.js-dist": "^1.51.1",
+    "webix": "^5.4.0"
+  }
+}

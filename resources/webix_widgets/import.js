@@ -39,3 +39,4 @@ import "./table_widget.js";
 import "./plotly_widget.js";
 import "./dashboard_widget.js";
 import "./xenv.js";
+import "./hint_widget.js";

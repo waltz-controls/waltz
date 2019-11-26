@@ -1,4 +1,3 @@
-
 (function () {
     /**
      * Model tango_attribute
@@ -79,20 +78,20 @@
              * @returns {webix.promise}
              */
             read: function () {
-                return this.toTangoRestApiRequest().get("/value").then(this._handle_resp.bind(this));
+                return this.toTangoRestApiRequest().value().get().then(this._handle_resp.bind(this));
             },
             /**
              * @param value
              * @returns {webix.promise}
              */
             write: function (value) {
-                return this.toTangoRestApiRequest().put("/value?v=" + value).then(this._handle_resp.bind(this));
+                return this.toTangoRestApiRequest().value().put("?v=" + value).then(this._handle_resp.bind(this));
             },
             /**
              * @returns {webix.promise}
              */
             fetchHistory:function(){
-                return this.toTangoRestApiRequest().get('/history')
+                return this.toTangoRestApiRequest().get('history')
                     .then(function(resp){
                         this.update_attributes({
                             history: resp,
@@ -106,7 +105,7 @@
              * @return {Promise<AttributeInfo>}
              */
             fetchInfo(){
-                return this.toTangoRestApiRequest().get('/info')
+                return this.toTangoRestApiRequest().get('info')
                     .then((resp) => {
                         this.update_attributes({
                             info: resp
@@ -146,8 +145,12 @@
                 }
             },
             toTangoRestApiRequest(){
-                const device = PlatformContext.devices.getItem(this.device_id);
-                return device.toTangoRestApiRequest().attributes(this.name);
+                //TODO migrate to modules to be able to use this
+                // const tangoId = TangoId.fromAttributeId(this.id);
+                return PlatformContext.rest.request()
+                    .hosts(this.device_id.substring(0, this.device_id.indexOf('/')).replace(':','/'))
+                    .devices(this.device_id.substring(this.device_id.indexOf('/') + 1))
+                    .attributes(this.name);
             }
         }
     );

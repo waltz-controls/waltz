@@ -37,7 +37,7 @@ const device_tree_list = webix.protoUI(
             select: true,
             drag: "source",
             template: function (obj) {
-                return "<span class='webix_list_icon " + obj.getIcon() + "'></span>" + obj.display_name;
+                return "<span class='webix_list_icon " + obj.getIcon() + "'></span>" + obj.name;
             },
             on: {
                 onItemClick(id) {
