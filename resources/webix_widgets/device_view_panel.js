@@ -250,22 +250,13 @@ const device_view_panel = webix.protoUI({
             this.enable();
         }
 
+        this.device = device;
         this._sync(device);
     },
     $init: function (config) {
         webix.extend(config, this._ui());
 
-        const master = this;
-        this.device = new webix.DataRecord({
-            on:{
-                onBindApply(device){
-                    master.setDevice(device);
-                }
-            }
-        });
-
         this.$ready.push(() => {
-            this.device.bind(config.context.devices);
             this.$$('device_control_attr').bind(this.$$('attrs'));
             this.$$('device_control_command').bind(this.$$('commands'));
             this.$$('device_control_pipe').bind(this.$$('pipes'));
@@ -276,11 +267,16 @@ const device_view_panel = webix.protoUI({
             "left_panel_toolbar.click.refresh subscribe"() {
                 if($$('left_panel').getChildViews()[1] === this.getParentView() &&
                     !$$('left_panel').getChildViews()[1].config.collapsed) {
-                    OpenAjax.hub.publish("tango_webapp.device_loaded", {data: this.device.data});
-                    this.setDevice(this.device.data);
+                    OpenAjax.hub.publish("tango_webapp.device_loaded", {data: this.device});
+                    this.setDevice(this.device);
                 }
             },
             "tango_webapp.item_selected subscribe"(event){
+                if("device" === event.data.kind){
+                    const device = TangoDevice.find_one(event.data.id);
+                    this.setDevice(device);
+                }
+
                 if(!["attrs","commands","pipes"].includes(event.data.kind)) return;
                 const $$kind = this.$$(event.data.kind);
                 $$kind.waitData.then(()=>{
