@@ -19,7 +19,7 @@ const kServerFieldMap = {
 
 function newXenvSVGTab(){
     return {
-        header: "<span class='webix_icon fa-map-o'></span> Xenv HQ SVG",
+        header: "<span class='webix_icon mdi mdi-map-outline'></span> Xenv HQ SVG",
         borderless: true,
         body: TangoWebapp.ui.newSVGboard({id: 'hq-svg', svg:"Xenv.svg"})
     }
@@ -99,7 +99,7 @@ const xenvHq = webix.protoUI({
     restoreState:async function(state){
         this.showProgress({
             type:"icon",
-            icon:"refresh",
+            icon:"wxi-sync",
         });
 
         for(const server of kServers){
@@ -407,7 +407,7 @@ const xenvHq = webix.protoUI({
 
 export function newXenvHeadQuarterTab(){
     return {
-        header: "<span class='webix_icon fa-cubes'></span> Xenv HQ",
+        header: "<span class='webix_icon mdi mdi-cube-outline'></span> Xenv HQ",
         borderless: true,
         body:
         {

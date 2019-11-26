@@ -43,7 +43,7 @@
                 view: "button",
                 id: "btnApply",
                 value: "Apply",
-                type: "form",
+                css:"webix_primary",
                 width: 100,
                 click(){
                     this.getTopParentView().apply();

@@ -498,7 +498,7 @@ TangoDevice = TangoWebappPlatform.TangoDevice = TangoWebappPlatform.DataCollecti
          * @return {string}
          */
         getIcon:function(){
-            return 'fa-microchip';
+            return 'mdi mdi-developer-board';
         }
     }
     );

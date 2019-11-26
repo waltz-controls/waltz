@@ -16,7 +16,7 @@ import {openCommandWindow,openPipeWindow, openAttributeWindow} from "./device_co
  * @type {string}
  * @memberof ui.DeviceViewPanel
  */
-const kDevicePanelHeader = "<span class='webix_icon fa-keyboard-o'></span> Device: ";
+const kDevicePanelHeader = "<span class='webix_icon mdi mdi-developer-board'></span> Device: ";
 
 /**
  * More info: {@link https://docs.webix.com/api__refs__ui.list.html webix.ui.list}
@@ -37,7 +37,7 @@ const device_tree_list = webix.protoUI(
             select: true,
             drag: "source",
             template: function (obj) {
-                return "<span class='webix_icon " + obj.getIcon() + "'></span>" + obj.name;
+                return "<span class='webix_list_icon " + obj.getIcon() + "'></span>" + obj.name;
             },
             on: {
                 onItemClick(id) {

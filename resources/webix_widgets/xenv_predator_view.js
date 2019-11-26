@@ -28,11 +28,9 @@ function newMetaYamlView(){
                 cols: [
                     {},
                     {
-                        view: "button",
-                        type: "icon",
-                        icon: "save",
+                        view: "icon",
+                        icon: "wxi-check",
                         align: "right",
-                        width: 30,
                         click() {
                             TangoWebappHelpers.error("Not yet supported!");
                             // this.getTopParentView().save();

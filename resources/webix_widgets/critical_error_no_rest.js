@@ -13,7 +13,7 @@
         return {
             view:"window",
             id:"critical_error_no_rest",
-            head:"<span class='webix_icon fa-warning' style='color: red;'></span>",
+            head:"<span class='webix_icon mdi mdi-alert' style='color: red;'></span>",
             position:"center",
             width: 480,
             height: 320,
@@ -27,7 +27,7 @@
                     { view:"label", label:"Also make sure username/password are correct (requires logout)!"},
                     {
                         cols: [
-                            {view: "button", type: "form", label: "Apply", click:function(){
+                            {view: "button", css:"webix_primary", label: "Apply", click:function(){
                                     var newRestUrl = this.getFormView().elements['rest_url'].getValue();
 
                                     var tangoRestApi = new TangoRestApi({url: newRestUrl});

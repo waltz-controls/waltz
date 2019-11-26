@@ -314,7 +314,6 @@ const scalar_view = webix.protoUI({
  * @memberof ui.Plot
  */
 TangoWebapp.ui.newScalarView = function(config) {
-    webix.assert(!config.empty, "Config can not be empty for newScalarView");
     return webix.extend({
         view: "scalar_view"
     }, config);
