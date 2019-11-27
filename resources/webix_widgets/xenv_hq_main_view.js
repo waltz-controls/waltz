@@ -99,7 +99,12 @@ const xenvServersView = {
             on: {
                 onItemClick(id) {
                     const device = this.getItem(id).device;
-                    PlatformContext.devices.setCursor(device.id);
+                    OpenAjax.hub.publish("tango_webapp.item_selected", {
+                        data: {
+                            id: device.id,
+                            kind: "device"
+                        }
+                    });
 
                     PlatformApi.PlatformUIController().expandDeviceTree();
                 },
