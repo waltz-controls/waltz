@@ -4,10 +4,8 @@ function newPanelToolbar(side) {
         id: `${side}_panel_toolbar`,
         cols: [
             {
-                view: "button",
-                type: "icon",
-                icon: "refresh",
-                maxWidth: 30,
+                view: "icon",
+                icon: "wxi-sync",
                 click() {
                     OpenAjax.hub.publish(`${side}_panel_toolbar.click.refresh`, {});
                 }
@@ -97,13 +95,14 @@ UIBuilder = MVC.Model.extend('ui_builder',
             this._ui._bottom = bottom_toolbar;
         },
         _build: function (what) {
-            if (this['_set_' + what + '_item']) return this._ui[what];
+            if (this['_set_' + what + '_item']) return webix.extend(this._ui[what],{
+                id:`${what}_panel_wrapper`
+            });
             else
                 return {
-                    header: "   ",
-                    minWidth: 100,
-                    maxWidth: 300,
-                    // collapsed: true,
+                    header:"",
+                    collapsed:false,
+                    id: `${what}_panel_wrapper`,
                     body: {
                         rows:[
                             {
@@ -126,7 +125,7 @@ UIBuilder = MVC.Model.extend('ui_builder',
          *
          */
         build: function () {
-            var ui = {
+            const ui = {
                 view: 'accordion',
                 id: 'ui',
                 multi: true,
@@ -135,7 +134,7 @@ UIBuilder = MVC.Model.extend('ui_builder',
 
             if (this._ui.hasOwnProperty('left')) {
                 ui.cols.push(this._build('left'));
-                ui.cols.push({width: 5});
+                ui.cols.push({view:"resizer"});
             }
 
             ui.cols.push({
@@ -156,7 +155,7 @@ UIBuilder = MVC.Model.extend('ui_builder',
             });
 
             if (this._ui.hasOwnProperty('right')) {
-                ui.cols.push({width: 5});
+                ui.cols.push({view:"resizer"});
                 ui.cols.push(this._build('right'));
             }
 

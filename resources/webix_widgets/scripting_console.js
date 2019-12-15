@@ -11,6 +11,12 @@
  * @memberof ui.ScriptingConsole
  * @namespace codemirror_textarea
  */
+
+
+
+
+
+
 export const codemirror_textarea = webix.protoUI(
     /** @lends codemirror_textarea.prototype */
     {
@@ -110,11 +116,8 @@ export const codemirror_textarea = webix.protoUI(
                 }
             },
             {
-                maxWidth: 30,
-                maxHeight: 30,
-                view: 'button',
-                type: "iconButton",
-                icon: 'save',
+                view: "icon",
+                icon: 'wxi-check',
                 click: function () {
                     this.getTopParentView().save();
                 },
@@ -122,11 +125,8 @@ export const codemirror_textarea = webix.protoUI(
                 tooltip: 'Hotkey: ctrl+s'
             },
             {
-                maxWidth: 30,
-                maxHeight: 30,
-                view: 'button',
-                type: "iconButton",
-                icon: 'trash',
+                view: "icon",
+                icon: 'wxi-trash',
                 click: function () {
                     this.getTopParentView().remove();
                 }
@@ -160,7 +160,7 @@ export const codemirror_textarea = webix.protoUI(
     var scripts_list = {
         view: 'list',
         select: true,
-        template: '<span class="webix_icon fa-file-text"></span> #name#',
+        template: '<span class="webix_icon mdi mdi-file-document-outline"></span> #name#',
         id: 'scripts_list',
         on: {
             onAfterSelect:function(id){
@@ -174,14 +174,11 @@ export const codemirror_textarea = webix.protoUI(
      * @memberof ui.ScriptingConsole
      */
     var lower_toolbar = {
-        maxHeight: 30,
         view: 'toolbar',
         cols: [
             {
-                maxWidth: 30,
-                view: 'button',
-                type: "iconButton",
-                icon: 'play',
+                view: "icon",
+                icon: 'mdi mdi-play',
                 click: function () {
                     this.getTopParentView().execute();
                 },
@@ -287,7 +284,7 @@ export const codemirror_textarea = webix.protoUI(
                         multi: true,
                         cols: [
                             {
-                                header: '<span class="webix_icon fa-book"></span> Scripts',
+                                header: '<span class="webix_icon mdi mdi-notebook"></span> Scripts',
                                 body: scripts_list
                             },
                             {
@@ -400,7 +397,7 @@ export const codemirror_textarea = webix.protoUI(
     //TODO export
     TangoWebapp.ui.newStatefulScriptingConsoleTab = function () {
         return {
-            header: "<span class='webix_icon fa-pencil-square-o'></span> Scripting",
+            header: "<span class='webix_icon wxi-pencil'></span> Scripting",
             close: true,
             borderless: true,
             body: TangoWebapp.ui.newStatefulScriptingConsoleView({id: 'scripting_console'})

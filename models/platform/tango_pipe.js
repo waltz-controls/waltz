@@ -69,7 +69,7 @@ TangoPipe = MVC.Model.extend('tango_pipe',
          * @return {string}
          */
         getIcon:function(){
-            return 'fa-file-text-o';
+            return 'mdi mdi-card-text-outline';
         }
     }
 );

@@ -78,7 +78,9 @@ TangoCommand = TangoPollable.extend('tango_command',
          *
          */
         getIcon:function(){
-            return 'fa-caret-square-o-right';
+            if(this.name === 'State' || this.name === 'Status') return 'mdi mdi-heart-pulse';
+
+            return 'mdi mdi-play-box-outline';
         }
     }
 );

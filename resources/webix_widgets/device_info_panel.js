@@ -17,22 +17,6 @@ const kDevice_info_values = [
  * @memberof ui.Utils
  */
 function newDeviceInfoDatatable (){
-    function _syncPollables(type, source) {
-        this.getTopParentView().$$(`polled_${type}`).data.sync(source, function () {
-            this.filter((pollable) => {
-                return pollable.polled;
-            });
-        });
-    }
-
-    function _updateHeader(device) {
-        $$("info_control_panel_header").config.header = webix.template(function () {
-            return `<span class='webix_icon ${device.getIcon()}'></span> Device: ${device.display_name}`;
-        });
-
-        $$("info_control_panel_header").refresh();
-    }
-
     return {
         id: 'info',
         view: 'datatable',
@@ -44,29 +28,6 @@ function newDeviceInfoDatatable (){
             {id: 'value', editor: "text", fillspace: true}
         ],
         on: {
-            onBindApply: function (device) {
-                if (!device || device.id === undefined) return false;
-
-                //TODO fire event, or even better use bind for all types in info_control_panel
-                _updateHeader(device);
-
-                var info = get_device_info(device);
-                info.push({
-                    id:'alias',
-                    info: 'Alias',
-                    value: device.alias
-                });
-
-                this.clearAll();
-                this.parse(info);
-
-                this.device = device;
-                this.getTopParentView().$$('properties').data.sync(device.properties);
-
-                _syncPollables.call(this, 'attributes',device.attrs);
-
-                _syncPollables.call(this, 'commands',device.commands);
-            },
             onBeforeEditStart: function (id) {
                 var row = id.row;
                 return row === 'alias';
@@ -111,21 +72,17 @@ const toolbar = {
     view: "toolbar",
     cols:[
         {
-            view:"button",
-            type:"icon",
-            icon:"refresh",
-            maxWidth:30,
+            view:"icon",
+            icon:"wxi-sync",
             click(){
                 this.getTopParentView().refresh();
             }
         },
         {},
         {
-            view: "button",
+            view: "icon",
             value: "Add",
-            type: "icon",
-            icon: "eye",
-            maxWidth: 30,
+            icon: "wxi-eye",
             tooltip: "Monitor",
             click(){
                 OpenAjax.hub.publish("tango_webapp.device_view", {
@@ -136,11 +93,9 @@ const toolbar = {
             }
         },
         {
-            view: "button",
+            view: "icon",
             value: "Add",
-            type: "icon",
-            icon: "gears",
-            maxWidth: 30,
+            icon: "mdi mdi-settings",
             tooltip: "Configure",
             click(){
                 OpenAjax.hub.publish("tango_webapp.device_configure", {
@@ -151,10 +106,8 @@ const toolbar = {
             }
         },
         {
-            view: "button",
-            type: "icon",
-            maxWidth:30,
-            icon: "save",
+            view: "icon",
+            icon: "wxi-check",
             tooltip: "Save alias",
             click(){
                 this.getTopParentView().save();
@@ -177,6 +130,13 @@ function newPropertiesDatatable() {
     }
 }
 
+function updateHeader(device) {
+    $$("info_control_panel_header").config.header = webix.template(() =>  `<span class='webix_icon ${device.getIcon()}'></span> Device: ${device.display_name}`);
+
+    $$("info_control_panel_header").refresh();
+}
+
+
 const device_info_panel = webix.protoUI({
     name:"device_info_panel",
     get device(){
@@ -189,7 +149,7 @@ const device_info_panel = webix.protoUI({
              this.device.fetchProperties(),
              this.device.pollStatus()]).fail(TangoWebappHelpers.error);
 
-        this.$$('info').callEvent("onBindApply",[device]);
+        this.setDevice(device);
     },
     updateAlias(alias){
         const device = this.device;
@@ -206,6 +166,36 @@ const device_info_panel = webix.protoUI({
         this.updateAlias(alias.value).then(() => {
             this.refresh();
         });
+    },
+    _syncPollables(type, source) {
+        this.getTopParentView().$$(`polled_${type}`).data.sync(source, function () {
+            this.filter((pollable) => {
+                return pollable.polled;
+            });
+        });
+    },
+    setDevice(device){
+        if (!device || device.id === undefined) return false;
+
+        //TODO fire event, or even better use bind for all types in info_control_panel
+        updateHeader(device);
+
+        const info = get_device_info(device);
+        info.push({
+            id:'alias',
+            info: 'Alias',
+            value: device.alias
+        });
+
+        this.$$('info').clearAll();
+        this.$$('info').parse(info);
+
+        this.$$('info').device = device;
+        this.$$('properties').data.sync(device.properties);
+
+        this._syncPollables.call(this.$$('info'), 'attributes',device.attrs);
+
+        this._syncPollables.call(this.$$('info'), 'commands',device.commands);
     },
     _ui(){
         return {
@@ -236,7 +226,15 @@ const device_info_panel = webix.protoUI({
     },
     $init:function(config){
         webix.extend(config, this._ui());
-
-        this.$ready.push(()=>{this.$$("info").bind(config.context.devices);});
+    },
+    defaults:{
+        on:{
+            "tango_webapp.item_selected subscribe"(event){
+                if("device" === event.data.kind){
+                    const device = TangoDevice.find_one(event.data.id);
+                    this.setDevice(device);
+                }
+            }
+        }
     }
-},  webix.ProgressBar, webix.IdSpace, webix.ui.layout);
+},  TangoWebappPlatform.mixin.OpenAjaxListener, webix.ProgressBar, webix.IdSpace, webix.ui.layout);

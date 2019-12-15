@@ -41,7 +41,8 @@
                     {
                         type: 'header',
                         height: 30,
-                        template: "<span class='webix_icon fa-server'></span><span class='webix_strong'> Tango REST API URL</span>"
+                        template: "<span class='webix_icon mdi mdi-server'></span><span class='webix_strong'> Tango" +
+                            " REST API URL</span>"
                     },
                     {
                         view: 'form',
@@ -121,7 +122,8 @@
                     {
                         type: 'header',
                         height: 30,
-                        template: "<span class='webix_icon fa-magic'></span><span class='webix_strong'> Tango Server Wizard</span>"
+                        template: "<span class='webix_icon mdi mdi-auto-fix'></span><span class='webix_strong'> Tango" +
+                            " Server Wizard</span>"
                     },
                     {
                         view: 'form',
@@ -212,6 +214,15 @@
         defaults: {}
     }, webix.IdSpace, webix.ui.layout);
 
+
+
+    const kTangoHostsHeader = "<span class='webix_icon mdi mdi-server'></span><span class='webix_strong'>Tango hosts</span>";
+    const kDeviceFiltersHeader = "<span class='webix_icon mdi mdi-filter'></span><span class='webix_strong'>Device filters</span>";
+    const kRemoveTangoHost = "<span class='webix_icon wxi-minus-square remove_tango_host'></span> #id#";
+    const kSettingsHeaderCogs = "<span class='webix_icon mdi mdi-cogs'></span> Settings";
+
+
+
     //defining such variables helps navigating this component in IDE
     /**
      * Extends {@link https://docs.webix.com/api__refs__ui.layout.html webix.ui.layout}
@@ -225,12 +236,12 @@
         {
         name: 'dashboard_device_filters',
         _ui: function () {
+
             return {
                 rows: [
                     {
                         type: 'header',
-                        height: 30,
-                        template: "<span class='webix_icon fa-filter'></span><span class='webix_strong'> Device filters</span>"
+                        template: kDeviceFiltersHeader
                     },
                     {
                         view: "textarea",
@@ -238,11 +249,10 @@
                         value: ""
                     },
                     {
-                        view: "button",
-                        type: "iconButton",
+                        view: "icon",
                         id: "btnSettings",
                         label: "Apply filters to Devices tree",
-                        icon: "filter",
+                        icon: "mdi mdi-filter",
                         align: "left",
                         click: function () {
                             //TODO validate
@@ -287,12 +297,12 @@
         {
         name: 'dashboard_tango_hosts',
         _ui: function () {
+
             return {
                 rows: [
                     {
                         type: 'header',
-                        template: "<span class='webix_icon fa-server'></span><span class='webix_strong'> Tango hosts</span>",
-                        height: 40
+                        template: kTangoHostsHeader,
                     },
                     {
                         view: 'form',
@@ -312,10 +322,8 @@
                                         suggest: [] //TODO
                                     },
                                     {
-                                        view: 'button',
-                                        type: 'icon',
-                                        icon: 'plus-square-o',
-                                        width: 32,
+                                        view: 'icon',
+                                        icon: 'wxi-plus-square',
                                         click: function () {
                                             var form = this.getFormView();
                                             var isValid = form.validate();
@@ -334,7 +342,7 @@
                         view: 'list',
                         autoheight: true,
                         select: true,
-                        template: "<span class='webix_icon fa-minus-square-o remove_tango_host'></span> #id#",
+                        template: kRemoveTangoHost,
                         on: {
                             onItemClick: function (id) {
                                 PlatformContext.tango_hosts.setCursor(id);
@@ -495,8 +503,9 @@
 
     //TODO export
     TangoWebapp.ui.newSettingsTab = function(){
+
         return {
-            header: "<span class='webix_icon fa-gears'></span> Settings",
+            header: kSettingsHeaderCogs,
             close : true,
             body:
                 {

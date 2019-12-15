@@ -12,7 +12,7 @@
      */
     TangoWebapp.ui.newUserLogPanel = function(context){
         return {
-            header: "<span class='webix_icon fa-commenting'></span>",
+            header: "<span class='webix_icon mdi mdi-comment-text-outline'></span>",
             width: 300,
             collapsed: false,
             body: {

@@ -8,7 +8,7 @@
      * @constant
      * @memberof ui.DeviceTree
      */
-    var header = "<span class='webix_icon fa-microchip'></span> Device: ";
+    var header = "<span class='webix_icon mdi mdi-chip'></span> Device: ";
     /**
      * @constant
      * @memberof ui.DeviceTree

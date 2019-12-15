@@ -1,3 +1,5 @@
+import "./webix_assert_fix.js";
+import "./webix_tabbar_fix.js";
 import "./codemirror/formatting.js"
 import "./critical_error_no_rest.js";
 import "./logger.js";
@@ -37,4 +39,4 @@ import "./astor_view.js";
 import "./table_widget.js";
 import "./plotly_widget.js";
 import "./dashboard_widget.js";
-import "./xenv.js";
+import "./hint_widget.js";
