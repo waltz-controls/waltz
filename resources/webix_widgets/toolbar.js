@@ -38,7 +38,7 @@
             data: [
                 {id: "toolsScripting", value: "Scripting"},
                 {id: "toolsAstor", value: "Manager"},
-                {id: "toolsTerminal", value: "Terminal", icon: "external-link"}
+                {id: "toolsTerminal", value: "Terminal", icon: "webix_list_icon mdi mdi-open-in-new"}
             ],
             autoheight: true,
             borderless: true,
