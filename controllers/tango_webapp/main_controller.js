@@ -63,9 +63,8 @@ TangoWebapp.MainController = class extends MVC.Controller{
         device.fetchInfo();
         device.fetchPipes();
         device.fetchProperties();
-        webix.promise.all(
-            [device.fetchAttrs(),
-             device.fetchCommands()]).then(() => device.pollStatus());
+        device.fetchAttrs();
+        device.fetchCommands();
     }
 
     //TODO replace with direct call

@@ -4,15 +4,23 @@
     <meta charset="UTF-8">
     <title>Waltz</title>
     <link rel="shortcut icon" href="../../images/platform/favicon.png">
-    <link rel="stylesheet" href="https://cdn.webix.com/5.4/skins/aircompact.css" type="text/css">
+    <link rel="stylesheet" href="https://cdn.webix.com/7.0/skins/mini.css" type="text/css">
+<!--    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.7.2/css/all.css" integrity="sha384-fnmOCqbTlWIlj8LyTjo7mOUStjsKC4pOpQbqyi7RrhN7udi9RwhKkMHpvLbHG9Sr" crossorigin="anonymous">-->
+    <link rel="stylesheet" href="https://cdn.materialdesignicons.com/4.5.95/css/materialdesignicons.css" type="text/css" charset="utf-8">
+<link rel="stylesheet" type="text/css" href="https://cdn.webix.com/components/hint/hint.css">
     <!-- code mirror -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.37.0/codemirror.min.css" type="text/css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.37.0/addon/hint/show-hint.min.css" type="text/css">
 </head>
 <body oncontextmenu="return false;">
-<img id="ajax-loader" style="position: absolute; top: 50%; left: 50%;" src="../../images/platform/ajax-loader.gif">
+<svg id="ajax-loader" class="spinner" width="65px" height="65px" viewBox="0 0 66 66" xmlns="http://www.w3.org/2000/svg">
+    <circle class="path" fill="none" stroke-width="6" stroke-linecap="round" cx="33" cy="33" r="30"></circle>
+</svg>
 
-<script type="application/javascript" src="https://cdn.webix.com/5.4/webix_debug.js"></script>
+<script type="application/javascript" src="https://cdn.webix.com/7.0/webix.js"></script>
+<!-- Webix Hint, use CDN or files in this repo -->
+<script type="text/javascript" src="https://cdn.webix.com/components/hint/hint.js"></script>
+
 <script type="application/javascript" src="https://cdn.plot.ly/plotly-latest.js"></script>
 <!-- code mirror -->
 <script type="application/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.37.0/codemirror.min.js"></script>

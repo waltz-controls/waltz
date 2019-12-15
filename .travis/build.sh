@@ -1,4 +1,4 @@
 #!/bin/bash
 
-ant assemble
+npm run assemble
 test -e build/distributions/waltz.war

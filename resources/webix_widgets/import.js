@@ -1,3 +1,5 @@
+import "./webix_assert_fix.js";
+import "./webix_tabbar_fix.js";
 import "./codemirror/formatting.js"
 import "./critical_error_no_rest.js";
 import "./logger.js";

@@ -119,7 +119,7 @@
          * @constructor
          */
         $init: function (config) {
-            webix.assert(config.device !== undefined, "DeviceMonitor requires device to be defined!");
+            // webix.assert(config.device !== undefined, "DeviceMonitor requires device to be defined!");
             webix.extend(config, this._ui(config.device));
 
             this.$ready.push(function () {
@@ -154,7 +154,7 @@
      */
     TangoWebapp.ui.newDeviceMonitorView = function (config) {
         return {
-            header: "<span class='webix_icon fa-eye'></span>[<span class='webix_strong'>" + config.device.display_name + "</span>]",
+            header: "<span class='webix_icon wxi-eye'></span>[<span class='webix_strong'>" + config.device.display_name + "</span>]",
             close: true,
             borderless: true,
             body: {

@@ -16,7 +16,7 @@ import {openCommandWindow,openPipeWindow, openAttributeWindow} from "./device_co
  * @type {string}
  * @memberof ui.DeviceViewPanel
  */
-const kDevicePanelHeader = "<span class='webix_icon fa-keyboard-o'></span> Device: ";
+const kDevicePanelHeader = "<span class='webix_icon mdi mdi-developer-board'></span> Device: ";
 
 /**
  * More info: {@link https://docs.webix.com/api__refs__ui.list.html webix.ui.list}
@@ -37,7 +37,7 @@ const device_tree_list = webix.protoUI(
             select: true,
             drag: "source",
             template: function (obj) {
-                return "<span class='webix_icon " + obj.getIcon() + "'></span>" + obj.name;
+                return "<span class='webix_list_icon " + obj.getIcon() + "'></span>" + obj.name;
             },
             on: {
                 onItemClick(id) {
@@ -250,22 +250,13 @@ const device_view_panel = webix.protoUI({
             this.enable();
         }
 
+        this.device = device;
         this._sync(device);
     },
     $init: function (config) {
         webix.extend(config, this._ui());
 
-        const master = this;
-        this.device = new webix.DataRecord({
-            on:{
-                onBindApply(device){
-                    master.setDevice(device);
-                }
-            }
-        });
-
         this.$ready.push(() => {
-            this.device.bind(config.context.devices);
             this.$$('device_control_attr').bind(this.$$('attrs'));
             this.$$('device_control_command').bind(this.$$('commands'));
             this.$$('device_control_pipe').bind(this.$$('pipes'));
@@ -276,11 +267,16 @@ const device_view_panel = webix.protoUI({
             "left_panel_toolbar.click.refresh subscribe"() {
                 if($$('left_panel').getChildViews()[1] === this.getParentView() &&
                     !$$('left_panel').getChildViews()[1].config.collapsed) {
-                    OpenAjax.hub.publish("tango_webapp.device_loaded", {data: this.device.data});
-                    this.setDevice(this.device.data);
+                    OpenAjax.hub.publish("tango_webapp.device_loaded", {data: this.device});
+                    this.setDevice(this.device);
                 }
             },
             "tango_webapp.item_selected subscribe"(event){
+                if("device" === event.data.kind){
+                    const device = TangoDevice.find_one(event.data.id);
+                    this.setDevice(device);
+                }
+
                 if(!["attrs","commands","pipes"].includes(event.data.kind)) return;
                 const $$kind = this.$$(event.data.kind);
                 $$kind.waitData.then(()=>{

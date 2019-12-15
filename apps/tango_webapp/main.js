@@ -1,8 +1,6 @@
 import "../../models/platform/subscriptions.js";
 import "../../resources/webix_widgets/import.js";
 
-import * as XenvWidget from "../../resources/webix_widgets/xenv.js";
-
 window.addEventListener("error", function (e) {
     TangoWebappHelpers.error("Unhandled exception!", e);
     return false;

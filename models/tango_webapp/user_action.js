@@ -31,7 +31,7 @@ UserAction = TangoWebapp.UserAction = MVC.Model.extend('user_action',
             type: 'user_action'
         },
         _get_user:function(){
-            return ['<span class="webix_icon fa-user"></span>',PlatformContext.UserContext.user,';'];
+            return ['<span class="webix_icon mdi mdi-account"></span>',PlatformContext.UserContext.user,';'];
         },
         _get_attr_value:function(attr){
             return [attr.info.data_format, '=', (attr.isScalar()) ? attr.value : '...']

@@ -1,5 +1,8 @@
 import {_ui} from "./astor_view_ui.js";
 
+
+const kManagerHeader = "<span class='webix_icon mdi mdi-format-list-checks'></span> Manager";
+
 const as_array = true;
 
 class TangoServer {
@@ -258,7 +261,7 @@ const astor = webix.protoUI({
 
 TangoWebapp.ui.newAstorTab = function (context) {
     return {
-        header: "<span class='webix_icon fa-tasks'></span> Manager",
+        header: kManagerHeader,
         close: true,
         borderless: true,
         body: {

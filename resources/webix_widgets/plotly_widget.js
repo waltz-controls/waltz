@@ -212,7 +212,7 @@ export function newPlotlyWidgetBody(config) {
 
 export function newPlotlyWidgetTab(config) {
     return {
-        header: "<span class='webix_icon fa-line-chart'></span> PlotlyWidget",
+        header: "<span class='webix_icon mdi mdi-chart-line'></span> PlotlyWidget",
         borderless: true,
         body: newPlotlyWidgetBody(config)
 

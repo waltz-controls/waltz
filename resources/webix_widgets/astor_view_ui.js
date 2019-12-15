@@ -1,12 +1,18 @@
 import {get_device_info} from "./device_info_panel.js";
 import newToolbar from "./attrs_monitor_toolbar.js";
 
+const kDBHeader = "<span class='webix_icon mdi mdi-database'></span> #id#";
+
+
+
+
 const hosts = {
     view: "list",
     id: "hosts",
     select: true,
     autoheight:true,
-    template: "<span class='webix_icon fa-desktop' style='color: {common.highlightColor()}'></span><span style='color: {common.highlightColor()}'>#name#</span>",
+    template: "<span class='webix_list_icon mdi mdi-monitor' style='color: {common.highlightColor()}'></span><span" +
+        " style='color: {common.highlightColor()}'> #name#</span>",
     type: {
         highlightColor(obj){
             console.debug(`host state = ${obj.state}`);
@@ -52,7 +58,8 @@ const servers = {
     uniteBy(obj) {
         return obj.level;
     },
-    template: "<span class='webix_icon fa-server' style='color: {common.highlightColor()}'></span><span style='color: {common.highlightColor()}'>#name#</span>",
+    template: "<span class='webix_list_icon mdi mdi-server' style='color: {common.highlightColor()}'></span><span" +
+        " style='color: {common.highlightColor()}'> #name#</span>",
     type: {
         highlightColor(obj){
             switch (obj._state) {
@@ -87,14 +94,28 @@ const servers = {
     }
 };
 
-
+const devices = {
+    view: "list",
+    id: "devices",
+    server: null,
+    select: true,
+    multiselect: true,
+    template: "<span class='webix_list_icon mdi mdi-developer-board'></span> #name#",
+    on: {
+        onAfterSelect(id) {
+            const device = this.getItem(id);
+            this.getTopParentView().tango_host.fetchDevice(device.name)
+                .then(device => PlatformContext.devices.setCursor(device.id));
+        }
+    }
+};
 
 export function _ui(){
     return {
         rows: [
             {
                 id: "header",
-                template: "<span class='webix_icon fa-database'></span> #id#",
+                template: kDBHeader,
                 type: "header"
             },
             {
@@ -114,7 +135,7 @@ export function _ui(){
                                         view: "button",
                                         value: "Kill",
                                         tooltip: "Kills selected servers",
-                                        type: "danger",
+                                        css:"webix_danger",
                                         click() {
                                             this.getTopParentView().devKill();
                                         }
@@ -163,9 +184,8 @@ export function _ui(){
                                         validate: webix.rules.isNotEmpty
                                     },
                                     {
-                                        view: "button",
-                                        type: "icon",
-                                        icon: "plus",
+                                        view: "icon",
+                                        icon: "wxi-plus",
                                         width: 30,
                                         click() {
                                             const form = this.getFormView();
@@ -176,9 +196,8 @@ export function _ui(){
                                         }
                                     },
                                     {
-                                        view: "button",
-                                        type: "icon",
-                                        icon: "repeat",
+                                        view: "icon",
+                                        icon: "wxi-sync",
                                         tooltip: "Restart selected device(s)",
                                         width: 30,
                                         click() {
@@ -186,9 +205,8 @@ export function _ui(){
                                         }
                                     },
                                     {
-                                        view: "button",
-                                        type: "icon",
-                                        icon: "trash",
+                                        view: "icon",
+                                        icon: "wxi-trash",
                                         tooltip: "Delete selected device(s)",
                                         width: 30,
                                         click() {
@@ -197,21 +215,7 @@ export function _ui(){
                                     }
                                 ]
                             },
-                            {
-                                view: "list",
-                                id: "devices",
-                                server: null,
-                                select: true,
-                                multiselect: true,
-                                template: "<span class='webix_icon fa-microchip'></span>#name#",
-                                on: {
-                                    onAfterSelect(id) {
-                                        const device = this.getItem(id);
-                                        this.getTopParentView().tango_host.fetchDevice(device.name)
-                                            .then(device => PlatformContext.devices.setCursor(device.id));
-                                    }
-                                }
-                            },
+                            devices,
                             {
                                 template: "Selected Device info:",
                                 type: "header"
