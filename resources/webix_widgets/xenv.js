@@ -1,4 +1,4 @@
-import {newXenvHeadQuarterTab} from "/xenvhq/index.js";
+import {newXenvHeadQuarterTab} from "/xenv/index.js";
 
 export const XenvHqController = class extends MVC.Controller {
     buildUI(platform_api) {
