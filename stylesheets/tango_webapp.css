@@ -95,6 +95,7 @@
     background-image: none;
 }
 
+/*
 .webix_tree_folder_open:before{
     content: "\e2c7";
     font-family: 'Material Icons';
@@ -117,6 +118,7 @@
 .webix_tree_file {
     background-image: none;
 }
+*/
 
 .member > .webix_tree_file:before {
     content: "\e322";
