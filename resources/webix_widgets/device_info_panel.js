@@ -1,3 +1,5 @@
+import {UpdateDeviceAlias} from "../../models/tango_webapp/user_action.js";
+
 const kDevice_info_values = [
     "name",
     "admin",
@@ -153,10 +155,8 @@ const device_info_panel = webix.protoUI({
     },
     updateAlias(alias){
         const device = this.device;
-        if(!alias || alias === device.name)
-            return UserAction.deleteDeviceAlias(device).fail(TangoWebappHelpers.error);
-        else
-            return UserAction.updateDeviceAlias(device, alias).fail(TangoWebappHelpers.error);
+        new UpdateDeviceAlias({user: PlatformContext.UserContext.user, device: device.id, alias, remove: !alias || alias === device.name}).submit();
+        return Promise.resolve();
     },
     save(){
         const $$info = this.$$('info');

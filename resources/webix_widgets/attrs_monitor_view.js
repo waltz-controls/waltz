@@ -1,5 +1,6 @@
 import newToolbar from "./attrs_monitor_toolbar.js"
 import {kNonPlottableDataTypes} from "./plot.js";
+import {WriteTangoAttribute} from "../../models/tango_webapp/user_action.js";
 
 /**
  * @namespace AttrsMonitorView
@@ -8,18 +9,13 @@ import {kNonPlottableDataTypes} from "./plot.js";
 (function () {
     webix.editors.attr_value_editor =  webix.extend({
             getValue:function(){
-                var value = this.getInputNode(this.node).value;
+                const value = this.getInputNode(this.node).value;
 
-                var attr = TangoAttribute.find_one(this.row);
+                //TODO avoid this: define this as an editor if attr is writable when datatable is created
+                const attr = TangoAttribute.find_one(this.row);
 
                 if(attr.info.writable.indexOf('WRITE') !== -1)
-                    UserAction.writeAttribute(attr, value)
-                        .then(function(){
-                            debugger
-                        })
-                        .fail(function(err){
-                            TangoWebappHelpers.error("Failed to write attribute", err);
-                        });
+                    new WriteTangoAttribute({user: PlatformContext.UserContext.user, attribute: this.row, value: value}).submit();
 
                 return value;
             }
@@ -402,13 +398,7 @@ import {kNonPlottableDataTypes} from "./plot.js";
             const attr = TangoAttribute.find_one(id);
 
             if(attr.info.writable.includes('WRITE'))
-                UserAction.writeAttribute(attr, value)
-                    .then(function(){
-                        debugger
-                    })
-                    .fail(function(err){
-                        TangoWebappHelpers.error("Failed to write attribute", err);
-                    });
+                new WriteTangoAttribute({user: PlatformContext.UserContext.user, attribute: id, value: value}).submit();
         },
         /**
          * @param id

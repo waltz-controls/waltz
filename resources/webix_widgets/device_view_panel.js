@@ -82,7 +82,7 @@ const device_tree_list = webix.protoUI(
                         openCommandWindow(cmd);
                     } else if (item.Class.className === 'tango_pipe') {
                         const pipe = item;
-                        UserAction.readPipe(pipe)
+                        pipe.read()
                             .then(openPipeWindow.bind(pipe));
                     }
 

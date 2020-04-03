@@ -97,7 +97,7 @@
                     data[row.name] = (row.values.split) ? row.values.split(',') : row.values;
             });
 
-            UserAction.writeDeviceProperties(this.config.device, data)
+            this.config.device.putProperties(data)
                 .fail(TangoWebappHelpers.error);
         },
         /** @memberof ui.DevicePropertiesView.device_properties */
@@ -116,7 +116,11 @@
 
             const data = dtable.getSelectedItem(true);
 
-            UserAction.deleteDeviceProperties(this.config.device, data.map(item => item.name))
+            Promise.all(
+                data.map(item => item.name).map(prop_name => {
+                    this.config.device.deleteProperty(prop_name)
+                })
+            )
                 .fail(TangoWebappHelpers.error);
         },
         _ui: function () {

@@ -110,7 +110,7 @@
                                 name,
                                 clazz: data.values.className
                             },
-                            host: data.host
+                            host: TangoHost.find_one(data.host)
                         }
                     });
                 })

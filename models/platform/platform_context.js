@@ -15,7 +15,8 @@ TangoWebappPlatform.PlatformContext = MVC.Model.extend('platform_context',
     {
         attributes: {
             id: 'string',
-            UserContext: '{}'
+            UserContext: '{}',
+            eventbus: 'EventBus'
         },
         default_attributes: {
             id: 'singleton'

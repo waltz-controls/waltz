@@ -1,3 +1,146 @@
+OpenAjax.hub.subscribe("platform_context.create", (msg, event)=>{
+    UserAction.init(event.data.eventbus);
+    UserActionService.init(event.data.eventbus);
+});
+
+const kUserActionsChannel = "channel:user-actions";
+const kUserActionSubmit = "user-action:submit";
+const kUserActionDone = "user-action:done";
+
+export class UserAction {
+    constructor(user, action, target){
+        this.id = +new Date();
+        this.user = user;
+        this.action = action;
+        this.target = target;
+    }
+
+    static init(eventbus){
+        this.eventbus = eventbus;
+    }
+
+    submit(){
+        UserAction.eventbus.publish(kUserActionSubmit, this, kUserActionsChannel);
+        return new Promise((resolve, reject) => {
+            const listener = (msg) => {
+                const timeout = setTimeout(() => {
+                    msg.data.add_errors([new Error(`UserAction[id=${this.id};action=${this.action};target=${this.target}] has failed due to 3s timeout`)]);
+                    UserAction.eventbus.unsubscribe(kUserActionDone, listener, kUserActionsChannel);
+                    reject(msg.data);
+                }, 3000);
+
+                if(msg.id === this.id){
+                    UserAction.eventbus.unsubscribe(kUserActionDone, listener, kUserActionsChannel);
+                    if(Array.isArray(msg.data.errors) && msg.data.errors.length){
+                        reject(msg.data);
+                    } else {
+                        clearTimeout(timeout);
+                        resolve(msg.data);
+                    }
+                }
+            };
+
+            UserAction.eventbus.subscribe(kUserActionDone,listener, kUserActionsChannel)
+        });
+    }
+}
+
+class TangoUserAction extends UserAction{
+    constructor(user, action) {
+        super(user, action, 'tango');
+    }
+}
+
+export class ReadTangoAttribute extends TangoUserAction {
+    constructor(user, attribute) {
+        super(user, 'read');
+        this.attribute = attribute;
+    }
+}
+
+export class WriteTangoAttribute extends TangoUserAction {
+    constructor({user, attribute, value} = {}) {
+        super(user, 'write');
+        this.attribute = attribute;
+        this.value = value;
+    }
+}
+
+export class ExecuteTangoCommand extends TangoUserAction {
+    constructor({user, command, value} = {}) {
+        super(user, 'exec');
+        this.command = command;
+        this.value = value;
+    }
+}
+
+export class UpdateDeviceAlias extends TangoUserAction {
+    constructor({user, device, alias, remove} = {}) {
+        super(user, 'alias');
+        this.device = device;
+        this.alias = alias;
+        this.remove = remove;
+    }
+}
+
+export class ExecuteUserScript extends UserAction {
+    constructor({user, script}) {
+        super(user, 'run','script');
+        this.script = script;
+    }
+}
+
+export class UserActionService {
+    constructor(action){
+        this.action = action;
+    }
+
+    static init(eventbus){
+        this.eventbus = eventbus;
+
+        this.eventbus.subscribe(kUserActionSubmit, (msg, event) => {
+            UserActionService.create(msg).execute();
+        }, kUserActionsChannel)
+    }
+
+    static create(action){
+        switch(action.target){
+            case "script":
+                return new ScriptExecutionService(action);
+            case "tango":
+                return new TangoUserActionExecutionService(action);
+        }
+    }
+
+    execute(){
+
+    }
+}
+
+export class ScriptExecutionService extends UserActionService {
+    constructor(action) {
+        super(action);
+    }
+
+    execute() {
+        this.action.script.execute().then(script => {
+            UserActionService.eventbus.publish(kUserActionDone,Object.assign(this.action,{data:script}),kUserActionsChannel);
+        }).catch(script => {
+            UserActionService.eventbus.publish(kUserActionDone,Object.assign(this.action,{data:script}),kUserActionsChannel);
+        });
+    }
+}
+
+export class TangoUserActionExecutionService extends UserActionService {
+    constructor(action) {
+        super(action);
+    }
+
+    execute() {
+
+    }
+}
+
 /**
  * Executes and logs corresponding user action
  *
@@ -18,7 +161,7 @@
  * @extends MVC.Model
  * @memberof TangoWebappPlatform
  */
-UserAction = TangoWebapp.UserAction = MVC.Model.extend('user_action',
+TangoWebapp.UserAction = MVC.Model.extend('user_action',
     /** @lends  TangoWebappPlatform.UserAction */
     {
         attributes: {

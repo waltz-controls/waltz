@@ -36,6 +36,8 @@
     "codemirror": "^5.37.0",
     "jquery": "^3.4.0",
     "plotly.js-dist": "^1.51.1",
-    "webix": "^7.0.0"
+    "webix": "^7.0.0",
+    "webix-jet": "^2.1.2",
+    "node_modules": "latest"
   }
 }
