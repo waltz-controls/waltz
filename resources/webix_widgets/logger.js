@@ -12,15 +12,12 @@
      * @memberof ui.Logger
      * @namespace logger
      */
-    var logger = webix.protoUI(
+    const logger = webix.protoUI(
         {
-            _view: null,
-            _limit: 125,
             _ui: function () {
-                var top = this;
                 return {
-                    template: function (obj) {
-                        return top._view.render(obj);
+                    template(obj){
+                        return `<div class='${obj.type}'>${TangoWebappPlatform.consts.LOG_DATE_FORMATTER(new Date(obj.timestamp))}: ${obj.value}</div>`;
                     }
                 }
             },
@@ -31,7 +28,6 @@
              */
             $init: function (config) {
                 webix.extend(config, this._ui());
-                this._view = new View({url: this.defaults.ejs});
             },
             /**
              * @param item
@@ -40,19 +36,14 @@
             log: function (item) {
                 if (item.type === 'error') item.$css = {"background-color": "lightcoral"};
                 item.adjusted = true;
-                var id = this.add(item);
-                this.moveTop(id);
-                while (this.data.count() > this._limit) {
-                    this.remove(this.getLastId());
-                }
+                this.addFirst(item);
             },
             defaults: {
                 type: {
                     height: Infinity
-                },
-                ejs: 'views/main_log_item.ejs'
+                }
             }
-        }, webix.IdSpace, webix.ui.list);
+        }, webix.ui.list, TangoWebappPlatform.mixin.BoundedReverseList);
 
     /**
      *

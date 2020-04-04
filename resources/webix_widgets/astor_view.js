@@ -187,7 +187,7 @@ const astor = webix.protoUI({
             this.$$('servers').getSelectedItem(as_array)
                 .map(async server => {
                     const cmd = await this.starter.fetchCommand(cmdName);
-                    new ExecuteTangoCommand({user: PlatformContext.UserContext.user, command: cmd.id, value: server.name}).submit();
+                    new ExecuteTangoCommand({user: PlatformContext.UserContext.user, command: cmd, value: server.name}).submit();
                 })).then(() => this.run());
     },
     devKill() {
@@ -219,7 +219,7 @@ const astor = webix.protoUI({
         $$devices.getSelectedItem(as_array)
             .forEach(async dev => {
                 const cmd = await (await $$devices.config.server.device).fetchCommand("DevRestart");
-                new ExecuteTangoCommand({user: PlatformContext.UserContext.user, command: cmd.id, value: dev.name}).submit();
+                new ExecuteTangoCommand({user: PlatformContext.UserContext.user, command: cmd, value: dev.name}).submit();
             });
     },
     devRemove() {

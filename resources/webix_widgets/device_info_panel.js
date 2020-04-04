@@ -155,8 +155,7 @@ const device_info_panel = webix.protoUI({
     },
     updateAlias(alias){
         const device = this.device;
-        new UpdateDeviceAlias({user: PlatformContext.UserContext.user, device: device.id, alias, remove: !alias || alias === device.name}).submit();
-        return Promise.resolve();
+        return new UpdateDeviceAlias({user: PlatformContext.UserContext.user, device: device, alias, remove: !alias || alias === device.name}).submit();
     },
     save(){
         const $$info = this.$$('info');

@@ -188,5 +188,15 @@ TangoWebappPlatform.mixin = {
                 hide_settings : false
             });
         }
+    },
+    BoundedReverseList: {
+        limit: 100,
+        addFirst: function (item) {
+            const id = this.add(item);
+            this.moveTop(id);
+            while (this.data.count() > (this.config.limit || this.limit)) {
+                this.remove(this.getLastId());
+            }
+        }
     }
 };

@@ -173,7 +173,9 @@ const table_datatable = webix.protoUI({
 
                     const id = `${editor.row}/${editor.column}`;
 
-                    new WriteTangoAttribute({user: PlatformContext.UserContext.user, attribute: id, value: value.value}).submit();
+                    const attr = TangoAttribute.find_one(id);
+
+                    new WriteTangoAttribute({user: PlatformContext.UserContext.user, attribute: attr, value: value.value}).submit();
                 },
                 onBeforeDrop(context){
                     if(context.from === this) return true;

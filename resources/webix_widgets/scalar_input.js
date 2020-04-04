@@ -33,19 +33,22 @@ export const scalar_input = webix.protoUI({
         if(!this.validate()) return;
         const delta = this.getValue();
         this.config.attr.read().then(resp => {
-            new WriteTangoAttribute({user: PlatformContext.UserContext.user, attribute: this.config.attr.id, value: resp.value - delta}).submit();
-        })
+            return new WriteTangoAttribute({user: PlatformContext.UserContext.user, attribute: this.config.attr, value: resp.value - delta}).submit();
+        });
     },
     _write_plus(){
         if(!this.validate()) return;
         const delta = this.getValue();
         this.config.attr.read().then(resp => {
-            new WriteTangoAttribute({user: PlatformContext.UserContext.user, attribute: this.config.attr.id, value: resp.value + delta}).submit();
-        })
+            return new WriteTangoAttribute({user: PlatformContext.UserContext.user, attribute: this.config.attr, value: resp.value + delta}).submit();
+        });
     },
     _write(){
         if(!this.validate()) return;
-        new WriteTangoAttribute({user: PlatformContext.UserContext.user, attribute: this.config.attr.id, value: this.getValues().value}).submit();
+        new WriteTangoAttribute({user: PlatformContext.UserContext.user, attribute: this.config.attr, value: this.getValues().value}).submit()
+            .then((result)=>{
+                this.setValue(result.value)
+        });
     },
     _compact_view(attr){
         const cols = [

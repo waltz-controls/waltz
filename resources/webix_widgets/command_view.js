@@ -118,8 +118,7 @@ export function commandExecutionHelper(command, $$input){
         argin = undefined;
     }
     //TODO check type
-    new ExecuteTangoCommand({user: PlatformContext.UserContext.user, command: command.id, value:argin}).submit();
-    return Promise.resolve();
+    return new ExecuteTangoCommand({user: PlatformContext.UserContext.user, command: command, value:argin}).submit();
 }
 
 const command_view = webix.protoUI({

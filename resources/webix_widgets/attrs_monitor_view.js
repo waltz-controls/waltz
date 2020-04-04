@@ -15,7 +15,7 @@ import {WriteTangoAttribute} from "../../models/tango_webapp/user_action.js";
                 const attr = TangoAttribute.find_one(this.row);
 
                 if(attr.info.writable.indexOf('WRITE') !== -1)
-                    new WriteTangoAttribute({user: PlatformContext.UserContext.user, attribute: this.row, value: value}).submit();
+                    new WriteTangoAttribute({user: PlatformContext.UserContext.user, attribute: attr, value: value}).submit();
 
                 return value;
             }
@@ -398,7 +398,7 @@ import {WriteTangoAttribute} from "../../models/tango_webapp/user_action.js";
             const attr = TangoAttribute.find_one(id);
 
             if(attr.info.writable.includes('WRITE'))
-                new WriteTangoAttribute({user: PlatformContext.UserContext.user, attribute: id, value: value}).submit();
+                new WriteTangoAttribute({user: PlatformContext.UserContext.user, attribute: attr, value: value}).submit();
         },
         /**
          * @param id
