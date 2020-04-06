@@ -35,19 +35,23 @@ UserScript = TangoWebapp.UserScript = MVC.Model.extend('user_script',
             this.code = v.trim();
             this.func = new this.Class.AsyncFunction("'use strict';" + this.code);
         },
+        set_result(v){
+            this.result = v;
+        },
         /**
          * executes this script
          * @return {Promise}
          */
         execute:function(){
-            var result = webix.promise.defer();
-            try {
-                result.resolve(this.func.apply(PlatformApi));
-            } catch (e) {
-                this.errors.push(e);
-                result.reject(this);
-            }
-            return result;
+            return this.func.apply(PlatformApi)
+                .then(result => {
+                    this.set_result(result);
+                    return this;
+                })
+                .catch(err => {
+                    this.errors.push(err);
+                    throw this;
+                });
         }
     });
 

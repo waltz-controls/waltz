@@ -292,7 +292,7 @@ const scalar_view = webix.protoUI({
         this.plot.clearAll();
     },
     readHistory(){
-        UserAction.readAttributeHistory(this.config)
+        this.config.fetchHistory()
             .then(() => {
                 this.plot.updateMulti(this.config.history);
             });

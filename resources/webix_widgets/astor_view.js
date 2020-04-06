@@ -1,4 +1,5 @@
 import {_ui} from "./astor_view_ui.js";
+import {ExecuteTangoCommand} from "../../models/tango_webapp/user_action.js";
 
 
 const kManagerHeader = "<span class='webix_icon mdi mdi-format-list-checks'></span> Manager";
@@ -186,7 +187,7 @@ const astor = webix.protoUI({
             this.$$('servers').getSelectedItem(as_array)
                 .map(async server => {
                     const cmd = await this.starter.fetchCommand(cmdName);
-                    UserAction.executeCommand(cmd, server.name);
+                    new ExecuteTangoCommand({user: PlatformContext.UserContext.user, command: cmd, value: server.name}).submit();
                 })).then(() => this.run());
     },
     devKill() {
@@ -218,7 +219,7 @@ const astor = webix.protoUI({
         $$devices.getSelectedItem(as_array)
             .forEach(async dev => {
                 const cmd = await (await $$devices.config.server.device).fetchCommand("DevRestart");
-                UserAction.executeCommand(cmd, dev.name);
+                new ExecuteTangoCommand({user: PlatformContext.UserContext.user, command: cmd, value: dev.name}).submit();
             });
     },
     devRemove() {

@@ -1,3 +1,4 @@
+import {WriteTangoAttribute} from "../../models/tango_webapp/user_action.js";
 
 const btnMinus = {view:"button",value:"-", width: 20, click(){ this.getFormView()._write_minus()}};
 const btnPlus = {view:"button",value:"+", width: 20, click(){ this.getFormView()._write_plus()}};
@@ -32,28 +33,22 @@ export const scalar_input = webix.protoUI({
         if(!this.validate()) return;
         const delta = this.getValue();
         this.config.attr.read().then(resp => {
-            UserAction.writeAttribute(this.config.attr,resp.value - delta)
-                .then(()=>{
-                    this.getTopParentView().run();
-                });
-        })
+            return new WriteTangoAttribute({user: PlatformContext.UserContext.user, attribute: this.config.attr, value: resp.value - delta}).submit();
+        });
     },
     _write_plus(){
         if(!this.validate()) return;
         const delta = this.getValue();
         this.config.attr.read().then(resp => {
-            UserAction.writeAttribute(this.config.attr,resp.value + delta)
-                .then(()=>{
-                    this.getTopParentView().run();
-                });
-        })
+            return new WriteTangoAttribute({user: PlatformContext.UserContext.user, attribute: this.config.attr, value: resp.value + delta}).submit();
+        });
     },
     _write(){
         if(!this.validate()) return;
-        UserAction.writeAttribute(this.config.attr,this.getValues().value)
-            .then(()=>{
-                this.getTopParentView().run();
-            });
+        new WriteTangoAttribute({user: PlatformContext.UserContext.user, attribute: this.config.attr, value: this.getValues().value}).submit()
+            .then((result)=>{
+                this.setValue(result.value)
+        });
     },
     _compact_view(attr){
         const cols = [

@@ -1,5 +1,6 @@
 import newToolbar from "./attrs_monitor_toolbar.js";
 import {btnClearAll} from "./scalar_view.js";
+import {ExecuteTangoCommand} from "../../models/tango_webapp/user_action.js";
 
 const command_output = webix.protoUI(
     /** @lends spectrum_text*/
@@ -117,8 +118,7 @@ export function commandExecutionHelper(command, $$input){
         argin = undefined;
     }
     //TODO check type
-
-    return UserAction.executeCommand(command, argin);
+    return new ExecuteTangoCommand({user: PlatformContext.UserContext.user, command: command, value:argin}).submit();
 }
 
 const command_view = webix.protoUI({

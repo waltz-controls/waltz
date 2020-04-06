@@ -4,6 +4,8 @@
  * @author Igor Khokhriakov <igor.khokhriakov@hzg.de>
  * @since 4/30/18
  */
+import {ExecuteUserScript} from "../../models/tango_webapp/user_action.js";
+
 /**
  * Extends {@link https://docs.webix.com/api__refs__ui.textarea.html webix.ui.textarea}
  * @property {String} name
@@ -263,16 +265,17 @@ export const codemirror_textarea = webix.protoUI(
                 type: "icon"
             });
 
-            UserAction.executeUserScript(script)
-                .then(function (result) {
-                    //TODO OK NOK etc
+            new ExecuteUserScript({user: PlatformContext.UserContext.user, script: script})
+                .submit()
+                .then(function (script) {
+            //         TODO OK NOK etc
 
-                    $$output.setValue(result);
+                    $$output.setValue(script.result);
                     $$output.hideProgress();
                 })
-                .fail(function (err) {
-                    //TODO color analyze etc
-                    $$output.setValue(err.errors);
+                .catch(function (script) {
+                //     TODO color analyze etc
+                    $$output.setValue(script.errors);
                     $$output.hideProgress();
                 });
         },

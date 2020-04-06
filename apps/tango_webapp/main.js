@@ -1,4 +1,7 @@
+import {EventBus} from "/eventbus/index.js"
+
 import "../../models/platform/subscriptions.js";
+import "../../models/tango_webapp/user_action.js";
 import "../../resources/webix_widgets/import.js";
 
 window.addEventListener("error", function (e) {
@@ -39,11 +42,13 @@ var user_ctx = load_user_context();
 
 TangoWebappHelpers.debug(user_ctx.toString());
 
-var rest = new TangoWebappPlatform.TangoRestApi({url: user_ctx.rest_url});
+const rest = new TangoWebappPlatform.TangoRestApi({url: user_ctx.rest_url});
+const eventbus = new EventBus();
 
 TangoWebappPlatform.PlatformContext.create({
     UserContext: user_ctx,
-    rest: rest
+    rest,
+    eventbus
 });
 
 TangoWebappHelpers.debug("platform/main done.");

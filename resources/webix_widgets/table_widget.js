@@ -1,6 +1,7 @@
 import newToolbar from "./attrs_monitor_toolbar.js";
 import {newRemoveAttributeSettings, toolbar_extension} from "./remove_attribute_toolbar.js";
 import {TangoId} from "../../models/platform/tango_id.js";
+import {WriteTangoAttribute} from "../../models/tango_webapp/user_action.js";
 
 const kPersistentColumns = ["id", "device", "remove"];
 const kOverlayDelayTimeout = 3000;
@@ -173,7 +174,8 @@ const table_datatable = webix.protoUI({
                     const id = `${editor.row}/${editor.column}`;
 
                     const attr = TangoAttribute.find_one(id);
-                    UserAction.writeAttribute(attr, value.value);
+
+                    new WriteTangoAttribute({user: PlatformContext.UserContext.user, attribute: attr, value: value.value}).submit();
                 },
                 onBeforeDrop(context){
                     if(context.from === this) return true;

@@ -76,13 +76,13 @@ export function openCommandWindow(cmd) {
 export function openAttributeWindow(attr) {
     if(!attr) return;
     if (attr.info.data_format === "SPECTRUM") {
-        return UserAction.readAttribute(attr)
+        return attr.read()
             .then(openSpectrumWindow.bind(attr));
     } else if (attr.info.data_format === "IMAGE") {
-        return UserAction.readAttribute(attr)
+        return attr.read()
             .then(openImageWindow.bind(attr));
     } else if (attr.info.data_format === "SCALAR") {
-        return UserAction.readAttribute(attr)
+        return attr.read()
             .then(openScalarWindow.bind(attr));
     } else {
         TangoWebappHelpers.error("Unsupported data format: " + attr.info.data_format);
@@ -109,7 +109,7 @@ export const device_control_attr = webix.protoUI({
     },
     plot_hist(){
         if(this.attr === null) return;
-        UserAction.readAttributeHistory(this.attr)
+        this.attr.fetchHistory()
             .then(() => {
                 return openAttributeWindow(this.attr);
             }).then(()=>{
@@ -252,7 +252,7 @@ export const device_control_pipe = webix.protoUI({
     _label_prefix:"Pipe:",
     read(){
         if(this.pipe === null) return;
-        UserAction.readPipe(this.pipe)
+        this.pipe.read()
             .then(openPipeWindow.bind(this.pipe));
     },
     showInfo(){

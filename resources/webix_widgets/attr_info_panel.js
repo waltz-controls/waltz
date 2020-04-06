@@ -15,7 +15,7 @@ export async function parsePollable(pollable) {
 export function savePollable(pollable, $$info){
     const polled = $$info.getItem('polled').value || $$info.getItem('polled').value === "true" || $$info.getItem('polled').value === "1";
     const poll_rate = $$info.getItem('poll_rate').value;
-    UserAction.updatePolling(pollable, polled, poll_rate)
+    pollable.updatePolling(polled, poll_rate)
         .fail(TangoWebappHelpers.error);
 }
 
@@ -169,8 +169,7 @@ const attr_info_panel = webix.protoUI(
             this.attr.info.events.arch_event.period = $$info.getItem('arch_event.period').value;
 
             //TODO alias
-
-            UserAction.updateAttributeInfo(this.attr)
+            this.attr.putInfo()
                 .then(() => OpenAjax.hub.publish("attr_info_panel.update_attr_info", {data: this.attr.info}))
                 .fail(TangoWebappHelpers.error);
 

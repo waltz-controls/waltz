@@ -211,7 +211,7 @@
             var top = this.getTopParentView();
 
             TangoWebappHelpers.iterate(top._device.attrs, function (attr) {
-                UserAction.updateAttributeInfo(attr)
+                attr.putInfo()
                     .then(function () {
                         OpenAjax.hub.publish("tango_webapp.device_view.update_attr_config", {data: attr.info})
                     })

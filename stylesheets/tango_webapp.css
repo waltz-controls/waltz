@@ -244,3 +244,7 @@
         transform:rotate(450deg);
     }
 }
+
+.red {
+    color: red;
+}
