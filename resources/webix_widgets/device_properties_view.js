@@ -121,7 +121,7 @@
                     this.config.device.deleteProperty(prop_name)
                 })
             )
-                .fail(TangoWebappHelpers.error);
+                .catch(TangoWebappHelpers.error);
         },
         _ui: function () {
             return {
