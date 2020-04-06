@@ -94,6 +94,13 @@ async function selectDevice(deviceId){
 
 
     PlatformContext.devices.setCursor(deviceId);
+
+    OpenAjax.hub.publish("tango_webapp.item_selected",{
+        data: {
+            id: deviceId,
+            kind: 'device'
+        }
+    });
 }
 
 /**
@@ -331,12 +338,10 @@ const stateful_table_datatable = webix.protoUI({
         attrs.forEach(attr => $$settings.addAttribute(attr, true));
     },
     _restoreDevices(devices){
-        this.parse(devices.map(device_id => {
-            const tangoId = TangoId.fromDeviceId(device_id);
-
+        this.parse(devices.map(device => {
             return {
-                id: device_id,
-                device: tangoId.deviceName
+                id: device.id,
+                device: device.display_name
             }
         }));
     },
@@ -380,8 +385,11 @@ const stateful_table_datatable = webix.protoUI({
         if(!attrs.includes(attr.name))
             attrs.push(attr.name);
         const devices = this.state.data.devices;
-        if(!devices.includes(attr.device_id))
-            devices.push(attr.device_id);
+        if(devices.find(device => device.id === attr.device_id) === undefined)
+            devices.push({
+                id: attr.device_id,
+                display_name: attr.getDevice().display_name
+            });
         this.state.setState(this.state.data);
     },
     removeAttribute(display_name){
@@ -396,14 +404,17 @@ const stateful_table_datatable = webix.protoUI({
     async addDevice(id){
         await webix.ui.table_datatable.prototype.addDevice.call(this, id);
         const devices = this.state.data.devices;
-        if(!devices.includes(id))
-            devices.push(id);
+        if(devices.find(device => device.id === id) === undefined)
+            devices.push({
+                id,
+                display_name: PlatformContext.devices.getItem(id).display_name //TODO use device as argument
+            });
         this.state.setState(this.state.data);
     },
     removeDevice(id){
         webix.ui.table_datatable.prototype.removeDevice.call(this, id);
         const devices = this.state.data.devices;
-        const index = devices.indexOf(id);
+        const index = devices.findIndex(device => device.id === id);
         if (index > -1) {
             devices.splice(index, 1);
         }
