@@ -13,7 +13,7 @@
     "build": "webpack --env.production true",
     "module": "webpack --env.production true --env.module true",
     "standalone": "webpack --env.production true --env.module true --env.standalone true",
-    "start": "webpack-dev-server --open"
+    "start": "webpack-dev-server"
   },
   "repository": {
     "type": "git",
@@ -38,10 +38,13 @@
   "devDependencies": {
     "@babel/core": "^7.9.0",
     "@babel/preset-env": "^7.9.5",
+    "atob": "^2.1.2",
     "babel-loader": "^8.1.0",
+    "btoa": "^1.2.1",
     "chai": "^4.1.2",
     "css-loader": "^0.28.7",
     "eslint": "^4.7.2",
+    "express": "^4.17.1",
     "file-loader": "^0.11.2",
     "jsdom": "^11.6.2",
     "less": "^2.7.2",

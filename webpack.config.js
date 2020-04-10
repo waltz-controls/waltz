@@ -65,7 +65,10 @@ module.exports = function(env) {
             stats:"errors-only",
             proxy: {
                 "/tango":{
-                    target: 'http://localhost:10001/tango'
+                    target: 'http://localhost:10001'
+                },
+                "/user-context":{
+                    target: 'http://localhost:3000'
                 }
             }
         }
