@@ -8,9 +8,12 @@
     "test": "test"
   },
   "scripts": {
-    "clean": "ant clean",
-    "assemble": "ant assemble",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "mocha-webpack --require tests/setup.js --webpack-config webpack.test.config.js \"tests/**/*.test.js\"",
+    "lint": "eslint sources/",
+    "build": "webpack --env.production true",
+    "module": "webpack --env.production true --env.module true",
+    "standalone": "webpack --env.production true --env.module true --env.standalone true",
+    "start": "webpack-dev-server --open"
   },
   "repository": {
     "type": "git",
@@ -32,12 +35,31 @@
     "url": "https://github.com/waltz-controls/waltz/issues"
   },
   "homepage": "https://www.waltz-controls.space",
+  "devDependencies": {
+    "@babel/core": "^7.9.0",
+    "@babel/preset-env": "^7.9.5",
+    "babel-loader": "^8.1.0",
+    "chai": "^4.1.2",
+    "css-loader": "^0.28.7",
+    "eslint": "^4.7.2",
+    "file-loader": "^0.11.2",
+    "jsdom": "^11.6.2",
+    "less": "^2.7.2",
+    "less-loader": "^4.0.5",
+    "mini-css-extract-plugin": "^0.4.0",
+    "mocha": "^5.0.3",
+    "mocha-webpack": "2.0.0-beta.0",
+    "null-loader": "^0.1.1",
+    "url-loader": "^0.5.9",
+    "webpack": "^4.12.1",
+    "webpack-cli": "^3.0.8",
+    "webpack-dev-server": "^3.1.4"
+  },
   "dependencies": {
-    "codemirror": "^5.37.0",
-    "jquery": "^3.4.0",
-    "plotly.js-dist": "^1.51.1",
-    "webix": "^7.0.0",
-    "webix-jet": "^2.1.2",
-    "node_modules": "latest"
+    "@waltz-controls/eventbus": "^1.2.1",
+    "codemirror": "^5.52.2",
+    "jquery": "^3.4.1",
+    "plotly.js-dist": "^1.53.0",
+    "webix": "^7.2.0"
   }
 }

@@ -1,4 +1,4 @@
-import {EventBus} from "/eventbus/index.js"
+import {EventBus} from "@waltz-controls/eventbus"
 
 import "../../models/platform/subscriptions.js";
 import "../../models/tango_webapp/user_action.js";
