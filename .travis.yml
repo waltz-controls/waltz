@@ -11,9 +11,6 @@ services:
 addons:
   sonarcloud:
     organization: waltz-controls
-  apt:
-    packages:
-      - ant
 jobs:
   include:
   - stage: build

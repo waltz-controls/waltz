@@ -1,4 +1,4 @@
-FROM tomcat:9-jdk8
+FROM tomcat:9-jdk11
 
-COPY build/distributions/waltz.war /usr/local/tomcat/webapps
+COPY dist/waltz.war /usr/local/tomcat/webapps
 
