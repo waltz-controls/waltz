@@ -14,12 +14,13 @@ output.on("finish", () => {
 
 archive.pipe(output);
 
-archive.directory("apps/", "apps");
-archive.directory("codebase/", "codebase");
-archive.directory("controlles/", "controlles");
-archive.directory("images/", "images");
-archive.directory("models/", "models");
-archive.directory("resources/", "resources");
+archive.directory("apps");
+archive.directory("codebase");
+archive.directory("controllers");
+archive.directory("jmvc/plugins");
+archive.directory("images");
+archive.directory("models");
+archive.directory("resources");
 archive.file("index.html");
 archive.file("jmvc/include.js");
 

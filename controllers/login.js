@@ -21,9 +21,9 @@ export class LoginController {
                     borderless: true,
                     height:240,
                     template: function () {
-                        return "<div style='padding-top: 3em; width:100%'>" +
-                            "<img style=' display:block; margin:auto; max-width: 100%; max-height: 100%;" +
-                            "' src='../images/platform/logo_Waltz.png'/></div>";
+                        return `<div style='padding-top: 3em; width:100%'>
+                                <img style='display:block; margin:auto; max-width: 100%; max-height: 100%;' src='images/platform/logo_Waltz.png'/>
+                                </div>`;
                     }
                 },
                 {
