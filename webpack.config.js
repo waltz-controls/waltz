@@ -1,20 +1,20 @@
-var path = require("path");
-var webpack = require("webpack");
+const path = require("path");
+const webpack = require("webpack");
 
 module.exports = function(env) {
 
-    var pack = require("./package.json");
-    var MiniCssExtractPlugin = require("mini-css-extract-plugin");
+    const pack = require("./package.json");
+    const MiniCssExtractPlugin = require("mini-css-extract-plugin");
 
-    var production = !!(env && env.production === "true");
-    var asmodule = !!(env && env.module === "true");
-    var standalone = !!(env && env.standalone === "true");
+    const production = !!(env && env.production === "true");
+    const asmodule = !!(env && env.module === "true");
+    const standalone = !!(env && env.standalone === "true");
 
-    var babelSettings = {
+    const babelSettings = {
         extends: path.join(__dirname, '/.babelrc')
     };
 
-    var config = {
+    const config = {
         mode: production ? "production" : "development",
         entry: {
             main: "./apps/main.js"
@@ -58,7 +58,14 @@ module.exports = function(env) {
                 VERSION: `"${pack.version}"`,
                 APPNAME: `"${pack.name}"`,
                 PRODUCTION : production,
-                BUILD_AS_MODULE : (asmodule || standalone)
+                BUILD_AS_MODULE : (asmodule || standalone),
+                REST_API_PROTOCOL: `"${env.REST_API_PROTOCOL}"`,
+                REST_API_HOST : `"${env.REST_API_HOST}"`,
+                REST_API_PORT : `${env.REST_API_PORT}`,
+                REST_API_VERSION : `"${env.REST_API_VERSION}"`,
+                TANGO_HOST : `"${env.TANGO_HOST}"`,
+                TANGO_PORT : `${env.TANGO_PORT}`,
+                USER_CONTEXT_URL : `"${env.USER_CONTEXT_URL}"`
             })
         ],
         devServer:{

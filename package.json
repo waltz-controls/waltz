@@ -8,13 +8,14 @@
     "test": "test"
   },
   "scripts": {
-    "test": "mocha-webpack --require tests/setup.js --webpack-config webpack.test.config.js \"tests/**/*.test.js\"",
-    "lint": "eslint sources/",
+    "test": "mocha-webpack --require test/setup.js --webpack-config webpack.test.config.js \"test/**/*.test.js\"",
+    "lint": "eslint ./",
     "build": "webpack --env.production true",
     "module": "webpack --env.production true --env.module true",
     "standalone": "webpack --env.production true --env.module true --env.standalone true",
     "start": "webpack-dev-server",
-    "user-context-server": "node test.server.js"
+    "user-context-server": "node test.server.js",
+    "war": "rm -rf dist && node war.js $npm_package_name"
   },
   "repository": {
     "type": "git",
@@ -39,6 +40,7 @@
   "devDependencies": {
     "@babel/core": "^7.9.0",
     "@babel/preset-env": "^7.9.5",
+    "archiver": "^3.1.1",
     "atob": "^2.1.2",
     "babel-loader": "^8.1.0",
     "btoa": "^1.2.1",
@@ -47,6 +49,7 @@
     "eslint": "^4.7.2",
     "express": "^4.17.1",
     "file-loader": "^0.11.2",
+    "fs": "0.0.1-security",
     "jsdom": "^11.6.2",
     "less": "^2.7.2",
     "less-loader": "^4.0.5",

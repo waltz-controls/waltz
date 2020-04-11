@@ -1,4 +1,5 @@
 #!/bin/bash
 
-npm run standalone
-test -e build/distributions/waltz.war
+npm run build
+npm run war
+test -e dist/waltz.war
