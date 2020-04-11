@@ -1,4 +1,4 @@
-import "../stylesheets/tango_webapp.css";
+import "../stylesheets/waltz.css";
 
 import {EventBus} from "@waltz-controls/eventbus"
 import {LoginController, UserLogin} from "../controllers/login";
