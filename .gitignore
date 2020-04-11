@@ -6,6 +6,8 @@
 *.iml
 .idea
 build
+dist
+codebase
 node_modules
 
 # User-specific stuff:
