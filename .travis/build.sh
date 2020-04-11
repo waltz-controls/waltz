@@ -1,4 +1,4 @@
 #!/bin/bash
 
-npm run assemble
+npm run standalone
 test -e build/distributions/waltz.war
