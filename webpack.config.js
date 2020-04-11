@@ -17,7 +17,7 @@ module.exports = function(env) {
     var config = {
         mode: production ? "production" : "development",
         entry: {
-            main: "./apps/tango_webapp/main.js"
+            main: "./apps/main.js"
         },
         output: {
             path: path.join(__dirname, "codebase"),

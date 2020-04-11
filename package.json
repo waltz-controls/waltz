@@ -2,7 +2,7 @@
   "name": "waltz",
   "version": "0.8.0",
   "description": "Waltz controls - lightweight SCADA web frontend",
-  "main": "index.jsp",
+  "main": "index.html",
   "directories": {
     "doc": "docs",
     "test": "test"
@@ -13,7 +13,8 @@
     "build": "webpack --env.production true",
     "module": "webpack --env.production true --env.module true",
     "standalone": "webpack --env.production true --env.module true --env.standalone true",
-    "start": "webpack-dev-server"
+    "start": "webpack-dev-server",
+    "user-context-server": "node test.server.js"
   },
   "repository": {
     "type": "git",

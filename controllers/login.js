@@ -1,11 +1,18 @@
+export class UserLogin{
+    constructor({name, headers}){
+        this.name = name;
+        this.headers = headers;
+    }
+}
+
 /**
-* Main controller
-* @type {Login.MainController}
-* @class
+ * Login controller
+ * @type {LoginController}
+ * @class
  *
-*/
-Login.MainController = class extends MVC.Controller {
-    static _ui(){
+ */
+export class LoginController {
+    ui(){
         return {
             id: 'login',
             view: 'layout',
@@ -16,7 +23,7 @@ Login.MainController = class extends MVC.Controller {
                     template: function () {
                         return "<div style='padding-top: 3em; width:100%'>" +
                             "<img style=' display:block; margin:auto; max-width: 100%; max-height: 100%;" +
-                            "' src='../../images/platform/logo_Waltz.png'/></div>";
+                            "' src='../images/platform/logo_Waltz.png'/></div>";
                     }
                 },
                 {
@@ -46,18 +53,23 @@ Login.MainController = class extends MVC.Controller {
                                         cols: [
                                             {
                                                 view: "button", value: "Login", type: "form", hotkey: "enter", click: function () {
-                                                    var form = this.getFormView();
-                                                    var isValid = form.validate();
-                                                    if (!isValid) return;
+                                                    const form = this.getFormView();
+                                                    if (!form.validate()) return;
 
-                                                    webix.storage.session.put('Authorization', "Basic " + btoa(form.getValues().username + ":" + form.getValues().password));
+                                                    const user = new UserLogin({
+                                                        name: form.getValues().username,
+                                                        headers: {
+                                                            "Authorization" : "Basic " + btoa(form.getValues().username + ":" + form.getValues().password)
+                                                        }
+                                                    });
 
-                                                    window.location = "../../apps/tango_webapp/index.html";
+
+                                                    this.getTopParentView().callEvent('login', [user]);
                                                 }
                                             },
                                             {
                                                 view: "button", value: "Cancel", click: function () {
-                                                    var form = this.getFormView();
+                                                    const form = this.getFormView();
                                                     form.clear();
                                                     form.clearValidation();
                                                 }
@@ -75,25 +87,32 @@ Login.MainController = class extends MVC.Controller {
     }
 
     /**
-     * This is the main entry point of the application. This function is invoked after jmvc has been completely initialized.
-     * @param {Object} params
+     *
+     * @returns {Promise<UserLogin>}
      */
-    load(params){
-        webix.ui(Login.MainController._ui());
+    run(){
+        return new Promise((resolve, reject) => {
+            let user;
+            if((user = webix.storage.session.get('user')) !== null){
+                resolve(user);
+            } else {
+                const login = webix.ui({
+                    view: 'window',
+                    autofocus: true,
+                    fullscreen: true,
+                    modal: true,
+                    body: this.ui()
+                });
 
-        webix.html.remove(document.getElementById('ajax-loader'));
+                login.attachEvent('login',user => {
+                    webix.storage.session
+                        .put('user', user);
 
-        //automatically redirect is user is already logged in
-        var authorization = sessionStorage.getItem("Authorization");
-        if(authorization != null && authorization.indexOf('Basic ') === 0){
-            var decoded = atob(authorization.substring(6)).split(':');
-            $$('frmLogin').setValues({
-                username: decoded[0],
-                password: decoded[1]
-            });
-        }
+                    resolve(user)
+                });
+
+                login.show();
+            }
+        });
     }
-};
-
-// MVC.Controller.register(Login.MainController);
-Login.MainController.initialize();
+}
