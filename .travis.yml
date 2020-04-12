@@ -25,7 +25,7 @@ jobs:
     - git fetch --unshallow --quiet
     - sonar-scanner -Dsonar.login=${SONAR_TOKEN} -Dsonar.projectKey=waltz-controls_waltz
       -Dsonar.projectName=waltz -Dsonar.projectVersion=$TRAVIS_BRANCH -Dsonar.sources=.
-      -Dsonar.exclusions=build/**,jmvc/**,docs/**,apps/**
+      -Dsonar.exclusions=jmvc/**,docs/**
   - name: Deploy to Amazon cloud
     env:
     - REST_API_PROTOCOL="http"
