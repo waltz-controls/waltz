@@ -50,7 +50,7 @@ jobs:
     - provider: releases
       prerelease: true
       api_key: "$GITHUB_OAUTH_TOKEN"
-      file: build/distributions/waltz.war
+      file: dist/waltz.war
       skip_cleanup: true
       on:
         tags: true
