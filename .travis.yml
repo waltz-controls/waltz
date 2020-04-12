@@ -12,6 +12,8 @@ services:
 addons:
   sonarcloud:
     organization: waltz-controls
+before_install:
+  - printf "//npm.pkg.github.com/:_authToken=${GITHUB_TOKEN}" >> ~/.npmrc
 jobs:
   include:
   - stage: build
