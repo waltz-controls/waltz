@@ -65,17 +65,17 @@ Pass: tango
 
 ## Developer requirements ##
 
-* Tango Controls environment (tested on Tango 8 and Tango 9)
+* Tango Controls environment (tested on Tango 9)
 * Tango REST Server that supports API spec version rc4 (tested on [rest-server-1.6](https://github.com/tango-controls/rest-server/releases/tag/rest-server-1.6))
 * Web server that can handle .war files (tested on Apache Tomcat 8&9)
 
 ## Build ##
 
-This project uses [ant](https://ant.apache.org) for high level build operations:
+This project uses [npm](https://docs.npmjs.com/) and [webpack](https://webpack.js.org/) for high level build operations:
 
 ```bash
-$> ant clean
-$> ant assemble
+$> npm install
+$> npm run build
 ```
 
 Extra parameters may ne passed to ant script to define default Tango REST API endpoint and/or Tango host:
@@ -83,7 +83,7 @@ Extra parameters may ne passed to ant script to define default Tango REST API en
 ```bash
 $> REST_API_PROTOCOL=[http|https] REST_API_HOST=[ip/fqdn] REST_API_PORT=[e.g. 10001]  \
    TANGO_HOST=[ip/fqdn] TANGO_PORT=[e.g. 10000] \
-   ant assemble
+   npm run build
 ```
 
 ## Implementation details
