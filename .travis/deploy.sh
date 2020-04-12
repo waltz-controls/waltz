@@ -8,6 +8,6 @@ chmod 600 ./.travis/IngvordAWS.pem
 
 ssh -o "StrictHostKeyChecking no" $REST_API_HOST
 
-scp -v -i ./.travis/IngvordAWS.pem build/distributions/$TRAVIS_BRANCH.war ubuntu@$REST_API_HOST:/home/ubuntu
+scp -v -i ./.travis/IngvordAWS.pem dist/$TRAVIS_BRANCH.war ubuntu@$REST_API_HOST:/home/ubuntu
 
 ssh -v -i ./.travis/IngvordAWS.pem ubuntu@$REST_API_HOST "sudo mv /home/ubuntu/$TRAVIS_BRANCH.war /var/lib/tomcat9/webapps"
