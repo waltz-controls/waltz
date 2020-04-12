@@ -37,7 +37,7 @@ jobs:
     - VERSION="$TRAVIS_BRANCH"
     script:
     - ".travis/build.sh"
-    - mv build/distributions/waltz.war build/distributions/$TRAVIS_BRANCH.war
+    - mv dist/waltz.war dist/$TRAVIS_BRANCH.war
     deploy:
     - provider: script
       script: bash .travis/deploy.sh
