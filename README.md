@@ -92,3 +92,7 @@ $> REST_API_PROTOCOL=[http|https] REST_API_HOST=[ip/fqdn] REST_API_PORT=[e.g. 10
 * [Webix](http://webix.com) is used for UI
 * [CodeMirror](https://codemirror.net/) is used for scripting console
 * [Plotly](https://plot.ly/javascript/) is used to display plots and images
+
+## Misc
+
+[![time tracker](https://wakatime.com/badge/github/waltz-controls/waltz.svg)](https://wakatime.com/badge/github/waltz-controls/waltz)
