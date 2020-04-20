@@ -38,6 +38,10 @@ module.exports = function(env) {
                 {
                     test: /\.(less|css)$/,
                     use: [ MiniCssExtractPlugin.loader, "css-loader", "less-loader" ]
+                },
+                {
+                    test: /webix\.js$/,
+                    use: [ 'script-loader' ]
                 }
             ]
         },
