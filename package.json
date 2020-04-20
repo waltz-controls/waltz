@@ -1,6 +1,6 @@
 {
   "name": "waltz",
-  "version": "0.8.0",
+  "version": "1.5.0",
   "description": "Waltz controls - lightweight SCADA web frontend",
   "main": "index.html",
   "directories": {
@@ -65,7 +65,7 @@
   },
   "dependencies": {
     "@waltz-controls/eventbus": "^1.2.3",
-    "@waltz-controls/middleware": "^1.2.1",
+    "@waltz-controls/middleware": "^1.2.3",
     "@waltz-controls/tango-rest-client": "^1.2.1",
     "codemirror": "^5.52.2",
     "jquery": "^3.5.0",

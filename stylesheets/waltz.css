@@ -188,62 +188,7 @@
     height: 100%;
 }
 
-@keyframes waltz-spin {
-    from {
-        transform:rotate(0deg);
-    }
-    to {
-        transform:rotate(360deg);
-    }
-}
 
-.waltz-spin {
-    animation-name: waltz-spin;
-    animation-duration: 1000ms;
-    animation-iteration-count: infinite;
-    animation-timing-function: linear;
-}
-
-.spinner {
-    animation: rotator 1.4s linear infinite;
-    position: absolute;
-    top: 50%;
-    left: 50%;
-}
-
-@keyframes rotator {
-    0% { transform: rotate(0deg); }
-    100% { transform: rotate(270deg); }
-}
-
-.path {
-    stroke-dasharray: 187;
-    stroke-dashoffset: 0;
-    transform-origin: center;
-    animation:
-    dash 1.4s ease-in-out infinite,
-    colors 5.6s ease-in-out infinite;
-}
-
-@keyframes colors {
-    0% { stroke: #1CA1C1; }
-    25% { stroke: #1CA1C1; }
-    50% { stroke: #1CA1C1; }
-    75% { stroke: #1CA1C1; }
-    100% { stroke: #1CA1C1; }
-}
-
-@keyframes dash {
-    0% { stroke-dashoffset: 187; }
-    50% {
-        stroke-dashoffset: 50;
-        transform:rotate(135deg);
-    }
-    100% {
-        stroke-dashoffset: 187;
-        transform:rotate(450deg);
-    }
-}
 
 .red {
     color: red;
