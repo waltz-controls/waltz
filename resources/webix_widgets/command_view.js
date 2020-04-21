@@ -1,6 +1,6 @@
 import newToolbar from "./attrs_monitor_toolbar.js";
 import {btnClearAll} from "./scalar_view.js";
-import {ExecuteTangoCommand} from "../../models/tango_webapp/user_action.js";
+import {ExecuteTangoCommand} from "../../src/models/tango_webapp/user_action.js";
 
 const command_output = webix.protoUI(
     /** @lends spectrum_text*/

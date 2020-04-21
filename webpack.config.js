@@ -17,7 +17,7 @@ module.exports = function(env) {
     const config = {
         mode: production ? "production" : "development",
         entry: {
-            main: "./main.js"
+            main: "./src/main.js"
         },
         output: {
             path: path.join(__dirname, "codebase"),
@@ -48,7 +48,7 @@ module.exports = function(env) {
         stats:"minimal",
         resolve: {
             extensions: [".js"],
-            modules: [".", "widgets", "node_modules"],
+            modules: ["./src", "./src/widgets", "node_modules"],
             alias:{
                 "jet-views":path.resolve(__dirname, "sources/views"),
                 "jet-locales":path.resolve(__dirname, "sources/locales")

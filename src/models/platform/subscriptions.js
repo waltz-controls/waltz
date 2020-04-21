@@ -1,5 +1,5 @@
 //import openajax
-import MultiMap from "../../resources/platform/multimap.js";
+import MultiMap from "../../../resources/platform/multimap.js";
 
 const kOpenAjaxEventName_Waltz_Subscription_open = "waltz.subscription.open";
 const kEventSourceOpenTimeout = 3000;

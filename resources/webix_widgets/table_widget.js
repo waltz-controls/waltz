@@ -1,7 +1,7 @@
 import newToolbar from "./attrs_monitor_toolbar.js";
 import {newRemoveAttributeSettings, toolbar_extension} from "./remove_attribute_toolbar.js";
-import {TangoId} from "../../models/platform/tango_id.js";
-import {WriteTangoAttribute} from "../../models/tango_webapp/user_action.js";
+import {TangoId} from "../../src/models/platform/tango_id.js";
+import {WriteTangoAttribute} from "../../src/models/tango_webapp/user_action.js";
 
 const kPersistentColumns = ["id", "device", "remove"];
 const kOverlayDelayTimeout = 3000;

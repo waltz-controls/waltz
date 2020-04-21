@@ -1,5 +1,5 @@
 import {_ui} from "./astor_view_ui.js";
-import {ExecuteTangoCommand} from "../../models/tango_webapp/user_action.js";
+import {ExecuteTangoCommand} from "../../src/models/tango_webapp/user_action.js";
 
 
 const kManagerHeader = "<span class='webix_icon mdi mdi-format-list-checks'></span> Manager";

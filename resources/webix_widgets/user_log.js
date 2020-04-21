@@ -1,4 +1,4 @@
-import {UserAction, kUserActionsChannel, kUserActionDone} from "../../models/tango_webapp/user_action.js";
+import {kUserActionDone, kUserActionsChannel, UserAction} from "../../src/models/tango_webapp/user_action.js";
 
 /**
  *

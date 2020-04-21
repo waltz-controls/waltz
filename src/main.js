@@ -1,4 +1,4 @@
-import "./stylesheets/waltz.css";
+import "../stylesheets/waltz.css";
 // import "../models/platform/subscriptions.js";
 // import "../models/tango_webapp/user_action.js";
 // import "../resources/webix_widgets/import.js";

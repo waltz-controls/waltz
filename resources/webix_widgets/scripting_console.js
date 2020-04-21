@@ -4,7 +4,7 @@
  * @author Igor Khokhriakov <igor.khokhriakov@hzg.de>
  * @since 4/30/18
  */
-import {ExecuteUserScript} from "../../models/tango_webapp/user_action.js";
+import {ExecuteUserScript} from "../../src/models/tango_webapp/user_action.js";
 
 /**
  * Extends {@link https://docs.webix.com/api__refs__ui.textarea.html webix.ui.textarea}

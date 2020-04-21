@@ -1,6 +1,6 @@
 import newToolbar from "./attrs_monitor_toolbar.js"
 import {kNonPlottableDataTypes} from "./plot.js";
-import {WriteTangoAttribute} from "../../models/tango_webapp/user_action.js";
+import {WriteTangoAttribute} from "../../src/models/tango_webapp/user_action.js";
 
 /**
  * @namespace AttrsMonitorView
