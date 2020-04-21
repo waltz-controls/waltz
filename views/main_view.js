@@ -1,6 +1,6 @@
 export default function newMainView(root){
     return {
-        ...root,
+        root,
         id:'main_view',
         template: 'main view'
     }

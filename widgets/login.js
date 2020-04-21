@@ -104,9 +104,6 @@ export default class LoginWidget extends WaltzWidget{
             const login = this.render();
 
             login.attachEvent('login',user => {
-                webix.storage.session
-                    .put('user', user);
-
                 this.dispatch(user);
             });
 

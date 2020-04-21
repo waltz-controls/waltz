@@ -6,12 +6,14 @@ import {Application} from "@waltz-controls/middleware";
 import LoginWidget from "login";
 import MainWindow from "main_window";
 import AjaxLoader from "controllers/ajax_loader";
+import LoginController from "controllers/login";
 
 // TangoWebappPlatform.consts.LOG_DATE_FORMATTER = webix.Date.dateToStr("%c");
 
 new Application({name: APPNAME, version: VERSION})
     .registerErrorHandler(err => console.error(err))
     .registerController(new AjaxLoader())
+    .registerController(new LoginController())
     .registerWidget(new LoginWidget())
     .registerWidget(new MainWindow())
     .run();

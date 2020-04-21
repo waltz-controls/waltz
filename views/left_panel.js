@@ -1,7 +1,10 @@
 export default function newLeftPanel(root){
     return {
-        ...root,
+        root,
         id: 'left_panel',
-        template:'left'
+        view:'accordion',
+        rows:[
+            {}
+        ]
     }
 }

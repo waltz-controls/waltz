@@ -29,7 +29,9 @@ export default class MainWindow extends WaltzWidget{
                 {
                     cols: [
                         newLeftPanel(this),
+                        {view:'resizer'},
                         newMainView(this),
+                        {view:'resizer'},
                         newRightPanel(this)
                     ]
                 },
@@ -38,7 +40,6 @@ export default class MainWindow extends WaltzWidget{
         });
 
         main.attachEvent('logout',()=> {
-            webix.storage.session.remove('user');
             this.dispatch({},'logout');
         })
 
@@ -74,4 +75,27 @@ export default class MainWindow extends WaltzWidget{
         });
     }
 
+    /**
+     *
+     * @return {webix.ui.baseview}
+     */
+    get leftPanel(){
+        return $$('left_panel');
+    }
+
+    /**
+     *
+     * @return {webix.ui.baseview}
+     */
+    get mainView(){
+        return $$('main_view');
+    }
+
+    /**
+     *
+     * @return {webix.ui.baseview}
+     */
+    get rightPanel(){
+        return $$('right_panel');
+    }
 }

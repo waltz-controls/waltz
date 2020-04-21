@@ -70,12 +70,11 @@ const top_toolbar = webix.protoUI({
             cols: [
                 {
                     view: "icon", icon: "mdi mdi-menu",
-                    click: function(){
-                        if( $$("left_panel_wrapper").config.collapsed){
-                            $$("left_panel_wrapper").expand();
-                        }
+                    click(){
+                        if( config.root.leftPanel.isVisible())
+                            config.root.leftPanel.hide();
                         else
-                            $$("left_panel_wrapper").collapse();
+                            config.root.leftPanel.show();
                     }
                 },
                 {
@@ -101,6 +100,18 @@ const top_toolbar = webix.protoUI({
                     label: "Help",
                     popup: "helpMenu",
                     borderless: true
+                },
+                {
+                    fillSpace:true
+                },
+                {
+                    view: "icon", icon: "mdi mdi-menu",
+                    click(){
+                        if( config.root.rightPanel.isVisible())
+                            config.root.rightPanel.hide();
+                        else
+                            config.root.rightPanel.show();
+                    }
                 }
             ]
         }
@@ -117,7 +128,7 @@ export default function newTopToolbar(root) {
 
 
     return {
-        ...root,
+        root,
         view: 'top_toolbar'
     }
 }
