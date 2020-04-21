@@ -5,9 +5,11 @@ import newLeftPanel from "views/left_panel";
 import newRightPanel from "views/right_panel";
 import newMainView from "views/main_view";
 
+export const kMainWindow = 'widget:main';
+
 export default class MainWindow extends WaltzWidget{
     constructor() {
-        super('main');
+        super(kMainWindow);
 
     }
 
@@ -15,22 +17,26 @@ export default class MainWindow extends WaltzWidget{
         this.listen(user => this.render(),'login')
 
         this.listen(() => {
-            $$('main').destructor();
+            $$(this.name).destructor();
         },'logout')
     }
 
     render() {
-
-
         const main = webix.ui({
             id:this.name,
+            type: 'space',
             rows: [
                 newTopToolbar(this),
                 {
+                    type:'space',
+                    borderless:true,
                     cols: [
                         newLeftPanel(this),
                         {view:'resizer'},
-                        newMainView(this),
+                        {
+                            ...newMainView(this),
+                            gravity:4
+                        },
                         {view:'resizer'},
                         newRightPanel(this)
                     ]
@@ -65,7 +71,7 @@ export default class MainWindow extends WaltzWidget{
                             PlatformApi.PlatformUIController().openSettingsTab();
                         }
                         if (id === "userSignOut") {
-                            $$('main').callEvent('logout',[])
+                            $$(kMainWindow).callEvent('logout',[])
 
                         }
                         $$("userMenu").hide();

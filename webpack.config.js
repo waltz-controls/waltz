@@ -48,7 +48,7 @@ module.exports = function(env) {
         stats:"minimal",
         resolve: {
             extensions: [".js"],
-            modules: ["./src", "./src/widgets", "node_modules"],
+            modules: ["./src", "node_modules"],
             alias:{
                 "jet-views":path.resolve(__dirname, "sources/views"),
                 "jet-locales":path.resolve(__dirname, "sources/locales")

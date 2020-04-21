@@ -3,8 +3,8 @@ export default function newLeftPanel(root){
         root,
         id: 'left_panel',
         view:'accordion',
+        multi:false,
         rows:[
-            {}
         ]
     }
 }

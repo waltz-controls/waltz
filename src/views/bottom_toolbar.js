@@ -70,6 +70,7 @@ const bottom_toolbar = webix.protoUI(
 export default function newBottomToolbar(root) {
     return {
         root,
+        id:'bottom-toolbar',
         view: "bottom_toolbar",
         maxHeight: 32
     };
