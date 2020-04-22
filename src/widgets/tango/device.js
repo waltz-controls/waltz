@@ -1,5 +1,5 @@
 import {WaltzWidget} from "@waltz-controls/middleware";
-import {kMainWindow} from "../main_window";
+import {kMainWindow} from "widgets/main_window";
 
 export const kTangoDeviceWidget = 'widget:tango_device';
 
@@ -20,11 +20,15 @@ export default class TangoDeviceWidget extends WaltzWidget {
 
     config(){
         this.listen(id => {
-            this.render()
+            //TODO
         },'select_device','user')
     }
 
     render(){
         this.app.getWidget(kMainWindow).leftPanel.addView(this.ui());
+    }
+
+    run(){
+        this.render();
     }
 }

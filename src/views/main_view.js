@@ -2,6 +2,16 @@ export default function newMainView(root){
     return {
         root,
         id:'main_view',
-        template: 'main view'
+        view: "tabview",
+        type: 'space',
+        padding: 0,
+        tabbar: {
+            height: 40,
+            popupWidth: 480,
+            tabMinWidth: 250,
+            tabMoreWidth: 40,
+            bottomPadding: 5
+        },
+        cells: [{}]
     }
 }

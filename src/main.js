@@ -11,19 +11,28 @@ import TangoTree from "widgets/tango/tree";
 import TangoRestController from "controllers/tango_rest";
 import ApplicationLogController from "controllers/log";
 import TangoDeviceWidget from "widgets/tango/device";
+import UserSettingsWidget from "widgets/settings";
 
 // TangoWebappPlatform.consts.LOG_DATE_FORMATTER = webix.Date.dateToStr("%c");
 
-new Application({name: APPNAME, version: VERSION})
+const waltz = new Application({name: APPNAME, version: VERSION})
     .registerErrorHandler(err => console.error(err))
     .registerController(new AjaxLoader())
     .registerController(new LoginController())
     .registerController(new TangoRestController())
     .registerController(new ApplicationLogController())
-    .registerWidget(new LoginWidget())
     .registerWidget(new MainWindow())
     .registerWidget(new TangoTree())
     .registerWidget(new TangoDeviceWidget())
+    .registerWidget(new UserSettingsWidget())
+
+
+export const kWaltz = 'app:waltz';
+
+new Application({name: 'WaltzLogin', version: VERSION})
+    .registerErrorHandler(err => console.error(err))
+    .registerContext(kWaltz, waltz)
+    .registerWidget(new LoginWidget())
     .run();
 
 

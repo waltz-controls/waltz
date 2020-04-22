@@ -1,3 +1,32 @@
+import {kMainWindow} from "widgets/main_window";
+
+webix.ui({
+    view: "popup",
+    id: "userMenu",
+    width: 100,
+    body: {
+        view: "list",
+        data: [
+            {id: "userSettings", value: "Settings"},
+            {id: "userSignOut", value: "Logout...", icon: "mdi mdi-logout"}
+        ],
+        autoheight: true,
+        borderless: true,
+        on: {
+            onItemClick: function (id) {
+                if (id === "userSettings") {
+                    $$(kMainWindow).callEvent('settings',[])
+                }
+                if (id === "userSignOut") {
+                    $$(kMainWindow).callEvent('logout',[])
+
+                }
+                $$("userMenu").hide();
+            }
+        }
+    }
+});
+
 const toolsMenu = webix.ui({
     view: "popup",
     id: "toolsMenu",

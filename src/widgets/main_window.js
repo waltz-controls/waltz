@@ -4,6 +4,7 @@ import newBottomToolbar from "views/bottom_toolbar";
 import newLeftPanel from "views/left_panel";
 import newRightPanel from "views/right_panel";
 import newMainView from "views/main_view";
+import {kWidgetSettings} from "widgets/settings";
 
 export const kMainWindow = 'widget:main';
 
@@ -14,8 +15,6 @@ export default class MainWindow extends WaltzWidget{
     }
 
     config(){
-        this.listen(user => this.render(),'login')
-
         this.listen(() => {
             $$(this.name).destructor();
         },'logout')
@@ -49,36 +48,15 @@ export default class MainWindow extends WaltzWidget{
             this.dispatch({},'logout');
         })
 
+        main.attachEvent('settings',()=> {
+            this.app.getWidget(kWidgetSettings).open();
+        })
+
         webix.ui.fullScreen();
     }
 
     run(){
-        webix.ui({
-            view: "popup",
-            id: "userMenu",
-            width: 100,
-            body: {
-                view: "list",
-                data: [
-                    {id: "userSettings", value: "Settings"},
-                    {id: "userSignOut", value: "Logout...", icon: "mdi mdi-logout"}
-                ],
-                autoheight: true,
-                borderless: true,
-                on: {
-                    onItemClick: function (id) {
-                        if (id === "userSettings") {
-                            PlatformApi.PlatformUIController().openSettingsTab();
-                        }
-                        if (id === "userSignOut") {
-                            $$(kMainWindow).callEvent('logout',[])
-
-                        }
-                        $$("userMenu").hide();
-                    }
-                }
-            }
-        });
+        this.render();
     }
 
     /**

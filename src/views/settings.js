@@ -2,14 +2,13 @@
 /** @module Settings
  * @memberof ui
  */
-(function () {
     /**
      * Extends {@link https://docs.webix.com/api__refs__ui.textarea.html webix.ui.textarea}
      * @property {String} name
      * @memberof ui.Settings
      * @namespace textarea0
      */
-    var textarea0 = webix.protoUI(
+    const textarea0 = webix.protoUI(
         /** @lends textarea0*/
         {
         name: "textarea0",
@@ -31,7 +30,7 @@
      * @memberof ui.Settings
      * @namespace tango_rest_url
      */
-    var tango_rest_url =  webix.protoUI(
+    const tango_rest_url =  webix.protoUI(
         /** @lends tango_rest_url.prototype*/
         {
         name:'tango_rest_url',
@@ -92,7 +91,7 @@
      * @memberof ui.Settings
      * @namespace server_wizard
      */
-    var server_wizard = webix.protoUI(
+    const server_wizard = webix.protoUI(
         /** @lends server_wizard.prototype */
         {
         name: 'server_wizard',
@@ -219,7 +218,7 @@
     const kTangoHostsHeader = "<span class='webix_icon mdi mdi-server'></span><span class='webix_strong'>Tango hosts</span>";
     const kDeviceFiltersHeader = "<span class='webix_icon mdi mdi-filter'></span><span class='webix_strong'>Device filters</span>";
     const kRemoveTangoHost = "<span class='webix_icon wxi-minus-square remove_tango_host'></span> #id#";
-    const kSettingsHeaderCogs = "<span class='webix_icon mdi mdi-cogs'></span> Settings";
+    export const kSettingsHeaderCogs = "<span class='webix_icon mdi mdi-cogs'></span> Settings";
 
 
 
@@ -231,7 +230,7 @@
      * @memberof ui.Settings
      * @namespace dashboard_device_filters
      */
-    var dashboard_device_filters = webix.protoUI(
+    const dashboard_device_filters = webix.protoUI(
         /** @lends dashboard_device_filters.prototype */
         {
         name: 'dashboard_device_filters',
@@ -292,7 +291,7 @@
      * @memberof ui.Settings
      * @namespace dashboard_tango_hosts
      */
-    var dashboard_tango_hosts = webix.protoUI(
+    const dashboard_tango_hosts = webix.protoUI(
         /** @lends dashboard_tango_hosts.prototype*/
         {
         name: 'dashboard_tango_hosts',
@@ -430,7 +429,7 @@
      * @memberof ui.Settings
      * @namespace settings
      */
-    var settings = webix.protoUI(
+    const settings = webix.protoUI(
         /** @lends settings*/
         {
         name: "settings",
@@ -500,19 +499,4 @@
             webix.extend(config, this._ui());
         }
     }, webix.IdSpace, webix.ui.layout);
-
-    //TODO export
-    TangoWebapp.ui.newSettingsTab = function(){
-
-        return {
-            header: kSettingsHeaderCogs,
-            close : true,
-            body:
-                {
-                    id: 'settings',
-                    view: "settings"
-                }
-        }
-    }
-})();
 

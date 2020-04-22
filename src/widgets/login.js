@@ -1,9 +1,12 @@
 import {WaltzWidget} from "@waltz-controls/middleware";
 import UserLogin from "models/login";
+import {kWaltz} from "../main";
 
+export const kLogin = 'login';
+export const kUser = 'user';
 export default class LoginWidget extends WaltzWidget{
     constructor() {
-        super('login');
+        super(kLogin);
     }
 
     ui(){
@@ -56,7 +59,7 @@ export default class LoginWidget extends WaltzWidget{
                                                     });
 
 
-                                                    this.getTopParentView().callEvent('login', [user]);
+                                                    this.getTopParentView().callEvent(kLogin, [user]);
                                                 }
                                             },
                                             {
@@ -78,13 +81,6 @@ export default class LoginWidget extends WaltzWidget{
         };
     }
 
-
-    config() {
-        this.listen(() => $$('login').destructor());
-
-        this.listen(() => this.run(),'logout');
-    }
-
     render() {
         return webix.ui({
             id:this.name,
@@ -96,15 +92,24 @@ export default class LoginWidget extends WaltzWidget{
         });
     }
 
+    login(user){
+        this.app.getContext(kWaltz).then(waltz => waltz
+            .registerContext(kLogin,this.app)
+            .registerContext(kUser, user)
+            .run()
+        );
+    }
+
     run() {
         let user;
-        if((user = webix.storage.session.get('user')) !== null){
-            this.dispatch(user)
+        if((user = webix.storage.session.get(kUser)) !== null){
+            this.login(user);
         } else {
             const login = this.render();
 
-            login.attachEvent('login',user => {
-                this.dispatch(user);
+            login.attachEvent(kLogin,user => {
+                login.destructor();
+                this.login(user);
             });
 
             login.show();

@@ -9,11 +9,6 @@ export default class TangoTree extends WaltzWidget {
         super(kTangoTree);
     }
 
-    async config(){
-        this.listen(() => this.render(), 'login');
-        // this.rest = await this.app.getContext(kTangoRest);
-    }
-
     ui(){
         return {
             view:'accordionitem',
@@ -33,7 +28,11 @@ export default class TangoTree extends WaltzWidget {
     }
 
     async run(){
+        this.render();
+
         const rest = await this.app.getContext(kTangoRestContext);
+
+
         rest.toTangoRestApiRequest().devices('tree')
             .get('?host=localhost:10000')
             .subscribe({

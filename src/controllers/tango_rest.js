@@ -1,5 +1,6 @@
 import {Controller} from "@waltz-controls/middleware";
 import {TangoRestApi, TangoRestApiRequest} from "@waltz-controls/tango-rest-client";
+import {kUser} from "widgets/login";
 
 export const kControllerTangoTest = 'controller:tango_test';
 export const kTangoRestContext = 'context:tango_rest';
@@ -54,20 +55,16 @@ export default class TangoRestController extends Controller {
     }
 
     config(){
-        this.listen(user => {
-            //TODO set host from userContext
-            this.app.registerContext(kTangoRestContext, new DecoratedTangoRestApi('http://localhost:10001',{
-                mode:'cors',
-                headers:{
-                    ...user.headers
-                }
-            }, this.middleware))
-
-        }, 'login')
-
-        this.listen({error: resp => webix.message({type:'error', text: resp.errors[0].description})}, 'req', kChannelTangoRest);
     }
 
-
+    async run(){
+        const user = await this.app.getContext(kUser);
+        this.app.registerContext(kTangoRestContext, new DecoratedTangoRestApi('',{
+            // mode:'cors',
+            headers:{
+                ...user.headers
+            }
+        }, this.middleware))
+    }
 
 }
