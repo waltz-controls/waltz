@@ -80,6 +80,7 @@ export class DeviceFilter {
 
 }
 
+const kUserContextUrl = 'user-context/cache';
 /**
  * Model user_context
  *
@@ -95,15 +96,26 @@ export class DeviceFilter {
  * @property {Object} ext
  */
 export default class UserContext {
+    /**
+     *
+     * @param id
+     * @param options
+     * @return {Promise<UserContext>}
+     */
     static load(id, options){
         return fetch(`user-context/cache?id=${id}`, options)
-            .then(resp => resp.text())
+            .then(resp => {
+                if(resp.ok)
+                    return resp.text()
+                else
+                    throw new Error(`Failed to load UserContext[${id}] due to ${resp.status}: ${resp.statusText}`)
+            })
             .then(text => JSON.parse(atob(text)))
             .then(json => new this({...json}));
     }
 
-    constructor({name, tango_hosts, device_filters, ext}) {
-        this.name = name;
+    constructor({user, tango_hosts, device_filters, ext}) {
+        this.user = user;
         this.tango_hosts = tango_hosts;
         this.device_filters = device_filters;
         this.ext = ext;
@@ -135,12 +147,12 @@ export default class UserContext {
     save(options = {}){
         return fetch(`user-context/cache`,{
             ...options,
-            method: 'put',
+            method: 'post',
             headers: {
                 ...options.headers,
-                "Content-type": "application/json"
+                'Content-Type': 'application/x-www-form-urlencoded'
             },
-            body: {id: this.name, data: btoa(JSON.stringify({...this}))}
+            body: `id=${this.user}&data=${btoa(JSON.stringify({...this}))}`
         })
     }
 
@@ -155,9 +167,9 @@ export default class UserContext {
             method: 'post',
             headers: {
                 ...options.headers,
-                "Content-type": "application/json"
+                'Content-Type': 'application/x-www-form-urlencoded'
             },
-            body: {id: this.name}
+            body: `id=${this.user}`
         })
     }
 }
