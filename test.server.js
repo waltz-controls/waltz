@@ -20,7 +20,7 @@ const userContext = {
     user: 'tango-cs',
     rest_url: 'http://localhost:10001/tango',
     tango_hosts:{'localhost:10000':null},
-    device_filters: [],
+    device_filters: ['*/*/*'],
     ext:{}
 };
 

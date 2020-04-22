@@ -12,6 +12,7 @@ import TangoRestController from "controllers/tango_rest";
 import ApplicationLogController from "controllers/log";
 import TangoDeviceWidget from "widgets/tango/device";
 import UserSettingsWidget from "widgets/settings";
+import UserContextController from "controllers/user_context";
 
 // TangoWebappPlatform.consts.LOG_DATE_FORMATTER = webix.Date.dateToStr("%c");
 
@@ -21,6 +22,7 @@ const waltz = new Application({name: APPNAME, version: VERSION})
     .registerController(new LoginController())
     .registerController(new TangoRestController())
     .registerController(new ApplicationLogController())
+    .registerController(new UserContextController())
     .registerWidget(new MainWindow())
     .registerWidget(new TangoTree())
     .registerWidget(new TangoDeviceWidget())
