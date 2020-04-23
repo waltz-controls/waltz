@@ -1,7 +1,8 @@
 import {WaltzWidget} from "@waltz-controls/middleware";
 import {kMainWindow} from "widgets/main_window";
 import {kSettingsHeaderCogs} from "views/settings";
-import {kUserContext} from "../controllers/user_context";
+import {kUserContext} from "controllers/user_context";
+import {kChannelLog, kTopicError} from "controllers/log";
 
 export const kWidgetSettings = 'widget:settings';
 
@@ -13,6 +14,12 @@ export default class UserSettingsWidget extends WaltzWidget {
         super(kWidgetSettings);
     }
 
+    config(){
+        this.listen(host => {
+            $$(this.name).$$('tango_hosts').add({id:host,value:host})
+        },kAddTangoHost);
+    }
+
     ui() {
         return {
             header: kSettingsHeaderCogs,
@@ -21,22 +28,29 @@ export default class UserSettingsWidget extends WaltzWidget {
                 {
                     id: this.name,
                     view: "settings",
-                    ...this
+                    root:this
                 }
         }
     }
 
+    async addTangoHost(host){
+        const context = await this.app.getContext(kUserContext);
+        context.tango_hosts[host] = null;
+
+        context.save()
+            .then(resp => {
+                if (resp.ok)
+                    this.dispatch(host, kAddTangoHost);
+                else
+                    throw new Error(`Failed to save UserContext[${context.user}] due to  ${resp.status}:${resp.statusText}`)
+            })
+            .catch(err => {
+                this.dispatch(err, kTopicError, kChannelLog);
+            })
+    }
+
     open(){
         this.app.getWidget(kMainWindow).mainView.addView(this.ui());
-
-        $$(this.name).attachEvent(kAddTangoHost, async host => {
-            const context = await this.app.getContext(kUserContext);
-            context.tango_hosts[host] = null;
-
-
-            this.dispatchObservable(context.save(),kAddTangoHost, kWidgetSettings);
-        });
-
     }
 
 }

@@ -10,6 +10,9 @@ function formatErrorMessage(error) {
                                                                    ${err.origin}</p>`);
 }
 
+export const kChannelLog = 'channel:log';
+export const kTopicError = 'topic:error';
+export const kTopicLog = 'topic:log';
 export default class ApplicationLogController extends Controller{
     constructor() {
         super(kApplicationLogController);
@@ -23,6 +26,21 @@ export default class ApplicationLogController extends Controller{
                     value: formatErrorMessage(err)
                 });
             }},kAnyTopic, kChannelTangoRest)
+
+        this.listen(msg => {
+                $$('main-log').log({
+                    type: 'error',
+                    timestamp: +new Date(),
+                    value: `<p>${msg}</p>`
+                });
+            },kTopicError, kChannelLog)
+
+        this.listen(msg => {
+            $$('main-log').log({
+                timestamp: +new Date(),
+                value: `<p>${msg}</p>`
+            });
+        },kTopicLog, kChannelLog)
     }
 
 }

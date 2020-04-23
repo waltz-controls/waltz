@@ -3,7 +3,7 @@
  * @memberof ui
  */
 import {kUserContext} from "controllers/user_context";
-import {kAddTangoHost, kWidgetSettings} from "widgets/settings";
+import {kWidgetSettings} from "widgets/settings";
 
 const kTangoHostsHeader = "<span class='webix_icon mdi mdi-server'></span><span class='webix_strong'>Tango hosts</span>";
 const kDeviceFiltersHeader = "<span class='webix_icon mdi mdi-filter'></span><span class='webix_strong'>Device filters</span>";
@@ -228,7 +228,7 @@ const dashboard_tango_hosts = webix.protoUI(
     /** @lends dashboard_tango_hosts.prototype*/
     {
     name: 'dashboard_tango_hosts',
-    ui() {
+    ui(config) {
 
         return {
             rows: [
@@ -260,7 +260,7 @@ const dashboard_tango_hosts = webix.protoUI(
                                         const form = this.getFormView();
                                         if (!form.validate()) return;
 
-                                        this.getTopParentView().callEvent(kAddTangoHost, [form.elements.new_tango_host.getValue()]);
+                                        config.root.addTangoHost(form.elements.new_tango_host.getValue());
                                     }
                                 }
                             ]
@@ -293,11 +293,11 @@ const dashboard_tango_hosts = webix.protoUI(
          * @constructor
          */
     $init: function (config) {
-        webix.extend(config, this.ui());
+        webix.extend(config, this.ui(config));
 
         this.$ready.push(async () => {
-            const context = await config.app.getContext(kUserContext);
-            $$(kWidgetSettings).$$('tango_hosts').parse(context.getTangoHosts());
+            const context = await config.root.app.getContext(kUserContext);
+            $$(kWidgetSettings).$$('tango_hosts').parse(context.getTangoHosts().map(host => ({id:host, value: host})));
         });
     },
     defaults: {
@@ -341,7 +341,7 @@ const settings = webix.protoUI(
     /** @lends settings*/
     {
     name: "settings",
-    ui({app, middleware}) {
+    ui({root}) {
         return {
             borderless: true,
             type: 'space',
@@ -356,7 +356,7 @@ const settings = webix.protoUI(
                         {
                             view: 'dashboard_tango_hosts',
                             id: 'dashboard-tango-hosts',
-                            app
+                            root
                         },
                         {}
                     ]
@@ -370,7 +370,7 @@ const settings = webix.protoUI(
                             minWidth: 240,
                             id: 'dashboard-device-filters',
                             view: "dashboard_device_filters",
-                            app
+                            root
                         },
                         {}
                     ]
@@ -383,7 +383,7 @@ const settings = webix.protoUI(
                         {
                             view: 'server_wizard',
                             id: 'dashboard-server-wizard',
-                            app
+                            root
                         },
                         {}
                     ]
