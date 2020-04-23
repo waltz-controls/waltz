@@ -276,12 +276,12 @@ const dashboard_tango_hosts = webix.protoUI(
                     template: kRemoveTangoHost,
                     on: {
                         onItemClick: function (id) {
-                            PlatformContext.tango_hosts.setCursor(id);
+                            config.root.selectTangoHost(id);
                         }
                     },
                     onClick: {
                         remove_tango_host: function (event, id) {
-                            PlatformApi.UserContextController().delete_tango_host(id);
+                            config.root.removeTangoHost(id);
                         }
                     }
                 }
