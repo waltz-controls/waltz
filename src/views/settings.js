@@ -45,26 +45,10 @@ const server_wizard = webix.protoUI(
     {
     name: 'server_wizard',
     /**
-     * @param {Object} data
+     * @param {Object} config
      * @private
      */
-    _create_devices: function (data) {
-        webix.promise.all(
-            data.values.devices.map(function (name) {
-                OpenAjax.hub.publish("tango_webapp.device_add", {
-                    data: {
-                        device: {
-                            server: data.values.server,
-                            name,
-                            clazz: data.values.className
-                        },
-                        host: TangoHost.find_one(data.host)
-                    }
-                });
-            })
-        );
-    },
-    ui: function () {
+    ui(config) {
         return {
             rows: [
                 {
@@ -78,17 +62,15 @@ const server_wizard = webix.protoUI(
                     id: 'form',
                     elements: [
                         {
-                            view: 'text',
-                            readonly: true,
-                            disabled: true,
+                            view: 'richselect',
                             name: 'tango_host',
                             label: "Tango host:",
                             labelWidth: 150,
                             labelPosition: "top",
                             placeholder: 'select in Tango hosts',
                             validate: webix.rules.isNotEmpty,
-                            invalidMessage: "Tango host must be set"
-
+                            invalidMessage: "Tango host must be set",
+                            options:[]
                         },
                         {
                             view: "text",
@@ -131,15 +113,13 @@ const server_wizard = webix.protoUI(
                             view: 'button',
                             type: 'form',
                             value: 'Create new Tango devices...',
-                            click: function () {
-                                var form = this.getFormView();
-                                var isValid = form.validate();
-                                if (!isValid) return;
+                            click() {
+                                const form = this.getFormView();
+                                if (!form.validate()) return;
 
-
-                                this.getTopParentView()._create_devices({
+                                config.root.addTangoDevices({
                                     host: form.elements.tango_host.data.value,
-                                    values: form.getValues()
+                                    ...form.getValues()
                                 });
                             }
                         }
@@ -153,11 +133,11 @@ const server_wizard = webix.protoUI(
          * @constructor
          */
     $init: function (config) {
-        webix.extend(config, this.ui());
+        webix.extend(config, this.ui(config));
 
         this.$ready.push(async () => {
-            const context = await config.app.getContext(kUserContext);
-            this.$$('form').elements.tango_host.parse(context.getTangoHosts());
+            this.$$('form').elements.tango_host.getPopup().getList()
+                .sync($$(kWidgetSettings).$$('tango_hosts'));
         });
     }
 }, webix.IdSpace, webix.ui.layout);
