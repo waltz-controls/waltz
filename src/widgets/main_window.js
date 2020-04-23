@@ -49,7 +49,7 @@ export default class MainWindow extends WaltzWidget{
         })
 
         main.attachEvent('settings',()=> {
-            this.app.getWidget(kWidgetSettings).open();
+            this.openTab(kWidgetSettings);
         })
 
         webix.ui.fullScreen();
@@ -81,5 +81,10 @@ export default class MainWindow extends WaltzWidget{
      */
     get rightPanel(){
         return $$('right_panel');
+    }
+
+    openTab(id){
+        const tab = $$(id) || $$(this.mainView.addView(this.app.getWidget(id).ui()))
+        tab.show();
     }
 }
