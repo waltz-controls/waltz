@@ -102,10 +102,10 @@ const server_wizard = webix.protoUI(
                             labelPosition: "top",
                             placeholder: "instance/family/member, i.e. sys/tg_test/1",
                             validate: function (value) {
-                                var rv = false;
+                                let rv = false;
                                 do {
                                     rv = /[\w]*\/[\w]*\/[\w]*/.test(value.shift());
-                                } while (rv && value.length != 0);
+                                } while (rv && value.length);
                                 return rv;
                             }, invalidMessage: "Incorrect devices"
                         },

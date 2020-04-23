@@ -4,7 +4,7 @@ import {kUserContext} from "controllers/user_context";
 import {kChannelLog, kTopicError} from "controllers/log";
 import {kTangoRestContext} from "../controllers/tango_rest";
 import {of} from "rxjs";
-import {mergeMap} from "rxjs/operators";
+import {last, mergeMap} from "rxjs/operators";
 
 export const kWidgetSettings = 'widget:settings';
 
@@ -29,7 +29,7 @@ function saveUserContext(context, action, payload){
 }
 
 
-const kAddTangoDevices = 'action:addTangoDevices';
+export const kAddTangoDevices = 'action:addTangoDevices';
 export default class UserSettingsWidget extends WaltzWidget {
     constructor() {
         super(kWidgetSettings);
@@ -92,7 +92,9 @@ export default class UserSettingsWidget extends WaltzWidget {
 
         const req = rest.newTangoHost({...host.split(':')}).database()
             .pipe(
-                mergeMap(db => of(devices.map(name => db.addDevice([server,name,className]))))
+                mergeMap(db => of(devices.map(name => db.addDevice([server,name,className]))).pipe(
+                    last()
+                ))
             )
 
         this.dispatchObservable(req, kAddTangoDevices)
