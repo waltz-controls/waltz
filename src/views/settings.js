@@ -182,25 +182,28 @@ const dashboard_device_filters = webix.protoUI(
                     template: kDeviceFiltersHeader
                 },
                 {
-                    view: "textarea",
-                    id: "value",
-                    value: ""
-                },
-                {
-                    view: "icon",
-                    id: "btnSettings",
-                    label: "Apply filters to Devices tree",
-                    icon: "mdi mdi-filter",
-                    align: "left",
-                    click: function () {
-                        //TODO validate
-                        const value = this.getTopParentView().$$("value").getValue().split('\n');
-                        PlatformApi.UserContextController().update_attributes({
-                            device_filters: value
-                        });
-                        $$('devices_tree').tree.updateRoot();
-                    }
+                    view: 'form',
+                    elements:[{
+                        view: "textarea",
+                        id: "value",
+                        value: ""
+                    },
+                        {
+                            view: "button",
+                            id: "btnSettings",
+                            type:'icon',
+                            label: "Apply filters to Devices tree",
+                            icon: "mdi mdi-filter",
+                            align: "left",
+                            click() {
+                                const value = this.getTopParentView().$$("value").getValue().split('\n');
+
+                                //TODO validate
+                                config.root.applyDeviceFilters(value)
+                            }
+                        }]
                 }
+
             ]
         };
     },
@@ -209,10 +212,10 @@ const dashboard_device_filters = webix.protoUI(
          * @constructor
          */
     $init: function (config) {
-        webix.extend(config, this.ui());
+        webix.extend(config, this.ui(config));
 
         this.$ready.push(async () => {
-            const context = await config.app.getContext(kUserContext);
+            const context = await config.root.app.getContext(kUserContext);
             this.$$('value').setValue(context.device_filters.join('\n'))
         });
     }
@@ -301,32 +304,7 @@ const dashboard_tango_hosts = webix.protoUI(
         });
     },
     defaults: {
-        minWidth: 240,
-        on: {
-            "user_context_controller.add_tango_host subscribe": function (event) {
-                $$('settings').$$('tango_hosts').add({
-                    id: event.data
-                });
-                var rest = PlatformContext.rest;
-                rest.fetchHost(event.data)
-                    .then(function (tango_host) {
-                        return tango_host.fetchDatabase();
-                    }).then(function (db) {
-                    TangoWebappHelpers.log(db.device.host.id + " has been added.");
-                }).fail(function (host) {
-                    TangoWebappHelpers.error("Failed to load Tango host[" + host.id + "]");//TODO errors
-                });
-            },
-            "user_context_controller.delete_tango_host subscribe": function (event) {
-                $$('settings').$$('tango_hosts').remove(event.data);
-
-                //TODO do we need to remove tango_host from context here?
-            },
-            "user_context_controller.destroy subscribe": function () {
-                $$('settings').$$('tango_hosts').clearAll();
-                $$('settings').$$('tango_hosts').refresh();
-            }
-        }
+        minWidth: 240
     }
 }, webix.ui.layout);
 

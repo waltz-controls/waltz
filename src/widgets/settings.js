@@ -10,6 +10,22 @@ export const kAddTangoHost = 'action:addTangoHost';
 
 export const kRemoveTangoHost = 'action:removeTangoHost';
 export const kSelectTangoHost = 'action:selectTangoHost';
+export const kApplyDeviceFilters = 'action:applyDeviceFilters';
+
+function saveUserContext(context, action, payload){
+    context.save()
+        .then(resp => {
+            if (resp.ok)
+                this.dispatch(payload, action);
+            else
+                throw new Error(`Failed to save UserContext[${context.user}] due to  ${resp.status}:${resp.statusText}`)
+        })
+        .catch(err => {
+            this.dispatch(err, kTopicError, kChannelLog);
+        })
+}
+
+
 export default class UserSettingsWidget extends WaltzWidget {
     constructor() {
         super(kWidgetSettings);
@@ -42,36 +58,25 @@ export default class UserSettingsWidget extends WaltzWidget {
         const context = await this.app.getContext(kUserContext);
         context.tango_hosts[host] = null;
 
-        context.save()
-            .then(resp => {
-                if (resp.ok)
-                    this.dispatch(host, kAddTangoHost);
-                else
-                    throw new Error(`Failed to save UserContext[${context.user}] due to  ${resp.status}:${resp.statusText}`)
-            })
-            .catch(err => {
-                this.dispatch(err, kTopicError, kChannelLog);
-            })
+        saveUserContext.call(this, context, kAddTangoHost, host);
     }
 
     async removeTangoHost(host){
         const context = await this.app.getContext(kUserContext);
         delete context.tango_hosts[host];
 
-        context.save()
-            .then(resp => {
-                if (resp.ok)
-                    this.dispatch(host, kRemoveTangoHost);
-                else
-                    throw new Error(`Failed to save UserContext[${context.user}] due to  ${resp.status}:${resp.statusText}`)
-            })
-            .catch(err => {
-                this.dispatch(err, kTopicError, kChannelLog);
-            })
+        saveUserContext.call(this, context, kRemoveTangoHost, host);
     }
 
     selectTangoHost(host){
         this.dispatch(host, kSelectTangoHost);
+    }
+
+    async applyDeviceFilters(filters){
+        const context = await this.app.getContext(kUserContext);
+        context.device_filters = filters;
+
+        saveUserContext.call(this, context, kApplyDeviceFilters, context);
     }
 
 }
