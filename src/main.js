@@ -10,6 +10,7 @@ import LoginController from "controllers/login";
 import TangoTree from "widgets/tango/tree";
 import TangoRestController from "controllers/tango_rest";
 import ApplicationLogController from "controllers/log";
+import WebixMessageController from "controllers/message";
 import TangoDeviceWidget from "widgets/tango/device";
 import UserSettingsWidget from "widgets/settings";
 import UserContextController from "controllers/user_context";
@@ -22,6 +23,7 @@ const waltz = new Application({name: APPNAME, version: VERSION})
     .registerController(new LoginController())
     .registerController(new TangoRestController())
     .registerController(new ApplicationLogController())
+    .registerController(new WebixMessageController())
     .registerController(new UserContextController())
     .registerWidget(new MainWindow())
     .registerWidget(new TangoTree())
