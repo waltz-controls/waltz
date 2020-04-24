@@ -159,6 +159,25 @@ export default class UserContext {
 
     /**
      *
+     * @param {string} id
+     * @param {*} def
+     * @return {*}
+     */
+    getOrDefault(id, def){
+        return this.ext[id] || (this.ext[id] = def);
+    }
+
+    /**
+     *
+     * @param {string} id
+     * @return {*}
+     */
+    get(id){
+        return this.ext[id];
+    }
+
+    /**
+     *
      * @param options
      * @return {Promise<Response>}
      */

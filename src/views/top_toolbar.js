@@ -44,7 +44,7 @@ const toolsMenu = webix.ui({
             onItemClick: function (id) {
                 switch (id) {
                     case "toolsScripting":
-                        PlatformApi.PlatformUIController().openScriptingTab();
+                        $$(kMainWindow).callEvent('scripting',[])
                         break;
                     case "toolsAstor":
                         PlatformApi.PlatformUIController().openAstorTab();

@@ -1,9 +1,5 @@
-import {TangoId} from "../platform/tango_id.js";
+import {TangoId} from "@waltz-controls/tango-rest-client";
 
-OpenAjax.hub.subscribe("platform_context.create", (msg, event)=>{
-    UserAction.init(event.data.eventbus);
-    UserActionService.init(event.data.eventbus);
-});
 
 export const kUserActionsChannel = "channel:user-actions";
 export const kUserActionSubmit = "user-action:submit";

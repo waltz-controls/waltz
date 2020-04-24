@@ -1,7 +1,6 @@
 import {WaltzWidget} from "@waltz-controls/middleware";
 import {kSettingsHeaderCogs} from "views/settings";
-import {kUserContext} from "controllers/user_context";
-import {kChannelLog, kTopicError} from "controllers/log";
+import {kControllerUserContext} from "controllers/user_context";
 import {kTangoRestContext} from "../controllers/tango_rest";
 import {of} from "rxjs";
 import {last, mergeMap} from "rxjs/operators";
@@ -15,16 +14,10 @@ export const kRemoveTangoHost = 'action:removeTangoHost';
 export const kSelectTangoHost = 'action:selectTangoHost';
 export const kApplyDeviceFilters = 'action:applyDeviceFilters';
 
-function saveUserContext(context, action, payload){
-    context.save()
-        .then(resp => {
-            if (resp.ok)
-                this.dispatch(payload, action);
-            else
-                throw new Error(`Failed to save UserContext[${context.user}] due to  ${resp.status}:${resp.statusText}`)
-        })
-        .catch(err => {
-            this.dispatch(err, kTopicError, kChannelLog);
+function saveUserContext(action, payload){
+    this.context.save()
+        .then(() => {
+            this.dispatch(payload, action);
         })
 }
 
@@ -36,6 +29,8 @@ export default class UserSettingsWidget extends WaltzWidget {
     }
 
     config(){
+        this.context = this.app.getController(kControllerUserContext);
+
         this.listen(host => {
             $$(this.name).$$('tango_hosts').add({id:host,value:host})
         },kAddTangoHost);
@@ -63,17 +58,17 @@ export default class UserSettingsWidget extends WaltzWidget {
     }
 
     async addTangoHost(host){
-        const context = await this.app.getContext(kUserContext);
+        const context = await this.context.get();
         context.tango_hosts[host] = null;
 
-        saveUserContext.call(this, context, kAddTangoHost, host);
+        saveUserContext.call(this, kAddTangoHost, host);
     }
 
     async removeTangoHost(host){
-        const context = await this.app.getContext(kUserContext);
+        const context = await this.context.get();
         delete context.tango_hosts[host];
 
-        saveUserContext.call(this, context, kRemoveTangoHost, host);
+        saveUserContext.call(this, kRemoveTangoHost, host);
     }
 
     selectTangoHost(host){
@@ -81,10 +76,10 @@ export default class UserSettingsWidget extends WaltzWidget {
     }
 
     async applyDeviceFilters(filters){
-        const context = await this.app.getContext(kUserContext);
+        const context = await this.context.get();
         context.device_filters = filters;
 
-        saveUserContext.call(this, context, kApplyDeviceFilters, context);
+        saveUserContext.call(this, kApplyDeviceFilters, context);
     }
 
     async addTangoDevices({host, server, className, devices}){

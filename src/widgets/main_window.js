@@ -1,3 +1,7 @@
+// import "webix/webix.css"
+// import "webix/skins/mini.css"
+// import "!!script-loader!webix/webix.js"
+
 import {WaltzWidget} from "@waltz-controls/middleware";
 import newTopToolbar from "views/top_toolbar";
 import newBottomToolbar from "views/bottom_toolbar";
@@ -5,6 +9,7 @@ import newLeftPanel from "views/left_panel";
 import newRightPanel from "views/right_panel";
 import newMainView from "views/main_view";
 import {kWidgetSettings} from "widgets/settings";
+import {kWidgetScripting} from "widgets/scripting";
 
 export const kMainWindow = 'widget:main';
 
@@ -50,6 +55,10 @@ export default class MainWindow extends WaltzWidget{
 
         main.attachEvent('settings',()=> {
             this.openTab(kWidgetSettings);
+        })
+
+        main.attachEvent('scripting',()=> {
+            this.openTab(kWidgetScripting);
         })
 
         webix.ui.fullScreen();
