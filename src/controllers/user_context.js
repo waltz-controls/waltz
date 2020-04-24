@@ -2,6 +2,7 @@ import {Controller} from "@waltz-controls/middleware";
 import {kUser} from "widgets/login";
 import UserContext from "models/user_context";
 import {kAddTangoHost, kWidgetSettings} from "widgets/settings";
+import {kChannelLog, kTopicError} from "./log";
 
 const kControllerUserContext = 'controller:user_context';
 export const kUserContext = 'context:user_context';
@@ -18,6 +19,10 @@ export default class UserContextController extends Controller {
 
     async run(){
         const user = await this.app.getContext(kUser)
-        this.app.registerContext(kUserContext, UserContext.load(user.name, {headers:{...user.headers}}));
+        this.app.registerContext(kUserContext, UserContext.load(user.name, {headers:{...user.headers}})
+            .catch(err => {
+                this.dispatch(err, kTopicError, kChannelLog);
+                throw err;//TODO throw critical error that prevents the whole application from proceeding
+            }));
     }
 }

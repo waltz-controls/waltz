@@ -103,6 +103,7 @@ export default class UserContext {
      * @return {Promise<UserContext>}
      */
     static load(id, options){
+        //TODO replace with clever observable
         return fetch(`user-context/cache?id=${id}`, options)
             .then(resp => {
                 if(resp.ok)

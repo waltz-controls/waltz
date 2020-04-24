@@ -92,9 +92,8 @@ export default class UserSettingsWidget extends WaltzWidget {
 
         const req = rest.newTangoHost({...host.split(':')}).database()
             .pipe(
-                mergeMap(db => of(devices.map(name => db.addDevice([server,name,className]))).pipe(
-                    last()
-                ))
+                mergeMap(db => of(devices.map(name => db.addDevice([server,name,className])))),
+                last()
             )
 
         this.dispatchObservable(req, kAddTangoDevices)
