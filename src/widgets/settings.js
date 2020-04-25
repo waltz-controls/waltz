@@ -1,9 +1,10 @@
 import {WaltzWidget} from "@waltz-controls/middleware";
 import {kSettingsHeaderCogs} from "views/settings";
 import {kControllerUserContext} from "controllers/user_context";
-import {kTangoRestContext} from "../controllers/tango_rest";
+import {kTangoRestContext} from "controllers/tango_rest";
 import {of} from "rxjs";
 import {last, mergeMap} from "rxjs/operators";
+import {kMainWindow} from "widgets/main_window";
 
 export const kWidgetSettings = 'widget:settings';
 
@@ -24,11 +25,8 @@ function saveUserContext(action, payload){
 
 export const kAddTangoDevices = 'action:addTangoDevices';
 export default class UserSettingsWidget extends WaltzWidget {
-    constructor() {
-        super(kWidgetSettings);
-    }
-
-    config(){
+    constructor(app) {
+        super(kWidgetSettings, app);
         this.context = this.app.getController(kControllerUserContext);
 
         this.listen(host => {
@@ -55,6 +53,11 @@ export default class UserSettingsWidget extends WaltzWidget {
                     root:this
                 }
         }
+    }
+
+    run(){
+        const tab = $$(this.name) || $$(this.app.getWidget(kMainWindow).mainView.addView(this.ui()));
+        tab.show();
     }
 
     async addTangoHost(host){

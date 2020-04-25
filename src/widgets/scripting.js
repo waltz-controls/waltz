@@ -1,60 +1,57 @@
 import {WaltzWidget} from "@waltz-controls/middleware";
 import "views/scripting_console";
 import {kControllerUserContext, kUserContext} from "controllers/user_context";
-import {kChannelLog, kTopicLog} from "../controllers/log";
-import UserScript from "../models/user_script";
+import {kChannelLog, kTopicLog} from "controllers/log";
+import UserScript from "models/user_script";
+import {kMainWindow} from "widgets/main_window";
 
 export const kWidgetScripting = 'widget:scripting';
 const kOverwrite = true;
 
 export default class ScriptingWidget extends WaltzWidget {
-    constructor() {
-        super(kWidgetScripting);
-
-    }
-
-    config(){
+    constructor(app) {
+        super(kWidgetScripting, app);
         const proxy = {
-            $proxy: true,
+        $proxy: true,
             load: (view, params) => {
-                return this.app.getContext(kUserContext)
-                    .then(userContext => userContext.getOrDefault(this.name, []).map(script => new UserScript({...script})));
-            },
+            return this.app.getContext(kUserContext)
+                .then(userContext => userContext.getOrDefault(this.name, []).map(script => new UserScript({...script})));
+        },
             save: (master, params, dataProcessor) =>{
-                let promiseContext = this.app.getContext(kUserContext);
-                switch(params.operation){
-                    case "insert":
-                        promiseContext = promiseContext
-                            .then(userContext => userContext.ext[this.name].push(params.data))
-                        break;
-                    case "update":
-                        promiseContext = promiseContext
-                            .then(userContext => {
-                                webix.extend(
-                                    userContext.get(this.name).find(script => script.id === params.id),
-                                    params.data,
-                                    kOverwrite);
-                            });
-                        break;
-                    case "delete":
-                        promiseContext = promiseContext
-                            .then(userContext => {
-                                const indexOf = userContext.get(this.name).findIndex(script => script.id === params.id)
-                                userContext.get(this.name).splice(indexOf, 1);
-                            });
-                        break;
-                }
-
-                return promiseContext
-                    .then(() => this.app.getController(kControllerUserContext).save())
-                    .then(() => this.dispatch(`Successfully ${params.operation}ed UserScript[${params.id}]`,kTopicLog, kChannelLog));
+            let promiseContext = this.app.getContext(kUserContext);
+            switch(params.operation){
+                case "insert":
+                    promiseContext = promiseContext
+                        .then(userContext => userContext.ext[this.name].push(params.data))
+                    break;
+                case "update":
+                    promiseContext = promiseContext
+                        .then(userContext => {
+                            webix.extend(
+                                userContext.get(this.name).find(script => script.id === params.id),
+                                params.data,
+                                kOverwrite);
+                        });
+                    break;
+                case "delete":
+                    promiseContext = promiseContext
+                        .then(userContext => {
+                            const indexOf = userContext.get(this.name).findIndex(script => script.id === params.id)
+                            userContext.get(this.name).splice(indexOf, 1);
+                        });
+                    break;
             }
-        };
 
-        this.data = new webix.DataCollection({
-            url: proxy,
-            save: proxy
-        });
+            return promiseContext
+                .then(() => this.app.getController(kControllerUserContext).save())
+                .then(() => this.dispatch(`Successfully ${params.operation}ed UserScript[${params.id}]`,kTopicLog, kChannelLog));
+        }
+    };
+
+    this.data = new webix.DataCollection({
+        url: proxy,
+        save: proxy
+    });
     }
 
     ui(){
@@ -71,7 +68,8 @@ export default class ScriptingWidget extends WaltzWidget {
     }
 
     run(){
-
+        const tab = $$(this.name) || $$(this.app.getWidget(kMainWindow).mainView.addView(this.ui()));
+        tab.show();
     }
 
     /**
@@ -107,7 +105,7 @@ export default class ScriptingWidget extends WaltzWidget {
     executeScript(script){
         return script.func(this.app.context)
             .then(result => {
-                script.setResult(result);
+                script.result = result;
                 return script;
             })
             .catch(err => {

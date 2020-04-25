@@ -8,8 +8,8 @@ import newBottomToolbar from "views/bottom_toolbar";
 import newLeftPanel from "views/left_panel";
 import newRightPanel from "views/right_panel";
 import newMainView from "views/main_view";
-import {kWidgetSettings} from "widgets/settings";
-import {kWidgetScripting} from "widgets/scripting";
+import UserSettingsWidget from "widgets/settings";
+import ScriptingWidget from "widgets/scripting";
 
 export const kMainWindow = 'widget:main';
 
@@ -54,11 +54,13 @@ export default class MainWindow extends WaltzWidget{
         })
 
         main.attachEvent('settings',()=> {
-            this.openTab(kWidgetSettings);
+            new UserSettingsWidget(this.app)
+                .run();
         })
 
         main.attachEvent('scripting',()=> {
-            this.openTab(kWidgetScripting);
+            new ScriptingWidget(this.app)
+                .run()
         })
 
         webix.ui.fullScreen();

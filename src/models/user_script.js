@@ -22,10 +22,6 @@ export default class UserScript {
     get name(){
         return this.id;
     }
-
-    setResult(v){
-        this.result = v;
-    }
 }
 
 
