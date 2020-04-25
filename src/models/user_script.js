@@ -22,6 +22,23 @@ export default class UserScript {
     get name(){
         return this.id;
     }
+
+    /**
+     *
+     * @param context
+     * @return {Promise<*>}
+     */
+    execute(context){
+        return this.func(context)
+            .then(result => {
+                this.result = result;
+                return this;
+            })
+            .catch(err => {
+                this.errors.push(err);
+                throw this;
+            });
+    }
 }
 
 

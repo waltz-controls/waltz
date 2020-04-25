@@ -1,7 +1,14 @@
+import "views/user_log";
+
 export default function newRightPanel(root){
     return {
-        root,
         id:'right_panel',
-        template: 'right'
+        rows:[
+            {
+                id: 'user_log',
+                view: 'user_log',
+                root
+            }
+        ]
     }
 }

@@ -4,6 +4,8 @@ import {kControllerUserContext, kUserContext} from "controllers/user_context";
 import {kChannelLog, kTopicLog} from "controllers/log";
 import UserScript from "models/user_script";
 import {kMainWindow} from "widgets/main_window";
+import {ExecuteUserScript} from "models/user_action";
+import {kControllerUserAction} from "controllers/user_action_controller";
 
 export const kWidgetScripting = 'widget:scripting';
 const kOverwrite = true;
@@ -102,16 +104,11 @@ export default class ScriptingWidget extends WaltzWidget {
      * @param {UserScript} script
      * @return {Promise<*>}
      */
-    executeScript(script){
-        return script.func(this.app.context)
-            .then(result => {
-                script.result = result;
-                return script;
-            })
-            .catch(err => {
-                script.errors.push(err);
-                throw script;
-            });
+    async executeScript(script){
+        const user = (await this.app.getContext(kUserContext)).user;
+
+        return this.app.getController(kControllerUserAction)
+                            .submit(new ExecuteUserScript({user, script}));
     }
 
 }

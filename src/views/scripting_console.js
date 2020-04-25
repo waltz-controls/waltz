@@ -63,6 +63,15 @@ const upper_toolbar = {
             click: function () {
                 this.getTopParentView().remove();
             }
+        },
+        {
+            view: "icon",
+            icon: 'mdi mdi-play',
+            click: function () {
+                this.getTopParentView().execute();
+            },
+            hotkey: 'ctrl+enter',
+            tooltip: 'Hotkey: ctrl+enter'
         }
     ]
 };
@@ -95,26 +104,6 @@ const scripts_list = {
     select: true,
     template: '<span class="webix_icon mdi mdi-file-document-outline"></span> #name#',
     id: 'scripts_list'
-};
-
-/**
- * @constant
- * @memberof ui.ScriptingConsole
- */
-const lower_toolbar = {
-    view: 'toolbar',
-    cols: [
-        {
-            view: "icon",
-            icon: 'mdi mdi-play',
-            click: function () {
-                this.getTopParentView().execute();
-            },
-            hotkey: 'ctrl+enter',
-            tooltip: 'Hotkey: ctrl+enter'
-        },
-        {}
-    ]
 };
 
 /**
@@ -225,7 +214,6 @@ const scripting_console = webix.protoUI(
                 {
                     view: 'resizer'
                 },
-                lower_toolbar,
                 output
             ]
         }

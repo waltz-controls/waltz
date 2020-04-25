@@ -15,36 +15,6 @@ export class UserAction {
         this.redoable = redoable;
     }
 
-    static init(eventbus){
-        this.eventbus = eventbus;
-    }
-
-    submit(){
-        UserAction.eventbus.publish(kUserActionSubmit, this, kUserActionsChannel);
-        return new Promise((resolve, reject) => {
-            const listener = (action) => {
-                const timeout = setTimeout(() => {
-                    UserAction.eventbus.unsubscribe(kUserActionDone, listener, kUserActionsChannel);
-                    reject({
-                        errors: [new Error(`UserAction[id=${this.id};action=${this.action};target=${this.target}] has failed due to 3s timeout`)]
-                    });
-                }, 3000);
-
-                if(action.id === this.id){
-                    clearTimeout(timeout);
-                    UserAction.eventbus.unsubscribe(kUserActionDone, listener, kUserActionsChannel);
-                    if(action.hasFailed()){
-                        reject(action.data);
-                    } else {
-                        resolve(action.data);
-                    }
-                }
-            };
-
-            UserAction.eventbus.subscribe(kUserActionDone,listener, kUserActionsChannel)
-        });
-    }
-
     toMessage(){
         return `<span><span class="webix_icon mdi mdi-account"></span><strong>${this.user}</strong>`;
     }
@@ -115,11 +85,11 @@ export class UpdateDeviceAlias extends TangoUserAction {
 export class ExecuteUserScript extends UserAction {
     constructor({user, script}) {
         super(user, 'run','script');
-        this.script = script;
+        this.data = script;
     }
 
     toMessage() {
-        return super.toMessage() + " executes script " + this.script.id + "</span>";
+        return super.toMessage() + " executes script " + this.data.id + "</span>";
     }
 }
 
@@ -144,85 +114,85 @@ export class ExecuteUserScript extends UserAction {
  * @memberof TangoWebappPlatform
  */
 export class UserActionService {
-    constructor(action){
+    constructor(action, context, eventbus){
         this.action = action;
-    }
-
-    static init(eventbus){
+        this.context = context;
         this.eventbus = eventbus;
-
-        this.eventbus.subscribe(kUserActionSubmit, (msg, event) => {
-            UserActionService.create(msg).execute();
-        }, kUserActionsChannel)
     }
 
-    static create(action){
+    static create(action, context, eventbus){
         switch(action.target){
             case "script":
-                return new ScriptExecutionService(action);
+                return new ScriptExecutionService(action, context, eventbus);
             case "tango":
-                return new TangoUserActionExecutionService(action);
+                return new TangoUserActionExecutionService(action, context, eventbus);
         }
     }
 
     execute(){
-
+        throw new Error("Not implemented!");
     }
 
     publishResult(result){
-        UserActionService.eventbus.publish(kUserActionDone,result,kUserActionsChannel);
+        this.eventbus.publish(kUserActionDone,result,kUserActionsChannel);
     }
 }
 
-export class ScriptExecutionService extends UserActionService {
-    constructor(action) {
-        super(action);
+function setData(action, data){
+    action.data = data;
+    return action;
+}
+
+class ScriptExecutionService extends UserActionService {
+    constructor(action, context, eventbus) {
+        super(action, context, eventbus);
     }
 
     execute() {
-        this.action.script.execute().then(script => {
-            this.publishResult(Object.assign(this.action,{data:script}));
+        this.action.data.execute(this.context).then(script => {
+            this.publishResult(setData(this.action,script));
         }).catch(script => {
-            this.publishResult(Object.assign(this.action,{data:script}));
+            this.publishResult(setData(this.action,script));
         });
     }
 }
 
-export class TangoUserActionExecutionService extends UserActionService {
-    constructor(action) {
-        super(action);
+class TangoUserActionExecutionService extends UserActionService {
+    constructor(action, context, eventbus) {
+        super(action, context, eventbus);
     }
 
     execute() {
         switch(this.action.action){
             case "write":
                 this.action.attribute.write(this.action.value).then((result)=>{
-                    this.publishResult(Object.assign(this.action,{data:result}));
+                    this.publishResult(setData(this.action,result));
                 }).fail(result=> {
-                    this.publishResult(Object.assign(this.action,{data:result}));
+                    this.publishResult(setData(this.action,result));
                 });
                 return;
             case "exec":
                 this.action.command.execute(this.action.value).then((result)=>{
-                    this.publishResult(Object.assign(
-                        this.action,{data:
-                                Object.assign(result,{input:this.action.value})}));
+                    this.publishResult(setData(this.action,{
+                        ...result,
+                        input:this.action.value
+                    }));
                 }).fail(result=> {
-                    this.publishResult(Object.assign(this.action,{data:result}));
+                    this.publishResult(setData(this.action,result));
                 });
                 return;
             case "alias":
                 if(this.action.remove){
                     this.action.device.deleteAlias().then((result)=>{
-                        this.publishResult(Object.assign(this.action,{data:result}));
+                        this.publishResult(setData(this.action,result));
                     }).fail(result=> {
-                        this.publishResult(Object.assign(this.action,{data:result}));
+                        this.publishResult(setData(this.action,result));
                     });
                 } else {
                     this.action.device.updateAlias(this.action.alias).then((result)=>{
-                        this.publishResult(Object.assign(this.action,{data:result}));
+                        this.publishResult(setData(this.action,result));
                     }).fail(result=> {
-                        this.publishResult(Object.assign(this.action,{data:result}));
+                        this.publishResult(setData(this.action,result));
                     });
                 }
                 return;
