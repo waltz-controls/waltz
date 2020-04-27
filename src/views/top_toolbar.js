@@ -7,16 +7,12 @@ webix.ui({
     body: {
         view: "list",
         data: [
-            {id: "userSettings", value: "Settings"},
             {id: "userSignOut", value: "Logout...", icon: "mdi mdi-logout"}
         ],
         autoheight: true,
         borderless: true,
         on: {
             onItemClick: function (id) {
-                if (id === "userSettings") {
-                    $$(kMainWindow).callEvent('settings',[])
-                }
                 if (id === "userSignOut") {
                     $$(kMainWindow).callEvent('logout',[])
 

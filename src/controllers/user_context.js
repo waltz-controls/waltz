@@ -1,8 +1,7 @@
 import {Controller} from "@waltz-controls/middleware";
 import {kUser} from "widgets/login";
 import UserContext from "models/user_context";
-import {kAddTangoHost, kWidgetSettings} from "widgets/settings";
-import {kChannelLog, kTopicError} from "./log";
+import {kChannelLog, kTopicError} from "controllers/log";
 
 export const kControllerUserContext = 'controller:user_context';
 export const kUserContext = 'context:user_context';
@@ -12,9 +11,6 @@ export default class UserContextController extends Controller {
     }
 
     config(){
-        this.listen(async host => {
-
-        },kAddTangoHost,kWidgetSettings)
     }
 
     async run(){

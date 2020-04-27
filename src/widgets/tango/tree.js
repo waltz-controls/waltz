@@ -3,11 +3,13 @@ import {kMainWindow} from "widgets/main_window";
 import {kTangoRestContext} from "controllers/tango_rest";
 import newSearch from "views/search";
 import "views/devices_tree";
-import {kUserContext} from "controllers/user_context";
-import {kChannelLog, kTopicError} from "controllers/log";
+import {kControllerUserContext, kUserContext} from "controllers/user_context";
+import {kChannelLog, kTopicError, kTopicLog} from "controllers/log";
 import {TangoId} from "@waltz-controls/tango-rest-client";
-import {kTangoDeviceWidget} from "./device";
-import {kAddTangoHost, kRemoveTangoHost} from "../settings";
+import {kTangoDeviceWidget} from "widgets/tango/device";
+import {newToolbarButton} from "views/helpers";
+import {last, mergeMap} from "rxjs/operators";
+import {of} from "rxjs";
 
 export const kTangoTree = 'widget:tango_tree';
 
@@ -26,6 +28,7 @@ const kDevicesTreePanelHeader = `${kDevicesTreePanelHeaderIcon}Tango hosts tree`
 
 export const kActionSelectTangoDevice = 'action:select_tango_device';
 export const kActionSelectTangoHost = 'action:select_tango_host';
+export const kAddTangoDevices = 'action:addTangoDevices';
 
 async function getTangoRest(app){
     const rest = await app.getContext(kTangoRestContext);
@@ -38,15 +41,49 @@ export default class TangoTree extends WaltzWidget {
     }
 
     config(){
-        this.listen(() => this.refresh(), kAddTangoHost);
+        this.context = this.app.getController(kControllerUserContext);
 
-        this.listen(() => this.refresh(), kRemoveTangoHost);
+        const proxy = {
+            $proxy: true,
+            load:() => {
+                return this.context.get()
+                    .then(userContext => userContext.getTangoHosts().map(host => ({id:host, value:host})));
+            },
+            save: (master, params, dataProcessor) => {
+                let promiseContext = this.context.get();
+                switch (params.operation) {
+                    case "insert":
+                        promiseContext = promiseContext
+                            .then(userContext => userContext.tango_hosts[params.id] = null)
+                        break;
+                    case "delete":
+                        promiseContext = promiseContext
+                            .then(userContext => {
+                                delete userContext.tango_hosts[params.id];
+                            });
+                        break;
+                }
+
+                return promiseContext
+                    .then(() => this.context.save())
+                    .then(() => this.refresh())
+                    .then(() => this.dispatch(`Successfully ${params.operation}ed TangoHost[${params.id}]`,kTopicLog, kChannelLog));
+            }
+        }
+
+        this.tango_hosts = new webix.DataCollection({
+            url: proxy,
+            save: proxy
+        })
+
+        this.listen(() => this.refresh(), kAddTangoDevices);
 
         this.listen(id => console.log(id.getTangoDeviceId()), kActionSelectTangoDevice)
         this.listen(id => console.log(id.getTangoHostId()), kActionSelectTangoHost)
     }
 
     ui(){
+        const self = this;
         return {
             view:'accordionitem',
             header:kDevicesTreePanelHeader,
@@ -66,7 +103,39 @@ export default class TangoTree extends WaltzWidget {
                         id: "tree"
                     },
                     {
-                        template: "toolbar"
+                        hidden: true,
+                        id:"wizard",
+                        view:"wizard",
+                        root: this
+                    },
+                    {
+                        hidden: true,
+                        view: "device_filters",
+                        id:"devices_filter",
+                        root: this
+                    },
+                    {
+                        hidden: true,
+                        view:"tango_hosts",
+                        id: "tango_hosts",
+                        root: this
+                    },
+                    {
+                        borderless: true,
+                        view: "toolbar",
+                        cols:[
+                            {
+                                view: "icon",
+                                icon:"mdi mdi-refresh",
+                                click(){
+                                    self.refresh();
+                                }
+                            },
+                            {},
+                            newToolbarButton('auto-fix',"wizard"),
+                            newToolbarButton('filter',"devices_filter"),
+                            newToolbarButton("plus","tango_hosts")
+                        ]
                     }
                 ]
             }
@@ -117,6 +186,7 @@ export default class TangoTree extends WaltzWidget {
     }
 
     async refresh(){
+        this.tree.showProgress();
         const user = await this.app.getContext(kUserContext);
         const rest = await getTangoRest(this.app);
         this.tree.clearAll();
@@ -125,9 +195,19 @@ export default class TangoTree extends WaltzWidget {
         rest.toTangoRestApiRequest().devices('tree')
             .get(`?${user.getTangoHosts().map(host => `host=${host}`).join('&')}&${user.device_filters.map(filter => `wildcard=${filter}`).join('&')}`)
             .subscribe({
-                next: tree => this.tree.parse(tree),
+                next: tree => {
+                    this.tree.parse(tree)
+                    this.tree.hideProgress();
+                },
                 error: err => this.dispatch(err, kTopicError, kChannelLog)
             })
+    }
+
+    async applyDeviceFilters(filters){
+        const context = await this.context.get();
+        context.device_filters = filters;
+
+        this.context.save().then(() => this.refresh())
     }
 
     run(){
@@ -138,5 +218,25 @@ export default class TangoTree extends WaltzWidget {
 
     openDeviceControlPanel(){
         this.app.getWidget(kTangoDeviceWidget).open();
+    }
+
+    async addTangoHost(host){
+        this.tango_hosts.add({id: host, value: host})
+    }
+
+    async removeTangoHost(host){
+        this.tango_hosts.remove(host);
+    }
+
+    async addTangoDevices({host, server, className, devices}){
+        const rest = await this.app.getContext(kTangoRestContext);
+
+        const req = rest.newTangoHost({...host.split(':')}).database()
+            .pipe(
+                mergeMap(db => of(devices.map(name => db.addDevice([server,name,className])))),
+                last()
+            )
+
+        this.dispatchObservable(req, kAddTangoDevices)
     }
 }

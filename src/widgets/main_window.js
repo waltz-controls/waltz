@@ -8,7 +8,6 @@ import newBottomToolbar from "views/bottom_toolbar";
 import newLeftPanel from "views/left_panel";
 import newRightPanel from "views/right_panel";
 import newMainView from "views/main_view";
-import UserSettingsWidget from "widgets/settings";
 import ScriptingWidget from "widgets/scripting";
 
 export const kMainWindow = 'widget:main';
@@ -51,11 +50,6 @@ export default class MainWindow extends WaltzWidget{
 
         main.attachEvent('logout',()=> {
             this.dispatch({},'logout');
-        })
-
-        main.attachEvent('settings',()=> {
-            new UserSettingsWidget(this.app)
-                .run();
         })
 
         main.attachEvent('scripting',()=> {
