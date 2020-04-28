@@ -1,5 +1,6 @@
 import {kMargins} from "./plot.js"
-import newToolbar from "./attrs_monitor_toolbar.js";
+import newToolbar from "./newToolbar";
+import {Runnable} from "views/mixins";
 
 /**
  *
@@ -92,14 +93,4 @@ const image_view = webix.protoUI({
     $init(config){
         webix.extend(config, this._ui(config));
     }
-}, TangoWebappPlatform.mixin.Runnable, webix.IdSpace, webix.ui.layout);
-
-/**
- * @param config
- * @memberof ui.Plot
- */
-TangoWebapp.ui.newImageView = function (config) {
-    return webix.extend({
-        view: "image_view"
-    }, config);
-};
+}, Runnable, webix.IdSpace, webix.ui.layout);

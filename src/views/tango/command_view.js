@@ -1,6 +1,7 @@
-import newToolbar from "./attrs_monitor_toolbar.js";
-import {btnClearAll} from "./scalar_view.js";
-import {ExecuteTangoCommand} from "../../src/models/tango_webapp/user_action.js";
+import newToolbar from "views/tango/newToolbar";
+import {btnClearAll} from "views/tango/scalar_view";
+import {ExecuteTangoCommand} from "models/user_action";
+import {Runnable} from "views/mixins";
 
 const command_output = webix.protoUI(
     /** @lends spectrum_text*/
@@ -172,10 +173,4 @@ const command_view = webix.protoUI({
     $init(config){
         webix.extend(config, this._ui(config));
     }
-},TangoWebappPlatform.mixin.Runnable, webix.IdSpace,webix.ui.layout);
-
-TangoWebapp.ui.newCommandView = function(config){
-    return webix.extend({
-        view: "command_view"
-    }, config)
-};
+},Runnable, webix.IdSpace,webix.ui.layout);

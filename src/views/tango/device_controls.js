@@ -1,4 +1,4 @@
-import {commandExecutionHelper} from "./command_view.js";
+import {commandExecutionHelper} from "views/tango/command_view";
 
 function getHeader(device) {
     return `<span class='webix_icon ${this.getIcon()}'></span>[<span class='webix_strong'>${device.display_name}/${this.display_name}</span>]`;
@@ -98,7 +98,6 @@ const LabelUpdater = {
 
 export const device_control_attr = webix.protoUI({
     name: "device_control_attr",
-    _label_prefix:"Attribute:",
     read(){
         if(this.attr === null) return;
         this.attr.read().then(resp => this.$$input.setValue(resp.value));
@@ -133,16 +132,9 @@ export const device_control_attr = webix.protoUI({
     },
     reset(){
         this.attr = null;
-        this.updateLabel();
     },
     defaults:{
         elements:[
-            {cols:[
-                    {view:"label",id:"label", label:"Attribute:"},
-                    // {view:"button",type:"icon",icon:"mdi mdi-info", width:30, click(){this.getFormView().showInfo()}},
-                    {view:"icon",icon:"wxi-eye", click(){this.getFormView().goto()}}
-                ]
-            },
             {
                 cols:[
                     {view:"button",value:"read", click(){ this.getFormView().read()}},
@@ -165,25 +157,21 @@ export const device_control_attr = webix.protoUI({
                 this.attr = attr;
                 if(!attr) return;
 
-                if(attr.info.writable.includes('WRITE') && attr.info.data_format !== "IMAGE") {
+                if(attr.writable && attr.data_format !== "IMAGE") {
                     this.$$input = $$(webix.ui([{view: "scalar_input", attr, type: "compact", borderless: true}], this.$$('input_holder'))[0].id);
 
                     this.$$('input_holder').show();
-                } else if(attr.info.data_format !== "IMAGE") {
+                } else if(attr.data_format !== "IMAGE") {
                     this.$$input = $$(webix.ui([{view: "text", readonly:true, borderless: true}], this.$$('input_holder'))[0].id);
 
                     this.$$('input_holder').show();
                 } else {
                     this.$$('input_holder').hide();
                 }
-
-                this.updateLabel(attr.display_name);
-
-                attr.read().then(resp => this.$$input.setValue(resp.value));
             }
         }
     }
-}, LabelUpdater,webix.IdSpace, webix.ui.form);
+}, webix.IdSpace, webix.ui.form);
 
 export const device_control_command = webix.protoUI({
     name: "device_control_command",
@@ -209,16 +197,9 @@ export const device_control_command = webix.protoUI({
     },
     reset(){
         this.command = null;
-        this.updateLabel();
     },
     defaults:{
         elements:[
-            {cols:[
-                    {view:"label",id:"label", label:"Command: "},
-                    // {view:"icon",icon:"fas fa-database fa-xs", click(){this.getFormView().showInfo()}},
-                    {view:"icon",icon:"wxi-eye", click(){this.getFormView().goto()}}
-                ]
-            },
             {id:"input_holder",rows:[
                     {}
                 ], hidden: true},
@@ -240,12 +221,10 @@ export const device_control_command = webix.protoUI({
                 } else {
                     this.$$('input_holder').hide();
                 }
-
-                this.updateLabel(command.display_name);
             }
         }
     }
-},LabelUpdater,webix.IdSpace, webix.ui.form);
+},webix.IdSpace, webix.ui.form);
 
 export const device_control_pipe = webix.protoUI({
     name: "device_control_pipe",
@@ -272,16 +251,9 @@ export const device_control_pipe = webix.protoUI({
     },
     reset(){
         this.pipe = null;
-        this.updateLabel();
     },
     defaults:{
         elements:[
-            {cols:[
-                    {view:"label",id:"label", label:"Pipe:"},
-                    // {view:"button",type:"icon",icon:"fas fa-info-circle", width:30, click(){this.getFormView().showInfo()}},
-                    {view:"icon",icon:"wxi-eye", click(){this.getFormView().goto()}}
-                ]
-            },
             {view:"button",value:"read", click(){this.getFormView().read();}}
         ],
         rules:{
@@ -291,9 +263,7 @@ export const device_control_pipe = webix.protoUI({
             onBindApply(pipe){
                 this.pipe = pipe;
                 if(!pipe) return;
-
-                this.updateLabel(pipe.display_name);
             }
         }
     }
-},LabelUpdater, webix.IdSpace,webix.ui.form);
+}, webix.IdSpace,webix.ui.form);

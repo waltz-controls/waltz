@@ -2,7 +2,7 @@ import {WaltzWidget} from "@waltz-controls/middleware";
 import {kMainWindow} from "widgets/main_window";
 import {kTangoRestContext} from "controllers/tango_rest";
 import newSearch from "views/search";
-import "views/devices_tree";
+import "views/tango/devices_tree";
 import {kControllerUserContext, kUserContext} from "controllers/user_context";
 import {kChannelLog, kTopicError, kTopicLog} from "controllers/log";
 import {TangoId} from "@waltz-controls/tango-rest-client";
@@ -10,6 +10,7 @@ import {kTangoDeviceWidget} from "widgets/tango/device";
 import {newToolbarButton} from "views/helpers";
 import {last, mergeMap} from "rxjs/operators";
 import {of} from "rxjs";
+import {kActionSelectTangoDevice, kActionSelectTangoHost, kAddTangoDevices} from "./actions";
 
 export const kTangoTree = 'widget:tango_tree';
 
@@ -25,10 +26,6 @@ const kDevicesTreePanelHeaderIcon = "<span class='webix_icon mdi mdi-sitemap'></
  * @type {string}
  */
 const kDevicesTreePanelHeader = `${kDevicesTreePanelHeaderIcon}Tango hosts tree`;
-
-export const kActionSelectTangoDevice = 'action:select_tango_device';
-export const kActionSelectTangoHost = 'action:select_tango_host';
-export const kAddTangoDevices = 'action:addTangoDevices';
 
 async function getTangoRest(app){
     const rest = await app.getContext(kTangoRestContext);

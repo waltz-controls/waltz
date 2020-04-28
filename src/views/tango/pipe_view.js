@@ -1,5 +1,5 @@
 import newToolbar from "./attrs_monitor_toolbar.js";
-import {codemirror_textarea} from "./scripting_console.js";
+import {codemirror_textarea} from "../scripting_console.js";
 
 const pipe_output = webix.protoUI({
     name: "pipe_output",

@@ -1,5 +1,6 @@
 import {kMargins} from "./plot.js"
-import newToolbar from "./attrs_monitor_toolbar.js";
+import newToolbar from "./newToolbar";
+import {Runnable} from "views/mixins";
 
 export const btnClearAll = {
     view:"button",
@@ -254,16 +255,6 @@ const btnHistory = {
     }
 };
 
-/**
- * @param {TangoAttribute} config
- * @memberof ui.Plot
- */
-TangoWebapp.ui.newScalar = function(config) {
-    return webix.extend({
-        view: "scalar"
-    }, config);
-};
-
 const scalar_view = webix.protoUI({
     name: "scalar_view",
     _ui(config){
@@ -307,14 +298,4 @@ const scalar_view = webix.protoUI({
     $init(config){
         webix.extend(config, this._ui(config));
     }
-}, TangoWebappPlatform.mixin.Runnable ,  webix.IdSpace, webix.ui.layout);
-
-/**
- * @param {TangoAttribute} config
- * @memberof ui.Plot
- */
-TangoWebapp.ui.newScalarView = function(config) {
-    return webix.extend({
-        view: "scalar_view"
-    }, config);
-};
+}, Runnable ,  webix.IdSpace, webix.ui.layout);

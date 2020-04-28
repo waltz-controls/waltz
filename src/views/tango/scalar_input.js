@@ -1,4 +1,4 @@
-import {WriteTangoAttribute} from "../../src/models/tango_webapp/user_action.js";
+import {WriteTangoAttribute} from "models/user_action";
 
 const btnMinus = {view:"button",value:"-", width: 20, click(){ this.getFormView()._write_minus()}};
 const btnPlus = {view:"button",value:"+", width: 20, click(){ this.getFormView()._write_plus()}};

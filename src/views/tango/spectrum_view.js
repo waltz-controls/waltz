@@ -1,5 +1,6 @@
 import {kMargins} from "./plot.js";
-import newToolbar from "./attrs_monitor_toolbar.js"
+import newToolbar from "./newToolbar"
+import {Runnable} from "views/mixins";
 
 /**
  *
@@ -115,14 +116,4 @@ const spectrum_view = webix.protoUI({
     $init(config){
         webix.extend(config, this._ui(config));
     }
-}, TangoWebappPlatform.mixin.Runnable, webix.IdSpace, webix.ui.layout);
-
-/**
- * @param {TangoAttribute} config
- * @memberof ui.Plot
- */
-TangoWebapp.ui.newSpectrumView = function (config) {
-        return webix.extend({
-            view: "spectrum_view"
-        }, config);
-};
+}, Runnable, webix.IdSpace, webix.ui.layout);
