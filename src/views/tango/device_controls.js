@@ -1,4 +1,5 @@
 import {commandExecutionHelper} from "views/tango/command_view";
+import "views/tango/scalar_input";
 
 function getHeader(device) {
     return `<span class='webix_icon ${this.getIcon()}'></span>[<span class='webix_strong'>${device.display_name}/${this.display_name}</span>]`;
@@ -89,15 +90,27 @@ export function openAttributeWindow(attr) {
     }
 }
 
-const LabelUpdater = {
-    updateLabel(value = ""){
-        this.$$('label').define("label",`${this._label_prefix} ${value}`);
-        this.$$('label').refresh();
-    }
-};
-
 export const device_control_attr = webix.protoUI({
     name: "device_control_attr",
+    ui(){
+        return {
+            elements:[
+                {
+                    cols:[
+                        {view:"button",value:"read", click(){ this.getFormView().read()}},
+                        {view:"button",value:"plot", click(){ this.getFormView().plot()}},
+                        {view:"button",value:"plot.hist", click(){ this.getFormView().plot_hist()}}
+                    ]
+                },
+                {
+                    id: "input_holder", rows:[
+                        {}
+                    ]
+                }
+
+            ]
+        }
+    },
     read(){
         if(this.attr === null) return;
         this.attr.read().then(resp => this.$$input.setValue(resp.value));
@@ -132,37 +145,35 @@ export const device_control_attr = webix.protoUI({
     },
     reset(){
         this.attr = null;
+        if(this.$$input) {
+            this.$$input.destructor();
+            this.$$input = null;
+        }
+    },
+    $init(config){
+        webix.extend(config, this.ui());
     },
     defaults:{
-        elements:[
-            {
-                cols:[
-                    {view:"button",value:"read", click(){ this.getFormView().read()}},
-                    {view:"button",value:"plot", click(){ this.getFormView().plot()}},
-                    {view:"button",value:"plot.hist", click(){ this.getFormView().plot_hist()}}
-                ]
-            },
-            {
-                id: "input_holder", rows:[
-                    {}
-                ]
-            }
-
-        ],
         rules:{
             "name": webix.rules.isNotEmpty
         },
         on:{
+            /**
+             *
+             * @param {Member} attr
+             */
             onBindApply(attr){
                 this.attr = attr;
                 if(!attr) return;
 
-                if(attr.writable && attr.data_format !== "IMAGE") {
+                if(attr.writable && !attr.isImage()) {
                     this.$$input = $$(webix.ui([{view: "scalar_input", attr, type: "compact", borderless: true}], this.$$('input_holder'))[0].id);
 
+                    this.$$input.setValues(attr);
+
                     this.$$('input_holder').show();
-                } else if(attr.data_format !== "IMAGE") {
-                    this.$$input = $$(webix.ui([{view: "text", readonly:true, borderless: true}], this.$$('input_holder'))[0].id);
+                } else if(!attr.isImage()) {
+                    this.$$input = $$(webix.ui([{view: "text", readonly:true, borderless: true, value: attr.value}], this.$$('input_holder'))[0].id);
 
                     this.$$('input_holder').show();
                 } else {

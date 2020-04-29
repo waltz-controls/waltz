@@ -50,12 +50,18 @@ export const scalar_input = webix.protoUI({
                 this.setValue(result.value)
         });
     },
+    /**
+     *
+     * @param {Member} attr
+     * @return {{cols: [{view: string, gravity: number, name: string, placeholder: string}]}}
+     * @private
+     */
     _compact_view(attr){
         const cols = [
-            {view:"text", name:"value", placeholder: `Input: ${attr.info.data_type} [min:${attr.info.min_value};max:${attr.info.max_value}]`, gravity:2}
+            {view:"text", name:"value", placeholder: `Input: ${attr.data_type} [min:${attr.min_value};max:${attr.max_value}]`, gravity:2}
         ];
 
-        if(attr.info.data_format === "SCALAR")
+        if(attr.isScalar())
             cols.push(btnMinus, btnPlus);
 
         cols.push(btnWrite);

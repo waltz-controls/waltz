@@ -37,18 +37,30 @@ function getTangoAction(type){
 const device_tree_list = webix.protoUI(
     {
         name: 'device_tree_list',
+        showCtrlPanel(){
+            const type = this.getItem(this.getSelectedId()).type;
+            this.getTopParentView().$$(`device_control_${type}`).show();
+        },
+        hideCtrlPanel(){
+            const type = this.getItem(this.getSelectedId()).type;
+            this.getTopParentView().$$(`device_control_${type}`).hide();
+        },
         $init: function (config) {
         },
         defaults: {
-            select: true,
             drag: "source",
             template: function (obj) {
                 return `<span class='webix_list_icon mdi mdi-${obj.icon}'></span>${obj.name}`;
             },
             on: {
                 onItemClick(id) {
-                    if (this.getSelectedId() === id)
-                        this.callEvent("onAfterSelect", [id]);
+                    if(this.isSelected(id)){
+                        this.hideCtrlPanel();
+                        this.unselectAll();
+                    } else {
+                        this.select(id);
+                        this.showCtrlPanel();
+                    }
                 },
                 /**
                  * Fires {@link event:item_selected}
@@ -58,8 +70,6 @@ const device_tree_list = webix.protoUI(
                  * @memberof ui.DeviceViewPanel.DeviceTreeList
                  */
                 onAfterSelect: function (id) {
-                    this.getTopParentView().toggleCtrlPanel(this.getItem(id).type);
-
                     this.config.root.dispatch(TangoId.fromMemberId(id), getTangoAction(this.getItem(id).type))
                 },
                 /**
@@ -174,16 +184,19 @@ const device_view_panel = webix.protoUI({
                     ]
                 },
                         {
+                            ...config,
                             hidden: true,
                             view: 'device_control_attr',
                             id: "device_control_attribute",
                         },
                         {
+                            ...config,
                             hidden: true,
                             view: "device_control_command",
                             id: "device_control_command"
                         },
                         {
+                            ...config,
                             hidden: true,
                             view: "device_control_pipe",
                             id: "device_control_pipe"
@@ -202,14 +215,6 @@ const device_view_panel = webix.protoUI({
                     ]
                 }
             ]
-        }
-    },
-    toggleCtrlPanel(type){
-        const $$target = this.$$(`device_control_${type}`);
-        if($$target.isVisible()){
-            $$target.hide()
-        } else {
-            $$target.show();
         }
     },
     $init: function (config) {

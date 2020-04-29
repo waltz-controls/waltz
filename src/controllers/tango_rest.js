@@ -13,20 +13,20 @@ class DecoratedTangoRestApiRequest extends TangoRestApiRequest {
         this.middleware = middleware;
     }
 
-    get(what){
-        const request = super.get(what);
+    get(what, options = {}){
+        const request = super.get(what, options);
         this.middleware.dispatchObservable('req',kChannelTangoRest, request);
         return request;
     }
 
-    put(what, data){
-        const request = super.put(what, data);
+    put(what, data, options = {}){
+        const request = super.put(what, data, options);
         this.middleware.dispatchObservable('req',kChannelTangoRest, request);
         return request;
     }
 
-    post(what, data){
-        const request = super.post(what, data);
+    post(what, data, options = {}){
+        const request = super.post(what, data, options);
         this.middleware.dispatchObservable('req',kChannelTangoRest, request);
         return request;
     }
