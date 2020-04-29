@@ -1,4 +1,3 @@
-import {commandExecutionHelper} from "views/tango/command_view";
 import "views/tango/scalar_input";
 
 function getHeader(device) {
@@ -186,10 +185,17 @@ export const device_control_attr = webix.protoUI({
 
 export const device_control_command = webix.protoUI({
     name: "device_control_command",
-    _label_prefix:"Command:",
     execute(){
         if(!this.command) return;
-        commandExecutionHelper(this.command, this.$$input);
+        let argin;
+        if (this.command.isVoid()) {
+            argin = undefined;
+        } else {
+            if (!this.$$input.validate()) return;
+            argin = this.$$input.getValue();
+        }
+
+        this.config.root.executeCommand(this.command, argin);
     },
     showInfo(){
         if(!this.command) return;
@@ -220,11 +226,15 @@ export const device_control_command = webix.protoUI({
             "name": webix.rules.isNotEmpty
         },
         on:{
+            /**
+             *
+             * @param {Member} command
+             */
             onBindApply(command){
                 this.command = command;
                 if(command === null) return;
 
-                if(command.info.in_type !== 'DevVoid') {
+                if(command.data_type !== 'DevVoid') {
                     const value = this.$$input ? this.$$input.getValue(): undefined;
                     this.$$input = $$(webix.ui([{view: "command_input", cmd: command, type: "mini", borderless: true}], this.$$('input_holder'))[0].id);
                     this.$$input.setValue(value);

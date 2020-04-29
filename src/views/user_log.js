@@ -1,10 +1,15 @@
 import {kUserActionDone, kUserActionsChannel, UserAction} from "models/user_action";
 import {BoundedReverseList} from "views/mixins";
+import {kControllerUserAction} from "controllers/user_action_controller";
 
 function log(target){
     return function(action){
         target.addFirst(action);
     }
+}
+
+function submitAction(app, action){
+    app.getController(kControllerUserAction).submit(action);
 }
 
 /**
@@ -31,7 +36,7 @@ const user_log = webix.protoUI({
                 if(action.redoable)
                 webix.confirm(`<div>Confirm redo action ${action.action} on ${action.target}?</div>${action.toMessage()}`, "confirm-warning")
                     .then(() => {
-                        Object.assign(action,{id: +new Date()}).submit();
+                        submitAction(this.config.root.app,Object.assign(action,{id: +new Date()}))
                     });
             }
         }

@@ -6,6 +6,10 @@ import "views/tango/device_view_panel";
 import {forkJoin, of} from "rxjs";
 import {catchError} from "rxjs/operators";
 import {kChannelLog, kTopicLog} from "controllers/log";
+import {TangoAttribute, TangoCommand, TangoPipe} from "models/tango";
+import {kControllerUserAction} from "controllers/user_action_controller";
+import {ExecuteTangoCommand, WriteTangoAttribute} from "models/user_action";
+import {kUserContext} from "controllers/user_context";
 
 export const kTangoDeviceWidget = 'widget:tango_device';
 
@@ -18,18 +22,6 @@ function setHeader(name, target) {
     target.refresh()
 }
 
-function getAttributeIcon(name, data_format){
-    if(name === "State" || name === "Status")
-        return 'heart-pulse';
-    switch(data_format){
-        case "SCALAR":
-            return 'at';
-        case "SPECTRUM":
-            return 'chart-line';
-        case "IMAGE":
-            return 'image-outline'
-    }
-}
 
 function catchFetchMembersError(members){
     return catchError(err => {
@@ -38,32 +30,6 @@ function catchFetchMembersError(members){
     });
 }
 
-class Member {
-    constructor({id, name, icon, type, data_format, data_type, min_value, max_value, writable = false}) {
-        this.id = id;
-        this.name = name;
-        this.icon = icon;
-        this.type = type;
-        this.data_format = data_format;
-        this.data_type = data_type;
-        this.min_value = min_value;
-        this.max_value = max_value;
-        this.writable = writable;
-        this.value = undefined;
-    }
-
-    isScalar(){
-        return this.data_format === "SCALAR";
-    }
-
-    isSpectrum(){
-        return this.data_format === "SPECTRUM";
-    }
-
-    isImage(){
-        return this.data_format === "IMAGE";
-    }
-}
 
 export default class TangoDeviceWidget extends WaltzWidget {
     constructor() {
@@ -143,7 +109,7 @@ export default class TangoDeviceWidget extends WaltzWidget {
             ),
                 rest.newTangoDevice(this.deviceId)
                     .commands()
-                    .get("?filter=id&filter=name").pipe(
+                    .get("?filter=id&filter=name&filter=in_type").pipe(
                     catchFetchMembersError.call(this, 'commands')
             ),
                 rest.newTangoDevice(this.deviceId)
@@ -160,22 +126,20 @@ export default class TangoDeviceWidget extends WaltzWidget {
                 this.widget.disable();
                 return;
             }
-            this.attributes.parse(attributes.map(attr => new Member(
+            this.attributes.parse(attributes.map(attr => new TangoAttribute(
                 {
                     ...attr,
                     ...attr.info,
-                    icon: getAttributeIcon(attr.name, attr.info.data_format),
-                    type: 'attribute',
                     writable: attr.info.writable.includes('WRITE') && attr.info.data_format !== "IMAGE"
                 })));
 
-            this.commands.parse(commands.map(cmd => new Member(
-                {...cmd, icon: attributes.name === "State" || attributes.name === "Status"
-                        ? 'heart-pulse'
-                        : 'play-box-outline',
-                type:'command'})));
+            this.commands.parse(commands.map(cmd => new TangoCommand(
+                {
+                    ...cmd,
+                    data_type: cmd.info.in_type
+                })));
 
-            this.pipes.parse(pipes.map(pipe => new Member({...pipe, icon: 'card-text-outline', type: 'pipe'})));
+            this.pipes.parse(pipes.map(pipe => new TangoPipe({...pipe})));
 
             this.widget.hideProgress()
         });
@@ -216,5 +180,15 @@ export default class TangoDeviceWidget extends WaltzWidget {
                 }
             })
             .subscribe(resp => this.attributes.updateItem(id.getTangoMemberId(),{value: resp}))
+    }
+
+    async executeCommand(command, value){
+        const user = (await this.app.getContext(kUserContext)).user;
+        this.app.getController(kControllerUserAction).submit(new ExecuteTangoCommand({user, command, value}));
+    }
+
+    async writeAttribute(attribute, value){
+        const user = (await this.app.getContext(kUserContext)).user;
+        this.app.getController(kControllerUserAction).submit(new WriteTangoAttribute({user, attribute, value}));
     }
 }

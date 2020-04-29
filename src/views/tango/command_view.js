@@ -59,18 +59,25 @@ const command_input = webix.protoUI({
 
         return argin;
     },
+    /**
+     *
+     * @param {TangoCommand} command
+     * @return {{}}
+     * @private
+     */
     _mini_view(command){
         const argin = {};
-        if (command.info.in_type !== 'DevVoid') {
-            webix.extend(argin,{
-                view:"textarea",
-                name:"argin",
-                placeholder: `Input: ${command.info.in_type} [${command.info.in_type_desc}]`,
+        if (command.isVoid()) {
+            webix.extend(argin, {hidden: true});
+        } else {
+            webix.extend(argin, {
+                view: "textarea",
+                name: "argin",
+                placeholder: `Input: ${command.data_type}`,
+                tooltip: `Input: ${command.data_type}`,
                 validate: webix.rules.isNotEmpty,
                 invalidMessage: 'Input argument can not be empty'
             });
-        } else {
-            webix.extend(argin,{ hidden: true });
         }
         return argin;
     },
@@ -107,18 +114,17 @@ const btnExecute = {
 
 /**
  *
- * @param {TangoCommand} command
+ * @param {Member} command
  * @param {webix.ui.form} $$input
  */
 export function commandExecutionHelper(command, $$input){
     let argin;
-    if(command.info.in_type !== 'DevVoid') {
+    if (command.isVoid()) {
+        argin = undefined;
+    } else {
         if (!$$input.validate()) return;
         argin = $$input.getValue();
-    } else {
-        argin = undefined;
     }
-    //TODO check type
     return new ExecuteTangoCommand({user: PlatformContext.UserContext.user, command: command, value:argin}).submit();
 }
 
