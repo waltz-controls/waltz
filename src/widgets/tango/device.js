@@ -7,8 +7,8 @@ import {forkJoin, of} from "rxjs";
 import {catchError} from "rxjs/operators";
 import {kChannelLog, kTopicLog} from "controllers/log";
 import {TangoAttribute, TangoCommand, TangoPipe} from "models/tango";
-import {kControllerUserAction} from "controllers/user_action_controller";
-import {ExecuteTangoCommand, WriteTangoAttribute} from "models/user_action";
+import {kControllerUserAction,} from "controllers/user_action_controller";
+import {ExecuteTangoCommand, ReadTangoAttribute, WriteTangoAttribute} from "models/user_action";
 import {kUserContext} from "controllers/user_context";
 
 export const kTangoDeviceWidget = 'widget:tango_device';
@@ -38,7 +38,14 @@ export default class TangoDeviceWidget extends WaltzWidget {
 
     config(){
         this.listen(id => this.setDevice(id),kActionSelectTangoDevice)
-        this.listen(id => this.readAttribute(id), kActionSelectTangoAttribute)
+        this.listen(id => this.readAttribute(this.attributes.getItem(id.getTangoMemberId())), kActionSelectTangoAttribute)
+        this.listen(action => {
+            switch(action.action){
+                case "read":
+                    this.attributes.updateItem(action.attribute.id, {...action.data})
+                    return;
+            }
+        }, kControllerUserAction)
         // this.listen(id => this.setDevice(id),kActionSelectTangoCommand)
         // this.listen(id => this.setDevice(id),kActionSelectTangoPipe)
     }
@@ -168,18 +175,12 @@ export default class TangoDeviceWidget extends WaltzWidget {
     //TODO CQRS
     /**
      *
-     * @param {TangoId} id
+     * @param {TangoAttribute} attribute
      */
-    async readAttribute(id){
-        if(!this.attributes.getItem(id.getTangoMemberId()).isScalar()) return;
-        const rest = await this.app.getContext(kTangoRestContext);
-        rest.newTangoAttribute(id)
-            .read({
-                headers:{
-                    "Accept":"text/plain"
-                }
-            })
-            .subscribe(resp => this.attributes.updateItem(id.getTangoMemberId(),{value: resp}))
+    async readAttribute(attribute){
+        if(!attribute.isScalar()) return;
+        const user = (await this.app.getContext(kUserContext)).user;
+        this.app.getController(kControllerUserAction).submit(new ReadTangoAttribute({user, attribute}));
     }
 
     async executeCommand(command, value){

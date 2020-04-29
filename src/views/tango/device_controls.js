@@ -1,4 +1,5 @@
 import "views/tango/scalar_input";
+import "views/tango/command_view";
 
 function getHeader(device) {
     return `<span class='webix_icon ${this.getIcon()}'></span>[<span class='webix_strong'>${device.display_name}/${this.display_name}</span>]`;
@@ -112,7 +113,7 @@ export const device_control_attr = webix.protoUI({
     },
     read(){
         if(this.attr === null) return;
-        this.attr.read().then(resp => this.$$input.setValue(resp.value));
+        this.config.root.readAttribute(this.attr);
     },
     plot(){
         if(this.attr === null) return;
@@ -166,7 +167,7 @@ export const device_control_attr = webix.protoUI({
                 if(!attr) return;
 
                 if(attr.writable && !attr.isImage()) {
-                    this.$$input = $$(webix.ui([{view: "scalar_input", attr, type: "compact", borderless: true}], this.$$('input_holder'))[0].id);
+                    this.$$input = $$(webix.ui([{view: "scalar_input", attr, type: "compact", borderless: true, root: this.config.root}], this.$$('input_holder'))[0].id);
 
                     this.$$input.setValues(attr);
 

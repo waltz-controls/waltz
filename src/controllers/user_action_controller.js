@@ -1,8 +1,11 @@
 import {Controller} from "@waltz-controls/middleware";
-import {kUserActionDone, kUserActionsChannel, kUserActionSubmit, UserAction} from "models/user_action";
+import {UserAction} from "models/user_action";
 import {kTangoRestContext} from "controllers/tango_rest";
 
 export const kControllerUserAction = 'controller:user_action';
+const kUserActionsChannel = "channel:user-actions";
+const kUserActionSubmit = "user-action:submit";
+const kUserActionDone = "user-action:done";
 export default class UserActionController extends Controller {
     constructor() {
         super(kControllerUserAction);
@@ -17,6 +20,7 @@ export default class UserActionController extends Controller {
     /**
      *
      * @param {typeof UserAction} action
+     * @return {Promise<*>}
      */
     submit(action) {
         this.dispatch(action, kUserActionSubmit, kUserActionsChannel);
@@ -37,15 +41,17 @@ export default class UserActionController extends Controller {
                         clearTimeout(timeout);
                         this.middleware.bus.unsubscribe(kUserActionDone, listener, kUserActionsChannel);
                         if(action.hasFailed()){
-                            reject(action.data);
+                            reject(action);
                         } else {
-                            resolve(action.data);
+                            resolve(action);
                         }
                     }
                 };
 
                 this.middleware.bus.subscribe(kUserActionDone,listener, kUserActionsChannel)
-            });
+            })
+                .then(action => this.dispatch(action))
+                .catch(action => this.dispatchError(action));
     }
 }
 
@@ -121,12 +127,34 @@ class TangoUserActionExecutionService extends UserActionService {
     async execute() {
         const rest = await this.context.get(kTangoRestContext);
         switch(this.action.action){
+            case "pipe":
+                rest.newTangoPipe(this.action.tango_id)
+                    .read()
+                    .toPromise()
+                    .then((result)=>{
+                        this.publishResult(setData(this.action,result));
+                    }).catch(result=> {
+                        this.publishResult(setData(this.action,result));
+                    });
+                return;
+            case "read":
+                rest.newTangoAttribute(this.action.tango_id).read()
+                    .toPromise()
+                    .then((result)=>{
+                        this.publishResult(setData(this.action,result));
+                    }).catch(result=> {
+                        this.publishResult(setData(this.action,result));
+                    });
+                return;
             case "write":
-                this.action.attribute.write(this.action.value).then((result)=>{
-                    this.publishResult(setData(this.action,result));
-                }).fail(result=> {
-                    this.publishResult(setData(this.action,result));
-                });
+                rest.newTangoAttribute(this.action.tango_id)
+                    .write(this.action.value)
+                    .toPromise()
+                    .then((result)=>{
+                        this.publishResult(setData(this.action,result));
+                    }).catch(result=> {
+                        this.publishResult(setData(this.action,result));
+                    });
                 return;
             case "exec":
                 rest.newTangoCommand(this.action.tango_id).execute(this.action.value)

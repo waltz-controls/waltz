@@ -1,5 +1,3 @@
-import {WriteTangoAttribute} from "models/user_action";
-
 const btnMinus = {view:"button",value:"-", width: 20, click(){ this.getFormView()._write_minus()}};
 const btnPlus = {view:"button",value:"+", width: 20, click(){ this.getFormView()._write_plus()}};
 const btnWrite = {view:"button", maxWidth:120, value:"Write",click(){this.getFormView()._write() }};
@@ -8,7 +6,7 @@ export const scalar_input = webix.protoUI({
     name:"scalar_input",
     getValue(){
         const value = this.elements.value.getValue();
-        switch(this.config.attr.info.data_type){
+        switch(this.config.attr.data_type){
             case "DevShort":
             case "DevUShort":
             case "DevLong":
@@ -32,23 +30,18 @@ export const scalar_input = webix.protoUI({
     _write_minus(){
         if(!this.validate()) return;
         const delta = this.getValue();
-        this.config.attr.read().then(resp => {
-            return new WriteTangoAttribute({user: PlatformContext.UserContext.user, attribute: this.config.attr, value: resp.value - delta}).submit();
-        });
+        this.config.attr.value -= delta;
+        this.config.root.writeAttribute(this.config.attr, this.config.attr.value);
     },
     _write_plus(){
         if(!this.validate()) return;
         const delta = this.getValue();
-        this.config.attr.read().then(resp => {
-            return new WriteTangoAttribute({user: PlatformContext.UserContext.user, attribute: this.config.attr, value: resp.value + delta}).submit();
-        });
+        this.config.attr.value += delta;
+        this.config.root.writeAttribute(this.config.attr, this.config.attr.value);
     },
     _write(){
         if(!this.validate()) return;
-        new WriteTangoAttribute({user: PlatformContext.UserContext.user, attribute: this.config.attr, value: this.getValues().value}).submit()
-            .then((result)=>{
-                this.setValue(result.value)
-        });
+        this.config.root.writeAttribute(this.config.attr, this.getValues().value);
     },
     /**
      *

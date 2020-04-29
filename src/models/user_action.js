@@ -1,10 +1,6 @@
 import {TangoId} from "@waltz-controls/tango-rest-client";
 
 
-export const kUserActionsChannel = "channel:user-actions";
-export const kUserActionSubmit = "user-action:submit";
-export const kUserActionDone = "user-action:done";
-
 export class UserAction {
     constructor(user, action, target, redoable = false){
         this.id = +new Date();
@@ -36,6 +32,38 @@ class TangoUserAction extends UserAction{
                                              <li>device: <i>${this.tango_id.getTangoDeviceName()}</i></li>
                                              <li>member: <i>${this.tango_id.name}</i></li>
                                     </ul></div>`;
+    }
+}
+
+export class ReadTangoPipe extends TangoUserAction {
+    /**
+     *
+     * @param user
+     * @param {TangoAttribute} attribute
+     */
+    constructor({user, pipe} = {}) {
+        super({user, action:'pipe', tango_id: TangoId.fromMemberId(pipe.id)});
+        this.pipe = pipe;
+    }
+
+    toMessage() {
+        return super.toMessage() + `<div>.read()</div>`;
+    }
+}
+
+export class ReadTangoAttribute extends TangoUserAction {
+    /**
+     *
+     * @param user
+     * @param {TangoAttribute} attribute
+     */
+    constructor({user, attribute} = {}) {
+        super({user, action:'read', tango_id: TangoId.fromMemberId(attribute.id)});
+        this.attribute = attribute;
+    }
+
+    toMessage() {
+        return super.toMessage() + `<div>.read()</div>`;
     }
 }
 
