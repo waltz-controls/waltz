@@ -3,7 +3,9 @@ import {kMainWindow} from "widgets/main_window";
 import {kActionSelectTangoAttribute, kActionSelectTangoDevice} from "widgets/tango/actions";
 import {kTangoRestContext} from "controllers/tango_rest";
 import "views/tango/device_view_panel";
-import {forkJoin} from "rxjs";
+import {forkJoin, of} from "rxjs";
+import {catchError} from "rxjs/operators";
+import {kChannelLog, kTopicLog} from "controllers/log";
 
 export const kTangoDeviceWidget = 'widget:tango_device';
 
@@ -27,6 +29,13 @@ function getAttributeIcon(name, data_format){
         case "IMAGE":
             return 'image-outline'
     }
+}
+
+function catchFetchMembersError(members){
+    return catchError(err => {
+        this.dispatchError(`Failed to get ${members} for device ${this.deviceId}`, kTopicLog, kChannelLog);
+        return of([]);
+    });
 }
 
 class Member {
@@ -104,22 +113,35 @@ export default class TangoDeviceWidget extends WaltzWidget {
         forkJoin(
             [rest.newTangoDevice(this.deviceId)
                 .toTangoRestApiRequest()
-                .get("?filter=name&filter=alias&filter=exported"),
+                .get("?filter=name&filter=alias&filter=exported").pipe(
+                    catchError(err => {
+                        this.dispatchError(err, kTopicLog, kChannelLog);
+                        return of({info:{exported: false}});
+                    })
+            ),
                 rest.newTangoDevice(this.deviceId)
                     .attributes()
-                    .get("?filter=id&filter=name&filter=data_format&filter=writable"),
+                    .get("?filter=id&filter=name&filter=data_format&filter=writable").pipe(
+                    catchFetchMembersError.call(this, 'attributes')
+            ),
                 rest.newTangoDevice(this.deviceId)
                     .commands()
-                    .get("?filter=id&filter=name"),
+                    .get("?filter=id&filter=name").pipe(
+                    catchFetchMembersError.call(this, 'commands')
+            ),
                 rest.newTangoDevice(this.deviceId)
                     .pipes()
-                    .get("?filter=id&filter=name")]
+                    .get("?filter=id&filter=name").pipe(
+
+                    catchFetchMembersError.call(this, 'pipes')
+            )]
         ).subscribe(([device, attributes, commands, pipes]) => {
             setHeader(device.alias || device.name, this.tab);
-            if(!device.info.exported){
-                $$(kTangoDeviceWidget).disable();
+            if(device.info.exported){
+                this.widget.enable();
             } else {
-                $$(kTangoDeviceWidget).enable();
+                this.widget.disable();
+                return;
             }
             this.attributes.parse(attributes.map(attr => new Member(
                 {

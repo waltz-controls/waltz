@@ -35,12 +35,16 @@ export default class ApplicationLogController extends Controller{
                 });
             },kTopicError, kChannelLog)
 
-        this.listen(msg => {
+        this.listen({
+            next :msg => {
             $$('main-log').log({
                 timestamp: +new Date(),
                 value: `<p>${msg}</p>`
             });
-        },kTopicLog, kChannelLog)
+        },
+        error: err => {
+            this.dispatch(err, kTopicError, kChannelLog);
+        }},kTopicLog, kChannelLog)
     }
 
 }
