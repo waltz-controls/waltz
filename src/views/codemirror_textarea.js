@@ -6,6 +6,7 @@
 // import '!!script-loader!codemirror/addon/hint/show-hint.js';
 // import '!!script-loader!codemirror/addon/hint/javascript-hint.js';
 
+import "codemirror/formatting";
 
 /**
  * Extends {@link https://docs.webix.com/api__refs__ui.textarea.html webix.ui.textarea}
@@ -68,3 +69,5 @@ const codemirror_textarea = webix.protoUI(
             tooltip: 'Autocomplete: ctrl+space'
         }
     }, webix.ui.textarea);
+
+export default codemirror_textarea;

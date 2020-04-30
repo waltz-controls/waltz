@@ -8,6 +8,7 @@
     "test": "test"
   },
   "scripts": {
+    "clean": "rm -rf codebase",
     "test": "mocha-webpack --require test/setup.js --webpack-config webpack.test.config.js \"test/**/*.test.js\"",
     "lint": "eslint ./",
     "build": "webpack --env.production true",

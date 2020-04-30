@@ -1,5 +1,6 @@
-import newToolbar from "./attrs_monitor_toolbar.js";
-import {codemirror_textarea} from "../scripting_console.js";
+import newToolbar from "views/tango/newToolbar";
+import codemirror_textarea from "views/codemirror_textarea";
+import {Runnable} from "views/mixins";
 
 const pipe_output = webix.protoUI({
     name: "pipe_output",
@@ -22,7 +23,7 @@ const pipe_view = webix.protoUI({
         return this.$$('output');
     },
     async run(){
-        this.plot.update(await this.config.read());
+        this.config.root.refresh();
     },
     _ui(){
         return {
@@ -39,11 +40,5 @@ const pipe_view = webix.protoUI({
     $init(config){
         webix.extend(config, this._ui())
     }
-},TangoWebappPlatform.mixin.Runnable,webix.IdSpace,webix.ui.layout);
-
-TangoWebapp.ui.newPipeView = function(config){
-    return webix.extend({
-        view: "pipe_view"
-    }, config);
-};
+},Runnable,webix.IdSpace,webix.ui.layout);
 

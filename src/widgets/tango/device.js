@@ -10,6 +10,7 @@ import {TangoAttribute, TangoCommand, TangoPipe} from "models/tango";
 import {kControllerUserAction,} from "controllers/user_action_controller";
 import {ExecuteTangoCommand, ReadTangoAttribute, ReadTangoPipe, WriteTangoAttribute} from "models/user_action";
 import {kUserContext} from "controllers/user_context";
+import PipeWidget from "widgets/tango/pipe";
 
 export const kTangoDeviceWidget = 'widget:tango_device';
 
@@ -197,11 +198,14 @@ export default class TangoDeviceWidget extends WaltzWidget {
     }
 
     async readPipe(pipe){
+
         const user = (await this.app.getContext(kUserContext)).user;
         this.app.getController(kControllerUserAction)
             .submit(new ReadTangoPipe({user, pipe}))
-            .then(action => {
-                debugger
+            .then(result => {
+                new PipeWidget(this.app, Object.assign(pipe, result))
+                    .run()
+                    .update(result);
             });
     }
 }

@@ -6,7 +6,7 @@ export default function newMainView(root){
         type: 'space',
         padding: 0,
         tabbar: {
-            height: 40,
+            height: 24,
             popupWidth: 480,
             tabMinWidth: 250,
             tabMoreWidth: 40,

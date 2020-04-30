@@ -91,5 +91,6 @@ export default class MainWindow extends WaltzWidget{
     openTab(id){
         const tab = $$(id) || $$(this.mainView.addView(this.app.getWidget(id).ui()))
         tab.show();
+        return tab;
     }
 }
