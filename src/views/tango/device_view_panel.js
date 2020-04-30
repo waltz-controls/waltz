@@ -155,7 +155,7 @@ const device_view_panel = webix.protoUI({
     ui(config) {
         return {
             rows: [
-                newComplexSearch(filter),
+                newComplexSearch(filter, ["a:", "c:", "p:"]),
                 {
                     gravity: 4,
                     rows:[

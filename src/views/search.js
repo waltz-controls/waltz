@@ -51,14 +51,21 @@ export default function newSearch(target, filter){
 /**
  *
  * @param {function} filter
+ * @param {string[]} [suggestData=[]] suggest
  */
-export function newComplexSearch(filter){
+export function newComplexSearch(filter, suggestData = []){
+    const suggest = webix.ui({
+        view:"suggest",
+        data:suggestData
+    })
+
     return {
         view: "search2",
         id:"search",
         placeholder: "type to filter",
         borderless: true,
         value: "",
+        // suggest
         on: {
             onTimedKeyPress: filter,
             onFocus: filter

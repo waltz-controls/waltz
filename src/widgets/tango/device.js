@@ -139,14 +139,17 @@ export default class TangoDeviceWidget extends WaltzWidget {
                     ...attr.info,
                     writable: attr.info.writable.includes('WRITE') && attr.info.data_format !== "IMAGE"
                 })));
+            this.attributes.sort("#name#");
 
             this.commands.parse(commands.map(cmd => new TangoCommand(
                 {
                     ...cmd,
                     data_type: cmd.info.in_type
                 })));
+            this.commands.sort("#name#");
 
             this.pipes.parse(pipes.map(pipe => new TangoPipe({...pipe})));
+            this.pipes.sort("#name#");
 
             this.widget.hideProgress()
         });
