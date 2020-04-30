@@ -45,7 +45,7 @@ export const scalar_input = webix.protoUI({
     },
     /**
      *
-     * @param {Member} attr
+     * @param {TangoAttribute} attr
      * @return {{cols: [{view: string, gravity: number, name: string, placeholder: string}]}}
      * @private
      */

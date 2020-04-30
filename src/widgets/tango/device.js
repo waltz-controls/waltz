@@ -8,7 +8,7 @@ import {catchError} from "rxjs/operators";
 import {kChannelLog, kTopicLog} from "controllers/log";
 import {TangoAttribute, TangoCommand, TangoPipe} from "models/tango";
 import {kControllerUserAction,} from "controllers/user_action_controller";
-import {ExecuteTangoCommand, ReadTangoAttribute, WriteTangoAttribute} from "models/user_action";
+import {ExecuteTangoCommand, ReadTangoAttribute, ReadTangoPipe, WriteTangoAttribute} from "models/user_action";
 import {kUserContext} from "controllers/user_context";
 
 export const kTangoDeviceWidget = 'widget:tango_device';
@@ -194,5 +194,14 @@ export default class TangoDeviceWidget extends WaltzWidget {
     async writeAttribute(attribute, value){
         const user = (await this.app.getContext(kUserContext)).user;
         this.app.getController(kControllerUserAction).submit(new WriteTangoAttribute({user, attribute, value}));
+    }
+
+    async readPipe(pipe){
+        const user = (await this.app.getContext(kUserContext)).user;
+        this.app.getController(kControllerUserAction)
+            .submit(new ReadTangoPipe({user, pipe}))
+            .then(action => {
+                debugger
+            });
     }
 }

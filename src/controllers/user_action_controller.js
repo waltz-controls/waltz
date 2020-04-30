@@ -50,8 +50,14 @@ export default class UserActionController extends Controller {
 
                 this.middleware.bus.subscribe(kUserActionDone,listener, kUserActionsChannel)
             })
-                .then(action => this.dispatch(action))
-                .catch(action => this.dispatchError(action));
+                .then(action => {
+                    this.dispatch(action)
+                    return action.data;
+                })
+                .catch(action => {
+                    this.dispatchError(action)
+                    throw action.data;
+                });
     }
 }
 

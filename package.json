@@ -38,8 +38,8 @@
   },
   "homepage": "https://www.waltz-controls.space",
   "devDependencies": {
-    "@babel/core": "^7.9.0",
-    "@babel/preset-env": "^7.9.5",
+    "@babel/core": "^7.9.6",
+    "@babel/preset-env": "^7.9.6",
     "archiver": "^3.1.1",
     "atob": "^2.1.2",
     "babel-loader": "^8.1.0",
@@ -68,7 +68,7 @@
   "dependencies": {
     "@waltz-controls/eventbus": "^1.2.4",
     "@waltz-controls/middleware": "^1.2.7",
-    "@waltz-controls/tango-rest-client": "^1.3.6",
+    "@waltz-controls/tango-rest-client": "^1.3.7",
     "codemirror": "^5.53.2",
     "jquery": "^3.5.0",
     "plotly.js-dist": "^1.53.0",

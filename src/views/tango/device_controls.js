@@ -250,11 +250,9 @@ export const device_control_command = webix.protoUI({
 
 export const device_control_pipe = webix.protoUI({
     name: "device_control_pipe",
-    _label_prefix:"Pipe:",
     read(){
-        if(this.pipe === null) return;
-        this.pipe.read()
-            .then(openPipeWindow.bind(this.pipe));
+        if(!this.pipe) return;
+        this.config.root.readPipe(this.pipe);
     },
     showInfo(){
         if(this.pipe === null) return;
@@ -284,7 +282,6 @@ export const device_control_pipe = webix.protoUI({
         on:{
             onBindApply(pipe){
                 this.pipe = pipe;
-                if(!pipe) return;
             }
         }
     }
