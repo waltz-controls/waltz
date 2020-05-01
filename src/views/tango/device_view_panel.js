@@ -37,13 +37,14 @@ function getTangoAction(type){
 const device_tree_list = webix.protoUI(
     {
         name: 'device_tree_list',
+        attachCtrlPanel(panel){
+            this.panel = panel;
+        },
         showCtrlPanel(){
-            const type = this.getItem(this.getSelectedId()).type;
-            this.getTopParentView().$$(`device_control_${type}`).show();
+            this.panel.show();
         },
         hideCtrlPanel(){
-            const type = this.getItem(this.getSelectedId()).type;
-            this.getTopParentView().$$(`device_control_${type}`).hide();
+            this.panel.hide();
         },
         $init: function (config) {
         },
@@ -55,11 +56,9 @@ const device_tree_list = webix.protoUI(
             on: {
                 onItemClick(id) {
                     if(this.isSelected(id)){
-                        this.hideCtrlPanel();
                         this.unselectAll();
                     } else {
                         this.select(id);
-                        this.showCtrlPanel();
                     }
                 },
                 /**
@@ -71,6 +70,14 @@ const device_tree_list = webix.protoUI(
                  */
                 onAfterSelect: function (id) {
                     this.config.root.dispatch(TangoId.fromMemberId(id), getTangoAction(this.getItem(id).type))
+                },
+                onSelectChange:function (ids) {
+                    const id = Array.isArray(ids) ? ids[0]: ids;
+                    if(this.isSelected(id)){
+                        this.showCtrlPanel();
+                    } else {
+                        this.hideCtrlPanel();
+                    }
                 },
                 /**
                  * Expands DeviceControlPanel
@@ -168,26 +175,15 @@ const device_view_panel = webix.protoUI({
                     },
                         {
                             ...config,
-                            gravity: 2,
-                            id: 'commands',
-                            view: 'device_tree_list'
-                        },
-                        {
-                            ...config,
-                            id: 'pipes',
-                            view: 'device_tree_list'
-                        },
-                        {
-                            id:"dummy",
-                            hidden: true
-                        }
-                    ]
-                },
-                        {
-                            ...config,
                             hidden: true,
                             view: 'device_control_attr',
                             id: "device_control_attribute",
+                        },
+                        {
+                            ...config,
+                            gravity: 2,
+                            id: 'commands',
+                            view: 'device_tree_list'
                         },
                         {
                             ...config,
@@ -197,10 +193,22 @@ const device_view_panel = webix.protoUI({
                         },
                         {
                             ...config,
+                            id: 'pipes',
+                            view: 'device_tree_list',
+                            autoheight:true
+                        },
+                        {
+                            ...config,
                             hidden: true,
                             view: "device_control_pipe",
                             id: "device_control_pipe"
                         },
+                        {
+                            id:"dummy",
+                            hidden: true
+                        }
+                    ]
+                },
                 {
                     view:"toolbar",
                     borderless: true,
@@ -224,6 +232,10 @@ const device_view_panel = webix.protoUI({
             this.$$('device_control_attribute').bind(this.$$('attrs'));
             this.$$('device_control_command').bind(this.$$('commands'));
             this.$$('device_control_pipe').bind(this.$$('pipes'));
+
+            this.$$('attrs').attachCtrlPanel(this.$$('device_control_attribute'));
+            this.$$('commands').attachCtrlPanel(this.$$('device_control_command'));
+            this.$$('pipes').attachCtrlPanel(this.$$('device_control_pipe'));
         })
     },
     defaults: {
