@@ -93,32 +93,21 @@ export const device_control_attr = webix.protoUI({
         }
     },
     read(){
-        if(this.attr === null) return;
+        if(!this.attr) return;
         this.config.root.readAttribute(this.attr);
     },
     plot(){
-        if(this.attr === null) return;
+        if(!this.attr) return;
         openAttributeWindow(this.attr);
     },
     plot_hist(){
-        if(this.attr === null) return;
+        if(!this.attr) return;
         this.attr.fetchHistory()
             .then(() => {
                 return openAttributeWindow(this.attr);
             }).then(()=>{
                 $$(this.attr.id).plot.updateMulti(this.attr.history);
             });
-    },
-    showInfo(){
-        if(this.attr === null) return;
-        OpenAjax.hub.publish("tango_webapp.item_selected", {
-            data: {
-                id: this.attr.id,
-                kind: "attrs"
-            }
-        });
-
-        $$('info_control_panel_header').expand();
     },
     goto(){
         if(this.attr === null) return;
@@ -141,7 +130,7 @@ export const device_control_attr = webix.protoUI({
         on:{
             /**
              *
-             * @param {Member} attr
+             * @param {TangoAttribute} attr
              */
             onBindApply(attr){
                 this.attr = attr;
@@ -178,17 +167,6 @@ export const device_control_command = webix.protoUI({
         }
 
         this.config.root.executeCommand(this.command, argin);
-    },
-    showInfo(){
-        if(!this.command) return;
-        OpenAjax.hub.publish("tango_webapp.item_selected", {
-            data: {
-                id: this.command.id,
-                kind: "commands"
-            }
-        });
-
-        $$('info_control_panel_header').expand();
     },
     goto(){
         if(!this.command) return;

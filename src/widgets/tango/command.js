@@ -13,14 +13,15 @@ export default class CommandWidget extends MemberWidget{
     constructor(app, cmd) {
         super(app, cmd, "command_view");
 
-        this.listen(action => {
-            if(action.action === "exec" && action.command.id === this.command.id)
-                this.view.output.update(action.data)
-        },kControllerUserAction)
+        this.listen(ExecuteTangoCommand.action);
     }
 
     get command(){
         return this.member;
+    }
+
+    update(response){
+        this.view.output.update(response);
     }
 
     async execute(value){

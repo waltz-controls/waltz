@@ -1,8 +1,11 @@
+import "views/tango/device_controls";
+import "views/tango/device_view_panel";
+
 import {WaltzWidget} from "@waltz-controls/middleware";
 import {kMainWindow} from "widgets/main_window";
 import {kActionSelectTangoAttribute, kActionSelectTangoDevice} from "widgets/tango/actions";
 import {kTangoRestContext} from "controllers/tango_rest";
-import "views/tango/device_view_panel";
+
 import {forkJoin, of} from "rxjs";
 import {catchError} from "rxjs/operators";
 import {kChannelLog, kTopicLog} from "controllers/log";

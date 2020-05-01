@@ -1,5 +1,11 @@
 import {TangoId} from "@waltz-controls/tango-rest-client";
 
+export const kChannelTango = "channel:tango";
+
+export const kTangoTypeAttribute = "tango:attribute";
+export const kTangoTypeCommand = "tango:command";
+export const kTangoTypePipe = "tango:pipe";
+
 function getTangoAttributeIcon(name, data_format){
     if(name === "State" || name === "Status")
         return 'heart-pulse';
@@ -49,12 +55,24 @@ class Member {
     set device(device){
         Object.assign(this.tango_id, TangoId.fromDeviceId(`${this.host}/${device}`));
     }
+
+    isAttribute(){
+        return this.type === kTangoTypeAttribute;
+    }
+
+    isCommand(){
+        return this.type === kTangoTypeCommand;
+    }
+
+    isPipe(){
+        return this.type === kTangoTypePipe;
+    }
 }
 
 
 export class TangoAttribute extends Member {
     constructor({id, name, data_format, data_type, min_value, max_value, writable = false}) {
-        super({id, name, icon:getTangoAttributeIcon(name, data_format), type:"attribute", data_format, data_type, min_value, max_value, writable});
+        super({id, name, icon:getTangoAttributeIcon(name, data_format), type:kTangoTypeAttribute, data_format, data_type, min_value, max_value, writable});
     }
 
     isScalar(){
@@ -72,7 +90,7 @@ export class TangoAttribute extends Member {
 
 export class TangoCommand extends Member {
     constructor({id, name, data_format, data_type, min_value, max_value, writable = false}) {
-        super({id, name, icon: getTangoCommandIcon(name), type: "command", data_format, data_type, min_value, max_value, writable});
+        super({id, name, icon: getTangoCommandIcon(name), type: kTangoTypeCommand, data_format, data_type, min_value, max_value, writable});
     }
 
     isVoid(){
@@ -82,7 +100,7 @@ export class TangoCommand extends Member {
 
 export class TangoPipe extends Member {
     constructor({id, name, data_format, data_type, min_value, max_value, writable = false}) {
-        super({id, name, icon: "card-text-outline", type: "pipe", data_format, data_type, min_value, max_value, writable});
+        super({id, name, icon: "card-text-outline", type: kTangoTypePipe, data_format, data_type, min_value, max_value, writable});
     }
 
 }

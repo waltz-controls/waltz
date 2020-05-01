@@ -213,21 +213,5 @@ const device_view_panel = webix.protoUI({
             this.$$('commands').attachCtrlPanel(this.$$('device_control_command'));
             this.$$('pipes').attachCtrlPanel(this.$$('device_control_pipe'));
         })
-    },
-    defaults: {
-        on:{
-            "tango_webapp.item_selected subscribe"(event){
-                if("device" === event.data.kind){
-                    const device = TangoDevice.find_one(event.data.id);
-                    this.setDevice(device);
-                }
-
-                if(!["attrs","commands","pipes"].includes(event.data.kind)) return;
-                const $$kind = this.$$(event.data.kind);
-                $$kind.waitData.then(()=>{
-                    $$kind.select(event.data.id)
-                });
-            }
-        }
     }
 }, webix.ProgressBar, webix.IdSpace, webix.ui.layout);

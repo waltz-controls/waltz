@@ -12,10 +12,7 @@ export default class PipeWidget extends MemberWidget {
      */
     constructor(app, pipe) {
         super(app,pipe, "pipe_view");
-        this.listen(action => {
-            if(action.action === "pipe" && action.pipe.id === this.pipe.id)
-                this.update(action.data)
-        },kControllerUserAction)
+        this.listen(ReadTangoPipe.action)
     }
 
     get pipe(){

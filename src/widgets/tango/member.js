@@ -1,5 +1,6 @@
 import {WaltzWidget} from "@waltz-controls/middleware";
 import HostTabWidget from "./host";
+import {kChannelTango} from "models/tango";
 
 function header(member){
     return `<span class='webix_icon mdi mdi-${member.icon}'></span>[<span class='webix_strong'>${member.device}/${member.name}</span>]`;
@@ -10,6 +11,13 @@ export default class MemberWidget extends WaltzWidget{
         super(member.id, app);
         this.member = member;
         this.view_name = view;
+    }
+
+    listen(topic){
+        super.listen(action => {
+            if(action.tango_id.getTangoMemberId() === this.member.tango_id.getTangoMemberId())
+                this.update(action.data)
+        },topic,kChannelTango)
     }
 
     ui(){

@@ -2,6 +2,8 @@ import {UserAction} from "models/user_action";
 import {BoundedReverseList} from "views/mixins";
 import {kControllerUserAction} from "controllers/user_action_controller";
 import {kInprocChannel} from "@waltz-controls/middleware";
+import {kChannelTango} from "models/tango";
+import {kAnyTopic} from "@waltz-controls/eventbus";
 
 function log(target){
     return function(action){
@@ -47,6 +49,7 @@ const user_log = webix.protoUI({
 
         //TODO pending action
         config.root.middleware.subscribe(kControllerUserAction,kInprocChannel,log(this));
+        config.root.middleware.subscribe(kAnyTopic,kChannelTango,log(this));
     },
     defaults:{
         limit: 25,

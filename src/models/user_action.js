@@ -36,13 +36,17 @@ class TangoUserAction extends UserAction{
 }
 
 export class ReadTangoPipe extends TangoUserAction {
+    static get action(){
+        return "pipe";
+    }
+
     /**
      *
      * @param user
-     * @param {TangoAttribute} attribute
+     * @param {TangoPipe} attribute
      */
     constructor({user, pipe} = {}) {
-        super({user, action:'pipe', tango_id: TangoId.fromMemberId(pipe.id)});
+        super({user, action:ReadTangoPipe.action, ...pipe});
         this.pipe = pipe;
     }
 
@@ -58,7 +62,7 @@ export class ReadTangoAttribute extends TangoUserAction {
      * @param {TangoAttribute} attribute
      */
     constructor({user, attribute} = {}) {
-        super({user, action:'read', tango_id: TangoId.fromMemberId(attribute.id)});
+        super({user, action:'read', ...attribute});
         this.attribute = attribute;
     }
 
@@ -75,7 +79,7 @@ export class WriteTangoAttribute extends TangoUserAction {
      * @param value
      */
     constructor({user, attribute, value} = {}) {
-        super({user, action:'write', tango_id: TangoId.fromMemberId(attribute.id)});
+        super({user, action:'write', ...attribute});
         this.attribute = attribute;
         this.value = value;
     }
@@ -86,8 +90,12 @@ export class WriteTangoAttribute extends TangoUserAction {
 }
 
 export class ExecuteTangoCommand extends TangoUserAction {
+    static get action(){
+        return "exec";
+    }
+
     constructor({user, command, value} = {}) {
-        super({user, action:'exec', ...command});
+        super({user, action:ExecuteTangoCommand.action, ...command});
         this.command = command;
         this.value = value;
     }

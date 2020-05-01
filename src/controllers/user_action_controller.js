@@ -1,6 +1,7 @@
 import {Controller} from "@waltz-controls/middleware";
-import {UserAction} from "models/user_action";
+import {ExecuteTangoCommand, ReadTangoPipe, UserAction} from "models/user_action";
 import {kTangoRestContext} from "controllers/tango_rest";
+import {kChannelTango} from "models/tango";
 
 export const kControllerUserAction = 'controller:user_action';
 const kUserActionsChannel = "channel:user-actions";
@@ -24,7 +25,8 @@ export default class UserActionController extends Controller {
      */
     submit(action) {
         this.dispatch(action, kUserActionSubmit, kUserActionsChannel);
-
+        const channel = action.target === "tango" ? kChannelTango : kControllerUserAction;
+        const topic = action.action;
 
 
             const outerAction = action;
@@ -51,11 +53,11 @@ export default class UserActionController extends Controller {
                 this.middleware.bus.subscribe(kUserActionDone,listener, kUserActionsChannel)
             })
                 .then(action => {
-                    this.dispatch(action)
+                    this.dispatch(action,topic,channel)
                     return action.data;
                 })
                 .catch(action => {
-                    this.dispatchError(action)
+                    this.dispatchError(action,topic,channel)
                     throw action.data;
                 });
     }
@@ -133,7 +135,7 @@ class TangoUserActionExecutionService extends UserActionService {
     async execute() {
         const rest = await this.context.get(kTangoRestContext);
         switch(this.action.action){
-            case "pipe":
+            case ReadTangoPipe.action:
                 rest.newTangoPipe(this.action.tango_id)
                     .read()
                     .toPromise()
@@ -162,7 +164,7 @@ class TangoUserActionExecutionService extends UserActionService {
                         this.publishResult(setData(this.action,result));
                     });
                 return;
-            case "exec":
+            case ExecuteTangoCommand.action:
                 rest.newTangoCommand(this.action.tango_id).execute(this.action.value)
                     .toPromise()
                     .then((result)=>{
