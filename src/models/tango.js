@@ -26,34 +26,17 @@ function getTangoCommandIcon(name){
 }
 
 class Member {
-    constructor({id, name, icon, type, data_format, data_type, min_value, max_value, writable = false}) {
+    constructor({id, host, device, name, icon, type, info, writable = false}) {
         this.id = id;
+        this.host = host;
+        this.device = device;
         this.tango_id = TangoId.fromMemberId(id);
         this.name = name;
         this.icon = icon;
         this.type = type;
-        this.data_format = data_format;
-        this.data_type = data_type;
-        this.min_value = min_value;
-        this.max_value = max_value;
+        this.info = info;
         this.writable = writable;
         this.value = undefined;
-    }
-
-    get host(){
-        return this.tango_id.getTangoHostId()
-    }
-
-    set host(host){
-        Object.assign(this.tango_id, TangoId.fromTangoHost(host))
-    }
-
-    get device(){
-        return this.tango_id.getTangoDeviceName();
-    }
-
-    set device(device){
-        Object.assign(this.tango_id, TangoId.fromDeviceId(`${this.host}/${device}`));
     }
 
     isAttribute(){
@@ -71,36 +54,35 @@ class Member {
 
 
 export class TangoAttribute extends Member {
-    constructor({id, name, data_format, data_type, min_value, max_value, writable = false}) {
-        super({id, name, icon:getTangoAttributeIcon(name, data_format), type:kTangoTypeAttribute, data_format, data_type, min_value, max_value, writable});
+    constructor({id, host, device, name, info}) {
+        super({id, host, device, name, icon:getTangoAttributeIcon(name, info.data_format), type:kTangoTypeAttribute, info, writable: info.writable.includes('WRITE') && info.data_format !== "IMAGE"});
     }
 
     isScalar(){
-        return this.data_format === "SCALAR";
+        return this.info.data_format === "SCALAR";
     }
 
     isSpectrum(){
-        return this.data_format === "SPECTRUM";
+        return this.info.data_format === "SPECTRUM";
     }
 
     isImage(){
-        return this.data_format === "IMAGE";
+        return this.info.data_format === "IMAGE";
     }
 }
 
 export class TangoCommand extends Member {
-    constructor({id, name, data_format, data_type, min_value, max_value, writable = false}) {
-        super({id, name, icon: getTangoCommandIcon(name), type: kTangoTypeCommand, data_format, data_type, min_value, max_value, writable});
+    constructor({id, host, device, name, info, writable = false}) {
+        super({id, host, device, name, icon: getTangoCommandIcon(name), type: kTangoTypeCommand, info, writable});
     }
 
     isVoid(){
-        return this.data_type === "DevVoid";
+        return this.info.data_type === "DevVoid";
     }
 }
 
 export class TangoPipe extends Member {
-    constructor({id, name, data_format, data_type, min_value, max_value, writable = false}) {
-        super({id, name, icon: "card-text-outline", type: kTangoTypePipe, data_format, data_type, min_value, max_value, writable});
+    constructor({id, host, device, name, info}) {
+        super({id, host, device, name, icon: "card-text-outline", type: kTangoTypePipe, info, writable: info.writable});
     }
-
 }

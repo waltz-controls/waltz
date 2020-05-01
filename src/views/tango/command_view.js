@@ -48,10 +48,10 @@ const command_input = webix.protoUI({
             webix.extend(argin, {
                 view: "textarea",
                 name: "argin",
-                label: `Input: ${command.data_type}`,
+                label: `Input: ${command.info.in_type} `,
                 labelPosition: "top",
-                placeholder: "3.14, 'String', ['string','array']",
-                tooltip: "3.14, 'String', ['string','array']",
+                placeholder: `3.14, 'String', ['string','array'] [${command.info.in_type_desc}]`,
+                tooltip: `3.14, 'String', ['string','array'] [${command.info.in_type_desc}]`,
                 validate: webix.rules.isNotEmpty,
                 invalidMessage: 'Input argument can not be empty'
             });
@@ -73,8 +73,8 @@ const command_input = webix.protoUI({
             webix.extend(argin, {
                 view: "textarea",
                 name: "argin",
-                placeholder: `Input: ${command.data_type}`,
-                tooltip: `Input: ${command.data_type}`,
+                placeholder: `Input: ${command.info.in_type} [${command.info.in_type_desc}]`,
+                tooltip: `Input: ${command.info.in_type}  [${command.info.in_type_desc}]`,
                 validate: webix.rules.isNotEmpty,
                 invalidMessage: 'Input argument can not be empty'
             });

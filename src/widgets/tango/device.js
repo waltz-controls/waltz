@@ -115,17 +115,17 @@ export default class TangoDeviceWidget extends WaltzWidget {
             ),
                 rest.newTangoDevice(this.deviceId)
                     .attributes()
-                    .get("?filter=id&filter=name&filter=data_format&filter=data_type&filter=writable&filter=min_value&filter=max_value").pipe(
+                    .get().pipe(//"?filter=id&filter=name&filter=data_format&filter=data_type&filter=writable&filter=min_value&filter=max_value"
                     catchFetchMembersError.call(this, 'attributes')
             ),
                 rest.newTangoDevice(this.deviceId)
                     .commands()
-                    .get("?filter=id&filter=name&filter=in_type").pipe(
+                    .get().pipe(//"?filter=id&filter=name&filter=in_type"
                     catchFetchMembersError.call(this, 'commands')
             ),
                 rest.newTangoDevice(this.deviceId)
                     .pipes()
-                    .get("?filter=id&filter=name").pipe(
+                    .get().pipe(//"?filter=id&filter=name"
 
                     catchFetchMembersError.call(this, 'pipes')
             )]
@@ -139,16 +139,13 @@ export default class TangoDeviceWidget extends WaltzWidget {
             }
             this.attributes.parse(attributes.map(attr => new TangoAttribute(
                 {
-                    ...attr,
-                    ...attr.info,
-                    writable: attr.info.writable.includes('WRITE') && attr.info.data_format !== "IMAGE"
+                    ...attr
                 })));
             this.attributes.sort("#name#");
 
             this.commands.parse(commands.map(cmd => new TangoCommand(
                 {
-                    ...cmd,
-                    data_type: cmd.info.in_type
+                    ...cmd
                 })));
             this.commands.sort("#name#");
 
