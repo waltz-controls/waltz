@@ -80,7 +80,8 @@ export const device_control_attr = webix.protoUI({
                     cols:[
                         {view:"button",value:"read", click(){ this.getFormView().read()}},
                         {view:"button",value:"plot", click(){ this.getFormView().plot()}},
-                        {view:"button",value:"plot.hist", click(){ this.getFormView().plot_hist()}}
+                        {view:"button",value:"plot.hist", click(){ this.getFormView().plot_hist()}},
+                        {view:"icon", icon: "mdi mdi-open-in-new", click(){this.getFormView().goto();}}
                     ]
                 },
                 {
@@ -94,24 +95,27 @@ export const device_control_attr = webix.protoUI({
     },
     read(){
         if(!this.attr) return;
-        this.config.root.readAttribute(this.attr);
+        return this.config.root.readAttribute(this.attr);
     },
     plot(){
         if(!this.attr) return;
-        openAttributeWindow(this.attr);
+        this.read()
+            .then(response => {
+                this.config.root.openAttributeWindow(this.attr)
+                    .update(response);
+            })
     },
     plot_hist(){
         if(!this.attr) return;
-        this.attr.fetchHistory()
-            .then(() => {
-                return openAttributeWindow(this.attr);
-            }).then(()=>{
-                $$(this.attr.id).plot.updateMulti(this.attr.history);
+        this.config.root.readAttributeHistory(this.attr)
+            .then(response => {
+                this.config.root.openAttributeWindow(this.attr)
+                    .update(response);
             });
     },
     goto(){
-        if(this.attr === null) return;
-        openAttributeWindow(this.attr);
+        if(!this.attr) return;
+        this.config.root.openAttributeWindow(this.attr);
     },
     reset(){
         this.attr = null;

@@ -6,7 +6,7 @@ export const scalar_input = webix.protoUI({
     name:"scalar_input",
     getValue(){
         const value = this.elements.value.getValue();
-        switch(this.config.attr.data_type){
+        switch(this.config.attr.info.data_type){
             case "DevShort":
             case "DevUShort":
             case "DevLong":
@@ -63,12 +63,18 @@ export const scalar_input = webix.protoUI({
             cols
         }
     },
+    /**
+     *
+     * @param {TangoAttribute} attr
+     * @return {{elements: [{view: string, labelPosition: string, name: string, tooltip: *, label: string, placeholder: *, validate: {(): boolean; (): boolean}}, {cols: [{}]}]}}
+     * @private
+     */
     _normal_view(attr){
         const cols = [
             {}
         ];
 
-        if(attr.info.data_format === "SCALAR")
+        if(attr.isScalar())
             cols.push(
                 webix.extend(btnMinus,{tooltip:"Hotkey: Ctrl + numpad(-)", hotkey: "ctrl+109"}),
                 webix.extend(btnPlus, {tooltip:"Hotkey: Ctrl + numpad(+)", hotkey: "ctrl+107"}));

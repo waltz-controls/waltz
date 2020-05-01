@@ -9,12 +9,13 @@ import {kTangoRestContext} from "controllers/tango_rest";
 import {forkJoin, of} from "rxjs";
 import {catchError} from "rxjs/operators";
 import {kChannelLog, kTopicLog} from "controllers/log";
-import {TangoAttribute, TangoCommand, TangoPipe} from "models/tango";
+import {kChannelTango, TangoAttribute, TangoCommand, TangoPipe} from "models/tango";
 import {kControllerUserAction,} from "controllers/user_action_controller";
 import {ExecuteTangoCommand, ReadTangoAttribute, ReadTangoPipe, WriteTangoAttribute} from "models/user_action";
 import {kUserContext} from "controllers/user_context";
 import PipeWidget from "widgets/tango/pipe";
 import CommandWidget from "widgets/tango/command";
+import AttributeWidget from "widgets/tango/attribute";
 
 export const kTangoDeviceWidget = 'widget:tango_device';
 
@@ -44,12 +45,8 @@ export default class TangoDeviceWidget extends WaltzWidget {
         this.listen(id => this.setDevice(id),kActionSelectTangoDevice)
         this.listen(id => this.readAttribute(this.attributes.getItem(id.getTangoMemberId())), kActionSelectTangoAttribute)
         this.listen(action => {
-            switch(action.action){
-                case "read":
                     this.attributes.updateItem(action.attribute.id, {...action.data})
-                    return;
-            }
-        }, kControllerUserAction)
+        },ReadTangoAttribute.action, kChannelTango)
         // this.listen(id => this.setDevice(id),kActionSelectTangoCommand)
         // this.listen(id => this.setDevice(id),kActionSelectTangoPipe)
     }
@@ -176,29 +173,54 @@ export default class TangoDeviceWidget extends WaltzWidget {
         this.tab.expand();
     }
 
-    //TODO CQRS
     /**
      *
      * @param {TangoAttribute} attribute
      */
     async readAttribute(attribute){
-        if(!attribute.isScalar()) return;
+        if(!attribute.isScalar()) return;//TODO
         const user = (await this.app.getContext(kUserContext)).user;
-        this.app.getController(kControllerUserAction).submit(new ReadTangoAttribute({user, attribute}));
+        return this.app.getController(kControllerUserAction).submit(new ReadTangoAttribute({user, attribute}));
+    }
+
+    async readAttributeHistory(attribute){
+        if(!attribute.isScalar()) return;
+        const rest = await this.app.getContext(kTangoRestContext);
+
+        return rest.newTangoAttribute(attribute.tango_id).history()
+            .toPromise()
+            .catch(err => {
+                this.dispatchError(err)
+                throw err;
+            });
     }
 
     async executeCommand(command, value){
         const user = (await this.app.getContext(kUserContext)).user;
-        this.app.getController(kControllerUserAction).submit(new ExecuteTangoCommand({user, command, value}));
+        return this.app.getController(kControllerUserAction).submit(new ExecuteTangoCommand({user, command, value}));
     }
 
     async writeAttribute(attribute, value){
         const user = (await this.app.getContext(kUserContext)).user;
-        this.app.getController(kControllerUserAction).submit(new WriteTangoAttribute({user, attribute, value}));
+        return this.app.getController(kControllerUserAction).submit(new WriteTangoAttribute({user, attribute, value}));
     }
 
+    /**
+     *
+     * @param {TangoAttribute} attr
+     */
+    openAttributeWindow(attr){
+        return new AttributeWidget(this.app, attr)//TODO memory leak?
+            .run();
+    }
+
+    /**
+     *
+     * @param {TangoCommand} cmd
+     * @return {CommandWidget}
+     */
     openCommandWindow(cmd) {
-        return new CommandWidget(this.app, cmd)
+        return new CommandWidget(this.app, cmd)//TODO memory leak?
             .run();
     }
 
@@ -208,7 +230,7 @@ export default class TangoDeviceWidget extends WaltzWidget {
      * @return {PipeWidget}
      */
     openPipeWindow(pipe){
-        return new PipeWidget(this.app, pipe)
+        return new PipeWidget(this.app, pipe)//TODO memory leak?
             .run();
     }
 

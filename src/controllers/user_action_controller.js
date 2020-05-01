@@ -1,5 +1,11 @@
 import {Controller} from "@waltz-controls/middleware";
-import {ExecuteTangoCommand, ReadTangoPipe, UserAction} from "models/user_action";
+import {
+    ExecuteTangoCommand,
+    ReadTangoAttribute,
+    ReadTangoPipe,
+    UserAction,
+    WriteTangoAttribute
+} from "models/user_action";
 import {kTangoRestContext} from "controllers/tango_rest";
 import {kChannelTango} from "models/tango";
 
@@ -145,7 +151,7 @@ class TangoUserActionExecutionService extends UserActionService {
                         this.publishResult(setData(this.action,result));
                     });
                 return;
-            case "read":
+            case ReadTangoAttribute.action:
                 rest.newTangoAttribute(this.action.tango_id).read()
                     .toPromise()
                     .then((result)=>{
@@ -154,7 +160,7 @@ class TangoUserActionExecutionService extends UserActionService {
                         this.publishResult(setData(this.action,result));
                     });
                 return;
-            case "write":
+            case WriteTangoAttribute.action:
                 rest.newTangoAttribute(this.action.tango_id)
                     .write(this.action.value)
                     .toPromise()

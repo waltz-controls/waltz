@@ -203,7 +203,7 @@ const scalar = webix.protoUI(
                     showlegend: true
                 });
             }catch(e){
-                TangoWebappHelpers.error("Failed to initialize Plotly", e)
+                throw new Error("Failed to initialize Plotly", e)
             }
         },
         /**
@@ -251,29 +251,36 @@ const btnHistory = {
     value:"History",
     maxWidth:120,
     click(){
-        this.getTopParentView().readHistory();
+        this.config.root.readHistory();
     }
 };
 
 const scalar_view = webix.protoUI({
     name: "scalar_view",
+    /**
+     *
+     * @param {TangoAttribute} config
+     * @return {{rows: []}}
+     * @private
+     */
     _ui(config){
+        const attr = config.root.attribute;
         const rows = [];
-        const view = config.info.data_type === 'DevString' ||
-                    config.info.data_type === 'State' ? "scalar_text" : "scalar";
+        const view = attr.info.data_type === 'DevString' ||
+        attr.info.data_type === 'State' ? "scalar_text" : "scalar";
 
         rows.push(webix.extend({
             view: view,
             id: 'plot'
-        }, config.attributes()));
+        }, attr));
 
-        if(config.info.writable.includes('WRITE')){
+        if(attr.writable){
             rows.push({view:"resizer"});
-            rows.push(webix.extend({view:"scalar_input"},{attr:config}));
+            rows.push({view:"scalar_input",attr, root: config.root});
         }
 
 
-        rows.push(newToolbar([btnHistory,btnClearAll]));
+        rows.push(newToolbar([webix.extend(btnHistory,config),btnClearAll]));
 
         return {
             rows
@@ -282,18 +289,11 @@ const scalar_view = webix.protoUI({
     clearAll(){
         this.plot.clearAll();
     },
-    readHistory(){
-        this.config.fetchHistory()
-            .then(() => {
-                this.plot.updateMulti(this.config.history);
-            });
-    },
     get plot(){
         return this.$$('plot');
     },
     async run(){
-        const resp = await this.config.read();
-        this.plot.update(resp.attributes());
+        this.config.root.read();
     },
     $init(config){
         webix.extend(config, this._ui(config));

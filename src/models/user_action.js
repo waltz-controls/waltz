@@ -56,13 +56,17 @@ export class ReadTangoPipe extends TangoUserAction {
 }
 
 export class ReadTangoAttribute extends TangoUserAction {
+
+    static get action (){
+        return "read";
+    }
     /**
      *
      * @param user
      * @param {TangoAttribute} attribute
      */
     constructor({user, attribute} = {}) {
-        super({user, action:'read', ...attribute});
+        super({user, action:ReadTangoAttribute.action, ...attribute});
         this.attribute = attribute;
     }
 
@@ -72,6 +76,10 @@ export class ReadTangoAttribute extends TangoUserAction {
 }
 
 export class WriteTangoAttribute extends TangoUserAction {
+
+    static get action (){
+        return "write";
+    }
     /**
      *
      * @param user
@@ -79,7 +87,7 @@ export class WriteTangoAttribute extends TangoUserAction {
      * @param value
      */
     constructor({user, attribute, value} = {}) {
-        super({user, action:'write', ...attribute});
+        super({user, action:WriteTangoAttribute.action, ...attribute});
         this.attribute = attribute;
         this.value = value;
     }
