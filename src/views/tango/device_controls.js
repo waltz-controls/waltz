@@ -1,76 +1,6 @@
 import "views/tango/scalar_input";
 import "views/tango/command_view";
 
-function getHeader(device) {
-    return `<span class='webix_icon ${this.getIcon()}'></span>[<span class='webix_strong'>${device.display_name}/${this.display_name}</span>]`;
-}
-
-
-//TODO make instance functions
-function openTab(view, resp) {
-    let $$tab = $$(this.id);
-    if (!$$tab || !$$tab.isVisible()) {
-        const device = PlatformContext.devices.getItem(this.device_id);
-        PlatformApi.PlatformUIController().openTangoHostTab(device.host, view);
-
-        $$tab = $$(this.id);
-    }
-
-    $$tab.show();
-    $$tab.plot.update(resp);
-}
-
-//TODO send Open Ajax event and handle it in main_controller
-export function openSpectrumWindow(resp) {
-    var device = PlatformContext.devices.getItem(this.device_id);
-    openTab.bind(this)({
-        header: getHeader.call(this, device),
-        close: true,
-        borderless: true,
-        body: TangoWebapp.ui.newSpectrumView(this)
-    }, resp);
-}
-
-//TODO send Open Ajax event and handle it in main_controller
-export function openImageWindow(resp) {
-    var device = PlatformContext.devices.getItem(this.device_id);
-    openTab.bind(this)({
-        header: getHeader.call(this, device),
-        close: true,
-        borderless: true,
-        body: TangoWebapp.ui.newImageView(webix.extend({id: this.id}, resp))
-    }, resp);
-}
-
-export function openScalarWindow(resp) {
-    const device = PlatformContext.devices.getItem(this.device_id);
-    openTab.bind(this)({
-        header: getHeader.call(this, device),
-        close: true,
-        borderless: true,
-        body: TangoWebapp.ui.newScalarView(webix.extend({id: this.id}, resp))
-    }, resp)
-}
-
-
-
-
-export function openAttributeWindow(attr) {
-    if(!attr) return;
-    if (attr.info.data_format === "SPECTRUM") {
-        return attr.read()
-            .then(openSpectrumWindow.bind(attr));
-    } else if (attr.info.data_format === "IMAGE") {
-        return attr.read()
-            .then(openImageWindow.bind(attr));
-    } else if (attr.info.data_format === "SCALAR") {
-        return attr.read()
-            .then(openScalarWindow.bind(attr));
-    } else {
-        TangoWebappHelpers.error("Unsupported data format: " + attr.info.data_format);
-    }
-}
-
 export const device_control_attr = webix.protoUI({
     name: "device_control_attr",
     ui(){
@@ -78,9 +8,9 @@ export const device_control_attr = webix.protoUI({
             elements:[
                 {
                     cols:[
-                        {view:"button",value:"read", click(){ this.getFormView().read()}},
-                        {view:"button",value:"plot", click(){ this.getFormView().plot()}},
-                        {view:"button",value:"plot.hist", click(){ this.getFormView().plot_hist()}},
+                        {view:"button",id:"read",value:"read", click(){ this.getFormView().read()}},
+                        {view:"button",id:"plot", value:"plot", click(){ this.getFormView().plot()}},
+                        {view:"button",id:"history",value:"plot.hist", click(){ this.getFormView().plot_hist()}},
                         {view:"icon", icon: "mdi mdi-open-in-new", click(){this.getFormView().goto();}}
                     ]
                 },
@@ -99,7 +29,7 @@ export const device_control_attr = webix.protoUI({
     },
     plot(){
         if(!this.attr) return;
-        this.read()
+        return this.read()
             .then(response => {
                 this.config.root.openAttributeWindow(this.attr)
                     .update(response);
@@ -133,12 +63,25 @@ export const device_control_attr = webix.protoUI({
         },
         on:{
             /**
+             *TODO can be this done in a better way? dynamic building?
              *
              * @param {TangoAttribute} attr
              */
             onBindApply(attr){
                 this.attr = attr;
                 if(!attr) return;
+
+                if(!attr.isScalar()){
+                    this.$$("history").hide();
+                } else {
+                    this.$$("history").show();
+                }
+
+                if(attr.isImage()){
+                    this.$$("read").hide();
+                } else {
+                    this.$$("read").show();
+                }
 
                 if(attr.writable && !attr.isImage()) {
                     this.$$input = $$(webix.ui([{view: "scalar_input", attr, type: "compact", borderless: true, root: this.config.root}], this.$$('input_holder'))[0].id);

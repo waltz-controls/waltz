@@ -70,23 +70,6 @@ var spectrum = webix.protoUI(
         }
     }, webix.IdSpace, webix.ui.view);
 
-/**
- * @param {TangoAttribute} config
- * @memberof ui.Plot
- */
-TangoWebapp.ui.newSpectrum = function (config) {
-    if (config.info.data_type === 'DevString') {
-        return webix.extend({
-            view: "spectrum_text"
-        }, config);
-    }
-    else {
-        return webix.extend({
-            view: "spectrum"
-        }, config);
-    }
-};
-
 const spectrum_view = webix.protoUI({
     name: "spectrum_view",
     _ui(config){
@@ -110,10 +93,9 @@ const spectrum_view = webix.protoUI({
         return this.$$('plot');
     },
     async run(){
-        const resp = await this.config.read();
-        this.plot.update(resp.attributes());
+        this.config.root.read();
     },
     $init(config){
-        webix.extend(config, this._ui(config));
+        webix.extend(config, this._ui(config.root.attribute));
     }
 }, Runnable, webix.IdSpace, webix.ui.layout);

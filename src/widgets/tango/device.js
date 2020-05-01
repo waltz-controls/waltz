@@ -45,6 +45,7 @@ export default class TangoDeviceWidget extends WaltzWidget {
         this.listen(id => this.setDevice(id),kActionSelectTangoDevice)
         this.listen(id => this.readAttribute(this.attributes.getItem(id.getTangoMemberId())), kActionSelectTangoAttribute)
         this.listen(action => {
+            if(!action.attribute.isImage())
                     this.attributes.updateItem(action.attribute.id, {...action.data})
         },ReadTangoAttribute.action, kChannelTango)
         // this.listen(id => this.setDevice(id),kActionSelectTangoCommand)
@@ -178,13 +179,12 @@ export default class TangoDeviceWidget extends WaltzWidget {
      * @param {TangoAttribute} attribute
      */
     async readAttribute(attribute){
-        if(!attribute.isScalar()) return;//TODO
         const user = (await this.app.getContext(kUserContext)).user;
         return this.app.getController(kControllerUserAction).submit(new ReadTangoAttribute({user, attribute}));
     }
 
     async readAttributeHistory(attribute){
-        if(!attribute.isScalar()) return;
+        if(!attribute.isScalar()) throw new Error(`TangoAttribute of format ${attribute.info.data_format} does not support reading history!`);
         const rest = await this.app.getContext(kTangoRestContext);
 
         return rest.newTangoAttribute(attribute.tango_id).history()

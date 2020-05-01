@@ -1,11 +1,12 @@
 import "views/tango/scalar_view";
+import "views/tango/spectrum_view";
+import "views/tango/image_view";
 import MemberWidget from "widgets/tango/member";
 import {kUserContext} from "controllers/user_context";
 import {kControllerUserAction} from "controllers/user_action_controller";
 import {ReadTangoAttribute, WriteTangoAttribute} from "models/user_action";
-import {kTangoRestContext} from "../../controllers/tango_rest";
-// import "views/tango/spectrum_view";
-// import "views/tango/image_view";
+import {kTangoRestContext} from "controllers/tango_rest";
+
 
 function view(attr){
     if(attr.isScalar())

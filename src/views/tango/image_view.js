@@ -59,15 +59,6 @@ var image = webix.protoUI(
         }
     }, webix.IdSpace, webix.ui.view);
 
-/**
- * @param config
- * @memberof ui.Plot
- */
-TangoWebapp.ui.newImage = function (config) {
-    return webix.extend({
-        view: "image"
-    }, config);
-};
 
 const image_view = webix.protoUI({
     name: "image_view",
@@ -87,10 +78,9 @@ const image_view = webix.protoUI({
         return this.$$('plot');
     },
     async run(){
-        const resp = await this.config.read();
-        this.plot.update(resp.attributes());
+        this.config.root.read();
     },
     $init(config){
-        webix.extend(config, this._ui(config));
+        webix.extend(config, this._ui(config.root.attribute));
     }
 }, Runnable, webix.IdSpace, webix.ui.layout);
