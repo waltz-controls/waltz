@@ -1,6 +1,5 @@
 import newToolbar from "views/tango/newToolbar";
 import {btnClearAll} from "views/tango/scalar_view";
-import {ExecuteTangoCommand} from "models/user_action";
 import {Runnable} from "views/mixins";
 
 const command_output = webix.protoUI(
@@ -21,8 +20,8 @@ const command_output = webix.protoUI(
                     template(obj){
                         return `<div>
                                     <div>Command executed: ${+new Date()} (${new Date()})</div>
-                                    <div>Input: ${obj.input} [${cmd.info.in_type_desc}]</div>
-                                    <div>Output: ${obj.output} [${cmd.info.out_type_desc}]</div>
+                                    <div>Input: ${obj.input}</div>
+                                    <div>Output: ${obj.output}</div>
                                 </div>`
                     }
                 }
@@ -43,18 +42,19 @@ const command_input = webix.protoUI({
     },
     _normal_view(command){
         const argin = {};
-        if (command.info.in_type !== 'DevVoid') {
-            webix.extend(argin,{
-                view:"textarea",
-                name:"argin",
-                label:`Input: ${command.info.in_type} [${command.info.in_type_desc}]`,
+        if (command.isVoid()) {
+            webix.extend(argin, {hidden: true});
+        } else {
+            webix.extend(argin, {
+                view: "textarea",
+                name: "argin",
+                label: `Input: ${command.data_type}`,
                 labelPosition: "top",
                 placeholder: "3.14, 'String', ['string','array']",
+                tooltip: "3.14, 'String', ['string','array']",
                 validate: webix.rules.isNotEmpty,
                 invalidMessage: 'Input argument can not be empty'
             });
-        } else {
-            webix.extend(argin,{ hidden: true });
         }
 
         return argin;
@@ -108,42 +108,18 @@ const btnExecute = {
     hotkey: "ctrl+enter",
     maxWidth:120,
     click(){
-        this.getTopParentView().execute();
+        this.getTopParentView().run();
     }
 };
-
-/**
- *
- * @param {Member} command
- * @param {webix.ui.form} $$input
- */
-export function commandExecutionHelper(command, $$input){
-    let argin;
-    if (command.isVoid()) {
-        argin = undefined;
-    } else {
-        if (!$$input.validate()) return;
-        argin = $$input.getValue();
-    }
-    return new ExecuteTangoCommand({user: PlatformContext.UserContext.user, command: command, value:argin}).submit();
-}
 
 const command_view = webix.protoUI({
     name: 'command_view',
     clearAll(){
         this.plot.clearAll();
     },
-    execute(){
-        const command = this.config;
-        const $$input = this.$$('input');
-        commandExecutionHelper(command,$$input)
-            .then((resp) => {
-                if (!resp.output) resp.output = "";
-                this.$$('output').update(resp);
-            });
-    },
     run(){
-        this.execute();
+        const value = this.input.getValue();
+        this.config.root.execute(value);
     },
     _ui(config){
         const rows = [];
@@ -151,10 +127,10 @@ const command_view = webix.protoUI({
         rows.push({
             view: 'command_output',
             id:'output',
-            cmd: config
+            cmd: config.root.command
         });
 
-        if (config.info.in_type !== 'DevVoid') {
+        if (!config.root.command.isVoid()) {
             rows.push(
                 {
                     view:"resizer"
@@ -162,7 +138,7 @@ const command_view = webix.protoUI({
                 {
                     view: 'command_input',
                     id: 'input',
-                    cmd: config
+                    cmd: config.root.command
                 });
         }
 
@@ -174,6 +150,12 @@ const command_view = webix.protoUI({
         }
     },
     get plot(){
+        return this.$$('output');
+    },
+    get input(){
+        return this.$$('input');
+    },
+    get output(){
         return this.$$('output');
     },
     $init(config){

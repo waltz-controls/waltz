@@ -52,27 +52,8 @@ export function openScalarWindow(resp) {
     }, resp)
 }
 
-export function openPipeWindow(resp) {
-    if(!resp) return;
-    const device = PlatformContext.devices.getItem(resp.device_id);
-    openTab.bind(resp)({
-        header: getHeader.call(resp, device),
-        close: true,
-        borderless: true,
-        body: TangoWebapp.ui.newPipeView(webix.extend({id: resp.id}, resp))
-    }, resp)
-}
 
-export function openCommandWindow(cmd) {
-    if(!cmd) return;
-    var device = PlatformContext.devices.getItem(cmd.device_id);
-    openTab.bind(cmd)({
-        header: getHeader.call(cmd, device),
-        close: true,
-        borderless: true,
-        body: TangoWebapp.ui.newCommandView(cmd)
-    }, undefined)
-}
+
 
 export function openAttributeWindow(attr) {
     if(!attr) return;
@@ -211,7 +192,7 @@ export const device_control_command = webix.protoUI({
     },
     goto(){
         if(!this.command) return;
-        openCommandWindow(this.command);
+        this.config.root.openCommandWindow(this.command);
     },
     reset(){
         this.command = null;
@@ -221,7 +202,10 @@ export const device_control_command = webix.protoUI({
             {id:"input_holder",rows:[
                     {}
                 ], hidden: true},
-            {view:"button",value:"execute", click(){this.getFormView().execute()}}
+            {cols:[
+                    {view:"button",value:"execute", click(){this.getFormView().execute()}},
+                    {view:"icon", icon: "mdi mdi-open-in-new", click(){this.getFormView().goto();}}
+                ]}
         ],
         rules:{
             "name": webix.rules.isNotEmpty
@@ -254,27 +238,17 @@ export const device_control_pipe = webix.protoUI({
         if(!this.pipe) return;
         this.config.root.readPipe(this.pipe);
     },
-    showInfo(){
-        if(this.pipe === null) return;
-        OpenAjax.hub.publish("tango_webapp.item_selected", {
-            data: {
-                id: this.pipe.id,
-                kind: "pipes"
-            }
-        });
-
-        $$('info_control_panel_header').expand();
-    },
     goto(){
-        if(this.pipe === null) return;
-        openPipeWindow(this.pipe);
+        if(!this.pipe) return;
+        this.config.root.openPipeWindow(this.pipe);
     },
     reset(){
         this.pipe = null;
     },
     defaults:{
-        elements:[
-            {view:"button",value:"read", click(){this.getFormView().read();}}
+        cols:[
+            {view:"button",value:"read", click(){this.getFormView().read();}},
+            {view:"icon", icon: "mdi mdi-open-in-new", click(){this.getFormView().goto();}}
         ],
         rules:{
             "name": webix.rules.isNotEmpty

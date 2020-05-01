@@ -9,7 +9,6 @@
  * @memberof ui
  */
 import {newComplexSearch} from "views/search";
-import {openAttributeWindow, openCommandWindow, openPipeWindow} from "views/tango/device_controls";
 import {kActionSelectTangoAttribute, kActionSelectTangoCommand, kActionSelectTangoPipe} from "widgets/tango/actions";
 import {TangoId} from "@waltz-controls/tango-rest-client";
 
@@ -78,29 +77,6 @@ const device_tree_list = webix.protoUI(
                     } else {
                         this.hideCtrlPanel();
                     }
-                },
-                /**
-                 * Expands DeviceControlPanel
-                 *
-                 * @param id
-                 * @memberof ui.DeviceViewPanel.DeviceTreeList
-                 */
-                onItemDblClick: function (id) {
-                    const item = this.getItem(id);
-
-                    if (item.Class.className === 'tango_attribute') {
-                        const attr = item;
-                        openAttributeWindow(attr);
-                    } else if (item.Class.className === 'tango_command') {
-                        const cmd = item;
-                        openCommandWindow(cmd);
-                    } else if (item.Class.className === 'tango_pipe') {
-                        const pipe = item;
-                        pipe.read()
-                            .then(openPipeWindow.bind(pipe));
-                    }
-
-                    $$('info_control_panel_header').expand()
                 }
             }
         }

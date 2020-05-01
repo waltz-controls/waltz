@@ -87,7 +87,7 @@ export class WriteTangoAttribute extends TangoUserAction {
 
 export class ExecuteTangoCommand extends TangoUserAction {
     constructor({user, command, value} = {}) {
-        super({user, action:'exec', tango_id: TangoId.fromMemberId(command.id)});
+        super({user, action:'exec', ...command});
         this.command = command;
         this.value = value;
     }

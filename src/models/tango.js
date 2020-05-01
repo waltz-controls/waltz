@@ -1,3 +1,5 @@
+import {TangoId} from "@waltz-controls/tango-rest-client";
+
 function getTangoAttributeIcon(name, data_format){
     if(name === "State" || name === "Status")
         return 'heart-pulse';
@@ -20,6 +22,7 @@ function getTangoCommandIcon(name){
 class Member {
     constructor({id, name, icon, type, data_format, data_type, min_value, max_value, writable = false}) {
         this.id = id;
+        this.tango_id = TangoId.fromMemberId(id);
         this.name = name;
         this.icon = icon;
         this.type = type;
@@ -31,7 +34,21 @@ class Member {
         this.value = undefined;
     }
 
+    get host(){
+        return this.tango_id.getTangoHostId()
+    }
 
+    set host(host){
+        Object.assign(this.tango_id, TangoId.fromTangoHost(host))
+    }
+
+    get device(){
+        return this.tango_id.getTangoDeviceName();
+    }
+
+    set device(device){
+        Object.assign(this.tango_id, TangoId.fromDeviceId(`${this.host}/${device}`));
+    }
 }
 
 
