@@ -104,7 +104,7 @@ export default class UserContext {
      */
     static load(id, options){
         //TODO replace with clever observable
-        return fetch(`user-context/cache?id=${id}`, options)
+        return fetch(`/user-context/cache?id=${id}`, options)
             .then(resp => {
                 if(resp.ok)
                     return resp.text()
