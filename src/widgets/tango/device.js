@@ -161,13 +161,9 @@ export default class TangoDeviceWidget extends WaltzWidget {
 
     }
 
-    render(){
+    run(){
         this.app.getWidget(kMainWindow).leftPanel.addView(this.ui());
         this.tab.collapse();
-    }
-
-    run(){
-        this.render();
     }
 
     open(){

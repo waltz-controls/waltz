@@ -2,6 +2,7 @@ import {TangoId} from "@waltz-controls/tango-rest-client";
 
 export const kChannelTango = "channel:tango";
 
+export const kTangoTypeHost = "tango:host";
 export const kTangoTypeAttribute = "tango:attribute";
 export const kTangoTypeCommand = "tango:command";
 export const kTangoTypePipe = "tango:pipe";

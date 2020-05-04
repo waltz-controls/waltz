@@ -1,12 +1,4 @@
 /**
- * @constant
- * @type {string}
- * @memberof ui.DeviceViewPanel
- */
-const kInfoControlPanelHeaderIcon = "<span class='webix_icon mdi mdi-information-variant'></span>";
-const kInfoControlPanelHeader = kInfoControlPanelHeaderIcon + " Info Control Panel";
-
-/**
  * More info: {@link https://docs.webix.com/api__refs__ui.view.html webix.ui.view}
  * @augments webix.ui.view
  * @memberof ui.DeviceViewPanel
@@ -50,6 +42,9 @@ const info_control_panel = webix.protoUI(
             this.$$('attrs').clearAll();
             this.$$('pipes').clearAll();
         },
+        get host(){
+            return this.$$('tango_host');
+        },
         _ui: function (context) {
             return {
                 rows: [
@@ -61,27 +56,22 @@ const info_control_panel = webix.protoUI(
                                 view: 'info_panel_empty'
                             },
                             {
-                                view: 'tango_host_info_panel',
-                                id: 'tango_host',
-                                context: context
-                            },
-                            {
-                                view: 'device_info_panel',
+                                template: 'device_info_panel',
                                 id: 'device',
                                 context: context
                             },
                             {
-                                view: 'command_info_panel',
+                                template: 'command_info_panel',
                                 id: 'commands',
                                 context: context
                             },
                             {
-                                view: 'attr_info_panel',
+                                template: 'attr_info_panel',
                                 id: 'attrs',
                                 context: context
                             },
                             {
-                                view: 'pipe_info_panel',
+                                template: 'pipe_info_panel',
                                 id: 'pipes',
                                 context: context
                             }
@@ -115,11 +105,7 @@ const info_control_panel = webix.protoUI(
          * @memberof ui.DeviceViewPanel.DeviceControlPanel
          */
         $init: function (config) {
-            webix.extend(config, this._ui(config.context));
-
-            this.$ready.push(function () {
-                // this.$$('device').bind(config.context.devices);
-            }.bind(this));
+            webix.extend(config, this._ui(config));
         },
         defaults: {
             on: {
@@ -149,25 +135,4 @@ const info_control_panel = webix.protoUI(
                 }
             }
         }
-    }, TangoWebappPlatform.mixin.OpenAjaxListener, webix.IdSpace, webix.ui.layout);
-
-/**
- * Factory function for {@link DeviceControlPanel}
- *
- * @param context
- * @function
- * @memberof ui.DeviceViewPanel
- */
-TangoWebapp.ui.newInfoControlPanel = function (context) {
-    return {
-        header: kInfoControlPanelHeader,
-        width: 300,
-        id: 'info_control_panel_header',
-        collapsed: true,
-        body: {
-            context: context,
-            view: 'info_control_panel',
-            id: 'info_control_panel'
-        }
-    };
-};
+    }, webix.IdSpace, webix.ui.layout);

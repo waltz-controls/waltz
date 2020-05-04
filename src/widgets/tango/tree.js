@@ -3,6 +3,7 @@ import {kMainWindow} from "widgets/main_window";
 import {kTangoRestContext} from "controllers/tango_rest";
 import newSearch from "views/search";
 import "views/tango/devices_tree";
+import "views/tango/tango_host_info_panel";
 import {kControllerUserContext, kUserContext} from "controllers/user_context";
 import {kChannelLog, kTopicError, kTopicLog} from "controllers/log";
 import {TangoId} from "@waltz-controls/tango-rest-client";
@@ -75,8 +76,8 @@ export default class TangoTree extends WaltzWidget {
 
         this.listen(() => this.refresh(), kAddTangoDevices);
 
-        this.listen(id => console.log(id.getTangoDeviceId()), kActionSelectTangoDevice)
-        this.listen(id => console.log(id.getTangoHostId()), kActionSelectTangoHost)
+        this.listen(id => console.debug(`tango:tree select device ${id.getTangoDeviceId()}`), kActionSelectTangoDevice)
+        this.listen(id => console.debug(`tango:tree select host ${id.getTangoHostId()}`), kActionSelectTangoHost)
     }
 
     ui(){
@@ -118,6 +119,12 @@ export default class TangoTree extends WaltzWidget {
                         root: this
                     },
                     {
+                        hidden: true,
+                        view: 'tango_host_info_panel',
+                        id: 'tango_host_info',
+                        root: this
+                    },
+                    {
                         borderless: true,
                         view: "toolbar",
                         cols:[
@@ -131,6 +138,7 @@ export default class TangoTree extends WaltzWidget {
                             {},
                             newToolbarButton('auto-fix',"wizard"),
                             newToolbarButton('filter',"devices_filter"),
+                            newToolbarButton('information-variant',"tango_host_info"),
                             newToolbarButton("plus","tango_hosts")
                         ]
                     }
@@ -143,8 +151,16 @@ export default class TangoTree extends WaltzWidget {
         this.app.getWidget(kMainWindow).leftPanel.addView(this.ui());
     }
 
+    get view(){
+        return $$(this.name);
+    }
+
     get tree(){
         return $$(this.name).$$("tree")
+    }
+
+    get tango_info(){
+        return $$(this.name).$$("tango_host_info")
     }
 
     /**
@@ -152,10 +168,13 @@ export default class TangoTree extends WaltzWidget {
      * @param {TangoId} tangoHostId
      * @return {TangoHost}
      */
-    async selectHost(tangoHostId){
-        this.dispatch(tangoHostId,kActionSelectTangoHost)
-        const rest = await getTangoRest(this.app);
-        return rest.newTangoHost(tangoHostId);
+    selectHost(tangoHostId){
+        this.dispatch(tangoHostId, kActionSelectTangoHost)
+        getTangoRest(this.app)
+            .then(rest => rest.newTangoHost(tangoHostId)
+                .toTangoRestApiRequest()
+                .get().toPromise())
+            .then(host => this.tango_info.setValues(host))
     }
 
     async selectDatabase(tangoHostId){

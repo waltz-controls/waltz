@@ -1,4 +1,4 @@
-import {UpdateDeviceAlias} from "../../src/models/tango_webapp/user_action.js";
+import {UpdateDeviceAlias} from "../../models/user_action.js";
 
 const kDevice_info_values = [
     "name",
