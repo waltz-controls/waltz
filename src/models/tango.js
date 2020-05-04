@@ -54,14 +54,25 @@ class Member {
     }
 }
 
+export class TangoHost {
+    constructor({id, info}) {
+        this.id = id;
+        this.tango_id = TangoId.fromTangoHost(id);
+        this.type = kTangoTypeHost;
+        this.icon = 'database';
+        this.info = info;
+    }
+}
+
 export class TangoDevice {
-    constructor({id, host, name, info}) {
+    constructor({id, host, name, alias, info}) {
         this.id = id;
         this.tango_id = TangoId.fromDeviceId(id);
         this.host = host;
         this.type = kTangoTypeDevice;
         this.icon = 'developer-board';
         this.name = name;
+        this.alias = alias;
         this.info = info;
     }
 

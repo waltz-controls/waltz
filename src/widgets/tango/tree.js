@@ -12,6 +12,7 @@ import {newToolbarButton} from "views/helpers";
 import {last, mergeMap} from "rxjs/operators";
 import {of} from "rxjs";
 import {kActionSelectTangoDevice, kActionSelectTangoHost, kAddTangoDevices} from "./actions";
+import {TangoHost} from "models/tango";
 
 export const kTangoTree = 'widget:tango_tree';
 
@@ -31,6 +32,12 @@ const kDevicesTreePanelHeader = `${kDevicesTreePanelHeaderIcon}Tango hosts tree`
 async function getTangoRest(app){
     const rest = await app.getContext(kTangoRestContext);
     return rest;
+}
+
+function updateHeader(host) {
+    $$(kTangoTree).getParentView().config.headerAlt = webix.template(`<span class='webix_icon mdi mdi-${host.icon}'></span> ${host.id}`);
+
+    $$(kTangoTree).getParentView().refresh();
 }
 
 export default class TangoTree extends WaltzWidget {
@@ -174,7 +181,11 @@ export default class TangoTree extends WaltzWidget {
             .then(rest => rest.newTangoHost(tangoHostId)
                 .toTangoRestApiRequest()
                 .get().toPromise())
-            .then(host => this.tango_info.setValues(host))
+            .then(host => new TangoHost(host))
+            .then(host => {
+                updateHeader(host);
+                this.tango_info.setValues(host)
+            })
     }
 
     async selectDatabase(tangoHostId){

@@ -3,13 +3,12 @@ import {StringUtils} from "utils";
 
 const kDevice_info_values = [
     "name",
-    "admin",
     "classname",
-    "exported",
+    "server",
+    "pid",
     "hostname",
     "version",
-    "pid",
-    "server",
+    "exported",
     "last_exported",
     "last_unexported"
 ];
@@ -109,7 +108,7 @@ function newPropertiesDatatable() {
 }
 
 function updateHeader(device) {
-    $$("info_control_panel_header").config.headerAlt = webix.template(() =>  `<span class='webix_icon mdi mdi-information-variant'></span><span class='webix_icon mdi mdi-${device.icon}'></span> ${device.name}`);
+    $$("info_control_panel_header").config.headerAlt = webix.template(() =>  `<span class='webix_icon mdi mdi-information-variant'></span> ${device.name}`);
 
     $$("info_control_panel_header").refresh();
 }
