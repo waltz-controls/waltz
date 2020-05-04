@@ -65,8 +65,14 @@ export function newComplexSearch(filter, suggestData = []){
         placeholder: "type to filter",
         borderless: true,
         value: "",
-        // suggest
+        suggest,
         on: {
+            onItemClick(){
+                //link suggest to the input
+                $$(this.config.suggest).config.master = this;
+                //show
+                $$(this.config.suggest).show(this.$view)
+            },
             onTimedKeyPress: filter,
             onFocus: filter
         }
