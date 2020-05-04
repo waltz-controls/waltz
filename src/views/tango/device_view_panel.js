@@ -11,14 +11,15 @@
 import {newComplexSearch} from "views/search";
 import {kActionSelectTangoAttribute, kActionSelectTangoCommand, kActionSelectTangoPipe} from "widgets/tango/actions";
 import {TangoId} from "@waltz-controls/tango-rest-client";
+import {kTangoTypeAttribute, kTangoTypeCommand, kTangoTypePipe} from "models/tango";
 
 function getTangoAction(type){
     switch (type) {
-        case "attribute":
+        case kTangoTypeAttribute:
             return kActionSelectTangoAttribute;
-        case "command":
+        case kTangoTypeCommand:
             return kActionSelectTangoCommand;
-        case "pipe":
+        case kTangoTypePipe:
             return kActionSelectTangoPipe;
     }
 }
