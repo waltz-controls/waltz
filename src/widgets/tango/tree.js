@@ -12,7 +12,8 @@ import {newToolbarButton} from "views/helpers";
 import {last, mergeMap} from "rxjs/operators";
 import {of} from "rxjs";
 import {kActionSelectTangoDevice, kActionSelectTangoHost, kAddTangoDevices} from "./actions";
-import {TangoHost} from "models/tango";
+import {kChannelTango, TangoHost} from "models/tango";
+import {UpdateDeviceAlias} from "models/user_action";
 
 export const kTangoTree = 'widget:tango_tree';
 
@@ -82,6 +83,8 @@ export default class TangoTree extends WaltzWidget {
         })
 
         this.listen(() => this.refresh(), kAddTangoDevices);
+
+        this.listen(() => this.refresh(),UpdateDeviceAlias.action,kChannelTango);
 
         this.listen(id => console.debug(`tango:tree select device ${id.getTangoDeviceId()}`), kActionSelectTangoDevice)
         this.listen(id => console.debug(`tango:tree select host ${id.getTangoHostId()}`), kActionSelectTangoHost)
@@ -213,6 +216,7 @@ export default class TangoTree extends WaltzWidget {
     }
 
     async refresh(){
+        //TODO remember selected item
         this.tree.showProgress();
         const user = await this.app.getContext(kUserContext);
         const rest = await getTangoRest(this.app);
@@ -223,7 +227,8 @@ export default class TangoTree extends WaltzWidget {
             .get(`?${user.getTangoHosts().map(host => `host=${host}`).join('&')}&${user.device_filters.map(filter => `wildcard=${filter}`).join('&')}`)
             .subscribe({
                 next: tree => {
-                    this.tree.parse(tree)
+                    this.tree.parse(tree);
+                    //TODO restore selected item
                     this.tree.hideProgress();
                 },
                 error: err => this.dispatch(err, kTopicError, kChannelLog)

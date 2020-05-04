@@ -1,6 +1,3 @@
-import {TangoId} from "@waltz-controls/tango-rest-client";
-
-
 export class UserAction {
     constructor(user, action, target, redoable = false){
         this.id = +new Date();
@@ -114,8 +111,12 @@ export class ExecuteTangoCommand extends TangoUserAction {
 }
 
 export class UpdateDeviceAlias extends TangoUserAction {
+    static get action (){
+        return "alias";
+    }
+
     constructor({user, device, alias, remove} = {}) {
-        super({user, action:'alias', tango_id: TangoId.fromMemberId(`${device.id}/alias`)});
+        super({user, action:UpdateDeviceAlias.action, ...device});
         this.device = device;
         this.alias = alias;
         this.remove = remove;

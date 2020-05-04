@@ -3,6 +3,7 @@ import {
     ExecuteTangoCommand,
     ReadTangoAttribute,
     ReadTangoPipe,
+    UpdateDeviceAlias,
     UserAction,
     WriteTangoAttribute
 } from "models/user_action";
@@ -182,19 +183,25 @@ class TangoUserActionExecutionService extends UserActionService {
                     this.publishResult(setData(this.action,result));
                 });
                 return;
-            case "alias":
+            case UpdateDeviceAlias.action:
                 if(this.action.remove){
-                    this.action.device.deleteAlias().then((result)=>{
-                        this.publishResult(setData(this.action,result));
-                    }).fail(result=> {
-                        this.publishResult(setData(this.action,result));
-                    });
+                    rest.newTangoHost(this.action.tango_id).database()
+                        .toPromise()
+                        .then(db => db.deleteDeviceAlias(this.action.device.alias))
+                        .then((result)=>{
+                            this.publishResult(setData(this.action,result));
+                        }).catch(result=> {
+                            this.publishResult(setData(this.action,result));
+                        });
                 } else {
-                    this.action.device.updateAlias(this.action.alias).then((result)=>{
-                        this.publishResult(setData(this.action,result));
-                    }).fail(result=> {
-                        this.publishResult(setData(this.action,result));
-                    });
+                    rest.newTangoHost(this.action.tango_id).database()
+                        .toPromise()
+                        .then(db => db.putDeviceAlias(this.action.device.name,this.action.alias))
+                        .then((result)=>{
+                            this.publishResult(setData(this.action,result));
+                        }).catch(result=> {
+                            this.publishResult(setData(this.action,result));
+                        });
                 }
                 return;
         }
