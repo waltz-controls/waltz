@@ -172,14 +172,9 @@ const device_info_panel = webix.protoUI({
     get properties(){
         return this.$$('properties');
     },
-    async refresh(){
-        let device, other;
-        [device,...other] = await webix.promise.all(
-            [this.device.fetchInfo(),
-             this.device.fetchProperties(),
-             this.device.pollStatus()]).fail(TangoWebappHelpers.error);
-
-        this.setDevice(device);
+    refresh(){
+        this.showProgress();
+        this.setDevice(this.device).then(() => this.hideProgress());
     },
     addProperty(){
         this.properties.editStop();
