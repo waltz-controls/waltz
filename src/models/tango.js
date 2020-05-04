@@ -3,6 +3,7 @@ import {TangoId} from "@waltz-controls/tango-rest-client";
 export const kChannelTango = "channel:tango";
 
 export const kTangoTypeHost = "tango:host";
+export const kTangoTypeDevice = "tango:device";
 export const kTangoTypeAttribute = "tango:attribute";
 export const kTangoTypeCommand = "tango:command";
 export const kTangoTypePipe = "tango:pipe";
@@ -51,6 +52,19 @@ class Member {
     isPipe(){
         return this.type === kTangoTypePipe;
     }
+}
+
+export class TangoDevice {
+    constructor({id, host, name, info}) {
+        this.id = id;
+        this.tango_id = TangoId.fromDeviceId(id);
+        this.host = host;
+        this.type = kTangoTypeDevice;
+        this.icon = 'developer-board';
+        this.name = name;
+        this.info = info;
+    }
+
 }
 
 

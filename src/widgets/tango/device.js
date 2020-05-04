@@ -20,7 +20,7 @@ import AttributeWidget from "widgets/tango/attribute";
 export const kTangoDeviceWidget = 'widget:tango_device';
 
 function getHeader(name = ''){
-    return webix.template(`<span class='webix_icon mdi mdi-developer-board'></span> Device: ${name}`)
+    return webix.template(`<span class='webix_icon mdi mdi-developer-board'></span> ${name}`)
 }
 
 function setHeader(name, target) {

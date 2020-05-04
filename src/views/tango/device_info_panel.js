@@ -1,15 +1,17 @@
-import {UpdateDeviceAlias} from "../../models/user_action.js";
+import {UpdateDeviceAlias} from "models/user_action.js";
+import {StringUtils} from "utils";
 
 const kDevice_info_values = [
     "name",
     "admin",
-    "device_class",
+    "classname",
     "exported",
-    "host",
-    "idl",
+    "hostname",
+    "version",
     "pid",
-    "started_at",
-    "stopped_at"
+    "server",
+    "last_exported",
+    "last_unexported"
 ];
 
 
@@ -43,7 +45,7 @@ export function get_device_info(device) {
 
     kDevice_info_values.forEach(function(item){
         result.push({
-            info: MVC.String.classize(item),
+            info: StringUtils.classize(item),
             value: device.info[item]
         })
     });
@@ -83,32 +85,6 @@ const toolbar = {
         {},
         {
             view: "icon",
-            value: "Add",
-            icon: "wxi-eye",
-            tooltip: "Monitor",
-            click(){
-                OpenAjax.hub.publish("tango_webapp.device_view", {
-                    data: {
-                        device: this.getTopParentView().device
-                    }
-                });
-            }
-        },
-        {
-            view: "icon",
-            value: "Add",
-            icon: "mdi mdi-settings",
-            tooltip: "Configure",
-            click(){
-                OpenAjax.hub.publish("tango_webapp.device_configure", {
-                    data: {
-                        device: this.getTopParentView().device
-                    }
-                });
-            }
-        },
-        {
-            view: "icon",
             icon: "wxi-check",
             tooltip: "Save alias",
             click(){
@@ -133,7 +109,7 @@ function newPropertiesDatatable() {
 }
 
 function updateHeader(device) {
-    $$("info_control_panel_header").config.header = webix.template(() =>  `<span class='webix_icon ${device.getIcon()}'></span> Device: ${device.display_name}`);
+    $$("info_control_panel_header").config.headerAlt = webix.template(() =>  `<span class='webix_icon mdi mdi-information-variant'></span><span class='webix_icon mdi mdi-${device.icon}'></span> ${device.name}`);
 
     $$("info_control_panel_header").refresh();
 }
@@ -190,11 +166,11 @@ const device_info_panel = webix.protoUI({
         this.$$('info').parse(info);
 
         this.$$('info').device = device;
-        this.$$('properties').data.sync(device.properties);
+        // this.$$('properties').data.sync(device.properties);
 
-        this._syncPollables.call(this.$$('info'), 'attributes',device.attrs);
+        // this._syncPollables.call(this.$$('info'), 'attributes',device.attrs);
 
-        this._syncPollables.call(this.$$('info'), 'commands',device.commands);
+        // this._syncPollables.call(this.$$('info'), 'commands',device.commands);
     },
     _ui(){
         return {
@@ -225,15 +201,5 @@ const device_info_panel = webix.protoUI({
     },
     $init:function(config){
         webix.extend(config, this._ui());
-    },
-    defaults:{
-        on:{
-            "tango_webapp.item_selected subscribe"(event){
-                if("device" === event.data.kind){
-                    const device = TangoDevice.find_one(event.data.id);
-                    this.setDevice(device);
-                }
-            }
-        }
     }
-},  TangoWebappPlatform.mixin.OpenAjaxListener, webix.ProgressBar, webix.IdSpace, webix.ui.layout);
+},  webix.ProgressBar, webix.IdSpace, webix.ui.layout);

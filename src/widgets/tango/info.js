@@ -2,7 +2,9 @@ import "views/tango/info_control_panel";
 
 import {WaltzWidget} from "@waltz-controls/middleware";
 import {kMainWindow} from "widgets/main_window";
-import {kActionSelectTangoHost} from "./actions";
+import {kActionSelectTangoDevice} from "./actions";
+import {kTangoRestContext} from "controllers/tango_rest";
+import {TangoDevice} from "models/tango";
 
 /**
  * @constant
@@ -20,7 +22,7 @@ export default class TangoInfoPanelWidget extends WaltzWidget {
     }
 
     config(){
-        this.listen(id => this.setHost(id),kActionSelectTangoHost);
+        this.listen(id => this.setDevice(id),kActionSelectTangoDevice);
     }
 
     ui(){
@@ -51,5 +53,20 @@ export default class TangoInfoPanelWidget extends WaltzWidget {
     run(){
         this.app.getWidget(kMainWindow).leftPanel.addView(this.ui());
         this.view.getParentView().collapse();
+    }
+
+    /**
+     *
+     * @param {TangoId} id
+     * @return {Promise<void>}
+     */
+    async setDevice(id){
+        const rest = await this.app.getContext(kTangoRestContext);
+        rest.newTangoDevice(id).info().toPromise().then(
+            info => {
+                this.view.device.setDevice(new TangoDevice({id:id.getTangoDeviceId(),host:id.getTangoHostId(), name: id.getTangoDeviceName(), info}))
+                this.view.device.show();
+            }
+        )
     }
 }

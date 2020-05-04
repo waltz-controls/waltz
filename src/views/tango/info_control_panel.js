@@ -1,3 +1,5 @@
+import "./device_info_panel";
+
 /**
  * More info: {@link https://docs.webix.com/api__refs__ui.view.html webix.ui.view}
  * @augments webix.ui.view
@@ -42,10 +44,10 @@ const info_control_panel = webix.protoUI(
             this.$$('attrs').clearAll();
             this.$$('pipes').clearAll();
         },
-        get host(){
-            return this.$$('tango_host');
+        get device(){
+            return this.$$('device');
         },
-        _ui: function (context) {
+        _ui: function (config) {
             return {
                 rows: [
                     {
@@ -56,24 +58,24 @@ const info_control_panel = webix.protoUI(
                                 view: 'info_panel_empty'
                             },
                             {
-                                template: 'device_info_panel',
-                                id: 'device',
-                                context: context
+                                root: config.root,
+                                view: 'device_info_panel',
+                                id: 'device'
                             },
                             {
+                                root: config.root,
                                 template: 'command_info_panel',
-                                id: 'commands',
-                                context: context
+                                id: 'commands'
                             },
                             {
+                                root: config.root,
                                 template: 'attr_info_panel',
-                                id: 'attrs',
-                                context: context
+                                id: 'attrs'
                             },
                             {
+                                root: config.root,
                                 template: 'pipe_info_panel',
-                                id: 'pipes',
-                                context: context
+                                id: 'pipes'
                             }
                         ]
                     }
