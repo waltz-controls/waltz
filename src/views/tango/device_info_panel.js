@@ -3,6 +3,8 @@ import {StringUtils} from "utils";
 import {kTangoRestContext} from "controllers/tango_rest";
 import {kControllerUserAction} from "controllers/user_action_controller";
 import {kUserContext} from "controllers/user_context";
+import {filter, map, mergeMap, share, toArray} from "rxjs/operators";
+import {from} from "rxjs";
 
 const kDevice_info_values = [
     "name",
@@ -54,11 +56,58 @@ function loadInfo($$info, device){
     $$info.parse(info);
 }
 
-async function loadProperties($$properties, device){
-    (await device).properties().get().subscribe(properties => {
+function loadProperties($$properties, device){
+    device.properties().get().subscribe(properties => {
         $$properties.clearAll();
         $$properties.parse(properties);
     });
+}
+
+class Pollable {
+    constructor({name, poll_rate}) {
+        this.name = name;
+        this.poll_rate = poll_rate;
+    }
+}
+
+/**
+ *
+ * @private
+ * @param line e.g. "Polled attribute name = double_scalar\nPolling period (mS) = 1000\nPolling ring buffer depth = 10\n..."
+ * @return {Pollable}
+ */
+function lineToPollable(line){
+    const lines = line.split('\n');
+    return new Pollable({
+        name: lines[0].split(' = ')[1],
+        poll_rate: lines[1].split(' = ')[1]
+    });
+}
+
+function loadPollable($$attributes,$$commands, device){
+    const pollStatus = device.admin().pipe(
+        mergeMap(admin => admin.devPollStatus(device.name)),
+        mergeMap(resp => from(resp.output)),
+        share()
+    )
+
+    pollStatus.pipe(
+        filter(pollStatus => pollStatus.includes(' attribute ')),
+        map(lineToPollable),
+        toArray()
+    ).subscribe(polledAttributes => {
+        $$attributes.clearAll();
+        $$attributes.parse(polledAttributes);
+    })
+
+    pollStatus.pipe(
+        filter(pollStatus => pollStatus.includes(' command ')),
+        map(lineToPollable),
+        toArray()
+    ).subscribe(polledCommands => {
+        $$commands.clearAll();
+        $$commands.parse(polledCommands);
+    })
 }
 
 function get_device_info(device) {
@@ -172,6 +221,12 @@ const device_info_panel = webix.protoUI({
     get properties(){
         return this.$$('properties');
     },
+    get attributes(){
+        return this.$$('polled_attributes');
+    },
+    get commands(){
+        return this.$$('polled_commands');
+    },
     refresh(){
         this.showProgress();
         this.setDevice(this.device).then(() => this.hideProgress());
@@ -247,19 +302,11 @@ const device_info_panel = webix.protoUI({
 
         loadInfo(this.info,device)
 
-        loadProperties(this.properties, getRestTangoDevice.call(this));
+        const _device = await getRestTangoDevice.call(this);
 
+        loadProperties(this.properties, _device);
 
-
-
-
-
-
-        // this.$$('properties').data.sync(device.properties);
-
-        // this._syncPollables.call(this.$$('info'), 'attributes',device.attrs);
-
-        // this._syncPollables.call(this.$$('info'), 'commands',device.commands);
+        loadPollable(this.attributes, this.commands, _device);
     },
     _ui(config){
         return {

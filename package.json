@@ -69,10 +69,10 @@
   "dependencies": {
     "@waltz-controls/eventbus": "^1.2.4",
     "@waltz-controls/middleware": "^1.2.7",
-    "@waltz-controls/tango-rest-client": "^1.3.11",
+    "@waltz-controls/tango-rest-client": "^1.4.0",
     "codemirror": "^5.53.2",
-    "jquery": "^3.5.0",
-    "plotly.js-dist": "^1.54.0",
+    "jquery": "^3.5.1",
+    "plotly.js-dist": "^1.54.1",
     "rxjs": "^6.5.5",
     "webix": "^7.3.0"
   }
