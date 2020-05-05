@@ -1,18 +1,28 @@
+import {StringUtils} from "utils";
+import {kTangoRestContext, pollStatus} from "controllers/tango_rest";
+import {filter, map} from "rxjs/operators";
+
 const kAttr_info_values = [
     'label','writable','data_format','data_type','max_dim_x','max_dim_y','format','description'];
 
 const kAttr_alarms_values = [
     'min_alarm','max_alarm','min_warning','max_warning','delta_t','delta_val'];
 
-export async function parsePollable(pollable) {
-    await pollable.fetchPollingStatus();  //TODO move to attribute initialization?
-    return {info:'Polling', value: "", data:[
-            {id:'polled', info: "IsPolled", value: pollable.polled},
-            {id:'poll_rate', info: "Period (ms)", value: pollable.poll_rate}
-        ]};
+async function parsePollable(attribute, app) {
+    const rest = await app.getContext(kTangoRestContext);
+    const device = rest.newTangoDevice(attribute.tango_id)
+    const pollables = pollStatus(device);
+
+    return pollables.pipe(
+        filter(pollable => pollable.name === attribute.name),
+        map(pollable => ({info:'Polling', value: "", data:[
+                {id:'polled', info: "IsPolled", value: true},
+                {id:'poll_rate', info: "Period (ms)", value: pollable.poll_rate}
+            ]}))
+    ).toPromise();
 }
 
-export function savePollable(pollable, $$info){
+function savePollable(pollable, $$info){
     const polled = $$info.getItem('polled').value || $$info.getItem('polled').value === "true" || $$info.getItem('polled').value === "1";
     const poll_rate = $$info.getItem('poll_rate').value;
     pollable.updatePolling(polled, poll_rate)
@@ -79,8 +89,9 @@ export function newInfoDatatableToolbar() {
  */
 function parseInfo(info){
     const result = [];
+    result.push({info:'Alias', value: undefined});
     result.push({id:'name',info:'Name', value: info.name});
-    kAttr_info_values.forEach(el => result.push({id:el, info:MVC.String.classize(el), value: info[el]}));
+    kAttr_info_values.forEach(el => result.push({id:el, info:StringUtils.classize(el), value: info[el]}));
     result.push(
         {id:'unit', info:'Unit', value: info.unit, data: [
                 {id:'standard_unit', info: "Standard", value: info.standard_unit},
@@ -94,7 +105,7 @@ function parseInfo(info){
 
     result.push(
         {info:'Alarms', value: "", data:
-                kAttr_alarms_values.map(el => ({id:el, info:MVC.String.classize(el), value: info.alarms[el]}))});
+                kAttr_alarms_values.map(el => ({id:el, info:StringUtils.classize(el), value: info.alarms[el]}))});
     result.push({info:'Change event', value: "", data:[
                         {id:'ch_event.rel_change', info: "Relative", value: info.events.ch_event.rel_change},
                         {id:'ch_event.abs_change', info: "Absolute", value: info.events.ch_event.abs_change}
@@ -108,8 +119,6 @@ function parseInfo(info){
                     {id:'arch_event.period', info: "Period", value: info.events.arch_event.period}
                 ]});
 
-    result.push({info:'Alias', value: undefined});
-    
     return result;
 }
 
@@ -138,6 +147,9 @@ const attr_info_panel = webix.protoUI(
                     newInfoDatatableToolbar()
                 ]
             }
+        },
+        get $$info(){
+            return this.$$('info');
         },
         async save(){
             let $$info = this.$$('info');
@@ -175,9 +187,9 @@ const attr_info_panel = webix.protoUI(
 
             savePollable(this.attr, $$info);
         },
-        async refresh(){
-            await this.attr.fetchInfo();
-            this.setAttribute(this.attr);
+        refresh(){
+            this.showProgress();
+            this.setAttribute(this.attr).then(() => this.hideProgress());
         },
         /**
          *
@@ -188,11 +200,10 @@ const attr_info_panel = webix.protoUI(
             this.attr = attr;
             const info = parseInfo(attr.info);
 
-            info.push(await parsePollable(attr));
+            info.push(await parsePollable(attr, this.config.root.app));
 
-            const $$info = this.$$('info');
-            $$info.clearAll();
-            $$info.parse(info);
+            this.$$info.clearAll();
+            this.$$info.parse(info);
         },
         /**
          * @constructs

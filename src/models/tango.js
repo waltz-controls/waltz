@@ -27,6 +27,8 @@ function getTangoCommandIcon(name){
         : 'play-box-outline'
 }
 
+//TODO extend TangoXXX from rest client
+
 class Member {
     constructor({id, host, device, name, icon, type, info, writable = false}) {
         this.id = id;
@@ -112,3 +114,26 @@ export class TangoPipe extends Member {
         super({id, host, device, name, icon: "card-text-outline", type: kTangoTypePipe, info, writable: info.writable});
     }
 }
+
+export class Pollable {
+    constructor({name, type, poll_rate}) {
+        this.name = name;
+        this.type = type;
+        this.poll_rate = poll_rate;
+    }
+
+    /**
+     *
+     * @param {string} pollStatus e.g. "Polled attribute name = double_scalar\nPolling period (mS) = 1000\nPolling ring buffer depth = 10\n..."
+     * @return {Pollable}
+     */
+    static fromDevPollStatus(pollStatus){
+        const lines = pollStatus.split('\n');
+        return new Pollable({
+            name: lines[0].split(' = ')[1],
+            type: lines[0].includes(' attribute ') ? kTangoTypeAttribute : kTangoTypeCommand,
+            poll_rate: lines[1].split(' = ')[1]
+        });
+    }
+}
+

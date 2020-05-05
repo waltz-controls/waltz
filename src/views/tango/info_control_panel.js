@@ -1,5 +1,6 @@
 import "./device_info_panel";
-import {kTangoTypeAttribute, kTangoTypeCommand, kTangoTypeDevice, kTangoTypePipe} from "../../models/tango";
+import "./attr_info_panel";
+import {kTangoTypeAttribute, kTangoTypeCommand, kTangoTypeDevice, kTangoTypePipe} from "models/tango";
 
 /**
  * More info: {@link https://docs.webix.com/api__refs__ui.view.html webix.ui.view}
@@ -45,8 +46,11 @@ const info_control_panel = webix.protoUI(
             this.$$('attrs').clearAll();
             this.$$('pipes').clearAll();
         },
-        get device(){
+        get $$device(){
             return this.$$('device');
+        },
+        get $$attribute(){
+            return this.$$('attrs');
         },
         _ui: function (config) {
             return {
@@ -70,7 +74,7 @@ const info_control_panel = webix.protoUI(
                             },
                             {
                                 root: config.root,
-                                template: 'attr_info_panel',
+                                view: 'attr_info_panel',
                                 id: 'attrs'
                             },
                             {
@@ -87,11 +91,11 @@ const info_control_panel = webix.protoUI(
             $$("info_control_panel_header").config.headerAlt = webix.template(() => {
                 switch(tango.type){
                     case kTangoTypeDevice:
-                        return `<span class='webix_icon mdi mdi-${tango.icon}'></span> ${tango.alias || tango.name}`;
+                        return `<span class='webix_icon mdi mdi-information-variant'></span> ${tango.alias || tango.name}`;
                     case kTangoTypeCommand:
                     case kTangoTypeAttribute:
                     case kTangoTypePipe:
-                        return `<span class='webix_icon mdi mdi-${tango.icon}'></span> ${tango.device}/${tango.name}`;
+                        return `<span class='webix_icon mdi mdi-information-variant'></span> ${tango.device}/${tango.name}`;
                     default:
                         throw new Error(`Unknown selected tango entity =${tango.type}`);
                 }
@@ -105,33 +109,5 @@ const info_control_panel = webix.protoUI(
          */
         $init: function (config) {
             webix.extend(config, this._ui(config));
-        },
-        defaults: {
-            on: {
-                /**
-                 * @listens event:item_selected
-                 * @function
-                 * @memberof ui.DeviceViewPanel.DeviceControlPanel.prototype
-                 * @inner
-                 */
-                "tango_webapp.item_selected subscribe":function(event){
-                    var $$view = this.$$(event.data.kind);
-                    if($$view === undefined) return;
-                    this._update_header(event.data);
-                    $$view.show(true);
-
-                    switch (event.data.kind){
-                        case "commands":
-                            $$view.setCommand(TangoCommand.find_one(event.data.id));
-                            break;
-                        case "attrs":
-                            $$view.setAttribute(TangoAttribute.find_one(event.data.id));
-                            break;
-                        case "pipes":
-                            $$view.setPipe(TangoPipe.find_one(event.data.id));
-                            break;
-                    }
-                }
-            }
         }
     }, webix.IdSpace, webix.ui.layout);

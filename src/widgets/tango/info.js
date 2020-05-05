@@ -2,9 +2,9 @@ import "views/tango/info_control_panel";
 
 import {WaltzWidget} from "@waltz-controls/middleware";
 import {kMainWindow} from "widgets/main_window";
-import {kActionSelectTangoDevice} from "./actions";
+import {kActionSelectTangoAttribute, kActionSelectTangoDevice} from "./actions";
 import {kTangoRestContext} from "controllers/tango_rest";
-import {TangoDevice} from "models/tango";
+import {TangoAttribute, TangoDevice} from "models/tango";
 
 /**
  * @constant
@@ -23,6 +23,7 @@ export default class TangoInfoPanelWidget extends WaltzWidget {
 
     config(){
         this.listen(id => this.setDevice(id),kActionSelectTangoDevice);
+        this.listen(id => this.setAttribute(id),kActionSelectTangoAttribute);
     }
 
     ui(){
@@ -66,9 +67,26 @@ export default class TangoInfoPanelWidget extends WaltzWidget {
             .then(device => new TangoDevice(device))
             .then(device => {
                 this.view.updateHeader(device)
-                this.view.device.setDevice(device)
-                this.view.device.show();
+                this.view.$$device.setDevice(device)
+                this.view.$$device.show();
             }
         )
+    }
+
+    /**
+     *
+     * @param {TangoId} id
+     * @return {Promise<void>}
+     */
+    async setAttribute(id){
+        const rest = await this.app.getContext(kTangoRestContext);
+        rest.newTangoAttribute(id).toTangoRestApiRequest().get().toPromise()
+            .then(attr => new TangoAttribute(attr))
+            .then(attr => {
+                    this.view.updateHeader(attr)
+                    this.view.$$attribute.setAttribute(attr)
+                    this.view.$$attribute.show();
+                }
+            )
     }
 }

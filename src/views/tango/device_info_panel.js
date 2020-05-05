@@ -1,10 +1,10 @@
 import {UpdateDeviceAlias} from "models/user_action.js";
 import {StringUtils} from "utils";
-import {kTangoRestContext} from "controllers/tango_rest";
+import {kTangoRestContext, pollStatus} from "controllers/tango_rest";
 import {kControllerUserAction} from "controllers/user_action_controller";
 import {kUserContext} from "controllers/user_context";
-import {filter, map, mergeMap, share, toArray} from "rxjs/operators";
-import {from} from "rxjs";
+import {filter, toArray} from "rxjs/operators";
+import {kTangoTypeAttribute, kTangoTypeCommand} from "models/tango";
 
 const kDevice_info_values = [
     "name",
@@ -63,45 +63,19 @@ function loadProperties($$properties, device){
     });
 }
 
-class Pollable {
-    constructor({name, poll_rate}) {
-        this.name = name;
-        this.poll_rate = poll_rate;
-    }
+function loadPollables($$attributes,$$commands, device){
+    const pollables = pollStatus(device);
 
-    /**
-     *
-     * @param {string} pollStatus e.g. "Polled attribute name = double_scalar\nPolling period (mS) = 1000\nPolling ring buffer depth = 10\n..."
-     * @return {Pollable}
-     */
-    static fromDevPollStatus(pollStatus){
-        const lines = pollStatus.split('\n');
-        return new Pollable({
-            name: lines[0].split(' = ')[1],
-            poll_rate: lines[1].split(' = ')[1]
-        });
-    }
-}
-
-function loadPollable($$attributes,$$commands, device){
-    const pollStatus = device.admin().pipe(
-        mergeMap(admin => admin.devPollStatus(device.name)),
-        mergeMap(resp => from(resp.output)),
-        share()
-    )
-
-    pollStatus.pipe(
-        filter(pollStatus => pollStatus.includes(' attribute ')),
-        map(Pollable.fromDevPollStatus),
+    pollables.pipe(
+        filter(pollable => pollable.type === kTangoTypeAttribute),
         toArray()
     ).subscribe(polledAttributes => {
         $$attributes.clearAll();
         $$attributes.parse(polledAttributes);
     })
 
-    pollStatus.pipe(
-        filter(pollStatus => pollStatus.includes(' command ')),
-        map(Pollable.fromDevPollStatus),
+    pollables.pipe(
+        filter(pollable => pollable.type === kTangoTypeCommand),
         toArray()
     ).subscribe(polledCommands => {
         $$commands.clearAll();
@@ -305,7 +279,7 @@ const device_info_panel = webix.protoUI({
 
         loadProperties(this.properties, _device);
 
-        loadPollable(this.attributes, this.commands, _device);
+        loadPollables(this.attributes, this.commands, _device);
     },
     _ui(config){
         return {
