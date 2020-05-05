@@ -149,7 +149,7 @@ function newPropertiesDatatable() {
         header: false,
         autoheight: true,
         columns: [
-            {id:'remove', width: 24, template: () => '<span class="remove webix_list_icon mdi mdi-trash-can-outline"></span>'},
+            {id:'remove', width: 24, template: () => '<span class="remove webix_list_icon mdi mdi-close"></span>'},
             {id: 'name', editor: "text"},
             {id: 'values', editor: "text", fillspace: true}
         ],
