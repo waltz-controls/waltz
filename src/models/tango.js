@@ -116,10 +116,15 @@ export class TangoPipe extends Member {
 }
 
 export class Pollable {
-    constructor({name, type, poll_rate}) {
+    constructor({name, type, polled = false, poll_rate = NaN}) {
         this.name = name;
         this.type = type;
+        this.polled = polled;
         this.poll_rate = poll_rate;
+    }
+
+    get polling_type() {
+        return this.type === kTangoTypeAttribute ? 'attribute' : 'command';
     }
 
     /**
@@ -131,6 +136,7 @@ export class Pollable {
         const lines = pollStatus.split('\n');
         return new Pollable({
             name: lines[0].split(' = ')[1],
+            polled: true,
             type: lines[0].includes(' attribute ') ? kTangoTypeAttribute : kTangoTypeCommand,
             poll_rate: lines[1].split(' = ')[1]
         });

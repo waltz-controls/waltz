@@ -1,7 +1,7 @@
 import {Controller} from "@waltz-controls/middleware";
 import {TangoRestApi, TangoRestApiRequest} from "@waltz-controls/tango-rest-client";
 import {kUser} from "widgets/login";
-import {map, mergeMap, share} from "rxjs/operators";
+import {map, mergeMap, share, switchMap} from "rxjs/operators";
 import {from} from "rxjs";
 import {Pollable} from "models/tango";
 
@@ -86,5 +86,34 @@ export function pollStatus(device){
         mergeMap(resp => from(resp.output)),
         map(Pollable.fromDevPollStatus),
         share()
+    );
+}
+
+
+/**
+ *
+ * @param {TangoDevice} device
+ * @param {Pollable} pollable
+ * @param {boolean} polled
+ * @param {number} poll_rate
+ * @return {Observable<any>}
+ */
+export function updatePolling(device, pollable, polled, poll_rate = 0){
+    return device.admin().pipe(
+        switchMap(admin => {
+            if (polled)
+                if (!pollable.polled)
+                    return admin.addObjPolling({
+                        lvalue: [poll_rate],
+                        svalue: [device.name, pollable.polling_type, pollable.name]
+                    });
+                else
+                    return admin.updObjPollingPeriod({
+                        lvalue: [poll_rate],
+                        svalue: [device.name, pollable.polling_type, pollable.name]
+                    });
+            else if (pollable.polled)
+                return admin.remObjPolling([device.name, pollable.polling_type, pollable.name]);
+        })
     );
 }

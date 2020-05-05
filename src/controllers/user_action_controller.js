@@ -4,6 +4,7 @@ import {
     ReadTangoAttribute,
     ReadTangoPipe,
     UpdateDeviceAlias,
+    UpdateTangoAttributeInfo,
     UserAction,
     WriteTangoAttribute
 } from "models/user_action";
@@ -203,6 +204,16 @@ class TangoUserActionExecutionService extends UserActionService {
                             this.publishResult(setData(this.action,result));
                         });
                 }
+                return;
+            case UpdateTangoAttributeInfo.action:
+                rest.newTangoAttribute(this.action.tango_id).toTangoRestApiRequest()
+                    .put(`/info?async=true`, this.action.info)
+                    .toPromise()
+                    .then(()=>{
+                        this.publishResult(setData(this.action,this.action.info));
+                    }).catch(()=> {
+                    this.publishResult(setData(this.action,this.action.info));
+                });
                 return;
         }
     }

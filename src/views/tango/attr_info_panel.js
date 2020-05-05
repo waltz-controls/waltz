@@ -1,6 +1,10 @@
 import {StringUtils} from "utils";
-import {kTangoRestContext, pollStatus} from "controllers/tango_rest";
-import {filter, map} from "rxjs/operators";
+import {kTangoRestContext, pollStatus, updatePolling} from "controllers/tango_rest";
+import {defaultIfEmpty, filter, map} from "rxjs/operators";
+import {Pollable, TangoAttribute} from "models/tango";
+import {kControllerUserAction} from "controllers/user_action_controller";
+import {UpdateTangoAttributeInfo} from "models/user_action";
+import {kUserContext} from "controllers/user_context";
 
 const kAttr_info_values = [
     'label','writable','data_format','data_type','max_dim_x','max_dim_y','format','description'];
@@ -15,19 +19,15 @@ async function parsePollable(attribute, app) {
 
     return pollables.pipe(
         filter(pollable => pollable.name === attribute.name),
-        map(pollable => ({info:'Polling', value: "", data:[
-                {id:'polled', info: "IsPolled", value: true},
+        defaultIfEmpty(new Pollable({...attribute})),
+        map(pollable => [
+                {id:'polled', info: "IsPolled", value: pollable.polled, pollable},
                 {id:'poll_rate', info: "Period (ms)", value: pollable.poll_rate}
-            ]}))
+            ])
     ).toPromise();
 }
 
-function savePollable(pollable, $$info){
-    const polled = $$info.getItem('polled').value || $$info.getItem('polled').value === "true" || $$info.getItem('polled').value === "1";
-    const poll_rate = $$info.getItem('poll_rate').value;
-    pollable.updatePolling(polled, poll_rate)
-        .fail(TangoWebappHelpers.error);
-}
+
 
 export function newInfoDatatable(){
     return {
@@ -151,45 +151,62 @@ const attr_info_panel = webix.protoUI(
         get $$info(){
             return this.$$('info');
         },
+        async savePolling(){
+            const polled = this.$$info.getItem('polled').value || this.$$info.getItem('polled').value === "true" || this.$$info.getItem('polled').value === "1";
+            const pollable = this.$$info.getItem('polled').pollable;
+            const poll_rate = this.$$info.getItem('poll_rate').value;
+            const rest = await this.config.root.app.getContext(kTangoRestContext);
+            const device = rest.newTangoDevice(this.attr.tango_id);
+            return updatePolling(device, pollable, polled, poll_rate).toPromise();
+        },
         async save(){
-            let $$info = this.$$('info');
-            $$info.editStop();
+            this.showProgress();
+            this.$$info.editStop();
+            this.$$info.clearValidation();
+
+            const info = this.attr.info;
             //flatten serialized structure
-            const items = $$info.data.serialize().reduce((acc,val) => {
+            const items = this.$$info.data.serialize().reduce((acc,val) => {
                 acc.push(val);
                 if(val.data) return acc.concat(val.data);
                 return acc;
             },[]);
             items
                 .filter(item => this.attr.info.hasOwnProperty(item.id))
-                .forEach(item => this.attr.info[item.id] = item.value);
+                .forEach(item => info[item.id] = item.value);
 
             items
                 .filter(item => kAttr_alarms_values.includes(item.id))
-                .forEach(item => this.attr.info.alarms[item.id] = item.value);
+                .forEach(item => info.alarms[item.id] = item.value);
 
             //Change event
-            this.attr.info.events.ch_event.rel_change = $$info.getItem('ch_event.rel_change').value;
-            this.attr.info.events.ch_event.abs_change = $$info.getItem('ch_event.abs_change').value;
+            info.events.ch_event.rel_change = this.$$info.getItem('ch_event.rel_change').value;
+            info.events.ch_event.abs_change = this.$$info.getItem('ch_event.abs_change').value;
 
             //Periodic event
-            this.attr.info.events.per_event.period = $$info.getItem('per_event.period').value;
+            info.events.per_event.period = this.$$info.getItem('per_event.period').value;
 
             //Archive event
-            this.attr.info.events.arch_event.rel_change = $$info.getItem('arch_event.rel_change').value;
-            this.attr.info.events.arch_event.abs_change = $$info.getItem('arch_event.abs_change').value;
-            this.attr.info.events.arch_event.period = $$info.getItem('arch_event.period').value;
+            info.events.arch_event.rel_change = this.$$info.getItem('arch_event.rel_change').value;
+            info.events.arch_event.abs_change = this.$$info.getItem('arch_event.abs_change').value;
+            info.events.arch_event.period = this.$$info.getItem('arch_event.period').value;
 
-            //TODO alias
-            this.attr.putInfo()
-                .then(() => OpenAjax.hub.publish("attr_info_panel.update_attr_info", {data: this.attr.info}))
-                .fail(TangoWebappHelpers.error);
+            const user = (await this.config.root.app.getContext(kUserContext)).user;
 
-            savePollable(this.attr, $$info);
+            Promise.all([
+                this.config.root.app.getController(kControllerUserAction).submit(
+                    new UpdateTangoAttributeInfo({user, attribute: this.attr, info})
+                ),
+                this.savePolling()
+            ])
+            .then(() => this.hideProgress());
         },
-        refresh(){
+        async refresh(){
             this.showProgress();
-            this.setAttribute(this.attr).then(() => this.hideProgress());
+            const rest = await this.config.root.app.getContext(kTangoRestContext);
+            rest.newTangoAttribute(this.attr.tango_id).toTangoRestApiRequest().get().toPromise()
+                .then(attribute => this.setAttribute(new TangoAttribute(attribute)))
+                .then(() => this.hideProgress());
         },
         /**
          *
@@ -200,7 +217,7 @@ const attr_info_panel = webix.protoUI(
             this.attr = attr;
             const info = parseInfo(attr.info);
 
-            info.push(await parsePollable(attr, this.config.root.app));
+            info.splice(10,0,...(await parsePollable(attr, this.config.root.app)));
 
             this.$$info.clearAll();
             this.$$info.parse(info);

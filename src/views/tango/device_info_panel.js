@@ -4,7 +4,7 @@ import {kTangoRestContext, pollStatus} from "controllers/tango_rest";
 import {kControllerUserAction} from "controllers/user_action_controller";
 import {kUserContext} from "controllers/user_context";
 import {filter, toArray} from "rxjs/operators";
-import {kTangoTypeAttribute, kTangoTypeCommand} from "models/tango";
+import {kTangoTypeAttribute, kTangoTypeCommand, TangoDevice} from "models/tango";
 
 const kDevice_info_values = [
     "name",
@@ -188,29 +188,32 @@ async function getRestTangoDevice(){
 const device_info_panel = webix.protoUI({
     name:"device_info_panel",
     device: null,
-    get info(){
+    get $$info(){
         return this.$$('info');
     },
-    get properties(){
+    get $$properties(){
         return this.$$('properties');
     },
-    get attributes(){
+    get $$attributes(){
         return this.$$('polled_attributes');
     },
-    get commands(){
+    get $$commands(){
         return this.$$('polled_commands');
     },
-    refresh(){
+    async refresh(){
         this.showProgress();
-        this.setDevice(this.device).then(() => this.hideProgress());
+        const device = await getRestTangoDevice.call(this);
+        device.toTangoRestApiRequest().get().toPromise()
+            .then(device => this.setDevice(new TangoDevice(device)))
+            .then(() => this.hideProgress());
     },
     addProperty(){
-        this.properties.editStop();
-        const id = this.properties.add({
+        this.$$properties.editStop();
+        const id = this.$$properties.add({
             name: "New property",
             values: ""
         });
-        this.properties.editRow(id);
+        this.$$properties.editRow(id);
     },
     deleteProperty(property){
         return getRestTangoDevice.call(this)
@@ -229,9 +232,9 @@ const device_info_panel = webix.protoUI({
     },
     async saveProperties(){
         const properties = {};
-        this.properties.editStop();
-        this.properties.eachRow((rowId) => {
-            const row = this.properties.getItem(rowId);
+        this.$$properties.editStop();
+        this.$$properties.eachRow((rowId) => {
+            const row = this.$$properties.getItem(rowId);
             if(row)
                 properties[row.name] = (row.values.split) ? row.values.split(',') : row.values;
         });
@@ -248,12 +251,16 @@ const device_info_panel = webix.protoUI({
             .toPromise();
     },
     save(){
-        this.info.editStop();
+        this.$$info.editStop();
+        this.$$info.clearValidation();
 
-        const alias = this.info.getItem("alias");
-        this.updateAlias(alias.value)
+        this.showProgress();
 
-        this.saveProperties();
+        const alias = this.$$info.getItem("alias");
+        Promise.all(
+            [this.updateAlias(alias.value),
+            this.saveProperties()]
+        ).then(() => this.hideProgress());
 
     },
     _syncPollables(type, source) {
@@ -273,13 +280,13 @@ const device_info_panel = webix.protoUI({
         if (!device || device.id === undefined) return false;
         this.device = device;
 
-        loadInfo(this.info,device)
+        loadInfo(this.$$info,device)
 
         const _device = await getRestTangoDevice.call(this);
 
-        loadProperties(this.properties, _device);
+        loadProperties(this.$$properties, _device);
 
-        loadPollables(this.attributes, this.commands, _device);
+        loadPollables(this.$$attributes, this.$$commands, _device);
     },
     _ui(config){
         return {

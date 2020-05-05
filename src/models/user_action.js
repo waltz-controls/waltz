@@ -127,6 +127,22 @@ export class UpdateDeviceAlias extends TangoUserAction {
     }
 }
 
+export class UpdateTangoAttributeInfo extends TangoUserAction {
+    static get action(){
+        return "info"
+    }
+
+    constructor({user, attribute, info}) {
+        super({user, action:UpdateTangoAttributeInfo.action, ...attribute});
+        this.attribute = attribute;
+        this.info = info;
+    }
+
+    toMessage() {
+        return super.toMessage() + `<div>updates info of ${this.attribute.id}</div>`;
+    }
+}
+
 export class ExecuteUserScript extends UserAction {
     constructor({user, script}) {
         super(user, 'run','script');
