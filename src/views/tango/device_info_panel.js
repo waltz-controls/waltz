@@ -1,6 +1,6 @@
 import {UpdateDeviceAlias} from "models/user_action.js";
 import {StringUtils} from "utils";
-import {kTangoRestContext, pollStatus} from "controllers/tango_rest";
+import {kTangoRestContext, pollStatus, updatePolling} from "controllers/tango_rest";
 import {kControllerUserAction} from "controllers/user_action_controller";
 import {kUserContext} from "controllers/user_context";
 import {filter, toArray} from "rxjs/operators";
@@ -102,10 +102,14 @@ function newPolledDatatable(id) {
         id: id,
         header: false,
         autoheight: true,
+        editable:true,
         columns: [
             {id: 'name'},
-            {id: 'poll_rate', template: "#poll_rate# (ms)", fillspace: true}
-        ]
+            {id: 'poll_rate', editor: "text", template: "#poll_rate# (ms)", fillspace: true}
+        ],
+        rules: {
+            poll_rate: webix.rules.isNumber
+        }
     }
 }
 
@@ -250,6 +254,18 @@ const device_info_panel = webix.protoUI({
             }`)
             .toPromise();
     },
+    savePolling(pollables){
+        const result = [];
+        pollables.eachRow(id => {
+            const promise = async () => {
+                const pollable = pollables.getItem(id);
+                const device = await getRestTangoDevice.call(this);
+                return updatePolling(device, pollable, true, pollable.poll_rate).toPromise();
+            }
+            result.push(promise());
+        })
+        return result;
+    },
     save(){
         this.$$info.editStop();
         this.$$info.clearValidation();
@@ -259,16 +275,12 @@ const device_info_panel = webix.protoUI({
         const alias = this.$$info.getItem("alias");
         Promise.all(
             [this.updateAlias(alias.value),
-            this.saveProperties()]
+                this.saveProperties(),
+                ...this.savePolling(this.$$attributes),
+                ...this.savePolling(this.$$commands),
+            ]
         ).then(() => this.hideProgress());
 
-    },
-    _syncPollables(type, source) {
-        this.getTopParentView().$$(`polled_${type}`).data.sync(source, function () {
-            this.filter((pollable) => {
-                return pollable.polled;
-            });
-        });
     },
 
     /**

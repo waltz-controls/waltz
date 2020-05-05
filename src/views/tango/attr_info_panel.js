@@ -51,7 +51,7 @@ export function newInfoDatatable(){
         },
         on:{
             onBeforeEditStart:function(id){
-                var row = id.row;
+                const row = id.row;
                 return row !== 'polled';
             }
         }
