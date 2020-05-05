@@ -68,20 +68,19 @@ class Pollable {
         this.name = name;
         this.poll_rate = poll_rate;
     }
-}
 
-/**
- *
- * @private
- * @param line e.g. "Polled attribute name = double_scalar\nPolling period (mS) = 1000\nPolling ring buffer depth = 10\n..."
- * @return {Pollable}
- */
-function lineToPollable(line){
-    const lines = line.split('\n');
-    return new Pollable({
-        name: lines[0].split(' = ')[1],
-        poll_rate: lines[1].split(' = ')[1]
-    });
+    /**
+     *
+     * @param {string} pollStatus e.g. "Polled attribute name = double_scalar\nPolling period (mS) = 1000\nPolling ring buffer depth = 10\n..."
+     * @return {Pollable}
+     */
+    static fromDevPollStatus(pollStatus){
+        const lines = pollStatus.split('\n');
+        return new Pollable({
+            name: lines[0].split(' = ')[1],
+            poll_rate: lines[1].split(' = ')[1]
+        });
+    }
 }
 
 function loadPollable($$attributes,$$commands, device){
@@ -93,7 +92,7 @@ function loadPollable($$attributes,$$commands, device){
 
     pollStatus.pipe(
         filter(pollStatus => pollStatus.includes(' attribute ')),
-        map(lineToPollable),
+        map(Pollable.fromDevPollStatus),
         toArray()
     ).subscribe(polledAttributes => {
         $$attributes.clearAll();
@@ -102,7 +101,7 @@ function loadPollable($$attributes,$$commands, device){
 
     pollStatus.pipe(
         filter(pollStatus => pollStatus.includes(' command ')),
-        map(lineToPollable),
+        map(Pollable.fromDevPollStatus),
         toArray()
     ).subscribe(polledCommands => {
         $$commands.clearAll();
