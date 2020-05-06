@@ -1,6 +1,7 @@
 import "./device_info_panel";
 import "./attr_info_panel";
 import "./command_info_panel";
+import "./pipe_info_panel";
 import {kTangoTypeAttribute, kTangoTypeCommand, kTangoTypeDevice, kTangoTypePipe, Pollable} from "models/tango";
 import {pollStatus, updatePolling} from "controllers/tango_rest";
 import {defaultIfEmpty, filter, map} from "rxjs/operators";
@@ -133,6 +134,9 @@ const info_control_panel = webix.protoUI(
         get $$command(){
             return this.$$('commands');
         },
+        get $$pipe(){
+            return this.$$('pipes');
+        },
         _ui: function (config) {
             return {
                 rows: [
@@ -160,7 +164,7 @@ const info_control_panel = webix.protoUI(
                             },
                             {
                                 root: config.root,
-                                template: 'pipe_info_panel',
+                                view: 'pipe_info_panel',
                                 id: 'pipes'
                             }
                         ]

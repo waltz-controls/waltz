@@ -9,14 +9,28 @@
  * @author Igor Khokhriakov <igor.khokhriakov@hzg.de>
  * @since 9/10/18
  */
-import {newInfoDatatable, newInfoDatatableToolbar} from "./attr_info_panel.js";
+import {newInfoDatatable, newInfoDatatableToolbar} from "./info_control_panel";
+import {WaltzWidgetMixin} from "../mixins";
+import {TangoPipe} from "models/tango";
+import {StringUtils} from "utils";
+
+function parseInfo(pipe){
+    return Object.entries(pipe.info).map(entity => ({info:StringUtils.classize(entity[0]),value:entity[1]}));
+}
 
 const pipe_info_panel = webix.protoUI(
     {
         pipe: null,
         name: 'pipe_info_panel',
-        refresh(){
-            this.setPipe(this.pipe);
+        get $$info(){
+            return this.$$('info');
+        },
+        async refresh(){
+            this.showProgress();
+            const rest = await this.getTangoRest();
+            rest.newTangoPipe(this.pipe.tango_id).toTangoRestApiRequest().get().toPromise()
+                .then(pipe => this.setPipe(new TangoPipe(pipe)))
+                .then(() => this.hideProgress());
         },
         save(){
             return false;
@@ -37,13 +51,10 @@ const pipe_info_panel = webix.protoUI(
         setPipe:function(pipe){
             this.pipe = pipe;
 
-            const info = [
-                {info: "Name", value: pipe.name}
-            ];
+            const info = parseInfo(pipe);
 
-            const $$info = this.$$('info');
-            $$info.clearAll();
-            $$info.parse(info);
+            this.$$info.clearAll();
+            this.$$info.parse(info);
         },
         /**
          * @constructs
@@ -54,20 +65,5 @@ const pipe_info_panel = webix.protoUI(
             // this.$ready.push(function () {
             //     this.bind($$('device_view_panel').$$('pipes'));
             // }.bind(this));
-        },
-        defaults:{
-            on:{
-                /**
-                 *
-                 * @param pipe
-                 * @memberof ui.DeviceViewPanel.DevicePanelPipes
-                 * @inner
-                 */
-                onBindApply:function(pipe){
-                    if(!pipe) return;
-                    this.setPipe(pipe);
-
-                }
-            }
         }
-    }, webix.ProgressBar, webix.IdSpace, webix.ui.layout);
+    }, WaltzWidgetMixin, webix.ProgressBar, webix.IdSpace, webix.ui.layout);

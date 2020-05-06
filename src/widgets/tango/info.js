@@ -2,9 +2,14 @@ import "views/tango/info_control_panel";
 
 import {WaltzWidget} from "@waltz-controls/middleware";
 import {kMainWindow} from "widgets/main_window";
-import {kActionSelectTangoAttribute, kActionSelectTangoCommand, kActionSelectTangoDevice} from "./actions";
+import {
+    kActionSelectTangoAttribute,
+    kActionSelectTangoCommand,
+    kActionSelectTangoDevice,
+    kActionSelectTangoPipe
+} from "./actions";
 import {kTangoRestContext} from "controllers/tango_rest";
-import {TangoAttribute, TangoCommand, TangoDevice} from "models/tango";
+import {TangoAttribute, TangoCommand, TangoDevice, TangoPipe} from "models/tango";
 
 /**
  * @constant
@@ -25,6 +30,7 @@ export default class TangoInfoPanelWidget extends WaltzWidget {
         this.listen(id => this.setDevice(id),kActionSelectTangoDevice);
         this.listen(id => this.setAttribute(id),kActionSelectTangoAttribute);
         this.listen(id => this.setCommand(id),kActionSelectTangoCommand);
+        this.listen(id => this.setPipe(id),kActionSelectTangoPipe);
     }
 
     ui(){
@@ -104,6 +110,23 @@ export default class TangoInfoPanelWidget extends WaltzWidget {
                     this.view.updateHeader(cmd)
                     this.view.$$command.setCommand(cmd)
                     this.view.$$command.show();
+                }
+            )
+    }
+
+    /**
+     *
+     * @param {TangoId} id
+     * @return {Promise<void>}
+     */
+    async setPipe(id){
+        const rest = await this.app.getContext(kTangoRestContext);
+        rest.newTangoPipe(id).toTangoRestApiRequest().get().toPromise()
+            .then(pipe => new TangoPipe(pipe))
+            .then(pipe => {
+                    this.view.updateHeader(pipe)
+                    this.view.$$pipe.setPipe(pipe)
+                    this.view.$$pipe.show();
                 }
             )
     }
