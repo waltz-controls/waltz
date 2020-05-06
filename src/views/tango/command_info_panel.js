@@ -1,7 +1,9 @@
-import {newInfoDatatable, newInfoDatatableToolbar, parsePollable, savePollable} from "./attr_info_panel.js";
+import {newInfoDatatable, newInfoDatatableToolbar, parsePollable, savePolling} from "./info_control_panel";
+import {StringUtils} from "utils";
+import {WaltzWidgetMixin} from "../mixins";
 
 function parseInfo(command){
-    return Object.entries(command.info).map(entity => ({info:MVC.String.classize(entity[0]),value:entity[1]}));
+    return Object.entries(command.info).map(entity => ({info:StringUtils.classize(entity[0]),value:entity[1]}));
 }
 
 /**
@@ -20,12 +22,25 @@ const command_info_panel = webix.protoUI(
     {
         command: null,
         name: 'command_info_panel',
-        refresh(){
-            this.setCommand(this.command);
+        get $$info(){
+            return this.$$('info');
         },
-        save() {
-            const $$info = this.$$('info');
-            savePollable(this.command, $$info);
+        //TODO
+        get attr(){
+            return this.command;
+        },
+        async refresh(){
+            this.showProgress();
+            const rest = await this.getTangoRest();
+            rest.newTangoCommand(this.command.tango_id).toTangoRestApiRequest().get().toPromise()
+                .then(command => this.setCommand(new TangoCommand(command)))
+                .then(() => this.hideProgress());
+        },
+        async save() {
+            this.showProgress();
+            const rest = await this.getTangoRest();
+            savePolling(this.$$info, rest, this.command.tango_id)
+                .then(() => this.hideProgress());
         },
         _ui: function () {
             return {
@@ -44,11 +59,12 @@ const command_info_panel = webix.protoUI(
             this.command = command;
 
             const info = parseInfo(command);
+            const rest = await this.getTangoRest();
 
-            info.push(await parsePollable(command));
+            info.push(...(await parsePollable(command, rest)));
 
-            this.$$('info').clearAll();
-            this.$$('info').parse(info);
+            this.$$info.clearAll();
+            this.$$info.parse(info);
         },
         /**
          * @constructs DevicePanelCommands
@@ -56,23 +72,8 @@ const command_info_panel = webix.protoUI(
          */
         $init: function (config) {
             webix.extend(config, this._ui());
-            // this.$ready.push(function () {
-            //     this.bind($$('device_view_panel').$$('commands'));
-            // }.bind(this));
         },
         defaults: {
-            complexData: true,
-            on: {
-                /**
-                 *
-                 * @param {TangoCommand} command
-                 * @memberof ui.DeviceViewPanel.DevicePanelCommands
-                 */
-                onBindApply: function (command) {
-                    if (!command) return;
-
-                    this.setCommand(command);
-                }
-            }
+            complexData: true
         }
-    }, webix.ProgressBar, webix.IdSpace, webix.ui.layout);
+    }, WaltzWidgetMixin, webix.ProgressBar, webix.IdSpace, webix.ui.layout);

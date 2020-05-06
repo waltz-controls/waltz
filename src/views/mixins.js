@@ -1,3 +1,7 @@
+import {kTangoRestContext} from "controllers/tango_rest";
+import {kUserContext} from "controllers/user_context";
+import {kControllerUserAction} from "controllers/user_action_controller";
+
 export const BoundedReverseList = {
     limit : 100,
     addFirst(item) {
@@ -63,11 +67,11 @@ export const Stateful = {
  */
 export const Runnable = {
     _delay: 1000,
-        _intervalId: 0,
-        /**
-         * @memberof mixins.Runnable
-         */
-        start: function () {
+    _intervalId: 0,
+    /**
+     * @memberof mixins.Runnable
+     */
+    start: function () {
         this._intervalId = setInterval(function () {
             if (!this.$destructed && this.isVisible())
                 this.run();
@@ -95,5 +99,19 @@ export const Runnable = {
     stop: function () {
         clearInterval(this._intervalId);
         this._intervalId = 0;
+    }
+}
+
+export const WaltzWidgetMixin = {
+    getTangoRest(){
+        return this.config.root.app.getContext(kTangoRestContext);
+    },
+
+    getUserContext(){
+        return this.config.root.app.getContext(kUserContext);
+    },
+
+    getUserActionsController(){
+        return this.config.root.app.getController(kControllerUserAction);
     }
 }

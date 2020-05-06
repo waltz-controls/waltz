@@ -1,86 +1,14 @@
 import {StringUtils} from "utils";
-import {kTangoRestContext, pollStatus, updatePolling} from "controllers/tango_rest";
-import {defaultIfEmpty, filter, map} from "rxjs/operators";
-import {Pollable, TangoAttribute} from "models/tango";
-import {kControllerUserAction} from "controllers/user_action_controller";
+import {TangoAttribute} from "models/tango";
 import {UpdateTangoAttributeInfo} from "models/user_action";
-import {kUserContext} from "controllers/user_context";
+import {newInfoDatatable, newInfoDatatableToolbar, parsePollable, savePolling} from "./info_control_panel";
+import {WaltzWidgetMixin} from "../mixins";
 
 const kAttr_info_values = [
     'label','writable','data_format','data_type','max_dim_x','max_dim_y','format','description'];
 
 const kAttr_alarms_values = [
     'min_alarm','max_alarm','min_warning','max_warning','delta_t','delta_val'];
-
-async function parsePollable(attribute, app) {
-    const rest = await app.getContext(kTangoRestContext);
-    const device = rest.newTangoDevice(attribute.tango_id)
-    const pollables = pollStatus(device);
-
-    return pollables.pipe(
-        filter(pollable => pollable.name === attribute.name),
-        defaultIfEmpty(new Pollable({...attribute})),
-        map(pollable => [
-                {id:'polled', info: "IsPolled", value: pollable.polled, pollable},
-                {id:'poll_rate', info: "Period (ms)", value: pollable.poll_rate}
-            ])
-    ).toPromise();
-}
-
-
-
-export function newInfoDatatable(){
-    return {
-        id: 'info',
-        view: 'treetable',
-        header:false,
-        editable:true,
-        columns:[
-            {id:'info' , template:"{common.icon()} #info#"},
-            {id:'value', editor: "text", template:(obj, common, value) => {
-                    if(obj.id === 'polled') {
-                        return common.checkbox(obj, common, obj.value, {
-                            checkValue: true
-                        });
-                    }
-                    else return value;
-                }, fillspace: true}
-        ],
-        rules: {
-            poll_rate: webix.rules.isNumber
-        },
-        on:{
-            onBeforeEditStart:function(id){
-                const row = id.row;
-                return row !== 'polled';
-            }
-        }
-    };
-}
-
-export function newInfoDatatableToolbar() {
-    return {
-        view:"toolbar",
-        maxHeight: 30,
-        cols:[
-            {
-                view:"icon",
-                icon:"wxi-sync",
-                click(){
-                    this.getTopParentView().refresh();
-                }
-            },
-            {},
-            {
-                view:"icon",
-                icon:"wxi-check",
-                click(){
-                    this.getTopParentView().save();
-                }
-            }
-        ]
-    };
-}
 
 /**
  *
@@ -151,14 +79,7 @@ const attr_info_panel = webix.protoUI(
         get $$info(){
             return this.$$('info');
         },
-        async savePolling(){
-            const polled = this.$$info.getItem('polled').value || this.$$info.getItem('polled').value === "true" || this.$$info.getItem('polled').value === "1";
-            const pollable = this.$$info.getItem('polled').pollable;
-            const poll_rate = this.$$info.getItem('poll_rate').value;
-            const rest = await this.config.root.app.getContext(kTangoRestContext);
-            const device = rest.newTangoDevice(this.attr.tango_id);
-            return updatePolling(device, pollable, polled, poll_rate).toPromise();
-        },
+
         async save(){
             this.showProgress();
             this.$$info.editStop();
@@ -191,19 +112,20 @@ const attr_info_panel = webix.protoUI(
             info.events.arch_event.abs_change = this.$$info.getItem('arch_event.abs_change').value;
             info.events.arch_event.period = this.$$info.getItem('arch_event.period').value;
 
-            const user = (await this.config.root.app.getContext(kUserContext)).user;
+            const user = (await this.getUserContext()).user;
+            const rest = await this.getTangoRest();
 
             Promise.all([
-                this.config.root.app.getController(kControllerUserAction).submit(
+                this.getUserActionsController().submit(
                     new UpdateTangoAttributeInfo({user, attribute: this.attr, info})
                 ),
-                this.savePolling()
+                savePolling(this.$$info,rest,this.attr.tango_id)
             ])
             .then(() => this.hideProgress());
         },
         async refresh(){
             this.showProgress();
-            const rest = await this.config.root.app.getContext(kTangoRestContext);
+            const rest = await this.getTangoRest();
             rest.newTangoAttribute(this.attr.tango_id).toTangoRestApiRequest().get().toPromise()
                 .then(attribute => this.setAttribute(new TangoAttribute(attribute)))
                 .then(() => this.hideProgress());
@@ -217,7 +139,8 @@ const attr_info_panel = webix.protoUI(
             this.attr = attr;
             const info = parseInfo(attr.info);
 
-            info.splice(10,0,...(await parsePollable(attr, this.config.root.app)));
+            const rest = await this.getTangoRest();
+            info.splice(10,0,...(await parsePollable(attr, rest)));
 
             this.$$info.clearAll();
             this.$$info.parse(info);
@@ -229,4 +152,4 @@ const attr_info_panel = webix.protoUI(
         $init: function (config) {
             webix.extend(config, this._ui());
         }
-    }, webix.ProgressBar, webix.IdSpace, webix.ui.layout);
+    }, WaltzWidgetMixin, webix.ProgressBar, webix.IdSpace, webix.ui.layout);

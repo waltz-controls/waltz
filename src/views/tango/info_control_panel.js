@@ -1,6 +1,84 @@
 import "./device_info_panel";
 import "./attr_info_panel";
-import {kTangoTypeAttribute, kTangoTypeCommand, kTangoTypeDevice, kTangoTypePipe} from "models/tango";
+import "./command_info_panel";
+import {kTangoTypeAttribute, kTangoTypeCommand, kTangoTypeDevice, kTangoTypePipe, Pollable} from "models/tango";
+import {pollStatus, updatePolling} from "controllers/tango_rest";
+import {defaultIfEmpty, filter, map} from "rxjs/operators";
+
+export function newInfoDatatable(){
+    return {
+        id: 'info',
+        view: 'treetable',
+        header:false,
+        editable:true,
+        columns:[
+            {id:'info' , template:"{common.icon()} #info#"},
+            {id:'value', editor: "text", template:(obj, common, value) => {
+                    if(obj.id === 'polled') {
+                        return common.checkbox(obj, common, obj.value, {
+                            checkValue: true
+                        });
+                    }
+                    else return value;
+                }, fillspace: true}
+        ],
+        rules: {
+            poll_rate: webix.rules.isNumber
+        },
+        on:{
+            onBeforeEditStart:function(id){
+                const row = id.row;
+                return row !== 'polled';
+            }
+        }
+    };
+}
+
+export function newInfoDatatableToolbar() {
+    return {
+        view:"toolbar",
+        maxHeight: 30,
+        cols:[
+            {
+                view:"icon",
+                icon:"wxi-sync",
+                click(){
+                    this.getTopParentView().refresh();
+                }
+            },
+            {},
+            {
+                view:"icon",
+                icon:"wxi-check",
+                click(){
+                    this.getTopParentView().save();
+                }
+            }
+        ]
+    };
+}
+
+    export async function parsePollable(tango, rest) {
+        const device = rest.newTangoDevice(tango.tango_id)
+        const pollables = pollStatus(device);
+
+        return pollables.pipe(
+            filter(pollable => pollable.name === tango.name),
+            defaultIfEmpty(new Pollable({...tango})),
+            map(pollable => [
+                {id:'polled', info: "IsPolled", value: pollable.polled, pollable},
+                {id:'poll_rate', info: "Period (ms)", value: pollable.poll_rate}
+            ])
+        ).toPromise();
+    }
+
+    export async function savePolling($$info, rest, tango_id){
+        const polled = $$info.getItem('polled').value || $$info.getItem('polled').value === "true" || $$info.getItem('polled').value === "1";
+        const pollable = $$info.getItem('polled').pollable;
+        const poll_rate = $$info.getItem('poll_rate').value;
+        const device = rest.newTangoDevice(tango_id);
+        return updatePolling(device, pollable, polled, poll_rate).toPromise();
+    }
 
 /**
  * More info: {@link https://docs.webix.com/api__refs__ui.view.html webix.ui.view}
@@ -52,6 +130,9 @@ const info_control_panel = webix.protoUI(
         get $$attribute(){
             return this.$$('attrs');
         },
+        get $$command(){
+            return this.$$('commands');
+        },
         _ui: function (config) {
             return {
                 rows: [
@@ -69,7 +150,7 @@ const info_control_panel = webix.protoUI(
                             },
                             {
                                 root: config.root,
-                                template: 'command_info_panel',
+                                view: 'command_info_panel',
                                 id: 'commands'
                             },
                             {
