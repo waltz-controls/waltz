@@ -133,7 +133,6 @@ const tango_hosts = webix.protoUI(
             webix.extend(config, this.ui(config));
 
             this.$ready.push(async () => {
-                const context = await this.getUserContext();
                 $$(config.root.name).$$("tango_hosts").$$('list').sync(config.root.tango_hosts);
             });
         }

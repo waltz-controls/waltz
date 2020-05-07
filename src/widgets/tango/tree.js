@@ -62,13 +62,11 @@ export default class TangoTree extends WaltzWidget {
                 switch (params.operation) {
                     case "insert":
                         promiseContext = promiseContext
-                            .then(userContext => userContext.tango_hosts[params.id] = null)
+                            .then(userContext => userContext.addTangoHost(params.id));
                         break;
                     case "delete":
                         promiseContext = promiseContext
-                            .then(userContext => {
-                                delete userContext.tango_hosts[params.id];
-                            });
+                            .then(userContext => userContext.removeTangoHost(params.id));
                         break;
                 }
 

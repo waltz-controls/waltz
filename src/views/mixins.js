@@ -103,14 +103,26 @@ export const Runnable = {
 }
 
 export const WaltzWidgetMixin = {
+    /**
+     *
+     * @return {Promise<TangoRestApi>}
+     */
     getTangoRest(){
         return this.config.root.app.getContext(kTangoRestContext);
     },
 
+    /**
+     *
+     * @return {Promise<UserContext>}
+     */
     getUserContext(){
         return this.config.root.app.getContext(kUserContext);
     },
 
+    /**
+     *
+     * @return {UserActionController}
+     */
     getUserActionsController(){
         return this.config.root.app.getController(kControllerUserAction);
     }

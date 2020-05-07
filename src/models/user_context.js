@@ -113,6 +113,26 @@ export default class UserContext {
 
     /**
      *
+     * @param host
+     * @return {UserContext}
+     */
+    addTangoHost(host){
+        this.tango_hosts[host] = null
+        return this;
+    }
+
+    /**
+     *
+     * @param host
+     * @return {UserContext}
+     */
+    removeTangoHost(host){
+        delete this.tango_hosts[host];
+        return this;
+    }
+
+    /**
+     *
      */
     toDeviceFilter() {
         return new DeviceFilter({
@@ -155,6 +175,17 @@ export default class UserContext {
      */
     get(id){
         return this.ext[id];
+    }
+
+    /**
+     *
+     * @param {string} id
+     * @param {function(any):void} extUpdater
+     * @return {UserContext}
+     */
+    updateExt(id, extUpdater){
+        extUpdater(this.get(id));
+        return this;
     }
 
     /**

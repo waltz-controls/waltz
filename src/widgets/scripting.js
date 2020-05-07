@@ -24,28 +24,27 @@ export default class ScriptingWidget extends WaltzWidget {
             switch(params.operation){
                 case "insert":
                     promiseContext = promiseContext
-                        .then(userContext => userContext.ext[this.name].push(params.data))
+                        .then(userContext => userContext.updateExt(this.name, ext => ext.push(params.data)))
                     break;
                 case "update":
                     promiseContext = promiseContext
-                        .then(userContext => {
+                        .then(userContext => userContext.updateExt(this.name, ext =>
                             webix.extend(
-                                userContext.get(this.name).find(script => script.id === params.id),
+                                ext.find(script => script.id === params.id),
                                 params.data,
-                                kOverwrite);
-                        });
+                                kOverwrite)));
                     break;
                 case "delete":
                     promiseContext = promiseContext
                         .then(userContext => {
                             const indexOf = userContext.get(this.name).findIndex(script => script.id === params.id)
-                            userContext.get(this.name).splice(indexOf, 1);
+                            return userContext.updateExt(this.name, ext => ext.splice(indexOf, 1));
                         });
                     break;
             }
 
             return promiseContext
-                .then(() => userContext.save())
+                .then(userContext => userContext.save())
                 .then(() => this.dispatch(`Successfully ${params.operation}ed UserScript[${params.id}]`,kTopicLog, kChannelLog));
         }
     };
