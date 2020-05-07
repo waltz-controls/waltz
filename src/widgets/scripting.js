@@ -1,6 +1,6 @@
 import {WaltzWidget} from "@waltz-controls/middleware";
 import "views/scripting_console";
-import {kControllerUserContext, kUserContext} from "controllers/user_context";
+import {kUserContext} from "controllers/user_context";
 import {kChannelLog, kTopicLog} from "controllers/log";
 import UserScript from "models/user_script";
 import {kMainWindow} from "widgets/main_window";
@@ -45,7 +45,7 @@ export default class ScriptingWidget extends WaltzWidget {
             }
 
             return promiseContext
-                .then(() => this.app.getController(kControllerUserContext).save())
+                .then(() => userContext.save())
                 .then(() => this.dispatch(`Successfully ${params.operation}ed UserScript[${params.id}]`,kTopicLog, kChannelLog));
         }
     };

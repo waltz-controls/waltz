@@ -2,6 +2,7 @@
  *  @memberof ui
  */
 import {TangoId} from "@waltz-controls/tango-rest-client";
+import {WaltzWidgetMixin} from "views/mixins";
 
 /**
  * Extends {@link https://docs.webix.com/api__refs__ui.layout.html webix.ui.layout}
@@ -51,11 +52,11 @@ const device_filters = webix.protoUI(
             webix.extend(config, this.ui(config));
 
             this.$ready.push(async () => {
-                const context = await config.root.context.get();
+                const context = await this.getUserContext();
                 this.$$('value').setValue(context.device_filters.join('\n'))
             });
         }
-    },webix.IdSpace, webix.ui.layout);
+    },WaltzWidgetMixin, webix.IdSpace, webix.ui.layout);
 
 const kRemoveTangoHost = "<span class='webix_icon wxi-minus-square remove_tango_host'></span> #id#";
 
@@ -132,11 +133,11 @@ const tango_hosts = webix.protoUI(
             webix.extend(config, this.ui(config));
 
             this.$ready.push(async () => {
-                const context = await config.root.context.get();
+                const context = await this.getUserContext();
                 $$(config.root.name).$$("tango_hosts").$$('list').sync(config.root.tango_hosts);
             });
         }
-    }, webix.IdSpace, webix.ui.layout);
+    }, WaltzWidgetMixin, webix.IdSpace, webix.ui.layout);
 
 /**
  * Extends {@link https://docs.webix.com/api__refs__ui.textarea.html webix.ui.textarea}

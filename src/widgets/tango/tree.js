@@ -4,7 +4,7 @@ import {kTangoRestContext} from "controllers/tango_rest";
 import newSearch from "views/search";
 import "views/tango/devices_tree";
 import "views/tango/tango_host_info_panel";
-import {kControllerUserContext, kUserContext} from "controllers/user_context";
+import {kUserContext} from "controllers/user_context";
 import {kChannelLog, kTopicError, kTopicLog} from "controllers/log";
 import {TangoId} from "@waltz-controls/tango-rest-client";
 import {kTangoDeviceWidget} from "widgets/tango/device";
@@ -46,17 +46,19 @@ export default class TangoTree extends WaltzWidget {
         super(kTangoTree);
     }
 
-    config(){
-        this.context = this.app.getController(kControllerUserContext);
+    getUserContext(){
+        return this.app.getContext(kUserContext);
+    }
 
+    config(){
         const proxy = {
             $proxy: true,
             load:() => {
-                return this.context.get()
+                return this.getUserContext()
                     .then(userContext => userContext.getTangoHosts().map(host => ({id:host, value:host})));
             },
             save: (master, params, dataProcessor) => {
-                let promiseContext = this.context.get();
+                let promiseContext = this.getUserContext();
                 switch (params.operation) {
                     case "insert":
                         promiseContext = promiseContext
@@ -71,7 +73,7 @@ export default class TangoTree extends WaltzWidget {
                 }
 
                 return promiseContext
-                    .then(() => this.context.save())
+                    .then(userContext => userContext.save())
                     .then(() => this.refresh())
                     .then(() => this.dispatch(`Successfully ${params.operation}ed TangoHost[${params.id}]`,kTopicLog, kChannelLog));
             }
@@ -236,10 +238,12 @@ export default class TangoTree extends WaltzWidget {
     }
 
     async applyDeviceFilters(filters){
-        const context = await this.context.get();
+        const context = await this.getUserContext();
         context.device_filters = filters;
 
-        this.context.save().then(() => this.refresh())
+        this.getUserContext()
+            .then(userContext => userContext.save())
+            .then(() => this.refresh())
     }
 
     run(){

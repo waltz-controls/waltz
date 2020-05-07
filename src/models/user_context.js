@@ -96,25 +96,6 @@ const kUserContextUrl = 'user-context/cache';
  * @property {Object} ext
  */
 export default class UserContext {
-    /**
-     *
-     * @param id
-     * @param options
-     * @return {Promise<UserContext>}
-     */
-    static load(id, options){
-        //TODO replace with clever observable
-        return fetch(`/user-context/cache?id=${id}`, options)
-            .then(resp => {
-                if(resp.ok)
-                    return resp.text()
-                else
-                    throw new Error(`Failed to load UserContext[${id}] due to ${resp.status}: ${resp.statusText}`)
-            })
-            .then(text => JSON.parse(atob(text)))
-            .then(json => new this({...json}));
-    }
-
     constructor({user, tango_hosts, device_filters, ext}) {
         this.user = user;
         this.tango_hosts = tango_hosts;
