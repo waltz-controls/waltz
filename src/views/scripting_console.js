@@ -109,7 +109,7 @@ const scripts_list = webix.protoUI({
     },
     defaults:{
         select: true,
-        template: '<span class="webix_icon mdi mdi-file-document-outline"></span> #name#',
+        template: '<span class="webix_list_icon mdi mdi-file-document-outline"></span> #name#',
         on: {
             onAfterSelect(id) {
                 this.config.root.data.setCursor(id);
