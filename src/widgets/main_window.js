@@ -9,6 +9,7 @@ import newLeftPanel from "views/left_panel";
 import newRightPanel from "views/right_panel";
 import newMainView from "views/main_view";
 import ScriptingWidget from "widgets/scripting";
+import Manager from "widgets/tango/manager";
 
 export const kMainWindow = 'widget:main';
 
@@ -54,6 +55,11 @@ export default class MainWindow extends WaltzWidget{
 
         main.attachEvent('scripting',()=> {
             new ScriptingWidget(this.app)
+                .run()
+        })
+
+        main.attachEvent('manager',()=> {
+            new Manager(this.app)
                 .run()
         })
 

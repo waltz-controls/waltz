@@ -133,6 +133,6 @@ export const WaltzWidgetMixin = {
      * @see ScriptingWidget#beforeCloseMain
      */
     beforeCloseMain(){
-        this.config.root.beforeCloseMain();
+        this.config.root.beforeCloseMain && this.config.root.beforeCloseMain();
     }
 }

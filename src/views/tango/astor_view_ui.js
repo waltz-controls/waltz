@@ -1,5 +1,7 @@
-import {get_device_info} from "./device_info_panel.js";
-import newToolbar from "./attrs_monitor_toolbar.js";
+import newToolbar from "./newToolbar";
+import {Runnable, WaltzWidgetMixin} from "views/mixins";
+import {kActionSelectTangoDevice} from "widgets/tango/actions";
+import {TangoId} from "@waltz-controls/tango-rest-client";
 
 const kDBHeader = "<span class='webix_icon mdi mdi-database'></span> #id#";
 
@@ -36,17 +38,16 @@ const hosts = {
             const admin = this.getItem(id);
 
 
-            this.getTopParentView().initializeAdmin(admin).then(() => {
-                PlatformContext.devices.setCursor(admin.id);
-            });
+            this.getTopParentView().config.root.setStarter(admin);
         },
         onAfterLoad(){
-            webix.assert(this.count() !== 0, "assertion error: hosts.count() !== 0");
+            this.getTopParentView().config.root.refreshHosts();
+
             this.select(this.getFirstId());
         }
     },
     click(id){
-        PlatformContext.devices.setCursor(id);
+        this.getTopParentView().config.root.dispatch(TangoId.fromDeviceId(id), kActionSelectTangoDevice);
     }
 };
 
@@ -85,12 +86,11 @@ const servers = {
         },
         onAfterSelect(id) {
             const server = this.getItem(id);
-            this.getTopParentView()._update_devices(server)
-                .then(device => {
-                    PlatformContext.devices.setCursor(device.id);
-                    return device;
-                });
+            this.getTopParentView().config.root.loadDevices(server);
         }
+    },
+    click(id){
+        this.getTopParentView().config.root.dispatch(TangoId.fromDeviceId(id), kActionSelectTangoDevice);
     }
 };
 
@@ -101,16 +101,12 @@ const devices = {
     select: true,
     multiselect: true,
     template: "<span class='webix_list_icon mdi mdi-developer-board'></span> #name#",
-    on: {
-        onAfterSelect(id) {
-            const device = this.getItem(id);
-            this.getTopParentView().tango_host.fetchDevice(device.name)
-                .then(device => PlatformContext.devices.setCursor(device.id));
-        }
+    click(id){
+        this.getTopParentView().config.root.dispatch(TangoId.fromDeviceId(id), kActionSelectTangoDevice);
     }
 };
 
-export function _ui(){
+function _ui(){
     return {
         rows: [
             {
@@ -122,12 +118,16 @@ export function _ui(){
                 cols: [
                     {
                         rows: [
-                            hosts,
+                            {
+                                ...hosts
+                            },
                             {
                                 template: "Tango Servers:",
                                 type: "header"
                             },
-                            servers,
+                            {
+                                ...servers
+                            },
                             {
                                 view: "toolbar",
                                 cols: [
@@ -215,35 +215,8 @@ export function _ui(){
                                     }
                                 ]
                             },
-                            devices,
                             {
-                                template: "Selected Device info:",
-                                type: "header"
-                            },
-                            {
-                                id: 'info',
-                                view: 'datatable',
-                                header: false,
-                                autoheight: true,
-                                columns: [
-                                    {id: 'info'},
-                                    {id: 'value', editor: "text", fillspace: true}
-                                ],
-                                on: {
-                                    onBindApply: function (device) {
-                                        if (!device || device.id === undefined) return false;
-
-                                        var info = get_device_info(device);
-                                        info.push({
-                                            id: 'alias',
-                                            info: 'Alias',
-                                            value: device.alias
-                                        });
-
-                                        this.clearAll();
-                                        this.parse(info);
-                                    }
-                                }
+                                ...devices
                             },
                             {
                                 template: "Manager's Log:",
@@ -261,3 +234,105 @@ export function _ui(){
         ]
     }
 }
+
+/**
+ *
+ * @author Igor Khokhriakov <igor.khokhriakov@hzg.de>
+ * @since 4/28/19
+ */
+const astor = webix.protoUI({
+    name: 'astor',
+    get $$header(){
+        return this.$$('header');
+    },
+
+    get $$hosts(){
+        return this.$$('hosts');
+    },
+
+    get $$servers(){
+        return this.$$('servers');
+    },
+
+    get $$devices(){
+        return this.$$('devices')
+    },
+
+    get $$log(){
+        return this.$$('log')
+    },
+
+    run() {
+        this.config.root.refresh();
+    },
+    _execute_for_all(cmdName) {
+        webix.promise.all(
+            this.$$('servers').getSelectedItem(as_array)
+                .map(async server => {
+                    const cmd = await this.starter.fetchCommand(cmdName);
+                    new ExecuteTangoCommand({user: PlatformContext.UserContext.user, command: cmd, value: server.name}).submit();
+                })).then(() => this.run());
+    },
+    devKill() {
+        this._execute_for_all("HardKillServer");
+    },
+    devStop() {
+        this._execute_for_all("DevStop");
+    },
+    devStart() {
+        this._execute_for_all("DevStart");
+    },
+    devAdd(name, clazz) {
+        const $$devices = this.$$('devices');
+        const server = $$devices.config.server;
+        if (server != null)
+            OpenAjax.hub.publish("tango_webapp.device_add", {
+                data: {
+                    device: {
+                        server: server.name,
+                        name,
+                        clazz
+                    },
+                    host: this.tango_host
+                }
+            });
+    },
+    devRestart() {
+        const $$devices = this.$$('devices');
+        $$devices.getSelectedItem(as_array)
+            .forEach(async dev => {
+                const cmd = await (await $$devices.config.server.device).fetchCommand("DevRestart");
+                new ExecuteTangoCommand({user: PlatformContext.UserContext.user, command: cmd, value: dev.name}).submit();
+            });
+    },
+    devRemove() {
+        this.$$('devices').getSelectedItem(as_array)
+            .forEach(async dev => {
+                const db = await this.tango_host.fetchDatabase();
+                db.deleteDevice(dev.name).then(function () {
+                    OpenAjax.hub.publish("tango_webapp.device_delete", {
+                        data: {
+                            device: dev
+                        }
+                    });
+                })
+                    .then(() => {
+                        this.$$('devices').remove(dev.id);
+                    })
+                    .fail(TangoWebappHelpers.error)
+            });
+    },
+    $init(config) {
+        webix.extend(config, _ui());
+
+        this.$ready.push(() => {
+            webix.extend(this.$$("hosts"), webix.ProgressBar);
+            webix.extend(this.$$("servers"), webix.ProgressBar);
+            webix.extend(this.$$("devices"), webix.ProgressBar);
+            webix.extend(this.$$("log"), webix.ProgressBar);
+
+            this.$$('frmNewDevice').bind(this.$$("devices"));
+            //TODO bind devices to servers
+        });
+    }
+}, WaltzWidgetMixin, Runnable, webix.ProgressBar, webix.IdSpace, webix.ui.layout);

@@ -79,7 +79,7 @@ const spectrum_view = webix.protoUI({
                     webix.extend({
                         view: "spectrum_text",
                         id: 'plot'
-                    }, config.attributes()) :
+                    }, config) :
                     webix.extend({
                         view: "spectrum",
                         gravity: 3,

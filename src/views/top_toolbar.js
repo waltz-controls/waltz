@@ -43,7 +43,7 @@ const toolsMenu = webix.ui({
                         $$(kMainWindow).callEvent('scripting',[])
                         break;
                     case "toolsAstor":
-                        PlatformApi.PlatformUIController().openAstorTab();
+                        $$(kMainWindow).callEvent('manager',[])
                         break;
                     case "toolsTerminal":
                         PlatformApi.PlatformUIController().openTerminalTab();
