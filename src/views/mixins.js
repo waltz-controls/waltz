@@ -125,5 +125,14 @@ export const WaltzWidgetMixin = {
      */
     getUserActionsController(){
         return this.config.root.app.getController(kControllerUserAction);
+    },
+
+    /**
+     * Calls this root's beforeClose
+     *
+     * @see ScriptingWidget#beforeCloseMain
+     */
+    beforeCloseMain(){
+        this.config.root.beforeCloseMain();
     }
 }

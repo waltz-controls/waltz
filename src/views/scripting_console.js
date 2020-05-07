@@ -7,6 +7,7 @@
 import UserScript from "models/user_script";
 
 import "views/codemirror_textarea";
+import {WaltzWidgetMixin} from "./mixins";
 
 /**
  * @constant
@@ -99,12 +100,23 @@ const script_code = {
  * @constant
  * @memberof ui.ScriptingConsole
  */
-const scripts_list = {
-    view: 'list',
-    select: true,
-    template: '<span class="webix_icon mdi mdi-file-document-outline"></span> #name#',
-    id: 'scripts_list'
-};
+const scripts_list = webix.protoUI({
+    name: 'scripts_list',
+    $init(config){
+        this.$ready.push(() => {
+            this.data.sync(config.root.data);
+        })
+    },
+    defaults:{
+        select: true,
+        template: '<span class="webix_icon mdi mdi-file-document-outline"></span> #name#',
+        on: {
+            onAfterSelect(id) {
+                this.config.root.data.setCursor(id);
+            }
+        }
+    }
+},webix.ui.list);
 
 /**
  * @constant
@@ -190,17 +202,6 @@ const scripting_console = webix.protoUI(
                     multi: true,
                     cols: [
                         {
-                            header: '<span class="webix_icon mdi mdi-notebook"></span> Scripts',
-                            body: {
-                                ...scripts_list,
-                                on: {
-                                    onAfterSelect:function(id){
-                                        config.root.data.setCursor(id);
-                                    }
-                                }
-                            }
-                        },
-                        {
                             gravity: 4,
                             body: {
                                 rows: [
@@ -226,11 +227,10 @@ const scripting_console = webix.protoUI(
         webix.extend(config, this.ui(config));
 
         this.$ready.push(() => {
-            this.$$('scripts_list').data.sync(config.root.data);
             this.$$('script_code').bind(config.root.data);
             this.$$('script_name').bind(config.root.data);
 
             webix.extend(this.$$('output'), webix.ProgressBar);
         });
     }
-}, webix.IdSpace, webix.ui.layout);
+}, WaltzWidgetMixin, webix.IdSpace, webix.ui.layout);

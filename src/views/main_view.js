@@ -10,7 +10,12 @@ export default function newMainView(root){
             popupWidth: 480,
             tabMinWidth: 250,
             tabMoreWidth: 40,
-            bottomPadding: 5
+            bottomPadding: 5,
+            on: {
+                onBeforeTabClose(id) {
+                    if($$(id) && $$(id).beforeCloseMain) $$(id).beforeCloseMain();
+                }
+            }
         },
         cells: [{}]
     }

@@ -10,6 +10,9 @@ import {kControllerUserAction} from "controllers/user_action_controller";
 export const kWidgetScripting = 'widget:scripting';
 const kOverwrite = true;
 
+const kScriptsPanelHeader = '<span class="webix_icon mdi mdi-notebook"></span> Scripts';
+
+const kScriptsPanelListId = 'panel:scripts_list';
 export default class ScriptingWidget extends WaltzWidget {
     constructor(app) {
         super(kWidgetScripting, app);
@@ -68,9 +71,38 @@ export default class ScriptingWidget extends WaltzWidget {
         }
     }
 
+    panel(){
+        return {
+            view:"accordionitem",
+            header: kScriptsPanelHeader,
+            headerAlt: kScriptsPanelHeader,
+            headerHeight: 32,
+            headerAltHeight: 32,
+            collapsed: true,
+            id: kScriptsPanelListId,
+            body:{
+                view: 'scripts_list',
+                root: this
+            }
+        }
+    }
+
     run(){
         const tab = $$(this.name) || $$(this.app.getWidget(kMainWindow).mainView.addView(this.ui()));
         tab.show();
+
+        const panel = $$(kScriptsPanelListId) || $$(this.app.getWidget(kMainWindow).leftPanel.addView(this.panel()));
+        panel.expand();
+    }
+
+    /**
+     * Removes side panel before closing main tab
+     *
+     */
+    beforeCloseMain(){
+        const panel = $$(kScriptsPanelListId);
+        panel.collapse();
+        this.app.getWidget(kMainWindow).leftPanel.removeView(panel);
     }
 
     /**
