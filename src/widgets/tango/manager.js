@@ -236,6 +236,7 @@ export default class Manager extends WaltzWidget {
     }
 
     loadLog(){
+        this.view.$$log.enable();
         this.view.$$log.showProgress();
         this.view.$$log.clearAll();
         //TODO proxy
