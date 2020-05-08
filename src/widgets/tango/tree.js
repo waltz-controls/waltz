@@ -10,7 +10,6 @@ import {TangoId} from "@waltz-controls/tango-rest-client";
 import {kTangoDeviceWidget} from "widgets/tango/device";
 import {newToolbarButton} from "views/helpers";
 import {last, mergeMap} from "rxjs/operators";
-import {of} from "rxjs";
 import {kActionSelectTangoDevice, kActionSelectTangoHost, kAddTangoDevices} from "./actions";
 import {kChannelTango, TangoHost} from "models/tango";
 import {UpdateDeviceAlias} from "models/user_action";
@@ -267,7 +266,7 @@ export default class TangoTree extends WaltzWidget {
 
         const req = rest.newTangoHost({...host.split(':')}).database()
             .pipe(
-                mergeMap(db => of(devices.map(name => db.addDevice([server,name,className])))),
+                mergeMap(db => from(devices.map(name => db.addDevice([server,name,className])))),
                 last()
             )
 

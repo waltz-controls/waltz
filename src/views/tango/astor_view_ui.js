@@ -137,7 +137,7 @@ function _ui(){
                                         tooltip: "Kills selected servers",
                                         css:"webix_danger",
                                         click() {
-                                            this.getTopParentView().devKill();
+                                            this.getTopParentView().config.root.buttons.devKill();
                                         }
                                     },
                                     {
@@ -145,7 +145,7 @@ function _ui(){
                                         value: "Stop",
                                         tooltip: "Stops selected servers",
                                         click() {
-                                            this.getTopParentView().devStop();
+                                            this.getTopParentView().config.root.buttons.devStop();
                                         }
                                     },
                                     {
@@ -153,7 +153,7 @@ function _ui(){
                                         value: "Start",
                                         tooltip: "Starts selected servers",
                                         click() {
-                                            this.getTopParentView().devStart();
+                                            this.getTopParentView().config.root.buttons.devStart();
                                         }
                                     }
                                 ]
@@ -163,7 +163,7 @@ function _ui(){
                     {
                         rows: [
                             {
-                                template: "Tango Devices:",
+                                template: "Tango Devices (DServer.QueryDevices):",
                                 type: "header"
                             },
                             {
@@ -190,18 +190,18 @@ function _ui(){
                                         click() {
                                             const form = this.getFormView();
                                             if (form.validate())
-                                                this.getTopParentView().devAdd(
-                                                    form.elements.name.getValue(),
-                                                    form.elements.clazz.getValue());
+                                                this.getTopParentView().config.root.buttons.devAdd({
+                                                    name:  form.elements.name.getValue(),
+                                                    clazz: form.elements.clazz.getValue()});
                                         }
                                     },
                                     {
                                         view: "icon",
-                                        icon: "wxi-sync",
+                                        icon: "mdi mdi-restart",
                                         tooltip: "Restart selected device(s)",
                                         width: 30,
                                         click() {
-                                            this.getTopParentView().devRestart();
+                                            this.getTopParentView().config.root.buttons.devRestart();
                                         }
                                     },
                                     {
@@ -210,7 +210,7 @@ function _ui(){
                                         tooltip: "Delete selected device(s)",
                                         width: 30,
                                         click() {
-                                            this.getTopParentView().devRemove();
+                                            this.getTopParentView().config.root.buttons.devRemove();
                                         }
                                     }
                                 ]
@@ -219,8 +219,12 @@ function _ui(){
                                 ...devices
                             },
                             {
-                                template: "Manager's Log:",
-                                type: "header"
+                                id: "log_header",
+                                template: "Starter's Log (#name#):",
+                                type: "header",
+                                data:[{
+                                    name: "Unselected"
+                                }]
                             },
                             {
                                 view: "list",
@@ -264,63 +268,6 @@ const astor = webix.protoUI({
 
     run() {
         this.config.root.refresh();
-    },
-    _execute_for_all(cmdName) {
-        webix.promise.all(
-            this.$$('servers').getSelectedItem(as_array)
-                .map(async server => {
-                    const cmd = await this.starter.fetchCommand(cmdName);
-                    new ExecuteTangoCommand({user: PlatformContext.UserContext.user, command: cmd, value: server.name}).submit();
-                })).then(() => this.run());
-    },
-    devKill() {
-        this._execute_for_all("HardKillServer");
-    },
-    devStop() {
-        this._execute_for_all("DevStop");
-    },
-    devStart() {
-        this._execute_for_all("DevStart");
-    },
-    devAdd(name, clazz) {
-        const $$devices = this.$$('devices');
-        const server = $$devices.config.server;
-        if (server != null)
-            OpenAjax.hub.publish("tango_webapp.device_add", {
-                data: {
-                    device: {
-                        server: server.name,
-                        name,
-                        clazz
-                    },
-                    host: this.tango_host
-                }
-            });
-    },
-    devRestart() {
-        const $$devices = this.$$('devices');
-        $$devices.getSelectedItem(as_array)
-            .forEach(async dev => {
-                const cmd = await (await $$devices.config.server.device).fetchCommand("DevRestart");
-                new ExecuteTangoCommand({user: PlatformContext.UserContext.user, command: cmd, value: dev.name}).submit();
-            });
-    },
-    devRemove() {
-        this.$$('devices').getSelectedItem(as_array)
-            .forEach(async dev => {
-                const db = await this.tango_host.fetchDatabase();
-                db.deleteDevice(dev.name).then(function () {
-                    OpenAjax.hub.publish("tango_webapp.device_delete", {
-                        data: {
-                            device: dev
-                        }
-                    });
-                })
-                    .then(() => {
-                        this.$$('devices').remove(dev.id);
-                    })
-                    .fail(TangoWebappHelpers.error)
-            });
     },
     $init(config) {
         webix.extend(config, _ui());
