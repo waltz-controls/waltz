@@ -3,8 +3,9 @@ import {StringUtils} from "utils";
 import {kTangoRestContext, pollStatus, updatePolling} from "controllers/tango_rest";
 import {kControllerUserAction} from "controllers/user_action_controller";
 import {kUserContext} from "controllers/user_context";
-import {filter, toArray} from "rxjs/operators";
-import {kTangoTypeAttribute, kTangoTypeCommand, TangoDevice} from "models/tango";
+import {filter, map, toArray} from "rxjs/operators";
+import {kTangoTypeAttribute, kTangoTypeCommand, Pollable, TangoDevice} from "models/tango";
+import {forkJoin} from "rxjs";
 
 const kDevice_info_values = [
     "name",
@@ -27,63 +28,57 @@ const kDevice_info_values = [
 function newDeviceInfoDatatable (){
     return {
         id: 'info',
-        view: 'datatable',
+        view: 'treetable',
         header: false,
-        autoheight: true,
         editable: true,
         columns: [
-            {id: 'info'},
-            {id: 'value', editor: "text", fillspace: true}
+            {id: 'info' , editor: "text", template:"{common.icon()} {common.delete()} #info#"},
+            {id: 'value', editor: "text", fillspace: true, template(obj){
+                    if(obj.polled) return `${obj.value} (ms)`
+                    else return obj.value;
+                }}
         ],
-        on: {
-            onBeforeEditStart: function (id) {
-                var row = id.row;
-                return row === 'alias';
+        type:{
+            delete(obj){
+                if(obj.isProperty) return `<span class="removeProperty webix_list_icon mdi mdi-close"></span>`;
+                else return "";
             }
+        },
+        on: {
+            onAfterEditStop(data, obj) {
+                if(obj.isProperty && obj.column === "info")
+                    this.data.changeId(obj.row, this.getTopParentView().device.id + "/" + data.value);
+                if (obj.isProperty && obj.column === "value")
+                    this.data.updateItem(obj.row, {value: (data.value.split) ? data.value.split(',') : data.value})
+            },
+            onBeforeEditStart: function (id) {
+                const row = id.row;
+                const item = this.getItem(row);
+                return (row === 'alias') || item.isProperty === true || item.polled === true;
+            }
+        },
+        onClick: {
+            removeProperty(ev, id){
+                this.getTopParentView().deleteProperty(this.data.getItem(id.row))
+                    .then(() => this.data.remove(id.row));
+
+                return false;
+            }
+        },
+        rules: {
+            info: webix.rules.isNotEmpty,
+            // value: webix.rules.isNotEmpty,
+            poll_rate: webix.rules.isNumber
         }
     }
 }
 
-function loadInfo($$info, device){
-    const info = [{
-        id:'alias',
-        info: 'Alias',
-        value: device.alias
-    }]
-    info.push(...get_device_info(device));
-
-    $$info.clearAll();
-    $$info.parse(info);
-}
-
-function loadProperties($$properties, device){
-    device.properties().get().subscribe(properties => {
-        $$properties.clearAll();
-        $$properties.parse(properties);
-    });
-}
-
-function loadPollables($$attributes,$$commands, device){
-    const pollables = pollStatus(device);
-
-    pollables.pipe(
-        filter(pollable => pollable.type === kTangoTypeAttribute),
-        toArray()
-    ).subscribe(polledAttributes => {
-        $$attributes.clearAll();
-        $$attributes.parse(polledAttributes);
-    })
-
-    pollables.pipe(
-        filter(pollable => pollable.type === kTangoTypeCommand),
-        toArray()
-    ).subscribe(polledCommands => {
-        $$commands.clearAll();
-        $$commands.parse(polledCommands);
-    })
-}
-
-function get_device_info(device) {
+/**
+ *
+ * @param device
+ * @return {{value: *, info: *}[]}
+ */
+function loadInfo(device){
     return kDevice_info_values.map(item => ({
             info: StringUtils.classize(item),
             value: device.info[item]
@@ -91,28 +86,34 @@ function get_device_info(device) {
     );
 }
 
-/**
- *
- * @param {string} id
- * @return {{view: string, columns: *[], header: boolean, autoheight: boolean, id: *}}
- */
-function newPolledDatatable(id) {
-    return {
-        view: "datatable",
-        id: id,
-        header: false,
-        autoheight: true,
-        editable:true,
-        columns: [
-            {id: 'name'},
-            {id: 'poll_rate', editor: "text", template: "#poll_rate# (ms)", fillspace: true}
-        ],
-        rules: {
-            poll_rate: webix.rules.isNumber
-        }
-    }
+function loadProperties(device){
+    return device.properties().get().pipe(
+        map(resp => resp.map(property => ({id: `${device.id.getTangoDeviceId()}/${property.name}`, info: property.name, value:property.values, isProperty: true}))),
+        map(properties => ({id: kPropertiesRowId, info:'Properties', value: '', data: properties}))
+    ).toPromise();
 }
 
+function loadPollables(device){
+    const pollables = pollStatus(device);
+
+    return forkJoin([
+        pollables.pipe(
+            filter(pollable => pollable.type === kTangoTypeAttribute),
+            map(pollable => ({...pollable, info: pollable.name, value: pollable.poll_rate})),
+            toArray()
+        ),
+        pollables.pipe(
+            filter(pollable => pollable.type === kTangoTypeCommand),
+            map(pollable => ({...pollable, info: pollable.name, value: pollable.poll_rate})),
+            toArray()
+        )
+    ]).pipe(
+        map(([attributes, commands]) => [
+            {id:'polled_attributes', info: 'Polled Attributes:', value:'', data: attributes},
+            {id:'polled_commands', info:'Polled Commands:', value:'', data:commands}
+        ])
+    ).toPromise()
+}
 
 const toolbar = {
     view: "toolbar",
@@ -145,41 +146,6 @@ const toolbar = {
 };
 
 
-function newPropertiesDatatable() {
-    return {
-        view: "datatable",
-        id: "properties",
-        editable: true,
-        header: false,
-        autoheight: true,
-        columns: [
-            {id:'remove', width: 24, template: () => '<span class="remove webix_list_icon mdi mdi-close"></span>'},
-            {id: 'name', editor: "text"},
-            {id: 'values', editor: "text", fillspace: true}
-        ],
-        rules: {
-            name: webix.rules.isNotEmpty,
-            values: webix.rules.isNotEmpty
-        },
-        on: {
-            onAfterEditStop(data, obj) {
-                if (obj.column === "name")
-                    this.data.changeId(obj.row, this.getTopParentView().device.id + "/" + data.value);
-                if (obj.column === "values")
-                    this.data.updateItem(obj.row, {values: (data.value.split) ? data.value.split(',') : data.value})
-            }
-        },
-        onClick:{
-            "remove"(event, id){
-                this.getTopParentView().deleteProperty(this.data.getItem(id.row))
-                    .then(() => this.data.remove(id.row));
-
-                return false;
-                },
-        }
-    }
-}
-
 /**
  *
  * @return {Promise<tango.TangoDevice>}
@@ -189,6 +155,8 @@ async function getRestTangoDevice(){
     return rest.newTangoDevice(this.device.tango_id);
 }
 
+const kPropertiesRowId = 'properties';
+const kAllFound = false;
 const device_info_panel = webix.protoUI({
     name:"device_info_panel",
     device: null,
@@ -196,7 +164,7 @@ const device_info_panel = webix.protoUI({
         return this.$$('info');
     },
     get $$properties(){
-        return this.$$('properties');
+        return this.$$(kPropertiesRowId);
     },
     get $$attributes(){
         return this.$$('polled_attributes');
@@ -212,18 +180,19 @@ const device_info_panel = webix.protoUI({
             .then(() => this.hideProgress());
     },
     addProperty(){
-        this.$$properties.editStop();
-        const id = this.$$properties.add({
-            name: "New property",
-            values: ""
-        });
-        this.$$properties.editRow(id);
+        this.$$info.editStop();
+        const id = this.$$info.add({
+            info: "New property",
+            value: "",
+            isProperty: true
+        },0, kPropertiesRowId);
+        this.$$info.editRow(id);
     },
     deleteProperty(property){
         return getRestTangoDevice.call(this)
             .then(device => device.toTangoRestApiRequest()
                                     .properties()
-                                    .delete(`/${property.name}`)
+                                    .delete(`/${property.info}`)
                                     .toPromise()
                 );
     },
@@ -236,12 +205,12 @@ const device_info_panel = webix.protoUI({
     },
     async saveProperties(){
         const properties = {};
-        this.$$properties.editStop();
-        this.$$properties.eachRow((rowId) => {
-            const row = this.$$properties.getItem(rowId);
-            if(row)
-                properties[row.name] = (row.values.split) ? row.values.split(',') : row.values;
-        });
+        this.$$info.editStop();
+        this.$$info
+            .find(item => item.isProperty, kAllFound)
+            .forEach(row => {
+                properties[row.info] = (row.value.split) ? row.value.split(',') : row.value;
+            });
 
 
         (await getRestTangoDevice.call(this)).toTangoRestApiRequest()
@@ -254,17 +223,12 @@ const device_info_panel = webix.protoUI({
             }`)
             .toPromise();
     },
-    savePolling(pollables){
-        const result = [];
-        pollables.eachRow(id => {
-            const promise = async () => {
-                const pollable = pollables.getItem(id);
+    savePolling(){
+        return this.$$info.find(item => item.polled === true, kAllFound)
+            .map(async pollable => {
                 const device = await getRestTangoDevice.call(this);
-                return updatePolling(device, pollable, true, pollable.poll_rate).toPromise();
-            }
-            result.push(promise());
-        })
-        return result;
+                return updatePolling(device, new Pollable({...pollable}), true, pollable.poll_rate).toPromise()
+            })
     },
     save(){
         this.$$info.editStop();
@@ -276,8 +240,7 @@ const device_info_panel = webix.protoUI({
         Promise.all(
             [this.updateAlias(alias.value),
                 this.saveProperties(),
-                ...this.savePolling(this.$$attributes),
-                ...this.savePolling(this.$$commands),
+                ...this.savePolling(),
             ]
         ).then(() => this.hideProgress());
 
@@ -292,13 +255,25 @@ const device_info_panel = webix.protoUI({
         if (!device || device.id === undefined) return false;
         this.device = device;
 
-        loadInfo(this.$$info,device)
+        const info = [{
+            id:'alias',
+            info: 'Alias',
+            value: device.alias
+        }];
+        info.push(...loadInfo(device));
 
         const _device = await getRestTangoDevice.call(this);
 
-        loadProperties(this.$$properties, _device);
+        const properties = await loadProperties(_device);
 
-        loadPollables(this.$$attributes, this.$$commands, _device);
+        info.push(properties);
+
+        const pollables = await loadPollables(_device);
+
+        info.push(...pollables);
+
+        this.$$info.clearAll();
+        this.$$info.parse(info);
     },
     _ui(config){
         return {
@@ -306,27 +281,8 @@ const device_info_panel = webix.protoUI({
             rows:[
                 newDeviceInfoDatatable(),
                 {
-                    height: 24,
-                    template: "Properties",
-                    type: "header"
-                },
-                newPropertiesDatatable(),
-                {
-                    height: 24,
-                    template: "Polled attributes",
-                    type: "header"
-                },
-                newPolledDatatable("polled_attributes"),
-                {
-                    height: 24,
-                    template: "Polled commands",
-                    type: "header"
-                },
-                newPolledDatatable("polled_commands"),
-                {
-                    minHeight:1
-                },
-                toolbar
+                    ...toolbar
+                }
             ]
         }
     },
