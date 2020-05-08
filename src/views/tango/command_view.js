@@ -118,7 +118,7 @@ const command_view = webix.protoUI({
         this.plot.clearAll();
     },
     run(){
-        const value = this.input.getValue();
+        const value = this.config.root.command.isVoid() ? undefined : this.input.getValue();
         this.config.root.execute(value);
     },
     _ui(config){

@@ -105,7 +105,7 @@ export class TangoCommand extends Member {
     }
 
     isVoid(){
-        return this.info.data_type === "DevVoid";
+        return this.info.in_type === "DevVoid";
     }
 }
 
