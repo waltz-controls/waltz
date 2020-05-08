@@ -81,6 +81,7 @@ export default class Manager extends WaltzWidget {
         this.listen(id => this.setTangoHost(id), kActionSelectTangoHost);
         this.listen({
             next: (event) => {
+                console.debug(event)
                 this.refreshHosts();
                 updateServer.call(this, event.data.map(el => el.split("\t")))
                 this.refreshDevices();
@@ -282,7 +283,7 @@ export default class Manager extends WaltzWidget {
 
 function executeForAll($$servers, root, cmd){
     zip(
-        $$servers.getSelectedItem(as_array),
+        from($$servers.getSelectedItem(as_array)),
         of(root.starter.newCommand(cmd)).pipe(
             map(cmd => new TangoCommand({...cmd.id, id: cmd.id.getTangoMemberId()}))
         ),
@@ -297,7 +298,7 @@ function executeForAll($$servers, root, cmd){
         switchMap(commands => forkJoin(
             commands
         ))
-    ).subscribe(resp => {/*root.view.run()*/});
+    ).subscribe(resp => {console.debug(`Done executeForAll ${cmd}`)/*root.view.run()*/});
 }
 
 class Buttons {
