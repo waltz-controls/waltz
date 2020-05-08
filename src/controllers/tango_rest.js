@@ -17,25 +17,33 @@ class DecoratedTangoRestApiRequest extends TangoRestApiRequest {
     }
 
     get(what, options = {}){
-        const request = super.get(what, options);
+        const request = super.get(what, options).pipe(
+            share()
+        );
         this.middleware.dispatchObservable('req',kChannelTangoRest, request);
         return request;
     }
 
     put(what, data, options = {}){
-        const request = super.put(what, data, options);
+        const request = super.put(what, data, options).pipe(
+            share()
+        );
         this.middleware.dispatchObservable('req',kChannelTangoRest, request);
         return request;
     }
 
     post(what, data, options = {}){
-        const request = super.post(what, data, options);
+        const request = super.post(what, data, options).pipe(
+            share()
+        );
         this.middleware.dispatchObservable('req',kChannelTangoRest, request);
         return request;
     }
 
     delete(what){
-        const request = super.delete(what);
+        const request = super.delete(what).pipe(
+            share()
+        );
         this.middleware.dispatchObservable('req',kChannelTangoRest, request);
         return request;
     }
