@@ -227,7 +227,7 @@ const device_info_panel = webix.protoUI({
         return this.$$info.find(item => item.polled === true, kAllFound)
             .map(async pollable => {
                 const device = await getRestTangoDevice.call(this);
-                return updatePolling(device, new Pollable({...pollable}), true, pollable.poll_rate).toPromise()
+                return updatePolling(device, new Pollable({...pollable}), true, pollable.value).toPromise()
             })
     },
     save(){
