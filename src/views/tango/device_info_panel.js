@@ -89,7 +89,7 @@ function loadInfo(device){
 function loadProperties(device){
     return device.properties().get().pipe(
         map(resp => resp.map(property => ({id: `${device.id.getTangoDeviceId()}/${property.name}`, info: property.name, value:property.values, isProperty: true}))),
-        map(properties => ({id: kPropertiesRowId, info:'Properties', value: '', data: properties}))
+        map(properties => ({id: kPropertiesRowId, info:'Properties', value: properties.length, data: properties}))
     ).toPromise();
 }
 
@@ -109,8 +109,8 @@ function loadPollables(device){
         )
     ]).pipe(
         map(([attributes, commands]) => [
-            {id:'polled_attributes', info: 'Polled Attributes:', value:'', data: attributes},
-            {id:'polled_commands', info:'Polled Commands:', value:'', data:commands}
+            {id:'polled_attributes', info: 'Polled Attributes:', value:attributes.length, data: attributes},
+            {id:'polled_commands', info:'Polled Commands:', value:commands.length, data:commands}
         ])
     ).toPromise()
 }
@@ -254,6 +254,7 @@ const device_info_panel = webix.protoUI({
     async setDevice(device){
         if (!device || device.id === undefined) return false;
         this.device = device;
+        this.$$info.clearAll();
 
         const info = [{
             id:'alias',
@@ -272,12 +273,11 @@ const device_info_panel = webix.protoUI({
 
         info.push(...pollables);
 
-        this.$$info.clearAll();
+
         this.$$info.parse(info);
     },
     _ui(config){
         return {
-            fitBiggest:true,
             rows:[
                 newDeviceInfoDatatable(),
                 {
