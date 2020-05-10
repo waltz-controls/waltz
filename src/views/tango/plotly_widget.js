@@ -1,8 +1,5 @@
-import newToolbar from "./attrs_monitor_toolbar.js";
-import {
-    newRemoveAttributeSettings,
-    toolbar_extension
-} from "../../../resources/webix_widgets/remove_attribute_toolbar.js";
+import newToolbar from "views/tango/newToolbar";
+import {newRemoveAttributeSettings, toolbar_extension} from "./remove_attribute_toolbar.js";
 import {kNonPlottableDataTypes} from "./plot.js";
 import {openAttributeWindow} from "./device_controls.js";
 

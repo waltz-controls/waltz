@@ -1,7 +1,6 @@
-import newToolbar from "./attrs_monitor_toolbar.js";
+import newToolbar from "views/tango/newToolbar";
 import {newRemoveAttributeSettings, toolbar_extension} from "./remove_attribute_toolbar.js";
-import {TangoId} from "../../src/models/platform/tango_id.js";
-import {WriteTangoAttribute} from "../../src/models/tango_webapp/user_action.js";
+import {Runnable, ToggleSettings} from "views/mixins";
 
 const kPersistentColumns = ["id", "device", "remove"];
 const kOverlayDelayTimeout = 3000;
@@ -15,28 +14,6 @@ const kAlertInvalid = `<span class="webix_icon mdi mdi-alert" style="color: red"
 const kAlertWarning = `<span class="webix_icon mdi mdi-alert" style="color: orange"></span>`;
 const kAlertFailure = `<span class="webix_icon mdi mdi-alert-octagram-outline" style="color: red"></span>`;
 
-
-export const TableWidgetController = class extends MVC.Controller {
-    buildUI(platform_api) {
-        platform_api.ui_builder.add_mainview_item(newTableWidgetTab({id:'table_widget'}));
-    }
-    /**
-     *
-     * @param {PlatformApi} platform_api
-     */
-    async initialize(platform_api){
-        // const host = await PlatformContext.rest.fetchHost("localhost:10000");
-        // const device = await host.fetchDevice("sys/tg_test/1");
-        // let attr = await device.fetchAttr("double_scalar");
-        //
-        //
-        // $$('table_widget').addAttribute(attr);
-        //
-        // attr = await device.fetchAttr("long_scalar");
-        // $$('table_widget').addAttribute(attr);
-
-    }
-};
 
 function respToUpdate(update, resp){
     update[resp.name + "_quality"] = resp.quality;
@@ -423,7 +400,7 @@ const stateful_table_datatable = webix.protoUI({
     getStateId() {
         return this.config.stateId || this.config.id;
     }
-},TangoWebappPlatform.mixin.Stateful,webix.ProgressBar,table_datatable);
+}, webix.ProgressBar,table_datatable);
 
 function newTableWidgetTable(config) {
     return {
@@ -642,20 +619,4 @@ const table_widget = webix.protoUI({
         });
     }
 
-},/*TODO Statefull*/ TangoWebappPlatform.mixin.Runnable, TangoWebappPlatform.mixin.ToggleSettings, webix.IdSpace, webix.ui.layout);
-
-export function newTableWidgetBody(config){
-    return webix.extend({
-                view: "table_widget"
-
-    },config);
-}
-
-export function newTableWidgetTab(config){
-    return {
-        header: kTableWidgetHeader,
-        borderless: true,
-        body: newTableWidgetBody(config)
-
-    };
-}
+},/*TODO Statefull*/ Runnable, ToggleSettings, webix.IdSpace, webix.ui.layout);

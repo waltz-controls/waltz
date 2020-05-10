@@ -1,3 +1,6 @@
+import {mainView} from "widgets/tango/dashboard";
+
+
 export default function newMainView(root){
     return {
         root,
@@ -17,6 +20,10 @@ export default function newMainView(root){
                 }
             }
         },
-        cells: [{}]
+        cells: [
+            {
+                ...mainView
+            }
+        ]
     }
 }

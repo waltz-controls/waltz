@@ -136,3 +136,28 @@ export const WaltzWidgetMixin = {
         this.config.root.beforeCloseMain && this.config.root.beforeCloseMain();
     }
 }
+
+export const ToggleSettings = {
+        toggleSettings(){
+        const $$settings = this.$$('settings');
+        if($$settings.isVisible()){
+        this.hideSettings();
+    } else {
+    this.showSettings();
+}
+},
+hideSettings(){
+    const $$settings = this.$$('settings');
+    $$settings.hide();
+    this.state.updateState({
+        hide_settings : true
+    });
+},
+showSettings(){
+    const $$settings = this.$$('settings');
+    $$settings.show();
+    this.state.updateState({
+        hide_settings : false
+    });
+}
+}

@@ -17,6 +17,7 @@ import UserContextController from "controllers/user_context";
 import UserActionController from "controllers/user_action_controller";
 import TangoInfoPanelWidget from "widgets/tango/info";
 import TangoSubscriptionsController from "controllers/tango_subscriptions";
+import DashboardWidget from "widgets/tango/dashboard";
 
 // TangoWebappPlatform.consts.LOG_DATE_FORMATTER = webix.Date.dateToStr("%c");
 
@@ -31,6 +32,7 @@ const waltz = new Application({name: APPNAME, version: VERSION})
     .registerController(new UserContextController())
     .registerController(new UserActionController())
     .registerWidget(new MainWindow())
+    .registerWidget(new DashboardWidget())
     .registerWidget(new TangoTree())
     .registerWidget(new TangoDeviceWidget())
     .registerWidget(new TangoInfoPanelWidget())
@@ -43,31 +45,3 @@ new Application({name: 'WaltzLogin', version: VERSION})
     .registerContext(kWaltz, waltz)
     .registerWidget(new LoginWidget())
     .run();
-
-
-// new LoginController()
-//     .run()
-//     .then(user => {
-//         //TODO migrate to fetch
-//         webix.attachEvent("onBeforeAjax", function (mode, url, params, x, headers) {
-//             x.withCredentials = true;
-//             Object.assign(headers, user.headers);
-//         });
-//
-//         //In fact requests UserContext from /user-context/cache
-//         return TangoWebappPlatform.UserContext.find_one(user.name);
-//     })
-//     .then(userContext => {
-//         TangoWebappHelpers.debug(userContext.toString());
-//
-//         const rest = new TangoWebappPlatform.TangoRestApi({url: userContext.rest_url});
-//         const eventbus = new EventBus();
-//
-//         TangoWebappPlatform.PlatformContext.create({
-//             UserContext: userContext,
-//             rest,
-//             eventbus
-//         });
-//
-//         TangoWebappHelpers.debug("platform/main done.");
-//     });

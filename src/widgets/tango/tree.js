@@ -97,6 +97,7 @@ export default class TangoTree extends WaltzWidget {
             headerHeight:0,
             headerAlt:kDevicesTreePanelHeader,
             headerAltHeight: 32,
+            collapsed: true,
             body: {
                 width: 300,
                 id: this.name,
