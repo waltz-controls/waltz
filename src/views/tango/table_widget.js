@@ -187,9 +187,6 @@ const table_datatable = webix.protoUI({
             }
         }
     },
-    clear(){
-        this.clearAll();
-    },
     addColumns(attrs){
         const columns = this.config.columns;
 
@@ -301,113 +298,6 @@ const table_datatable = webix.protoUI({
 }, WaltzWidgetMixin, webix.ui.datatable);
 
 
-
-const stateful_table_datatable = webix.protoUI({
-    name:"stateful_table_datatable",
-    getInitialState(){
-        return {
-            hide_settings: false,
-            frozen: false,
-            attrs: [],
-            devices: []
-        }
-    },
-    _restoreAttrs(attrs){
-        const columns = this.config.columns;
-        columns.splice.apply(columns,[columns.length - 1, 0].concat(attrs.map(getColumnConfig)));
-        this.refreshColumns();
-
-        const $$settings = this.getTopParentView().$$('settings');
-        attrs.forEach(attr => $$settings.addAttribute(attr, true));
-    },
-    _restoreDevices(devices){
-        this.parse(devices.map(device => {
-            return {
-                id: device.id,
-                device: device.display_name
-            }
-        }));
-    },
-    restoreState(state){
-        if(state.data.devices.length === 0 && state.data.attrs.length > 0) //this may happen when user cleared tha table and then refreshed the app
-            this.state.updateState({
-                attrs: [],
-                devices: []
-            });
-
-        this.showProgress({
-            type:"top",
-            delay: 3000,
-        });
-
-        this._restoreAttrs(state.data.attrs);
-
-        this._restoreDevices(state.data.devices);
-
-        this.getTopParentView().frozen = state.data.frozen;
-
-        if(state.data.hide_settings)
-            this.getTopParentView().hideSettings();
-
-        this.run();
-    },
-    setFrozen(value){
-        this.state.updateState({
-            frozen: value
-        });
-    },
-    clear(){
-        webix.ui.table_datatable.prototype.clear.apply(this, arguments);
-        this.state.updateState({
-            devices: []
-        });
-    },
-    async addAttribute(attr){
-        await webix.ui.table_datatable.prototype.addAttribute.call(this, attr);
-        const attrs = this.state.data.attrs;
-        if(!attrs.includes(attr.name))
-            attrs.push(attr.name);
-        const devices = this.state.data.devices;
-        if(devices.find(device => device.id === attr.device_id) === undefined)
-            devices.push({
-                id: attr.device_id,
-                display_name: attr.getDevice().display_name
-            });
-        this.state.setState(this.state.data);
-    },
-    removeAttribute(display_name){
-        const name = webix.ui.table_datatable.prototype.removeAttribute.call(this, display_name);
-        const attrs = this.state.data.attrs;
-        const index = attrs.indexOf(name);
-        if (index > -1) {
-            attrs.splice(index, 1);
-        }
-        this.state.setState(this.state.data);
-    },
-    async addDevice(id){
-        await webix.ui.table_datatable.prototype.addDevice.call(this, id);
-        const devices = this.state.data.devices;
-        if(devices.find(device => device.id === id) === undefined)
-            devices.push({
-                id,
-                display_name: PlatformContext.devices.getItem(id).display_name //TODO use device as argument
-            });
-        this.state.setState(this.state.data);
-    },
-    removeDevice(id){
-        webix.ui.table_datatable.prototype.removeDevice.call(this, id);
-        const devices = this.state.data.devices;
-        const index = devices.findIndex(device => device.id === id);
-        if (index > -1) {
-            devices.splice(index, 1);
-        }
-        this.state.setState(this.state.data);
-    },
-    getStateId() {
-        return this.config.stateId || this.config.id;
-    }
-}, webix.ProgressBar,table_datatable);
-
 function newTableWidgetTable(config) {
     return {
         id:"datatable",
@@ -416,7 +306,7 @@ function newTableWidgetTable(config) {
         view:"table_datatable",
         onClick: {
             "remove-single":function(event, id){
-                this.getTopParentView().removeDevice(id.row);
+                this.config.root.removeDevice(TangoId.fromDeviceId(id.row));
             }
         }
     }

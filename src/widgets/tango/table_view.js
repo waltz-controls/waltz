@@ -31,16 +31,16 @@ function newProxy(target){
     return {
         $proxy: true,
         load: () => {
-            return this.app.getContext(kUserContext).then(userContext => userContext.getOrDefault(this.id, new Context()))
+            return this.app.getContext(kUserContext).then(userContext => userContext.getOrDefault(this.id, new Context())[target])
         },
         save: (master, params, dataProcessor) => {
+            if(!dataProcessor.config.autoupdate) return;
             switch (params.operation) {
                 case "insert":
                     return this.getUserContext()
                         .then(userContext => userContext.updateExt(this.id, ext => ext[target].push(new ContextEntity(params.data))))
                         .then(userContext => userContext.save())
-                        .then(() => this.dispatch(`Successfully added new ${target} ${params.data.name}`,kTopicLog, kChannelLog))
-                        .catch(err => {debugger});
+                        .then(() => this.dispatch(`Successfully added new ${target} ${params.data.name}`,kTopicLog, kChannelLog));
                 case "delete":
                     return this.getUserContext()
                         .then(userContext => userContext.updateExt(this.id, ext => {
@@ -52,6 +52,21 @@ function newProxy(target){
                 default:
                     throw new Error(`Unsupported operation ${params.operation}`);
             }
+        },
+        saveAll: async (master, updates, dataProcessor)=>{
+            if(dataProcessor.config.autoupdate) return;//skip in case autoupdate
+            const deletes = updates.filter(update => update.operation === 'delete');
+
+            const userContext = await this.getUserContext();
+            const context = userContext.get(this.id)[target];
+
+            deletes.forEach(update => {
+                const index = context.findIndex(contextEntity => contextEntity.id === update.id);
+                context.splice(index, 1);
+            });
+
+            return userContext.save()
+                .then(() => this.dispatch(`Successfully updated user context!`,kTopicLog, kChannelLog))
         }
     }
 }
@@ -115,8 +130,23 @@ export default class TableViewWidget extends WaltzWidget {
             this.showOverlay(kFrozenOverlayMessage);
             return;
         }
-        this.$$datatable.clear();
-        this.$$settings.clear();
+        this.$$datatable.clearAll();
+
+        this.batchRemoveDevices();
+    }
+
+    batchRemoveDevices(){
+        //batch delete devices from the context, invokes proxy.saveAll
+        webix.dp(this.devices).define("autoupdate", false);
+        try {
+            const ids = [];
+
+            this.devices.data.each(item => ids.push(item.id));
+            this.devices.remove(ids);
+            webix.dp(this.devices).send();
+        } finally {
+            webix.dp(this.devices).define("autoupdate", true);
+        }
     }
 
     async restoreState(){
@@ -182,6 +212,8 @@ export default class TableViewWidget extends WaltzWidget {
         }
         this.$$datatable.removeAttribute(id.name);
         this.$$settings.removeAttribute(id.name);
+
+        this.attributes.remove(id.getTangoMemberId());
     }
 
     /**
@@ -221,6 +253,7 @@ export default class TableViewWidget extends WaltzWidget {
             this.$$view.showOverlay(kFrozenOverlayMessage);
             return;
         }
+        if(this.devices.exists(id.getTangoDeviceId())) return;
 
         const rest = await this.getTangoRest();
 
@@ -241,6 +274,7 @@ export default class TableViewWidget extends WaltzWidget {
             this.showOverlay(kFrozenOverlayMessage);
             return;
         }
-        this.$$datatable.removeDevice(id);
+        this.$$datatable.removeDevice(id.getTangoDeviceId());
+        this.devices.remove(id.getTangoDeviceId());
     }
 }
