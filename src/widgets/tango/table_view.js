@@ -9,6 +9,8 @@ import {kChannelLog, kTopicLog} from "controllers/log";
 import {TangoId} from "@waltz-controls/tango-rest-client";
 
 const kWidgetTableView = 'widget:table_view';
+const kFrozenOverlayMessage = "<span class='webix_icon mdi mdi-bell-ring'></span>This TableWidget's configuration is" +
+    " frozen...<br/> Please uncheck 'Frozen' box!";
 
 class ContextEntity{
     constructor({id, name, alias, info}) {
@@ -23,6 +25,7 @@ class Context{
     constructor() {
         this.devices = [];
         this.attributes = [];
+        this.frozen = false;
     }
 }
 
@@ -125,9 +128,20 @@ export default class TableViewWidget extends WaltzWidget {
         return this.$$view.$$('settings')
     }
 
+    setFrozen(v, update = false){
+        this.frozen = v;
+        this.$$settings.elements.frozen.setValue(v);
+        if(update) {
+            this.getUserContext()
+                .then(userContext => userContext.updateExt(this.id, ext => ext.frozen = v))
+                .then(userContext => userContext.save())
+                .then(() => this.dispatch(`Successfully updated user context!`, kTopicLog, kChannelLog))
+        }
+    }
+
     clear(){
         if(this.frozen) {
-            this.showOverlay(kFrozenOverlayMessage);
+            this.$$view.showOverlay(kFrozenOverlayMessage);
             return;
         }
         this.$$datatable.clearAll();
@@ -161,46 +175,8 @@ export default class TableViewWidget extends WaltzWidget {
         this.$$datatable.parse(devices.map(device => ({...device, device: device.alias || device.name})));
 
         this.$$view.run();
-    }
 
-    selectAttribute(id){
-        const attr = TangoAttribute.find_one(id);
-        if(attr === null) {
-            return loadAttribute(id)
-                .then(attr => {
-                    const columnConfig = this.$$('datatable').getColumnConfig(attr.name);
-                    if(attr.isWritable() && columnConfig.editor !== "text"){
-                        webix.extend(
-                            columnConfig,
-                            {
-                                editor: "text"
-                            }
-                        );
-                        this.$$('datatable').refreshColumns();
-                    }
-                })
-                .then(attr => {
-                    this.$$('input').setAttribute(attr);
-                })
-                .fail(function (resp) {
-                    TangoWebappHelpers.error(resp);
-                    throw resp;
-                });
-        } else{
-            const columnConfig = this.$$('datatable').getColumnConfig(attr.name);
-            if(attr.isWritable() && columnConfig.editor !== "text") {
-                webix.extend(
-                    columnConfig,
-                    {
-                        editor: "text"
-                    }
-                );
-                this.$$('datatable').refreshColumns();
-            }
-
-            this.$$('input').setAttribute(attr);
-            return webix.promise.resolve(attr);
-        }
+        this.setFrozen(userContext.get(this.id).frozen, true);
     }
 
     /**
@@ -277,7 +253,7 @@ export default class TableViewWidget extends WaltzWidget {
      */
     removeDevice(id){
         if(this.frozen) {
-            this.showOverlay(kFrozenOverlayMessage);
+            this.$$view.showOverlay(kFrozenOverlayMessage);
             return;
         }
         this.$$datatable.removeDevice(id.getTangoDeviceId());

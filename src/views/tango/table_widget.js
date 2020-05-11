@@ -7,8 +7,7 @@ import {kChannelLog, kTopicLog} from "controllers/log";
 
 const kPersistentColumns = ["id", "device", "remove"];
 const kOverlayDelayTimeout = 3000;
-const kFrozenOverlayMessage = "<span class='webix_icon mdi mdi-bell-ring'></span>This TableWidget's configuration is" +
-    " frozen...<br/> Please uncheck 'Frozen' box!";
+
 const kTableWidgetHeader = "<span class='webix_icon mdi mdi-table-large'></span> TableWidget";
 const kRemoveAllHeader = "<span class='remove-all webix_icon wxi-trash'></span>";
 const kRemoveSingleHeader = "<span class='remove-single webix_icon wxi-trash'></span>";
@@ -116,28 +115,6 @@ const table_datatable = webix.protoUI({
                     if(obj.column === 'remove'){
                         this.config.root.clear();
                     }
-                },
-                async onItemClick(id) {
-                    //TODO refactor - split and extract
-                    const device_id = id.row;
-
-                    await selectDevice(device_id);
-
-                    const attr_name = id.column;
-
-
-                    if(kPersistentColumns.includes(attr_name)) return;
-
-                    const attrId = `${device_id}/${attr_name}`;
-                    this.getTopParentView().selectAttribute(attrId)
-                        .then(() => {
-                        OpenAjax.hub.publish("tango_webapp.item_selected", {
-                            data: {
-                                id: attrId,
-                                kind: 'attrs'
-                            }
-                        });
-                    });
                 },
                 onAfterEditStop(value, editor) {
                     if (value.value == value.old) return;
@@ -344,18 +321,6 @@ function newScalarInput(){
 
 const table_widget = webix.protoUI({
     name: "table_widget",
-    get frozen(){
-        return this.$$('settings').getValues().frozen
-    },
-    set frozen(value){
-        this.$$('datatable').setFrozen(value);
-        this.$$('settings').setValues({
-            frozen: value
-        })
-    },
-    get state(){
-        return this.$$('datatable').state;
-    },
     _ui(config) {
         return {
             rows:[
@@ -399,7 +364,7 @@ const table_widget = webix.protoUI({
                 tooltip: "Enables/disables changes of this table i.e. add/remove attributes etc",
                 value: false,
                 click(){
-                    this.config.root.frozen = this.getValue();//TODO bind to table_widget field
+                    config.root.setFrozen(this.getValue(), true);//TODO bind to table_widget field
                 }
             });
             $$settings.getChildViews()[0].define({
