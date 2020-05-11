@@ -159,6 +159,8 @@ export default class TableViewWidget extends WaltzWidget {
         this.$$settings.addAttributes(attributes);
 
         this.$$datatable.parse(devices.map(device => ({...device, device: device.alias || device.name})));
+
+        this.$$view.run();
     }
 
     selectAttribute(id){
@@ -241,6 +243,8 @@ export default class TableViewWidget extends WaltzWidget {
         this.$$settings.addAttribute(attr, force);
 
         this.attributes.add(attr);
+
+        this.$$view.run();
     }
 
     /**
@@ -263,6 +267,8 @@ export default class TableViewWidget extends WaltzWidget {
         this.$$settings.addDevice(device);
 
         this.devices.add(device);
+
+        this.$$view.run();
     }
 
     /**
