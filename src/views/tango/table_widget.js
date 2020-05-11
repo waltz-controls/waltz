@@ -1,6 +1,8 @@
 import newToolbar from "views/tango/newToolbar";
 import {newRemoveAttributeSettings, toolbar_extension} from "./remove_attribute_toolbar.js";
-import {Runnable, ToggleSettings} from "views/mixins";
+import {Runnable, ToggleSettings, WaltzWidgetMixin} from "views/mixins";
+import {TangoId} from "@waltz-controls/tango-rest-client";
+import {TangoAttribute} from "models/tango";
 
 const kPersistentColumns = ["id", "device", "remove"];
 const kOverlayDelayTimeout = 3000;
@@ -13,6 +15,13 @@ const kRemoveSingleHeader = "<span class='remove-single webix_icon wxi-trash'></
 const kAlertInvalid = `<span class="webix_icon mdi mdi-alert" style="color: red"></span>`;
 const kAlertWarning = `<span class="webix_icon mdi mdi-alert" style="color: orange"></span>`;
 const kAlertFailure = `<span class="webix_icon mdi mdi-alert-octagram-outline" style="color: red"></span>`;
+
+function devicesTreeIdToTangoId(tree, id){
+    const item = tree.getItem(id);
+    const host = tree.getTangoHostId(item);
+
+    return TangoId.fromDeviceId(`${host}/${item.device_name}`)
+}
 
 
 function respToUpdate(update, resp){
@@ -127,7 +136,7 @@ const table_datatable = webix.protoUI({
             on:{
                 onHeaderClick(obj){
                     if(obj.column === 'remove'){
-                        this.getTopParentView().clear();
+                        this.config.root.clear();
                     }
                 },
                 async onItemClick(id) {
@@ -163,13 +172,12 @@ const table_datatable = webix.protoUI({
                 },
                 onBeforeDrop(context){
                     if(context.from === this) return true;
-                    if(context.from.config.$id === 'attrs') {
-                        const attr = TangoAttribute.find_one(context.source[0]);
-                        if (attr != null) {
-                            this.getTopParentView().addAttribute(attr);
-                        }
-                    } else if(context.from.config.view === 'devices_tree_tree'){
-                        this.getTopParentView().addDevice(context.source[0]);
+                    if(context.from.config.view === 'device_tree_list' &&
+                        context.from.config.$id === 'attrs') {
+                            this.config.root.addAttribute(TangoId.fromMemberId(context.source[0]));
+                    } else if(context.from.config.view === 'devices_tree' &&
+                        (context.from.getItem(context.source[0]).isAlias || context.from.getItem(context.source[0]).isMember)){
+                        this.config.root.addDevice(devicesTreeIdToTangoId(context.from, context.source[0]));
                     } else {
                         this.getTopParentView().showOverlay(`${context.from.config.$id} are not supported by this widget`);
                     }
@@ -185,7 +193,7 @@ const table_datatable = webix.protoUI({
     addColumn(attr){
         const columns = this.config.columns;
         const attrColumnConfig = getColumnConfig(attr.name);
-        attrColumnConfig.header = `${attr.display_name} (${attr.info.display_unit})`;
+        attrColumnConfig.header = `${attr.name} (${attr.info.display_unit})`;
         if (attr.isWritable()) webix.extend(attrColumnConfig, {
             editor: "text"
         });
@@ -197,26 +205,26 @@ const table_datatable = webix.protoUI({
      *
      * @param {TangoAttribute} attr
      */
-    addAttribute(attr){
+    async addAttribute(attr){
         if(this.config.columns.filter(column => column.id === attr.name).length === 0)
             this.addColumn(attr);
 
-        const item = this.getItem(attr.device_id);
-        if(item ===  undefined)
-            this.add({
-                id: attr.device_id,
-                device: attr.getDevice().display_name,
+        const item = this.getItem(attr.tango_id.getTangoDeviceId());
+        if(item ===  undefined){
+            await this.config.root.addDevice(attr.tango_id);
+            this.updateItem(attr.tango_id.getTangoDeviceId(), {
                 [attr.name]: "",
                 [attr.name + "_quality"]: ""
-            });
+            })
+            }
 
         this._tracked_attrs.add(attr.name);
 
-        this.run();
+        // this.run();
     },
     /**
      *
-     * @param name
+     * @param {string} name
      * @return {string} removed attr name
      */
     removeAttribute(name){
@@ -233,27 +241,19 @@ const table_datatable = webix.protoUI({
         this._tracked_attrs.delete(col.id);
         return col.id;
     },
-    async addDevice(id){
-        let device = TangoDevice.find_one(id);
-        if(device == null) {
-            try {
-                const parts = id.split('/');
-                const tango_host = parts.shift();
-                device = await PlatformContext.rest.fetchHost(tango_host)
-                    .then(host => host.fetchDevice(parts.join('/')))
-            } catch (e) {
-                TangoWebappHelpers.error(`Failed to fetch device[id=${id}]`,e);
-                return;
-            }
-        }
-
+    /**
+     *
+     * @param {TangoDevice} device
+     * @return {Promise<void>}
+     */
+    addDevice(device){
         if(this.exists(device.id)) return;
         this.add({
             id: device.id,
-            device: device.display_name
+            device: device.alias || device.name
         });
 
-        this.run();
+        // this.run();
     },
     removeDevice(id){
         this.remove(id);
@@ -289,10 +289,8 @@ const table_datatable = webix.protoUI({
     },
     $init(config) {
         webix.extend(config, this._config());
-
-
     }
-}, webix.ui.datatable);
+}, WaltzWidgetMixin, webix.ui.datatable);
 
 
 
@@ -405,8 +403,9 @@ const stateful_table_datatable = webix.protoUI({
 function newTableWidgetTable(config) {
     return {
         id:"datatable",
+        root: config.root,
         stateId: config.id,
-        view:"stateful_table_datatable",
+        view:"table_datatable",
         onClick: {
             "remove-single":function(event, id){
                 this.getTopParentView().removeDevice(id.row);
@@ -487,7 +486,7 @@ const table_widget = webix.protoUI({
             rows:[
                 newTableWidgetTable(config),
                 newScalarInput(),
-                newRemoveAttributeSettings(),
+                newRemoveAttributeSettings(config),
                 newToolbar(toolbar_extension())
             ]
         }
@@ -501,93 +500,6 @@ const table_widget = webix.protoUI({
             $$datatable.enable();
             // $$datatable.hideOverlay();
         },kOverlayDelayTimeout);
-    },
-    selectAttribute(id){
-        const attr = TangoAttribute.find_one(id);
-        if(attr === null) {
-            return loadAttribute(id)
-                .then(attr => {
-                    const columnConfig = this.$$('datatable').getColumnConfig(attr.name);
-                    if(attr.isWritable() && columnConfig.editor !== "text"){
-                        webix.extend(
-                            columnConfig,
-                            {
-                                editor: "text"
-                            }
-                        );
-                        this.$$('datatable').refreshColumns();
-                    }
-                })
-                .then(attr => {
-                    this.$$('input').setAttribute(attr);
-                })
-                .fail(function (resp) {
-                    TangoWebappHelpers.error(resp);
-                    throw resp;
-                });
-        } else{
-            const columnConfig = this.$$('datatable').getColumnConfig(attr.name);
-            if(attr.isWritable() && columnConfig.editor !== "text") {
-                webix.extend(
-                    columnConfig,
-                    {
-                        editor: "text"
-                    }
-                );
-                this.$$('datatable').refreshColumns();
-            }
-
-            this.$$('input').setAttribute(attr);
-            return webix.promise.resolve(attr);
-        }
-    },
-    removeAttribute(name){
-        const $$settings = this.$$('settings');
-        const $$datatable = this.$$('datatable');
-        if(this.frozen) {
-            this.showOverlay(kFrozenOverlayMessage);
-            return;
-        }
-        $$datatable.removeAttribute(name);
-        $$settings.removeAttribute(name);
-    },
-    async addAttribute(attr, force = false){
-        if(this.frozen && !force) {
-            this.showOverlay(kFrozenOverlayMessage);
-            return;
-        }
-        if(!attr.isScalar()) {
-            this.showOverlay("Only SCALAR attributes are supported by this widget!");
-            return;
-        }
-
-        const $$datatable = this.$$('datatable');
-        await $$datatable.addAttribute(attr, force);
-
-        const $$settings = this.$$('settings');
-        $$settings.addAttribute(attr.display_name, force);
-    },
-    async addDevice(id){
-        if(this.frozen) {
-            this.showOverlay(kFrozenOverlayMessage);
-            return;
-        }
-        await this.$$('datatable').addDevice(id);
-        this.$$('settings').addDevice(id);
-    },
-    removeDevice(id){
-        if(this.frozen) {
-            this.showOverlay(kFrozenOverlayMessage);
-            return;
-        }
-        this.$$('datatable').removeDevice(id);
-    },
-    clear(){
-        if(this.frozen) {
-            this.showOverlay(kFrozenOverlayMessage);
-            return;
-        }
-        this.$$('datatable').clear();
     },
     run(){
         this.$$('datatable').run();
@@ -609,7 +521,7 @@ const table_widget = webix.protoUI({
                 tooltip: "Enables/disables changes of this table i.e. add/remove attributes etc",
                 value: false,
                 click(){
-                    this.getTopParentView().frozen = this.getValue();//TODO bind to table_widget field
+                    this.config.root.frozen = this.getValue();//TODO bind to table_widget field
                 }
             });
             $$settings.getChildViews()[0].define({
@@ -619,4 +531,4 @@ const table_widget = webix.protoUI({
         });
     }
 
-},/*TODO Statefull*/ Runnable, ToggleSettings, webix.IdSpace, webix.ui.layout);
+}, Runnable, ToggleSettings, WaltzWidgetMixin, webix.IdSpace, webix.ui.layout);

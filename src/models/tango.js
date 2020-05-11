@@ -97,6 +97,10 @@ export class TangoAttribute extends Member {
     isImage(){
         return this.info.data_format === "IMAGE";
     }
+
+    isWritable(){
+        return this.writable === true;
+    }
 }
 
 export class TangoCommand extends Member {

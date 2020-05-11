@@ -1,17 +1,18 @@
-import "views/tango/dashboard_widget";
-
-
 import {WaltzWidget} from "@waltz-controls/middleware";
 import {kMainWindow} from "widgets/main_window";
 import {kUserContext} from "controllers/user_context";
 import {kChannelLog, kTopicLog} from "controllers/log";
 import TableViewWidget from "./table_view";
+import {
+    kWidgetDashboardProfilesId,
+    kWidgetDashboardProfilesPanel,
+    kWidgetDashboardProfilesPanelId,
+    newDashboardProfilesPanel
+} from "views/tango/dashboard_widget";
 
 const kDashboardHeader = "<span class='webix_icon mdi mdi-gauge'></span> Dashboard";
 const kWidgetDashboard = 'widget:dashboard';
-const kWidgetDashboardProfilesId = 'widget:dashboard_profiles';
-const kWidgetDashboardProfilesPanelId = 'widget:dashboard_profiles_panel';
-const kWidgetDashboardProfilesPanel = 'widget:dashboard_profiles_panel_top';
+
 
 export const mainView = {
     header: kDashboardHeader,
@@ -44,7 +45,7 @@ function createInnerWidgetUI(type, config){
     }
 }
 
-const kWidgetDashboardPanelHeader = '<span class="webix_icon mdi mdi-gauge"></span>Dashboard profiles';
+
 export default class DashboardWidget extends WaltzWidget {
     constructor() {
         super(kWidgetDashboard);
@@ -88,119 +89,7 @@ export default class DashboardWidget extends WaltzWidget {
     }
 
     panel(){
-        const self = this;
-        return {
-            view: 'accordionitem',
-            id: kWidgetDashboardProfilesPanel,
-            header: kWidgetDashboardPanelHeader,
-            headerAlt: kWidgetDashboardPanelHeader,
-            headerHeight: 32,
-            headerAltHeight: 32,
-            body: {
-                id: kWidgetDashboardProfilesPanelId,
-                isolate: true,
-                rows:[
-                    {
-                        id: kWidgetDashboardProfilesId,
-                        view:"list",
-                        select: true,
-                        template:"#name# (#type#)",
-                        url: this.proxy,
-                        save: this.proxy,
-                        on:{
-                            onAfterSelect(id){
-                                const profile = this.getItem(id);
-                                self.showProfileWidget(profile);
-                            },
-                            onAfterLoad(){
-                                if(this.count() > 0)
-                                    this.select(this.getFirstId());
-                            }
-                        }
-                    },
-                    {
-                        view: "form",
-                        id: "frmProfileSettings",
-                        hidden: true,
-                        elements: [
-                            {
-                                cols: [
-                                    {
-                                        view: "text",
-                                        id: "profileId",
-                                        name: "id",
-                                        hidden: true
-                                    },
-                                    {
-                                        view: "text",
-                                        id: "profile",
-                                        name: "name",
-                                        placeholder:"New profile's name",
-                                        validate: webix.rules.isNotEmpty
-                                    }
-                                ]
-                            }, {
-                                cols: [
-                                    {
-                                        view: "richselect",
-                                        id: "type",
-                                        name: "type",
-                                        options: ["table", "plot", "list"],
-                                        value: "table",
-                                        validate: webix.rules.isNotEmpty
-                                    },
-                                    {
-                                        view: "icon",
-                                        id: 'btnAddProfile',
-                                        icon: "wxi-check",
-                                        maxWidth: 30,
-                                        click() {
-                                            const $$frm = this.getFormView();
-                                            if (!$$frm.validate()) return;
-
-                                            const values = $$frm.getValues();
-
-                                            self.createProfile(values);
-                                        }
-                                    }
-                                ]
-                            }
-                        ]
-                    },
-                    {
-                        borderless: true,
-                        view:"toolbar",
-                        cols:[
-                            {
-                                view: "icon",
-                                icon: "wxi-trash",
-                                maxWidth: 30,
-                                tooltip: "Delete selected profile",
-                                click() {
-                                    self.deleteProfile(self.$$profiles.getSelectedId());
-                                }
-                            },
-                            {},
-                            {
-                                view: "icon",
-                                css:"add_profile_icon",
-                                icon: "wxi-plus",
-                                tooltip: "Show new profile form",
-                                maxWidth: 30,
-                                click() {
-                                    const $$frmProfile = this.getTopParentView().$$('frmProfileSettings');
-                                    if ($$frmProfile.isVisible())
-                                        $$frmProfile.hide();
-                                    else
-                                        $$frmProfile.show();
-                                }
-                            }
-                        ]
-                    }
-                ]
-
-            }
-        }
+        return newDashboardProfilesPanel(this);
     }
 
     get $$main() {

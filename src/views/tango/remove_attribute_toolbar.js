@@ -10,8 +10,10 @@ const widget_settings = webix.protoUI({
             cols: [{}]
         }
     },
+    clear(){
+
+    },
     removeAttribute(name) {
-        if(this.getTopParentView().frozen) return;
         const col = this.queryView({label: name});
         this.removeView(col);
         if (this.getChildViews().length === 1) {
@@ -21,17 +23,21 @@ const widget_settings = webix.protoUI({
             this.getChildViews()[0].resize();
         }
     },
-    addAttribute(label, force) {
-        if(this.getTopParentView().frozen && !force) return;
-        const col = this.queryView({label: label});
+    /**
+     *
+     * @param {TangoAttribute} attr
+     * @param force
+     */
+    addAttribute(attr, force) {
+        const col = this.queryView({label: attr.name});
         if (col !== null) return;
         this.addView({
             view: "button",
             type: "icon",
             icon: "wxi-trash",
-            label: label,
+            label: attr.name,
             click() {
-                this.getTopParentView().removeAttribute(this.data.label);
+                this.getParentView().config.root.removeAttribute(attr.tango_id);
             }
         });
         if (this.getChildViews().length === 2) {
@@ -41,7 +47,11 @@ const widget_settings = webix.protoUI({
             this.getChildViews()[0].resize();
         }
     },
-    addDevice(id) {
+    /**
+     *
+     * @param {TangoDevice} device
+     */
+    addDevice(device) {
         //TODO?
     },
     $init(config) {
@@ -49,10 +59,11 @@ const widget_settings = webix.protoUI({
     }
 }, webix.ui.form);
 
-export function newRemoveAttributeSettings() {
+export function newRemoveAttributeSettings(config) {
     return {
         view: "widget_settings",
-        id: "settings"
+        id: "settings",
+        root: config.root
     };
 }
 
