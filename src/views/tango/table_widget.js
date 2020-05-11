@@ -38,16 +38,16 @@ function respToUpdate(update, resp){
 
 /**
  *
- * @param {String} attr
+ * @param {TangoAttribute} attr
  */
 function getColumnConfig(attr){
     return {
-        id: attr,
-        header: `${attr}`, //TODO redefine header once attr info is loaded ${attr.display_name} (${attr.info.display_unit})
+        id: attr.name,
+        header: `${attr.name} (${attr.info.display_unit})`, //TODO redefine header once attr info is loaded ${attr.display_name} (${attr.info.display_unit})
         template:function(obj){
             //TODO move to schema type
             function getQualityIcon(obj){
-                switch (obj[attr + "_quality"]) {
+                switch (obj[attr.name + "_quality"]) {
                     case "ATTR_ALARM":
                     case "ATTR_INVALID":
                         return kAlertInvalid;
@@ -61,7 +61,7 @@ function getColumnConfig(attr){
                 }
             }
 
-            return `${getQualityIcon(obj)}${obj[attr]}`;
+            return `${getQualityIcon(obj)}${obj[attr.name]}`;
         },
         fillspace: true
     };
@@ -190,15 +190,23 @@ const table_datatable = webix.protoUI({
     clear(){
         this.clearAll();
     },
-    addColumn(attr){
+    addColumns(attrs){
         const columns = this.config.columns;
-        const attrColumnConfig = getColumnConfig(attr.name);
-        attrColumnConfig.header = `${attr.name} (${attr.info.display_unit})`;
-        if (attr.isWritable()) webix.extend(attrColumnConfig, {
-            editor: "text"
-        });
-        columns.splice(columns.length - 1, 0, attrColumnConfig);
+
+        const configs = attrs.map(attr => getColumnConfig(attr));
+
+        attrs
+            .filter(attr => attr.isWritable())
+            .map(attr => configs.find(config => config.id === attr.name))
+            .forEach(config => webix.extend(config, {
+                editor: "text"
+            }))
+
+        columns.splice(columns.length - 1, 0, ...configs);
         this.refreshColumns();
+    },
+    addColumn(attr){
+        this.addColumns([attr])
     },
     _tracked_attrs:new Set([]),
     /**
@@ -507,11 +515,14 @@ const table_widget = webix.protoUI({
     $init(config){
         webix.extend(config, this._ui(config));
 
-        this.$ready.push(()=>{
+
+        this.$ready.push(() => {
             webix.event(this.getNode(), "click", function(e){
                 this.run();
             }, {bind:this});
+        });
 
+        this.$ready.push(()=>{
             const $$settings = this.$$('settings');
             $$settings.addView({
                 name: "frozen",

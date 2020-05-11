@@ -4,18 +4,78 @@ import {WaltzWidget} from "@waltz-controls/middleware";
 
 import {kTangoRestContext} from "controllers/tango_rest";
 import {TangoAttribute, TangoDevice} from "models/tango";
+import {kUserContext} from "controllers/user_context";
+import {kChannelLog, kTopicLog} from "controllers/log";
+import {TangoId} from "@waltz-controls/tango-rest-client";
 
 const kWidgetTableView = 'widget:table_view';
 
+class ContextEntity{
+    constructor({id, name, alias, info}) {
+        this.id = id;
+        this.name = name;
+        this.alias = alias;
+        this.info = info;
+    }
+}
+
+class Context{
+    constructor() {
+        this.devices = [];
+        this.attributes = [];
+    }
+}
+
+
+function newProxy(target){
+    return {
+        $proxy: true,
+        load: () => {
+            return this.app.getContext(kUserContext).then(userContext => userContext.getOrDefault(this.id, new Context()))
+        },
+        save: (master, params, dataProcessor) => {
+            switch (params.operation) {
+                case "insert":
+                    return this.getUserContext()
+                        .then(userContext => userContext.updateExt(this.id, ext => ext[target].push(new ContextEntity(params.data))))
+                        .then(userContext => userContext.save())
+                        .then(() => this.dispatch(`Successfully added new ${target} ${params.data.name}`,kTopicLog, kChannelLog))
+                        .catch(err => {debugger});
+                case "delete":
+                    return this.getUserContext()
+                        .then(userContext => userContext.updateExt(this.id, ext => {
+                            const index = ext[target].findIndex(device => device.id === params.id)
+                            ext[target].splice(index,1);
+                        }))
+                        .then(userContext => userContext.save())
+                        .then(() => this.dispatch(`Successfully deleted ${target} ${params.data.name}`,kTopicLog, kChannelLog));
+                default:
+                    throw new Error(`Unsupported operation ${params.operation}`);
+            }
+        }
+    }
+}
 
 
 export default class TableViewWidget extends WaltzWidget {
     constructor({id, app}) {
         super(id, app);
         this.frozen = false;
-        //TODO proxy
-        this.devices = new webix.DataCollection();
-        this.attributes = new webix.DataCollection();
+
+        const devices = newProxy.call(this, 'devices');
+
+        const attributes = newProxy.call(this,'attributes');
+
+        this.devices = new webix.DataCollection({
+            url: devices,
+            save: devices
+        });
+        this.attributes = new webix.DataCollection({
+            url: attributes,
+            save: attributes
+        });
+
+        this.restoreState();
     }
 
     get id(){
@@ -32,6 +92,10 @@ export default class TableViewWidget extends WaltzWidget {
 
     getTangoRest(){
         return this.app.getContext(kTangoRestContext);
+    }
+
+    getUserContext(){
+        return this.app.getContext(kUserContext);
     }
 
     get $$view(){
@@ -53,6 +117,18 @@ export default class TableViewWidget extends WaltzWidget {
         }
         this.$$datatable.clear();
         this.$$settings.clear();
+    }
+
+    async restoreState(){
+        const userContext = await this.getUserContext();
+        if(!userContext.get(this.id)) return;
+        const attributes = userContext.get(this.id).attributes.map(attr => new TangoAttribute(attr));
+        const devices = userContext.get(this.id).devices;
+
+        this.$$datatable.addColumns(attributes);
+        this.$$settings.addAttributes(attributes);
+
+        this.$$datatable.parse(devices.map(device => ({...device, device: device.alias || device.name})));
     }
 
     selectAttribute(id){
@@ -130,8 +206,9 @@ export default class TableViewWidget extends WaltzWidget {
         }
 
         this.$$datatable.addAttribute(attr, force);
-
         this.$$settings.addAttribute(attr, force);
+
+        this.attributes.add(attr);
     }
 
     /**
@@ -151,6 +228,8 @@ export default class TableViewWidget extends WaltzWidget {
 
         this.$$datatable.addDevice(device);
         this.$$settings.addDevice(device);
+
+        this.devices.add(device);
     }
 
     /**

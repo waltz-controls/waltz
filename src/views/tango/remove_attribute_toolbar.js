@@ -23,12 +23,15 @@ const widget_settings = webix.protoUI({
             this.getChildViews()[0].resize();
         }
     },
+    addAttributes(attrs){
+        attrs.forEach(attr => this.addAttribute(attr));
+    },
     /**
      *
      * @param {TangoAttribute} attr
      * @param force
      */
-    addAttribute(attr, force) {
+    addAttribute(attr) {
         const col = this.queryView({label: attr.name});
         if (col !== null) return;
         this.addView({
