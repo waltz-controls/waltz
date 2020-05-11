@@ -4,6 +4,7 @@ import {Runnable, ToggleSettings, WaltzWidgetMixin} from "views/mixins";
 import {TangoId} from "@waltz-controls/tango-rest-client";
 import {TangoAttribute} from "models/tango";
 import {kChannelLog, kTopicLog} from "controllers/log";
+import {kActionSelectTangoDevice} from "../../widgets/tango/actions";
 
 const kPersistentColumns = ["id", "device", "remove"];
 const kOverlayDelayTimeout = 3000;
@@ -72,23 +73,6 @@ function getColumnConfig(attr){
 
 }
 
-async function selectDevice(deviceId){
-    const device = PlatformContext.devices.getItem(deviceId);
-    if(device === undefined) {
-        await PlatformContext.rest.fetchDevice(deviceId)
-    }
-
-
-    PlatformContext.devices.setCursor(deviceId);
-
-    OpenAjax.hub.publish("tango_webapp.item_selected",{
-        data: {
-            id: deviceId,
-            kind: 'device'
-        }
-    });
-}
-
 const table_datatable = webix.protoUI({
     name:"table_datatable",
     _config() {
@@ -116,14 +100,18 @@ const table_datatable = webix.protoUI({
                         this.config.root.clear();
                     }
                 },
+                onItemClick(id) {
+                    //TODO refactor - split and extract
+                    const device_id = TangoId.fromDeviceId(id.row);
+
+                    this.config.root.dispatch(device_id,kActionSelectTangoDevice);
+                },
                 onAfterEditStop(value, editor) {
                     if (value.value == value.old) return;
 
-                    const id = `${editor.row}/${editor.column}`;
+                    const id = TangoId.fromMemberId(`${editor.row}/${editor.column}`);
 
-                    const attr = TangoAttribute.find_one(id);
-
-                    new WriteTangoAttribute({user: PlatformContext.UserContext.user, attribute: attr, value: value.value}).submit();
+                    this.config.root.writeAttribute(id, value.value);
                 },
                 onBeforeDrop(context){
                     if(context.from === this) return true;
