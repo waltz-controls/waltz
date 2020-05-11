@@ -3,6 +3,7 @@ import {newRemoveAttributeSettings, toolbar_extension} from "./remove_attribute_
 import {Runnable, ToggleSettings, WaltzWidgetMixin} from "views/mixins";
 import {TangoId} from "@waltz-controls/tango-rest-client";
 import {TangoAttribute} from "models/tango";
+import {kChannelLog, kTopicLog} from "controllers/log";
 
 const kPersistentColumns = ["id", "device", "remove"];
 const kOverlayDelayTimeout = 3000;
@@ -87,29 +88,6 @@ async function selectDevice(deviceId){
             kind: 'device'
         }
     });
-}
-
-/**
- *
- * @param attrId
- * @return {Promise<TangoAttribute>}
- */
-function loadAttribute(attrId){
-    const tangoId = TangoId.fromAttributeId(attrId);
-
-    return PlatformContext.rest.request()
-        .hosts(tangoId.tangoHost.replace(':','/'))
-        .devices(tangoId.deviceName)
-        .attributes(tangoId.memberName)
-        .get('/info')
-        .then(resp => {
-            return new TangoAttribute({
-                id: attrId,
-                name: tangoId.memberName,
-                device_id: tangoId.deviceId,
-                info: resp
-            })
-        })
 }
 
 const table_datatable = webix.protoUI({
@@ -271,31 +249,30 @@ const table_datatable = webix.protoUI({
             delay: 500,
             hide:true
         });
-        this.data.each(item => {
+        this.data.each(async item => {
             const tangoId = TangoId.fromDeviceId(item.id);
 
             const attrs = this.config.columns.slice(1,this.config.columns.length - 1);//skip the first: device and the last one - remove
-            PlatformContext.rest.request()
-                .hosts(tangoId.tangoHost.replace(':','/'))
-                .devices(tangoId.deviceName)
+            const rest = await this.getTangoRest();
+                rest.newTangoDevice(tangoId).toTangoRestApiRequest()
                 .attributes('value')
                 .get('?' + attrs.map(function (attr) {
                     return "attr=" + attr.id
                 }).join('&'))
+                .toPromise()
                 .then(resp => {
                     const update = resp.reduce(respToUpdate, {});
                     this.updateItem(item.id, update);
                 })
-                .fail(function (resp) {
-                    TangoWebappHelpers.error(resp);
-                    throw resp;
+                .catch((resp) => {
+                    this.config.root.dispatchError(resp,kTopicLog,kChannelLog);
                 });
             })
     },
     $init(config) {
         webix.extend(config, this._config());
     }
-}, WaltzWidgetMixin, webix.ui.datatable);
+}, WaltzWidgetMixin, webix.ProgressBar, webix.ui.datatable);
 
 
 function newTableWidgetTable(config) {
