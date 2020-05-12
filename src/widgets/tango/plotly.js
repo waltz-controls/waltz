@@ -132,7 +132,9 @@ export default class PlotlyWidget extends WaltzWidget {
      */
     async addAttribute(id){
         const rest = await this.getTangoRest();
-        const attr = await rest.newTangoAttribute(id).toTangoRestApiRequest().get('?filter=id&filter=name&filter=data_type&filter=data_format').toPromise().then(resp => new TangoAttribute(resp))
+        const attr = await rest.newTangoAttribute(id).toTangoRestApiRequest().get('?filter=id&filter=name&filter=data_type&filter=data_format')
+            .toPromise()
+            .then(resp => new TangoAttribute(resp))
 
         if(!attr.isScalar()){
             this.$$view.showOverlay(kUnsupportedAttributeTypeMessage)
@@ -143,13 +145,13 @@ export default class PlotlyWidget extends WaltzWidget {
             return;
         }
         if (this.attributes.exists(attr.id)) {
-            this.$$view.run()
+            this.$$view.run();
         } else {
             this.attributes.add(new ContextEntity(attr));
             rest.newTangoAttribute(id).read().toPromise()
                 .then(resp => {
                     const name = attr.tango_id.getTangoDeviceName() + "/" + attr.name;
-                    this.$$plot.addTrace(name, [resp.timestamp], [resp.value], this.attributes.getIndexById(attr.id) - 1);
+                    this.$$plot.addTrace(name, [resp.timestamp], [resp.value], this.attributes.getIndexById(attr.id));
                     this.$$settings.addAttribute(webix.extend(attr, {name: name},kForce));
                 })
                 .catch(err => {
@@ -166,7 +168,7 @@ export default class PlotlyWidget extends WaltzWidget {
      */
     removeAttribute(id){
         const index = this.attributes.getIndexById(id.getTangoMemberId());
-        if(index === -1) throw new Error(`assertion error: ${id.getTangoMemberId()} is not found in this widget`);
+        if(index === -1) throw new Error(`Assertion error: ${id.getTangoMemberId()} is not found in this widget`);
 
         this.$$plot.deleteTrace(index);
         this.$$settings.removeAttribute(id.getTangoDeviceName() + "/" + id.name);
