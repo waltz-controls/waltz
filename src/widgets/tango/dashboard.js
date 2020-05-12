@@ -10,6 +10,7 @@ import {
     newDashboardProfilesPanel
 } from "views/tango/dashboard_widget";
 import PlotlyWidget from "./plotly";
+import ListViewWidget from "./list_view";
 
 const kDashboardHeader = "<span class='webix_icon mdi mdi-gauge'></span> Dashboard";
 const kWidgetDashboard = 'widget:dashboard';
@@ -42,7 +43,7 @@ function createInnerWidgetUI(type, config){
         case "plot":
             return new PlotlyWidget(config).ui();
         case "list":
-            return TangoWebapp.ui.newStatefulAttrsMonitorView(config);
+            return new ListViewWidget(config).ui();
     }
 }
 
