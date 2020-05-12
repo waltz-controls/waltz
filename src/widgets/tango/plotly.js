@@ -4,7 +4,7 @@ import {kTangoRestContext} from "controllers/tango_rest";
 import {kUserContext} from "controllers/user_context";
 import {kChannelLog, kTopicError, kTopicLog} from "controllers/log";
 import {TangoAttribute} from "models/tango";
-import {kNonPlottableDataTypes} from "../../views/tango/plot";
+import {kNonPlottableDataTypes} from "views/tango/plot";
 import {TangoId} from "@waltz-controls/tango-rest-client";
 
 const kUnsupportedAttributeTypeMessage = "<span class='webix_icon mdi mdi-bell-ring'></span>This widget supports only scalar attributes!";
