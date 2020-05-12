@@ -122,7 +122,7 @@ export default class PlotlyWidget extends WaltzWidget {
             this.$$view.hideSettings();
 
 
-        // this.$$view.run();
+        this.$$view.run();
     }
 
 
@@ -143,9 +143,9 @@ export default class PlotlyWidget extends WaltzWidget {
             return;
         }
         if (this.attributes.exists(attr.id)) {
-            // this.$$view.run()
+            this.$$view.run()
         } else {
-            this.attributes.add(attr);
+            this.attributes.add(new ContextEntity(attr));
             rest.newTangoAttribute(id).read().toPromise()
                 .then(resp => {
                     const name = attr.tango_id.getTangoDeviceName() + "/" + attr.name;

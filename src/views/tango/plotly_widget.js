@@ -3,7 +3,6 @@ import newToolbar from "views/tango/newToolbar";
 import {newRemoveAttributeSettings, toolbar_extension} from "./remove_attribute_toolbar.js";
 import {Runnable, ToggleSettings, WaltzWidgetMixin} from "views/mixins";
 import {TangoId} from "@waltz-controls/tango-rest-client";
-// import {openAttributeWindow} from "./device_controls.js";
 
 const kOverlayDelayTimeout = 3000;
 
@@ -17,13 +16,13 @@ function newPlotlyContainer() {
 
 /**
  *
- * @param {Array<TangoAttribute>} attrs
+ * @param {Array<ContextEntity>} attrs
  * @return {Map<TangoDevice, TangoAttribute>}
  */
 function groupAttributesByDeviceId(attrs) {
     const map = new Map();
     attrs.forEach((item) => {
-        const key = item.getDevice();
+        const key = TangoId.fromMemberId(item.id).getTangoDeviceId();
         const collection = map.get(key);
         if (!collection) {
             map.set(key, [item]);
@@ -45,27 +44,18 @@ const plotly_widget = webix.protoUI({
             ]
         }
     },
-    _plotly_legendclick(ndx) {
-        const attrId = this.state.data.attrs[ndx];
-        const attr = TangoAttribute.find_one(attrId);
-
-        PlatformContext.devices.setCursor(attr.device_id);
-
-        OpenAjax.hub.publish("tango_webapp.item_selected", {
-            data: {
-                id: attrId,
-                kind: 'attrs'
-            }
-        });
-
-    },
     async run() {
-        const grouped = groupAttributesByDeviceId(this.state.data.attrs.map(attrId => TangoAttribute.find_one(attrId)));
-        let update = await webix.promise.all(
+        const attrs = this.config.root.attributes.find(() => true);
+        const grouped = groupAttributesByDeviceId(attrs);
+        const rest = await this.getTangoRest();
+        //TODO replace with attributes entry point
+        let update = await Promise.all(
             Array.from(grouped.keys())
-                .map(device => device.fetchAttrValues(
-                    grouped.get(device).map(attr => attr.name))
-                    .then(values => values.map(val => webix.extend(val, {device_id: device.id})))));
+                .map(deviceId => rest.newTangoDevice(TangoId.fromDeviceId(deviceId)).toTangoRestApiRequest()
+                    .attributes('value')
+                    .get('?' + grouped.get(deviceId).map(attr => `attr=${attr.info.name}`).join('&'))
+                    .toPromise()
+                    .then(values => values.map(val => webix.extend(val, {tango_id: TangoId.fromDeviceId(deviceId)})))));
 
         //flat
         update = update.reduce((acc, val) => acc.concat(val), []);
@@ -76,7 +66,7 @@ const plotly_widget = webix.protoUI({
 
         update.forEach(update => {
             if (update.quality === 'FAILURE') return;
-            const indexOf = this.state.data.attrs.indexOf(`${update.device_id}/${update.name}`);
+            const indexOf = this.config.root.attributes.getIndexById(`${update.tango_id.getTangoDeviceId()}/${update.name}`);
             traces.push(indexOf);
             times.push(update.timestamp);
             values.push(update.value);
@@ -117,7 +107,7 @@ const plotly_widget = webix.protoUI({
     defaults: {
         on: {
             onPlotlyLegendClick(ndx) {
-                this._plotly_legendclick(ndx);
+                // this._plotly_legendclick(ndx);
             }
         }
     }
