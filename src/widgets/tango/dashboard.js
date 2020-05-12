@@ -112,6 +112,8 @@ export default class DashboardWidget extends WaltzWidget {
     showProfileWidget(profile){
         const view = $$(profile.viewId) || $$(profile.viewId = this.$$main.addView(createInnerWidgetUI(profile.type, {id: profile.id, app: this.app})));
 
+        $$(kWidgetDashboard).show();
+
         view.show();
     }
 
