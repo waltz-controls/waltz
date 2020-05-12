@@ -1,5 +1,7 @@
 import "../stylesheets/loader.css";
 import "../stylesheets/waltz.css";
+
+import "views/webix_tabbar_fix";
 // import "../models/platform/subscriptions.js";
 // import "../models/tango_webapp/user_action.js";
 // import "../resources/webix_widgets/import.js";
