@@ -9,6 +9,7 @@ import {
     kWidgetDashboardProfilesPanelId,
     newDashboardProfilesPanel
 } from "views/tango/dashboard_widget";
+import PlotlyWidget from "./plotly";
 
 const kDashboardHeader = "<span class='webix_icon mdi mdi-gauge'></span> Dashboard";
 const kWidgetDashboard = 'widget:dashboard';
@@ -39,7 +40,7 @@ function createInnerWidgetUI(type, config){
         case "table":
             return new TableViewWidget(config).ui();
         case "plot":
-            return newPlotlyWidgetBody(config);
+            return new PlotlyWidget(config).ui();
         case "list":
             return TangoWebapp.ui.newStatefulAttrsMonitorView(config);
     }
@@ -116,6 +117,8 @@ export default class DashboardWidget extends WaltzWidget {
         this.showProfileWidget(profile);
 
         this.$$profiles.add(profile);
+
+        this.$$profiles.select(profile.id);
     }
 
     deleteProfile(id){

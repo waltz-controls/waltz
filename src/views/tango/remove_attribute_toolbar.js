@@ -3,6 +3,8 @@
  * @author Igor Khokhriakov <igor.khokhriakov@hzg.de>
  * @since 6/12/19
  */
+import {TangoId} from "@waltz-controls/tango-rest-client";
+
 const widget_settings = webix.protoUI({
     name: "widget_settings",
     _config() {
@@ -35,12 +37,13 @@ const widget_settings = webix.protoUI({
         const col = this.queryView({label: attr.name});
         if (col !== null) return;
         this.addView({
+            id: attr.id,
             view: "button",
             type: "icon",
             icon: "wxi-trash",
             label: attr.name,
             click() {
-                this.getParentView().config.root.removeAttribute(attr.tango_id);
+                this.getParentView().config.root.removeAttribute(TangoId.fromMemberId(attr.id));
             }
         });
         if (this.getChildViews().length === 2) {
@@ -60,13 +63,14 @@ const widget_settings = webix.protoUI({
     $init(config) {
         webix.extend(config, this._config());
     }
-}, webix.ui.form);
+}, webix.IdSpace, webix.ui.form);
 
 export function newRemoveAttributeSettings(config) {
     return {
         view: "widget_settings",
         id: "settings",
-        root: config.root
+        root: config.root,
+        maxHeight:64
     };
 }
 

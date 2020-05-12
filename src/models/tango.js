@@ -18,6 +18,8 @@ function getTangoAttributeIcon(name, data_format){
             return 'chart-line';
         case "IMAGE":
             return 'image-outline'
+        default:
+            return 'checkbox-blank-circle-outline'
     }
 }
 
@@ -83,7 +85,7 @@ export class TangoDevice {
 
 export class TangoAttribute extends Member {
     constructor({id, host, device, name, info}) {
-        super({id, host, device, name, icon:getTangoAttributeIcon(name, info.data_format), type:kTangoTypeAttribute, info, writable: info.writable.includes('WRITE') && info.data_format !== "IMAGE"});
+        super({id, host, device, name, icon:getTangoAttributeIcon(name, info.data_format), type:kTangoTypeAttribute, info, writable: info.writable && info.writable.includes('WRITE') && info.data_format !== "IMAGE"});
     }
 
     isScalar(){

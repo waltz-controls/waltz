@@ -1,45 +1,18 @@
+import "./scalar_view";
 import newToolbar from "views/tango/newToolbar";
 import {newRemoveAttributeSettings, toolbar_extension} from "./remove_attribute_toolbar.js";
-import {kNonPlottableDataTypes} from "./plot.js";
-import {openAttributeWindow} from "./device_controls.js";
+import {Runnable, ToggleSettings, WaltzWidgetMixin} from "views/mixins";
+import {TangoId} from "@waltz-controls/tango-rest-client";
+// import {openAttributeWindow} from "./device_controls.js";
 
-/**
- *
- * @author Igor Khokhriakov <igor.khokhriakov@hzg.de>
- * @since 6/12/19
- */
-
-export const PlotlyWidgetController = class extends MVC.Controller {
-    buildUI(platform_api) {
-        platform_api.ui_builder.add_mainview_item(newPlotlyWidgetTab({id: 'plotly_widget'}));
-    }
-
-    /**
-     *
-     * @param {PlatformApi} platform_api
-     */
-    async initialize(platform_api) {
-        const host = await PlatformContext.rest.fetchHost("localhost:10000");
-        const device = await host.fetchDevice("sys/tg_test/1");
-        let attr = await device.fetchAttr("double_scalar");
-
-
-        // $$('plotly_widget').addAttribute(attr);
-        //
-        // attr = await device.fetchAttr("long_scalar");
-        // $$('plotly_widget').addAttribute(attr);
-    }
-};
-
-//disable Xenv widget for master
-// PlotlyWidgetController.initialize();
-
+const kOverlayDelayTimeout = 3000;
 
 function newPlotlyContainer() {
-    return TangoWebapp.ui.newScalar({
+    return {
+        view: 'scalar',
         id: 'plot',
         empty: true
-    });
+    };
 }
 
 /**
@@ -63,50 +36,14 @@ function groupAttributesByDeviceId(attrs) {
 
 const plotly_widget = webix.protoUI({
     name: "plotly_widget",
-    getInitialState(){
-        return {
-            hide_settings: false,
-            attrs: []
-        };
-    },
-    _ui() {
+    _ui(config) {
         return {
             rows: [
                 newPlotlyContainer(),
-                newRemoveAttributeSettings(),
+                newRemoveAttributeSettings(config),
                 newToolbar(toolbar_extension())
             ]
         }
-    },
-    restoreState(state) {
-        webix.promise.all(
-            state.data.attrs.map(attrId => PlatformContext.rest.fetchAttr(attrId))).then(attrs => {
-            const $$plot = this.$$('plot');
-            $$plot.addTraces(
-                attrs.map(attr => attr.getDevice().display_name + "/" + attr.info.label),
-                attrs.map(attr => []), attrs.map(attr => []));
-            attrs.forEach(attr => this.$$('settings').addAttribute(attr.id));
-            this.run();
-        });
-
-        if(state.data.hide_settings)
-            this.hideSettings();
-    },
-    _add_scalar(scalar) {
-        scalar.read().then(() => {
-            const $$plot = this.$$('plot');
-            $$plot.addTrace(scalar.getDevice().display_name + "/" + scalar.info.label, [scalar.timestamp], [scalar.value], this.state.data.attrs.indexOf(scalar.id));
-        });
-    },
-    _add_new_scalar(scalar) {
-        if (kNonPlottableDataTypes.includes(scalar.info.data_type)) {
-            webix.message(`Can not plot attr[${scalar.name}] of type ${scalar.info.data_type}`);
-            return;
-        }
-        this.state.data.attrs.push(scalar.id);
-        this.state.updateState();
-        this._add_scalar(scalar);
-        this.$$('settings').addAttribute(scalar.id);
     },
     _plotly_legendclick(ndx) {
         const attrId = this.state.data.attrs[ndx];
@@ -121,30 +58,6 @@ const plotly_widget = webix.protoUI({
             }
         });
 
-    },
-    /**
-     *
-     * @param {TangoAttribute} attr
-     */
-    addAttribute(attr) {
-        if (attr.isScalar()) {
-            if (this.state.data.attrs.indexOf(attr.id) < 0)
-                this._add_new_scalar(attr);
-            else
-                this.run();
-        } else {
-            openAttributeWindow(attr);
-        }
-    },
-    removeAttribute(id) {
-        const index = this.state.data.attrs.indexOf(id);
-        webix.assert(index > -1, `assertion error: attr[${id}] is not found in this widget`);
-
-        this.$$('plot').deleteTrace(index);
-        this.$$('settings').removeAttribute(id);
-
-        this.state.data.attrs.splice(index, 1);
-        this.state.updateState();
     },
     async run() {
         const grouped = groupAttributesByDeviceId(this.state.data.attrs.map(attrId => TangoAttribute.find_one(attrId)));
@@ -170,8 +83,17 @@ const plotly_widget = webix.protoUI({
         });
         this.$$('plot').updateTraces(traces, times, values);
     },
+    showOverlay(msg){
+        this.disable();
+        // $$datatable.showOverlay(msg);
+        webix.message({expire:kOverlayDelayTimeout, text:msg});
+        setTimeout(() => {
+            this.enable();
+            // $$datatable.hideOverlay();
+        },kOverlayDelayTimeout);
+    },
     $init(config) {
-        webix.extend(config, this._ui());
+        webix.extend(config, this._ui(config));
 
         this.addDrop(this.getNode(), {
             /**
@@ -180,12 +102,10 @@ const plotly_widget = webix.protoUI({
              * @see {@link https://docs.webix.com/api__dragitem_onbeforedrop_event.html| onBeforeDrop}
              */
             $drop: function (source, target) {
-                const dnd = webix.DragControl.getContext();
-                if (dnd.from.config.$id === 'attrs') {
-                    const attr = TangoAttribute.find_one(dnd.source[0]);
-                    if (attr == null) return false;
-
-                    this.addAttribute(attr);
+                const context = webix.DragControl.getContext();
+                if (context.from.config.view === 'device_tree_list' &&
+                    context.from.config.$id === 'attrs') {
+                    this.config.root.addAttribute(TangoId.fromMemberId(context.source[0]));
                 }
                 // if(dnd.from.config.view === 'devices_tree_tree'){
                 //     this.addDevice(dnd.source[0]);
@@ -201,20 +121,4 @@ const plotly_widget = webix.protoUI({
             }
         }
     }
-}, TangoWebappPlatform.mixin.Stateful, TangoWebappPlatform.mixin.ToggleSettings, TangoWebappPlatform.mixin.Runnable, webix.EventSystem, webix.DragControl, webix.IdSpace, webix.ui.layout);
-
-export function newPlotlyWidgetBody(config) {
-    return webix.extend({
-        view: "plotly_widget"
-
-    }, config);
-}
-
-export function newPlotlyWidgetTab(config) {
-    return {
-        header: "<span class='webix_icon mdi mdi-chart-line'></span> PlotlyWidget",
-        borderless: true,
-        body: newPlotlyWidgetBody(config)
-
-    };
-}
+}, ToggleSettings, Runnable, WaltzWidgetMixin, webix.EventSystem, webix.DragControl, webix.IdSpace, webix.ui.layout);
