@@ -4,7 +4,7 @@ import {Runnable, ToggleSettings, WaltzWidgetMixin} from "views/mixins";
 import {TangoId} from "@waltz-controls/tango-rest-client";
 import {TangoAttribute} from "models/tango";
 import {kChannelLog, kTopicLog} from "controllers/log";
-import {kActionSelectTangoDevice} from "../../widgets/tango/actions";
+import {kActionSelectTangoDevice} from "widgets/tango/actions";
 
 const kPersistentColumns = ["id", "device", "remove"];
 const kOverlayDelayTimeout = 3000;
@@ -42,7 +42,7 @@ function respToUpdate(update, resp){
  * @param {TangoAttribute} attr
  */
 function getColumnConfig(attr){
-    return {
+    return webix.extend({
         id: attr.name,
         header: `${attr.name} (${attr.info.display_unit})`, //TODO redefine header once attr info is loaded ${attr.display_name} (${attr.info.display_unit})
         template:function(obj){
@@ -65,12 +65,7 @@ function getColumnConfig(attr){
             return `${getQualityIcon(obj)}${obj[attr.name]}`;
         },
         fillspace: true
-    };
-    //TODO set writeable once attr info is loaded
-    // if (attr.isWritable()) webix.extend(attrColumnConfig, {
-    //     editor: "text"
-    // });
-
+    }, attr.isWritable() ? {editor:"text"} : {});
 }
 
 const table_datatable = webix.protoUI({
@@ -101,7 +96,6 @@ const table_datatable = webix.protoUI({
                     }
                 },
                 onItemClick(id) {
-                    //TODO refactor - split and extract
                     const device_id = TangoId.fromDeviceId(id.row);
 
                     this.config.root.dispatch(device_id,kActionSelectTangoDevice);
@@ -135,20 +129,12 @@ const table_datatable = webix.protoUI({
 
         const configs = attrs.map(attr => getColumnConfig(attr));
 
-        attrs
-            .filter(attr => attr.isWritable())
-            .map(attr => configs.find(config => config.id === attr.name))
-            .forEach(config => webix.extend(config, {
-                editor: "text"
-            }))
-
         columns.splice(columns.length - 1, 0, ...configs);
         this.refreshColumns();
     },
     addColumn(attr){
         this.addColumns([attr])
     },
-    _tracked_attrs:new Set([]),
     /**
      *
      * @param {TangoAttribute} attr
@@ -166,9 +152,7 @@ const table_datatable = webix.protoUI({
             })
             }
 
-        this._tracked_attrs.add(attr.name);
-
-        // this.run();
+        this.run();
     },
     /**
      *
@@ -185,8 +169,6 @@ const table_datatable = webix.protoUI({
         }
 
         this.refreshColumns();
-
-        this._tracked_attrs.delete(col.id);
         return col.id;
     },
     /**
@@ -201,7 +183,7 @@ const table_datatable = webix.protoUI({
             device: device.alias || device.name
         });
 
-        // this.run();
+        this.run();
     },
     removeDevice(id){
         this.remove(id);
