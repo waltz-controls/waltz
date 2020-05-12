@@ -104,6 +104,9 @@ export default class DashboardWidget extends WaltzWidget {
 
     run(){
         const panel = $$(kWidgetDashboardProfilesPanel) || $$(this.app.getWidget(kMainWindow).leftPanel.addView(this.panel()));
+        webix.extend(panel, webix.ProgressBar);
+        panel.showProgress();
+        this.$$profiles.waitData.then(() => panel.hideProgress());
     }
 
     showProfileWidget(profile){
@@ -126,6 +129,10 @@ export default class DashboardWidget extends WaltzWidget {
         const profile = this.$$profiles.getItem(id);
         this.$$profiles.remove(id);
 
-        $$(profile.viewId).destructor()
+        this.showProfileWidget(this.$$profiles.getItem(this.$$profiles.getFirstId()));
+
+        this.$$profiles.select(this.$$profiles.getFirstId());
+
+        $$(profile.viewId).destructor();
     }
 }

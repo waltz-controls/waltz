@@ -154,11 +154,14 @@ export default class TangoDeviceWidget extends WaltzWidget {
         });
     }
 
+    /**
+     *
+     * @param {TangoId} id
+     */
     setDevice(id){
+        if(this.deviceId && (this.deviceId.getTangoDeviceId() === id.getTangoDeviceId())) return;
         this.deviceId = id;
         this.refresh();
-
-
     }
 
     run(){

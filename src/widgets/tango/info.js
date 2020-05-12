@@ -69,6 +69,7 @@ export default class TangoInfoPanelWidget extends WaltzWidget {
      * @return {Promise<void>}
      */
     async setDevice(id){
+        if(this.view.$$device.device && (this.view.$$device.device.id === id.getTangoDeviceId())) return;
         const rest = await this.app.getContext(kTangoRestContext);
         rest.newTangoDevice(id).toTangoRestApiRequest().get().toPromise()
             .then(device => new TangoDevice(device))

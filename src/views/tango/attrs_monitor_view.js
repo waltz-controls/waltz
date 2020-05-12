@@ -277,6 +277,7 @@ const kOverlayDelayTimeout = 3000;
 
             const attrs = this.$$('scalars').find(() => true);
 
+            //TODO group by devices e.g. sys/tg_test/1/ampli&sys/tg_test/2/ampli => sys/tg_test/*/ampli ?
             rest.toTangoRestApiRequest()
                 .attributes()
                 .value()

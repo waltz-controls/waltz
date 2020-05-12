@@ -3,9 +3,9 @@ import {WaltzWidget} from "@waltz-controls/middleware";
 import {kTangoRestContext} from "controllers/tango_rest";
 import {kUserContext} from "controllers/user_context";
 import {TangoAttribute} from "models/tango";
-import {kChannelLog, kTopicLog} from "../../controllers/log";
-import {WriteTangoAttribute} from "../../models/user_action";
-import {kControllerUserAction} from "../../controllers/user_action_controller";
+import {kChannelLog, kTopicLog} from "controllers/log";
+import {WriteTangoAttribute} from "models/user_action";
+import {kControllerUserAction} from "controllers/user_action_controller";
 
 const kUnsupportedAttributeTypeMessage = "<span class='webix_icon mdi mdi-bell-ring'></span>This widget supports only scalar attributes!";
 
