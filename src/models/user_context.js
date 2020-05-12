@@ -143,11 +143,12 @@ export default class UserContext {
 
     /**
      *
-     * @param options
+     * @param {string} [host=''] host
+     * @param {object} [options={}] options
      * @return {Promise<Response>}
      */
-    save(options = {}){
-        return fetch(`user-context/cache`,{
+    save(host = '', options = {}){
+        return fetch(`${host}/user-context/cache`,{
             ...options,
             method: 'post',
             headers: {

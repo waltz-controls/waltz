@@ -12,8 +12,8 @@ class DecoratedUserContext extends UserContext {
         this.controller = controller;
     }
 
-    save(options){
-        return super.save(options)
+    save(host, options){
+        return super.save(host, options)
             .then(resp => {
                 if (resp.ok)
                     return this;
