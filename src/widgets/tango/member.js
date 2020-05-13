@@ -39,7 +39,7 @@ export default class MemberWidget extends WaltzWidget{
      * @return {webix.ui}
      */
     get view(){
-        return $$(this.member.host).$$(this.member.id);
+        return $$(this.member.id);
     }
 
     run(){

@@ -55,8 +55,10 @@ const device_tree_list = webix.protoUI(
             },
             on: {
                 onItemClick(id) {
-                    if(this.isSelected(id)){
+                    if(this.isSelected(id) && this.panel.isVisible()){
                         this.unselectAll();
+                    } else if(this.isSelected(id) && !this.panel.isVisible()) {
+                        this.showCtrlPanel();
                     } else {
                         this.select(id);
                     }
@@ -68,10 +70,10 @@ const device_tree_list = webix.protoUI(
                  * @param {string} id
                  * @memberof ui.DeviceViewPanel.DeviceTreeList
                  */
-                onAfterSelect: function (id) {
+                onAfterSelect (id) {
                     this.config.root.dispatch(TangoId.fromMemberId(id), getTangoAction(this.getItem(id).type))
                 },
-                onSelectChange:function (ids) {
+                onSelectChange (ids) {
                     const id = Array.isArray(ids) ? ids[0]: ids;
                     if(this.isSelected(id)){
                         this.showCtrlPanel();

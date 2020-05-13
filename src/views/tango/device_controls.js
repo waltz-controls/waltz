@@ -1,17 +1,49 @@
 import "views/tango/scalar_input";
 import "views/tango/command_view";
 
+function defaultButtons(){
+    return {
+        height:24,
+        cols:[
+            {
+                height:24,
+            },
+            {
+                height: 24,
+                width: 24,
+                borderless: true,
+                template: `<span class="goto webix_list_icon mdi mdi-open-in-new"></span>`,
+                onClick: {
+                    "goto"() {
+                        this.getFormView().goto();
+                    }
+                }
+            },
+            {
+                height:24,
+                width:24,
+                borderless: true,
+                template:`<span class="close webix_list_icon mdi mdi-close"></span>`,
+                onClick:{
+                    "close"() {
+                        this.getFormView().hide();
+                    }
+                }
+            }]
+    };
+}
+
 export const device_control_attr = webix.protoUI({
     name: "device_control_attr",
     ui(){
         return {
             elements:[
+                defaultButtons(),
                 {
                     cols:[
                         {view:"button",id:"read",value:"read", click(){ this.getFormView().read()}},
                         {view:"button",id:"plot", value:"plot", click(){ this.getFormView().plot()}},
-                        {view:"button",id:"history",value:"plot.hist", click(){ this.getFormView().plot_hist()}},
-                        {view:"icon", icon: "mdi mdi-open-in-new", click(){this.getFormView().goto();}}
+                        {view:"button",id:"history",value:"plot.hist", click(){ this.getFormView().plot_hist()}}
                     ]
                 },
                 {
@@ -124,13 +156,11 @@ export const device_control_command = webix.protoUI({
     },
     defaults:{
         elements:[
+            defaultButtons(),
             {id:"input_holder",rows:[
                     {}
                 ], hidden: true},
-            {cols:[
-                    {view:"button",value:"execute", click(){this.getFormView().execute()}},
-                    {view:"icon", icon: "mdi mdi-open-in-new", click(){this.getFormView().goto();}}
-                ]}
+             {view:"button",value:"execute", click(){this.getFormView().execute()}}
         ],
         rules:{
             "name": webix.rules.isNotEmpty
@@ -171,9 +201,9 @@ export const device_control_pipe = webix.protoUI({
         this.pipe = null;
     },
     defaults:{
-        cols:[
-            {view:"button",value:"read", click(){this.getFormView().read();}},
-            {view:"icon", icon: "mdi mdi-open-in-new", click(){this.getFormView().goto();}}
+        elements:[
+            defaultButtons(),
+            {view:"button",value:"read", click(){this.getFormView().read();}}
         ],
         rules:{
             "name": webix.rules.isNotEmpty
