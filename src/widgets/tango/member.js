@@ -47,7 +47,7 @@ export default class MemberWidget extends WaltzWidget{
 
         hostTab.show();
 
-        const tab = hostTab.$$(this.member.id) || $$(hostTab.addView(this.ui()));
+        const tab = $$(this.member.id) || $$(hostTab.addView(this.ui()));
 
         tab.show();
 

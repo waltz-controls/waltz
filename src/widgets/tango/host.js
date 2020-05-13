@@ -16,9 +16,9 @@ export default class HostTabWidget extends WaltzWidget {
             close: true,
             body: {
                 id: this.name,
-                isolate: true,
                 view: "tabview",
                 tabbar: {
+                    borderless:true,
                     popupWidth: 320,
                     tabMinWidth: 320,
                     root: this,
@@ -42,8 +42,6 @@ export default class HostTabWidget extends WaltzWidget {
     }
 
     run(innerTab){
-        const tab = $$(this.name) || $$(this.app.getWidget(kMainWindow).mainView.addView(this.ui(innerTab)));
-
-        return tab;
+        return $$(this.name) || $$(this.app.getWidget(kMainWindow).mainView.addView(this.ui(innerTab)));
     }
 }
