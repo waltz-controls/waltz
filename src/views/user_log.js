@@ -1,9 +1,17 @@
-import {UserAction} from "models/user_action";
+import {
+    ExecuteTangoCommand,
+    ReadTangoAttribute,
+    ReadTangoPipe,
+    UpdateTangoAttributeInfo,
+    UserAction,
+    WriteTangoAttribute
+} from "models/user_action";
 import {BoundedReverseList} from "views/mixins";
 import {kControllerUserAction} from "controllers/user_action_controller";
 import {kInprocChannel} from "@waltz-controls/middleware";
 import {kChannelTango} from "models/tango";
 import {kAnyTopic} from "@waltz-controls/eventbus";
+import {UpdateDeviceAlias} from "../models/user_action";
 
 function log(target){
     return function(action){
@@ -11,8 +19,58 @@ function log(target){
     }
 }
 
-function submitAction(app, action){
-    app.getController(kControllerUserAction).submit(action);
+function getFormatter(action){
+    if(action.target === 'tango'){
+        return new TangoUserActionFormatter(action)
+    } else {
+        return new UserActionFormatter(action);
+    }
+}
+
+class UserActionFormatter {
+    constructor(action) {
+        this.action = action;
+    }
+
+    toMessage(){
+        return `<span><span class="webix_icon mdi mdi-account"></span><strong>${this.action.user}</strong>
+                <div>performs action <strong>${this.action.action}</strong> on <strong>${this.action.target}</strong></div>`;
+    }
+}
+
+class TangoUserActionFormatter extends UserActionFormatter{
+    constructor(action) {
+        super(action);
+    }
+
+    getTail(){
+        switch (this.action.action) {
+            case ReadTangoPipe.action:
+                return `<div><strong>.read() => ...</strong></div>`;
+            case ReadTangoAttribute.action:
+                return `<div style="background-color: #D5E7B3"><strong>.read() => ${this.action.data.value}</strong></div>`;
+            case WriteTangoAttribute.action:
+                return `<div style="background-color: aliceblue"><strong>.write(${this.action.value}) => ${this.action.data.value}</strong></div>`;
+            case ExecuteTangoCommand.action:
+                return `<div style="background-color: #e7b3b3"><strong>.execute(${this.action.value}) => ${this.action.data.output}</strong></div>`;
+            case UpdateDeviceAlias.action:
+                return  `<div><strong>${this.action.remove ? 'removes' : ''} ${this.action.device.id}.alias(${this.action.alias})</strong></div>`;
+            case UpdateTangoAttributeInfo.action:
+                return `<div><strong>updates info of ${this.action.attribute.id}</strong></div>`;
+            default:
+                return "";
+        }
+    }
+
+    toMessage(){
+        return `${super.toMessage()}
+                <div><ul><li>host: <i>${this.action.tango_id.getTangoHostId()}</i></li>
+                         <li>device: <i>${this.action.tango_id.getTangoDeviceName()}</i></li>
+                         <li>member: <i>${this.action.tango_id.name}</i></li>
+                </ul></div>
+                ${this.getTail()}`;
+    }
+
 }
 
 /**
@@ -32,15 +90,7 @@ const user_log = webix.protoUI({
              * @return {string}
              */
             template(action){
-                return `<div>${action.hasFailed() ? '<span class="webix_icon red mdi mdi-alert"></span>' : ''}${action.redoable ? '<span class="webix_icon mdi mdi-redo-variant"></span>' : ''}<strong>${new Date(action.id)}</strong></div>${action.toMessage()}`;
-            },
-            click(id){
-                const action = this.getItem(id);
-                if(action.redoable)
-                webix.confirm(`<div>Confirm redo action ${action.action} on ${action.target}?</div>${action.toMessage()}`, "confirm-warning")
-                    .then(() => {
-                        submitAction(this.config.root.app,Object.assign(action,{id: +new Date()}))
-                    });
+                return `<div>${action.hasFailed() ? '<span class="webix_icon red mdi mdi-alert"></span>' : ''}${new Date(action.id)}</div>${action.redoable ? '<span class="redo webix_icon mdi mdi-redo-variant"></span>' : ''}${getFormatter(action).toMessage()}`;
             }
         }
     },

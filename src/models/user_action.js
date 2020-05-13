@@ -8,10 +8,6 @@ export class UserAction {
         this.redoable = redoable;
     }
 
-    toMessage(){
-        return `<span><span class="webix_icon mdi mdi-account"></span><strong>${this.user}</strong>`;
-    }
-
     hasFailed(){
         return Array.isArray(this.data.errors) && this.data.errors.length;
     }
@@ -21,14 +17,6 @@ class TangoUserAction extends UserAction{
     constructor({user, action, tango_id} = {}) {
         super(user, action, 'tango', true);
         this.tango_id = tango_id;
-    }
-
-    toMessage() {
-        return super.toMessage() + ` performs tango action: <i>${this.action}</i></span>
-                                    <div><ul><li>host: <i>${this.tango_id.getTangoHostId()}</i></li>
-                                             <li>device: <i>${this.tango_id.getTangoDeviceName()}</i></li>
-                                             <li>member: <i>${this.tango_id.name}</i></li>
-                                    </ul></div>`;
     }
 }
 
@@ -46,10 +34,6 @@ export class ReadTangoPipe extends TangoUserAction {
         super({user, action:ReadTangoPipe.action, ...pipe});
         this.pipe = pipe;
     }
-
-    toMessage() {
-        return super.toMessage() + `<div>.read()</div>`;
-    }
 }
 
 export class ReadTangoAttribute extends TangoUserAction {
@@ -65,10 +49,6 @@ export class ReadTangoAttribute extends TangoUserAction {
     constructor({user, attribute} = {}) {
         super({user, action:ReadTangoAttribute.action, ...attribute});
         this.attribute = attribute;
-    }
-
-    toMessage() {
-        return super.toMessage() + `<div>.read()</div>`;
     }
 }
 
@@ -88,10 +68,6 @@ export class WriteTangoAttribute extends TangoUserAction {
         this.attribute = attribute;
         this.value = value;
     }
-
-    toMessage() {
-        return super.toMessage() + `<div>.write(${this.value})</div>`;
-    }
 }
 
 export class ExecuteTangoCommand extends TangoUserAction {
@@ -103,10 +79,6 @@ export class ExecuteTangoCommand extends TangoUserAction {
         super({user, action:ExecuteTangoCommand.action, ...command});
         this.command = command;
         this.value = value;
-    }
-
-    toMessage() {
-        return super.toMessage() + `<div>.execute(${this.value}) => ${this.data.output}</div>`;
     }
 }
 
@@ -121,10 +93,6 @@ export class UpdateDeviceAlias extends TangoUserAction {
         this.alias = alias;
         this.remove = remove;
     }
-
-    toMessage() {
-        return super.toMessage() + `<div>${this.remove ? 'removes' : ''} ${this.device.id}.alias(${this.alias})</div>`;
-    }
 }
 
 export class UpdateTangoAttributeInfo extends TangoUserAction {
@@ -137,20 +105,12 @@ export class UpdateTangoAttributeInfo extends TangoUserAction {
         this.attribute = attribute;
         this.info = info;
     }
-
-    toMessage() {
-        return super.toMessage() + `<div>updates info of ${this.attribute.id}</div>`;
-    }
 }
 
 export class ExecuteUserScript extends UserAction {
     constructor({user, script}) {
         super(user, 'run','script');
         this.data = script;
-    }
-
-    toMessage() {
-        return super.toMessage() + " executes script " + this.data.id + "</span>";
     }
 }
 
