@@ -38,7 +38,7 @@ class Profile{
     get icon(){
         switch(this.type){
             case "table":
-                return "table";
+                return "table-large";
             case "plot":
                 return "chart-line";
             case "list":
