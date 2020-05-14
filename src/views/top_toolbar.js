@@ -94,7 +94,7 @@ const top_toolbar = webix.protoUI({
         return {
             cols: [
                 {
-                    view: "icon", icon: "mdi mdi-menu",
+                    view: "icon", icon: "mdi mdi-page-layout-sidebar-left",
                     click(){
                         if( config.root.leftPanel.isVisible())
                             config.root.leftPanel.hide();
@@ -130,7 +130,7 @@ const top_toolbar = webix.protoUI({
                     fillSpace:true
                 },
                 {
-                    view: "icon", icon: "mdi mdi-menu",
+                    view: "icon", icon: "mdi mdi-page-layout-sidebar-right",
                     click(){
                         if( config.root.rightPanel.isVisible())
                             config.root.rightPanel.hide();
