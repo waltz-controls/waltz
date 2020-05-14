@@ -80,7 +80,7 @@ export class DeviceFilter {
 
 }
 
-const kUserContextUrl = 'user-context/cache';
+const kUserContextUrl = '/user-context/cache';
 /**
  * Model user_context
  *
@@ -148,7 +148,7 @@ export default class UserContext {
      * @return {Promise<Response>}
      */
     save(host = '', options = {}){
-        return fetch(`${host}/user-context/cache`,{
+        return fetch(`${host}${kUserContextUrl}`,{
             ...options,
             method: 'post',
             headers: {

@@ -28,23 +28,9 @@ class DecoratedUserContext extends UserContext {
 
 }
 
-/**
- *
- * @param id
- * @param options
- * @return {Promise<UserContext>}
- */
-function load(id, options){
-    return fetch(`/user-context/cache?id=${id}`, options)
-        .then(resp => {
-            //TODO 404
-            if(resp.ok)
-                return resp.text()
-            else
-                throw new Error(`Failed to load UserContext[${id}] due to ${resp.status}: ${resp.statusText}`)
-        })
-        .then(text => JSON.parse(atob(text)))
-        .then(json => new DecoratedUserContext({...json}));
+
+function defaultUserContext(user){
+    return btoa(JSON.stringify(new UserContext({user, tango_hosts:{}, device_filters:["*/*/*"], ext:{}})))
 }
 
 export default class UserContextController extends Controller {
@@ -57,10 +43,30 @@ export default class UserContextController extends Controller {
 
     async run(){
         const user = await this.app.getContext(kUser)
-        this.app.registerContext(kUserContext, load(user.name, {headers:{...user.headers}})
+        this.app.registerContext(kUserContext, this.load(user.name, {headers:{...user.headers}})
             .catch(err => {
                 this.dispatch(err, kTopicError, kChannelLog);
                 throw err;//TODO throw critical error that prevents the whole application from proceeding
             }));
+    }
+
+    /**
+     *
+     * @param user
+     * @param options
+     * @return {Promise<UserContext>}
+     */
+    load(user, options){
+        return fetch(`/user-context/cache?id=${user}`, options)
+            .then(resp => {
+                if(resp.ok)
+                    return resp.text()
+                else if(resp.status === 404)
+                    return defaultUserContext(user);
+                else
+                    throw new Error(`Failed to load UserContext[${user}] due to ${resp.status}: ${resp.statusText}`);
+            })
+            .then(text => JSON.parse(atob(text)))
+            .then(json => new DecoratedUserContext({...json}));
     }
 }

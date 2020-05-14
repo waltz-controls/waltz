@@ -18,7 +18,6 @@ const port = 3000;
 
 const userContext = {
     user: 'tango-cs',
-    rest_url: 'http://localhost:10001/tango',
     tango_hosts:{'localhost:10000':null},
     device_filters: ['*/*/*'],
     ext:{}
@@ -28,7 +27,7 @@ app.get("/user-context/cache", (req, res) => {
     if(req.query.id && req.query.id === "tango-cs"){
         res.send(btoa(JSON.stringify(userContext)));
     }
-    else res.sendStatus(400);
+    else res.sendStatus(404);
 });
 
 app.post("/user-context/cache", (req, res) => {
@@ -36,7 +35,7 @@ app.post("/user-context/cache", (req, res) => {
         Object.assign(userContext,JSON.parse(atob(req.body.data)));
         res.sendStatus(200);
     }
-    else res.sendStatus(400);
+    else res.sendStatus(404);
 });
 
 app.listen(port, () => {
