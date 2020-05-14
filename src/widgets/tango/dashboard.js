@@ -28,11 +28,24 @@ export const mainView = {
 }
 
 class Profile{
-    constructor(id, name, type, viewId = undefined){
+    constructor({id, name, type, viewId = undefined}){
         this.id = id;
         this.name = name;
         this.type = type;
         this.viewId = viewId;
+    }
+
+    get icon(){
+        switch(this.type){
+            case "table":
+                return "table";
+            case "plot":
+                return "chart-line";
+            case "list":
+                return "format-list-bulleted";
+            default:
+                return "help";
+        }
     }
 }
 
@@ -66,7 +79,7 @@ export default class DashboardWidget extends WaltzWidget {
             $proxy:true,
             load:()=>{
                 return this.getUserContext()
-                    .then(userContext => userContext.getOrDefault(this.name, []))
+                    .then(userContext => userContext.getOrDefault(this.name, []).map(profile => new Profile(profile)))
             },
             save:(master, params, dataProcessor)=>{
                 switch (params.operation) {
@@ -115,10 +128,19 @@ export default class DashboardWidget extends WaltzWidget {
         $$(kWidgetDashboard).show();
 
         view.show();
+
+        this.updateHeader(profile);
+    }
+
+    updateHeader(profile){
+        const $$tabbar = this.$$main.getParentView().getParentView().getTabbar();
+        const tab = $$tabbar.config.options.find(option => option.id === this.name)
+        tab.value = `<span class="webix_icon mdi mdi-${profile.icon}"></span> ${profile.name}`;
+        $$tabbar.refresh();
     }
 
     createProfile({name,type}){
-        const profile = new Profile(webix.uid(), name, type);
+        const profile = new Profile({id:webix.uid(), name, type});
 
         this.showProfileWidget(profile);
 
