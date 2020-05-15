@@ -1,6 +1,5 @@
-import newToolbar from "views/tango/newToolbar";
 import {btnClearAll} from "views/tango/scalar_view";
-import {Runnable} from "@waltz-controls/waltz-webix-extensions";
+import {newToolbar, Runnable} from "@waltz-controls/waltz-webix-extensions";
 
 const command_output = webix.protoUI(
     /** @lends spectrum_text*/

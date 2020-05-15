@@ -1,7 +1,6 @@
-import newToolbar from "views/tango/newToolbar";
 import {kNonPlottableDataTypes} from "./plot.js";
 import {WriteTangoAttribute} from "models/user_action";
-import {Runnable, ToggleSettings, WaltzWidgetMixin} from "@waltz-controls/waltz-webix-extensions";
+import {newToolbar, Runnable, ToggleSettings, WaltzWidgetMixin} from "@waltz-controls/waltz-webix-extensions";
 import {TangoId} from "@waltz-controls/tango-rest-client";
 import {toolbar_extension} from "./remove_attribute_toolbar";
 import {mergeMap} from "rxjs/operators";

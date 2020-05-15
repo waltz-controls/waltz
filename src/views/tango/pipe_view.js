@@ -1,6 +1,5 @@
-import newToolbar from "views/tango/newToolbar";
 import codemirror_textarea from "views/codemirror_textarea";
-import {Runnable} from "@waltz-controls/waltz-webix-extensions";
+import {newToolbar, Runnable} from "@waltz-controls/waltz-webix-extensions";
 
 const pipe_output = webix.protoUI({
     name: "pipe_output",

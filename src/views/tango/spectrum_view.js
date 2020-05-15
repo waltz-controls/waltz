@@ -1,6 +1,5 @@
 import {kMargins} from "./plot.js";
-import newToolbar from "./newToolbar"
-import {Runnable} from "@waltz-controls/waltz-webix-extensions";
+import {newToolbar, Runnable} from "@waltz-controls/waltz-webix-extensions";
 
 /**
  *

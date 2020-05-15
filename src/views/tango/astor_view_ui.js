@@ -1,5 +1,4 @@
-import newToolbar from "./newToolbar";
-import {Runnable, WaltzWidgetMixin} from "@waltz-controls/waltz-webix-extensions";
+import {newToolbar, Runnable, WaltzWidgetMixin} from "@waltz-controls/waltz-webix-extensions";
 import {kActionSelectTangoDevice} from "widgets/tango/actions";
 import {TangoId} from "@waltz-controls/tango-rest-client";
 

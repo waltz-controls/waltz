@@ -1,7 +1,6 @@
 import "./scalar_view";
-import newToolbar from "views/tango/newToolbar";
 import {newRemoveAttributeSettings, toolbar_extension} from "./remove_attribute_toolbar.js";
-import {Runnable, ToggleSettings, WaltzWidgetMixin} from "@waltz-controls/waltz-webix-extensions";
+import {newToolbar, Runnable, ToggleSettings, WaltzWidgetMixin} from "@waltz-controls/waltz-webix-extensions";
 import {TangoId} from "@waltz-controls/tango-rest-client";
 
 const kOverlayDelayTimeout = 3000;
