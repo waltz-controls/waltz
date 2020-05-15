@@ -64,13 +64,13 @@
     "url-loader": "^0.5.9",
     "webpack": "^4.43.0",
     "webpack-cli": "^3.0.8",
-    "webpack-dev-server": "^3.1.4"
+    "webpack-dev-server": "^3.11.0"
   },
   "dependencies": {
     "@waltz-controls/eventbus": "^1.2.4",
     "@waltz-controls/middleware": "^1.2.7",
     "@waltz-controls/tango-rest-client": "^1.5.0",
-    "@waltz-controls/waltz-webix-extensions": "^1.0.1",
+    "@waltz-controls/waltz-webix-extensions": "^1.0.2",
     "codemirror": "^5.53.2",
     "jquery": "^3.5.1",
     "plotly.js-dist": "^1.54.1",

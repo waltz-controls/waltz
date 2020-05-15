@@ -1,12 +1,12 @@
 import newToolbar from "views/tango/newToolbar";
 import {kNonPlottableDataTypes} from "./plot.js";
 import {WriteTangoAttribute} from "models/user_action";
-import {Runnable, ToggleSettings, WaltzWidgetMixin} from "views/mixins";
+import {Runnable, ToggleSettings, WaltzWidgetMixin} from "@waltz-controls/waltz-webix-extensions";
 import {TangoId} from "@waltz-controls/tango-rest-client";
 import {toolbar_extension} from "./remove_attribute_toolbar";
 import {mergeMap} from "rxjs/operators";
 import {from} from "rxjs";
-import {kActionSelectTangoDevice} from "../../widgets/tango/actions";
+import {kActionSelectTangoDevice} from "widgets/tango/actions";
 
 const kOverlayDelayTimeout = 3000;
 

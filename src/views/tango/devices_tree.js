@@ -2,7 +2,7 @@
  *  @memberof ui
  */
 import {TangoId} from "@waltz-controls/tango-rest-client";
-import {WaltzWidgetMixin} from "views/mixins";
+import {WaltzWidgetMixin} from "@waltz-controls/waltz-webix-extensions";
 
 /**
  * Extends {@link https://docs.webix.com/api__refs__ui.layout.html webix.ui.layout}

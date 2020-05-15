@@ -1,7 +1,7 @@
 import {WaltzWidget} from "@waltz-controls/middleware";
 import {kMainWindow} from "widgets/main_window";
 import {kTangoRestContext} from "controllers/tango_rest";
-import newSearch from "views/search";
+import {newSearch} from "@waltz-controls/waltz-webix-extensions";
 import "views/tango/devices_tree";
 import "views/tango/tango_host_info_panel";
 import {kUserContext} from "controllers/user_context";

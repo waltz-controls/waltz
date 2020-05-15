@@ -2,16 +2,16 @@ import {
     ExecuteTangoCommand,
     ReadTangoAttribute,
     ReadTangoPipe,
+    UpdateDeviceAlias,
     UpdateTangoAttributeInfo,
     UserAction,
     WriteTangoAttribute
 } from "models/user_action";
-import {BoundedReverseList} from "views/mixins";
+import {BoundedReverseList} from "@waltz-controls/waltz-webix-extensions";
 import {kControllerUserAction} from "controllers/user_action_controller";
 import {kInprocChannel} from "@waltz-controls/middleware";
 import {kChannelTango} from "models/tango";
 import {kAnyTopic} from "@waltz-controls/eventbus";
-import {UpdateDeviceAlias} from "../models/user_action";
 
 function log(target){
     return function(action){

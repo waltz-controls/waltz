@@ -4,7 +4,7 @@
  * @memberof ui.Logger
  * @namespace logger
  */
-import {BoundedReverseList} from "./mixins";
+import {BoundedReverseList} from "@waltz-controls/waltz-webix-extensions";
 
 const logger = webix.protoUI(
     {

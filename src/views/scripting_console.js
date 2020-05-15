@@ -7,7 +7,7 @@
 import UserScript from "models/user_script";
 
 import "views/codemirror_textarea";
-import {WaltzWidgetMixin} from "./mixins";
+import {WaltzWidgetMixin} from "@waltz-controls/waltz-webix-extensions";
 
 /**
  * @constant

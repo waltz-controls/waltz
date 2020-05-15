@@ -10,7 +10,7 @@
  * @since 9/10/18
  */
 import {newInfoDatatable, newInfoDatatableToolbar} from "./info_control_panel";
-import {WaltzWidgetMixin} from "../mixins";
+import {WaltzWidgetMixin} from "@waltz-controls/waltz-webix-extensions";
 import {TangoPipe} from "models/tango";
 import {StringUtils} from "utils";
 

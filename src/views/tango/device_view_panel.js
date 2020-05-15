@@ -8,7 +8,7 @@
  * @module DeviceViewPanel
  * @memberof ui
  */
-import {newComplexSearch} from "views/search";
+import {newComplexSearch} from "@waltz-controls/waltz-webix-extensions";
 import {kActionSelectTangoAttribute, kActionSelectTangoCommand, kActionSelectTangoPipe} from "widgets/tango/actions";
 import {TangoId} from "@waltz-controls/tango-rest-client";
 import {kTangoTypeAttribute, kTangoTypeCommand, kTangoTypePipe} from "models/tango";
