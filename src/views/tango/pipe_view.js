@@ -1,5 +1,4 @@
-import codemirror_textarea from "views/codemirror_textarea";
-import {newToolbar, Runnable} from "@waltz-controls/waltz-webix-extensions";
+import {codemirror_textarea, newToolbar, Runnable} from "@waltz-controls/waltz-webix-extensions";
 
 const pipe_output = webix.protoUI({
     name: "pipe_output",
