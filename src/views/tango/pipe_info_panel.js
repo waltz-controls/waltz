@@ -11,7 +11,7 @@
  */
 import {newInfoDatatable, newInfoDatatableToolbar} from "./info_control_panel";
 import {WaltzWidgetMixin} from "@waltz-controls/waltz-webix-extensions";
-import {TangoPipe} from "models/tango";
+import {TangoPipe} from "@waltz-controls/waltz-tango-rest-plugin";
 import {StringUtils} from "utils";
 
 function parseInfo(pipe){

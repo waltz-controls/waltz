@@ -2,8 +2,15 @@ import "./device_info_panel";
 import "./attr_info_panel";
 import "./command_info_panel";
 import "./pipe_info_panel";
-import {kTangoTypeAttribute, kTangoTypeCommand, kTangoTypeDevice, kTangoTypePipe, Pollable} from "models/tango";
-import {pollStatus, updatePolling} from "controllers/tango_rest";
+import {
+    kTangoTypeAttribute,
+    kTangoTypeCommand,
+    kTangoTypeDevice,
+    kTangoTypePipe,
+    Pollable,
+    pollStatus,
+    updatePolling
+} from "@waltz-controls/waltz-tango-rest-plugin";
 import {defaultIfEmpty, filter, map} from "rxjs/operators";
 
 export function newInfoDatatable(){

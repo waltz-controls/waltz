@@ -1,10 +1,17 @@
 import {UpdateDeviceAlias} from "models/user_action.js";
 import {StringUtils} from "utils";
-import {kTangoRestContext, pollStatus, updatePolling} from "controllers/tango_rest";
 import {kControllerUserAction} from "controllers/user_action_controller";
 import {kUserContext} from "controllers/user_context";
 import {filter, map, toArray} from "rxjs/operators";
-import {kTangoTypeAttribute, kTangoTypeCommand, Pollable, TangoDevice} from "models/tango";
+import {
+    kTangoRestContext,
+    kTangoTypeAttribute,
+    kTangoTypeCommand,
+    Pollable,
+    pollStatus,
+    TangoDevice,
+    updatePolling
+} from "@waltz-controls/waltz-tango-rest-plugin";
 import {forkJoin} from "rxjs";
 
 const kDevice_info_values = [

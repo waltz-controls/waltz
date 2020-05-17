@@ -5,7 +5,7 @@ import MemberWidget from "widgets/tango/member";
 import {kUserContext} from "controllers/user_context";
 import {kControllerUserAction} from "controllers/user_action_controller";
 import {ReadTangoAttribute, WriteTangoAttribute} from "models/user_action";
-import {kTangoRestContext} from "controllers/tango_rest";
+import {kTangoRestContext} from "@waltz-controls/waltz-tango-rest-plugin";
 
 
 function view(attr){

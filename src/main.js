@@ -9,14 +9,13 @@ import MainWindow from "widgets/main_window";
 import AjaxLoader from "controllers/ajax_loader";
 import LoginController from "controllers/login";
 import TangoTree from "widgets/tango/tree";
-import TangoRestController from "controllers/tango_rest";
 import ApplicationLogController from "controllers/log";
 import WebixMessageController from "controllers/message";
 import TangoDeviceWidget from "widgets/tango/device";
 import UserContextController from "controllers/user_context";
 import UserActionController from "controllers/user_action_controller";
 import TangoInfoPanelWidget from "widgets/tango/info";
-import TangoSubscriptionsController from "controllers/tango_subscriptions";
+import {TangoRestController, TangoSubscriptionsController} from "@waltz-controls/waltz-tango-rest-plugin";
 import DashboardWidget from "widgets/tango/dashboard";
 
 // TangoWebappPlatform.consts.LOG_DATE_FORMATTER = webix.Date.dateToStr("%c");

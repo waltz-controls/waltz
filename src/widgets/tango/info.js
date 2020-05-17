@@ -8,8 +8,13 @@ import {
     kActionSelectTangoDevice,
     kActionSelectTangoPipe
 } from "./actions";
-import {kTangoRestContext} from "controllers/tango_rest";
-import {TangoAttribute, TangoCommand, TangoDevice, TangoPipe} from "models/tango";
+import {
+    kTangoRestContext,
+    TangoAttribute,
+    TangoCommand,
+    TangoDevice,
+    TangoPipe
+} from "@waltz-controls/waltz-tango-rest-plugin";
 
 /**
  * @constant

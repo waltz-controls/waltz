@@ -2,8 +2,7 @@ import "views/tango/table_widget";
 
 import {WaltzWidget} from "@waltz-controls/middleware";
 
-import {kTangoRestContext} from "controllers/tango_rest";
-import {TangoAttribute, TangoDevice} from "models/tango";
+import {kTangoRestContext, TangoAttribute, TangoDevice} from "@waltz-controls/waltz-tango-rest-plugin";
 import {kUserContext} from "controllers/user_context";
 import {kChannelLog, kTopicLog} from "controllers/log";
 import {TangoId} from "@waltz-controls/tango-rest-client";

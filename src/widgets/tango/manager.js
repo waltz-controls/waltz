@@ -2,16 +2,14 @@ import "views/tango/astor_view_ui";
 import {WaltzWidget} from "@waltz-controls/middleware";
 import {kMainWindow} from "widgets/main_window";
 import {kActionSelectTangoHost, kAddTangoDevices, kDeleteTangoDevice} from "./actions";
-import {kTangoRestContext} from "controllers/tango_rest";
 import {kChannelLog, kTopicLog} from "controllers/log";
 import {catchError, map, mergeMap, switchMap, tap, toArray} from "rxjs/operators";
 import {forkJoin, from, of, zip} from "rxjs";
-import {kContextTangoSubscriptions} from "controllers/tango_subscriptions";
 import {TangoId} from "@waltz-controls/tango-rest-client";
 import {kControllerUserAction} from "controllers/user_action_controller";
 import {kUserContext} from "controllers/user_context";
 import {ExecuteTangoCommand} from "models/user_action";
-import {TangoCommand} from "../../models/tango";
+import {kContextTangoSubscriptions, kTangoRestContext, TangoCommand} from "@waltz-controls/waltz-tango-rest-plugin";
 
 const kWidgetTangoManager = "widget:tango_manager";
 

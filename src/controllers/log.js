@@ -1,6 +1,6 @@
 import {Controller} from "@waltz-controls/middleware";
 import {kAnyTopic} from "@waltz-controls/eventbus";
-import {kChannelTangoRest} from "controllers/tango_rest";
+import {kChannelTangoRest} from "@waltz-controls/waltz-tango-rest-plugin";
 
 export const kApplicationLogController = 'controller:app_log';
 

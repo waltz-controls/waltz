@@ -1,7 +1,7 @@
 import {newRemoveAttributeSettings, toolbar_extension} from "./remove_attribute_toolbar.js";
 import {newToolbar, Runnable, ToggleSettings, WaltzWidgetMixin} from "@waltz-controls/waltz-webix-extensions";
 import {TangoId} from "@waltz-controls/tango-rest-client";
-import {TangoAttribute} from "models/tango";
+import {TangoAttribute} from "@waltz-controls/waltz-tango-rest-plugin";
 import {kChannelLog, kTopicLog} from "controllers/log";
 import {kActionSelectTangoDevice} from "widgets/tango/actions";
 

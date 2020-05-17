@@ -1,6 +1,6 @@
 import {WaltzWidget} from "@waltz-controls/middleware";
 import HostTabWidget from "./host";
-import {kChannelTango} from "models/tango";
+import {kChannelTango} from "@waltz-controls/waltz-tango-rest-plugin";
 
 function header(member){
     return `<span class='webix_icon mdi mdi-${member.icon}'></span>[<span class='webix_strong'>${member.device}/${member.name}</span>]`;

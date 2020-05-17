@@ -3,7 +3,7 @@ import {kChannelLog, kTopicError, kTopicLog} from "./log";
 import {kAnyTopic} from "@waltz-controls/eventbus";
 import {Subject} from "rxjs";
 import {throttleTime} from "rxjs/operators";
-import {kChannelTangoRest} from "./tango_rest";
+import {kChannelTangoRest} from "@waltz-controls/waltz-tango-rest-plugin";
 import {kControllerUserAction} from "./user_action_controller";
 
 const kControllerWebixMessage = 'controller:webix_message';

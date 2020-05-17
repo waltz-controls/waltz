@@ -10,7 +10,7 @@ import {
 import {BoundedReverseList} from "@waltz-controls/waltz-webix-extensions";
 import {kControllerUserAction} from "controllers/user_action_controller";
 import {kInprocChannel} from "@waltz-controls/middleware";
-import {kChannelTango} from "models/tango";
+import {kChannelTango} from "@waltz-controls/waltz-tango-rest-plugin";
 import {kAnyTopic} from "@waltz-controls/eventbus";
 
 function log(target){

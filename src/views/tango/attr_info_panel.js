@@ -1,5 +1,5 @@
 import {StringUtils} from "utils";
-import {TangoAttribute} from "models/tango";
+import {TangoAttribute} from "@waltz-controls/waltz-tango-rest-plugin";
 import {UpdateTangoAttributeInfo} from "models/user_action";
 import {newInfoDatatable, newInfoDatatableToolbar, parsePollable, savePolling} from "./info_control_panel";
 import {WaltzWidgetMixin} from "@waltz-controls/waltz-webix-extensions";

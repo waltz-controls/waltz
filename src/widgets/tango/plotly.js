@@ -1,9 +1,8 @@
 import "views/tango/plotly_widget";
 import {WaltzWidget} from "@waltz-controls/middleware";
-import {kTangoRestContext} from "controllers/tango_rest";
+import {kTangoRestContext, TangoAttribute} from "@waltz-controls/waltz-tango-rest-plugin";
 import {kUserContext} from "controllers/user_context";
 import {kChannelLog, kTopicError, kTopicLog} from "controllers/log";
-import {TangoAttribute} from "models/tango";
 import {kNonPlottableDataTypes} from "views/tango/plot";
 import {TangoId} from "@waltz-controls/tango-rest-client";
 

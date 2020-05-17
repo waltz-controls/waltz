@@ -4,12 +4,17 @@ import "views/tango/device_view_panel";
 import {WaltzWidget} from "@waltz-controls/middleware";
 import {kMainWindow} from "widgets/main_window";
 import {kActionSelectTangoAttribute, kActionSelectTangoDevice} from "widgets/tango/actions";
-import {kTangoRestContext} from "controllers/tango_rest";
+import {
+    kChannelTango,
+    kTangoRestContext,
+    TangoAttribute,
+    TangoCommand,
+    TangoPipe
+} from "@waltz-controls/waltz-tango-rest-plugin";
 
 import {forkJoin, of} from "rxjs";
 import {catchError} from "rxjs/operators";
 import {kChannelLog, kTopicLog} from "controllers/log";
-import {kChannelTango, TangoAttribute, TangoCommand, TangoPipe} from "models/tango";
 import {kControllerUserAction,} from "controllers/user_action_controller";
 import {ExecuteTangoCommand, ReadTangoAttribute, ReadTangoPipe, WriteTangoAttribute} from "models/user_action";
 import {kUserContext} from "controllers/user_context";

@@ -8,8 +8,7 @@ import {
     UserAction,
     WriteTangoAttribute
 } from "models/user_action";
-import {kTangoRestContext} from "controllers/tango_rest";
-import {kChannelTango} from "models/tango";
+import {kChannelTango, kTangoRestContext} from "@waltz-controls/waltz-tango-rest-plugin";
 
 export const kControllerUserAction = 'controller:user_action';
 const kUserActionsChannel = "channel:user-actions";
