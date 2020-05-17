@@ -12,7 +12,7 @@ import TangoTree from "widgets/tango/tree";
 import ApplicationLogController from "controllers/log";
 import WebixMessageController from "controllers/message";
 import TangoDeviceWidget from "widgets/tango/device";
-import UserContextController from "controllers/user_context";
+import {UserContextController} from "@waltz-controls/waltz-user-context-plugin";
 import UserActionController from "controllers/user_action_controller";
 import TangoInfoPanelWidget from "widgets/tango/info";
 import {TangoRestController, TangoSubscriptionsController} from "@waltz-controls/waltz-tango-rest-plugin";

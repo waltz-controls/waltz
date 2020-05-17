@@ -7,7 +7,7 @@ import {catchError, map, mergeMap, switchMap, tap, toArray} from "rxjs/operators
 import {forkJoin, from, of, zip} from "rxjs";
 import {TangoId} from "@waltz-controls/tango-rest-client";
 import {kControllerUserAction} from "controllers/user_action_controller";
-import {kUserContext} from "controllers/user_context";
+import {kUserContext} from "@waltz-controls/waltz-user-context-plugin";
 import {ExecuteTangoCommand} from "models/user_action";
 import {kContextTangoSubscriptions, kTangoRestContext, TangoCommand} from "@waltz-controls/waltz-tango-rest-plugin";
 

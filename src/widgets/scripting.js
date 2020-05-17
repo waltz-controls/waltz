@@ -1,6 +1,6 @@
 import {WaltzWidget} from "@waltz-controls/middleware";
 import "views/scripting_console";
-import {kUserContext} from "controllers/user_context";
+import {kUserContext} from "@waltz-controls/waltz-user-context-plugin";
 import {kChannelLog, kTopicLog} from "controllers/log";
 import UserScript from "models/user_script";
 import {kMainWindow} from "widgets/main_window";

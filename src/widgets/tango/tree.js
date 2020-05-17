@@ -3,7 +3,7 @@ import {kMainWindow} from "widgets/main_window";
 import {newSearch} from "@waltz-controls/waltz-webix-extensions";
 import "views/tango/devices_tree";
 import "views/tango/tango_host_info_panel";
-import {kUserContext} from "controllers/user_context";
+import {kUserContext} from "@waltz-controls/waltz-user-context-plugin";
 import {kChannelLog, kTopicError, kTopicLog} from "controllers/log";
 import {TangoId} from "@waltz-controls/tango-rest-client";
 import {kTangoDeviceWidget} from "widgets/tango/device";

@@ -17,7 +17,7 @@ import {catchError} from "rxjs/operators";
 import {kChannelLog, kTopicLog} from "controllers/log";
 import {kControllerUserAction,} from "controllers/user_action_controller";
 import {ExecuteTangoCommand, ReadTangoAttribute, ReadTangoPipe, WriteTangoAttribute} from "models/user_action";
-import {kUserContext} from "controllers/user_context";
+import {kUserContext} from "@waltz-controls/waltz-user-context-plugin";
 import PipeWidget from "widgets/tango/pipe";
 import CommandWidget from "widgets/tango/command";
 import AttributeWidget from "widgets/tango/attribute";

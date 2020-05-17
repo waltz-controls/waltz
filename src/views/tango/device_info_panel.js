@@ -1,7 +1,7 @@
 import {UpdateDeviceAlias} from "models/user_action.js";
 import {StringUtils} from "utils";
 import {kControllerUserAction} from "controllers/user_action_controller";
-import {kUserContext} from "controllers/user_context";
+import {kUserContext} from "@waltz-controls/waltz-user-context-plugin";
 import {filter, map, toArray} from "rxjs/operators";
 import {
     kTangoRestContext,
