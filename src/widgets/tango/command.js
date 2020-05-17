@@ -1,8 +1,7 @@
 import "views/tango/command_view";
 import MemberWidget from "widgets/tango/member";
 import {kUserContext} from "@waltz-controls/waltz-user-context-plugin";
-import {kControllerUserAction} from "controllers/user_action_controller";
-import {ExecuteTangoCommand} from "models/user_action";
+import {ExecuteTangoCommand, kControllerUserAction} from "@waltz-controls/waltz-user-actions-plugin";
 
 export default class CommandWidget extends MemberWidget{
     /**

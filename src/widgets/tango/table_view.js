@@ -6,8 +6,7 @@ import {kTangoRestContext, TangoAttribute, TangoDevice} from "@waltz-controls/wa
 import {kUserContext} from "@waltz-controls/waltz-user-context-plugin";
 import {kChannelLog, kTopicLog} from "controllers/log";
 import {TangoId} from "@waltz-controls/tango-rest-client";
-import {kControllerUserAction} from "../../controllers/user_action_controller";
-import {WriteTangoAttribute} from "../../models/user_action";
+import {kControllerUserAction, WriteTangoAttribute} from "@waltz-controls/waltz-user-actions-plugin";
 
 const kWidgetTableView = 'widget:table_view';
 const kFrozenOverlayMessage = "<span class='webix_icon mdi mdi-bell-ring'></span>This TableWidget's configuration is" +

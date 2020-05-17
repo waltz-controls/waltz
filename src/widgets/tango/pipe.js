@@ -1,6 +1,5 @@
 import "views/tango/pipe_view";
-import {kControllerUserAction} from "controllers/user_action_controller";
-import {ReadTangoPipe} from "models/user_action";
+import {kControllerUserAction, ReadTangoPipe} from "@waltz-controls/waltz-user-actions-plugin";
 import {kUserContext} from "@waltz-controls/waltz-user-context-plugin";
 import MemberWidget from "widgets/tango/member";
 

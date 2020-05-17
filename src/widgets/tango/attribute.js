@@ -3,8 +3,11 @@ import "views/tango/spectrum_view";
 import "views/tango/image_view";
 import MemberWidget from "widgets/tango/member";
 import {kUserContext} from "@waltz-controls/waltz-user-context-plugin";
-import {kControllerUserAction} from "controllers/user_action_controller";
-import {ReadTangoAttribute, WriteTangoAttribute} from "models/user_action";
+import {
+    kControllerUserAction,
+    ReadTangoAttribute,
+    WriteTangoAttribute
+} from "@waltz-controls/waltz-user-actions-plugin";
 import {kTangoRestContext} from "@waltz-controls/waltz-tango-rest-plugin";
 
 

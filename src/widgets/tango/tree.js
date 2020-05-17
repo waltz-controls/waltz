@@ -11,7 +11,7 @@ import {newToolbarButton} from "views/helpers";
 import {last, mergeMap} from "rxjs/operators";
 import {kActionSelectTangoDevice, kActionSelectTangoHost, kAddTangoDevices} from "./actions";
 import {kChannelTango, kTangoRestContext, TangoHost} from "@waltz-controls/waltz-tango-rest-plugin";
-import {UpdateDeviceAlias} from "models/user_action";
+import {UpdateDeviceAlias} from "@waltz-controls/waltz-user-actions-plugin";
 
 export const kTangoTree = 'widget:tango_tree';
 

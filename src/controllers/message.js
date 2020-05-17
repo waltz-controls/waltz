@@ -4,7 +4,7 @@ import {kAnyTopic} from "@waltz-controls/eventbus";
 import {Subject} from "rxjs";
 import {throttleTime} from "rxjs/operators";
 import {kChannelTangoRest} from "@waltz-controls/waltz-tango-rest-plugin";
-import {kControllerUserAction} from "./user_action_controller";
+import {kControllerUserAction} from "@waltz-controls/waltz-user-actions-plugin";
 
 const kControllerWebixMessage = 'controller:webix_message';
 

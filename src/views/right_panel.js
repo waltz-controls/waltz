@@ -1,5 +1,5 @@
 import "views/user_log";
-import {kControllerUserAction} from "controllers/user_action_controller";
+import {kControllerUserAction} from "@waltz-controls/waltz-user-actions-plugin";
 
 export default function newRightPanel(root){
     return {

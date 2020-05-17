@@ -1,6 +1,5 @@
-import {UpdateDeviceAlias} from "models/user_action.js";
 import {StringUtils} from "utils";
-import {kControllerUserAction} from "controllers/user_action_controller";
+import {kControllerUserAction, UpdateDeviceAlias} from "@waltz-controls/waltz-user-actions-plugin";
 import {kUserContext} from "@waltz-controls/waltz-user-context-plugin";
 import {filter, map, toArray} from "rxjs/operators";
 import {

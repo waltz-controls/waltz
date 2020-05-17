@@ -4,8 +4,7 @@ import {kUserContext} from "@waltz-controls/waltz-user-context-plugin";
 import {kChannelLog, kTopicLog} from "controllers/log";
 import UserScript from "models/user_script";
 import {kMainWindow} from "widgets/main_window";
-import {ExecuteUserScript} from "models/user_action";
-import {kControllerUserAction} from "controllers/user_action_controller";
+import {ExecuteUserScript, kControllerUserAction} from "@waltz-controls/waltz-user-actions-plugin";
 
 export const kWidgetScripting = 'widget:scripting';
 const kOverwrite = true;

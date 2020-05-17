@@ -1,14 +1,14 @@
 import {
     ExecuteTangoCommand,
+    kControllerUserAction,
     ReadTangoAttribute,
     ReadTangoPipe,
     UpdateDeviceAlias,
     UpdateTangoAttributeInfo,
     UserAction,
     WriteTangoAttribute
-} from "models/user_action";
+} from "@waltz-controls/waltz-user-actions-plugin";
 import {BoundedReverseList} from "@waltz-controls/waltz-webix-extensions";
-import {kControllerUserAction} from "controllers/user_action_controller";
 import {kInprocChannel} from "@waltz-controls/middleware";
 import {kChannelTango} from "@waltz-controls/waltz-tango-rest-plugin";
 import {kAnyTopic} from "@waltz-controls/eventbus";

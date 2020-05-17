@@ -1,5 +1,5 @@
 import {kNonPlottableDataTypes} from "./plot.js";
-import {WriteTangoAttribute} from "models/user_action";
+import {WriteTangoAttribute} from "@waltz-controls/waltz-user-actions-plugin";
 import {newToolbar, Runnable, ToggleSettings, WaltzWidgetMixin} from "@waltz-controls/waltz-webix-extensions";
 import {TangoId} from "@waltz-controls/tango-rest-client";
 import {toolbar_extension} from "./remove_attribute_toolbar";

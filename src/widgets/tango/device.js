@@ -15,8 +15,13 @@ import {
 import {forkJoin, of} from "rxjs";
 import {catchError} from "rxjs/operators";
 import {kChannelLog, kTopicLog} from "controllers/log";
-import {kControllerUserAction,} from "controllers/user_action_controller";
-import {ExecuteTangoCommand, ReadTangoAttribute, ReadTangoPipe, WriteTangoAttribute} from "models/user_action";
+import {
+    ExecuteTangoCommand,
+    kControllerUserAction,
+    ReadTangoAttribute,
+    ReadTangoPipe,
+    WriteTangoAttribute
+} from "@waltz-controls/waltz-user-actions-plugin";
 import {kUserContext} from "@waltz-controls/waltz-user-context-plugin";
 import PipeWidget from "widgets/tango/pipe";
 import CommandWidget from "widgets/tango/command";

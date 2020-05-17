@@ -6,9 +6,8 @@ import {kChannelLog, kTopicLog} from "controllers/log";
 import {catchError, map, mergeMap, switchMap, tap, toArray} from "rxjs/operators";
 import {forkJoin, from, of, zip} from "rxjs";
 import {TangoId} from "@waltz-controls/tango-rest-client";
-import {kControllerUserAction} from "controllers/user_action_controller";
 import {kUserContext} from "@waltz-controls/waltz-user-context-plugin";
-import {ExecuteTangoCommand} from "models/user_action";
+import {ExecuteTangoCommand, kControllerUserAction} from "@waltz-controls/waltz-user-actions-plugin";
 import {kContextTangoSubscriptions, kTangoRestContext, TangoCommand} from "@waltz-controls/waltz-tango-rest-plugin";
 
 const kWidgetTangoManager = "widget:tango_manager";
