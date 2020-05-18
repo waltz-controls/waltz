@@ -94,6 +94,7 @@ export default class DashboardWidget extends WaltzWidget {
                                 const index = ext.findIndex(profile => profile.id === params.id)
                                 ext.splice(index,1);
                             }))
+                            .then(userContext => userContext.updateExt(params.id, ext => delete ext[params.id]))
                             .then(userContext => userContext.save())
                             .then(() => this.dispatch(`Successfully deleted profile ${params.data.name}`,kTopicLog, kChannelLog));
                     default:
