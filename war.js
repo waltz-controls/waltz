@@ -14,14 +14,9 @@ output.on("finish", () => {
 
 archive.pipe(output);
 
-archive.directory("apps");
 archive.directory("codebase");
-archive.directory("controllers");
-archive.directory("jmvc/plugins");
 archive.directory("images");
-archive.directory("models");
-archive.directory("resources");
+archive.directory("stylesheets");
 archive.file("index.html");
-archive.file("jmvc/include.js");
 
 archive.finalize();
