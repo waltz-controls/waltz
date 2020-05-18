@@ -113,7 +113,7 @@ export default class PlotlyWidget extends WaltzWidget {
             attrs.map(attr => TangoId.fromMemberId(attr.id).getTangoDeviceName() + "/" + attr.name),
             attrs.map(() => []), attrs.map(() => []));
 
-        this.$$settings.addAttributes(attrs.map(attr => webix.extend(attr, {name: TangoId.fromMemberId(attr.id).getTangoDeviceName() + "/" + attr.name}, kForce)))
+        this.$$settings.addAttributes(attrs.map(attr => Object.assign(attr, {name: TangoId.fromMemberId(attr.id).getTangoDeviceName() + "/" + attr.name})))
 
 
         const hideSettings = (await this.getUserContext()).get(this.id).hideSettings;
