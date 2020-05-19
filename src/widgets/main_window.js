@@ -14,12 +14,9 @@ import Manager from "widgets/tango/manager";
 export const kMainWindow = 'widget:main';
 
 export default class MainWindow extends WaltzWidget{
-    constructor() {
-        super(kMainWindow);
+    constructor(app) {
+        super(kMainWindow, app);
 
-    }
-
-    config(){
         this.listen(() => {
             $$(this.name).destructor();
         },'logout')

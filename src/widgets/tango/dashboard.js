@@ -62,19 +62,9 @@ function createInnerWidgetUI(type, config){
 
 
 export default class DashboardWidget extends WaltzWidget {
-    constructor() {
-        super(kWidgetDashboard);
-    }
+    constructor(app) {
+        super(kWidgetDashboard, app);
 
-    /**
-     *
-     * @return {Promise<UserContext>}
-     */
-    getUserContext(){
-        return this.app.getContext(kUserContext);
-    }
-
-    config(){
         this.proxy = {
             $proxy:true,
             load:()=>{
@@ -102,6 +92,14 @@ export default class DashboardWidget extends WaltzWidget {
                 }
             }
         }
+    }
+
+    /**
+     *
+     * @return {Promise<UserContext>}
+     */
+    getUserContext(){
+        return this.app.getContext(kUserContext);
     }
 
     panel(){

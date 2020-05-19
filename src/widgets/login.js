@@ -5,8 +5,8 @@ import {kWaltz} from "../main";
 export const kLogin = 'login';
 export const kUser = 'user';
 export default class LoginWidget extends WaltzWidget{
-    constructor() {
-        super(kLogin);
+    constructor(app) {
+        super(kLogin, app);
     }
 
     ui(){

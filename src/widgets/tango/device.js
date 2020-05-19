@@ -47,11 +47,9 @@ function catchFetchMembersError(members){
 }
 
 export default class TangoDeviceWidget extends WaltzWidget {
-    constructor() {
-        super(kTangoDeviceWidget);
-    }
+    constructor(app) {
+        super(kTangoDeviceWidget, app);
 
-    config(){
         this.listen(id => this.setDevice(id),kActionSelectTangoDevice)
         this.listen(id => this.readAttribute(this.attributes.getItem(id.getTangoMemberId())), kActionSelectTangoAttribute)
         this.listen(action => {

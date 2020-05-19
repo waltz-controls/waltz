@@ -40,15 +40,9 @@ function updateHeader(host) {
 }
 
 export default class TangoTree extends WaltzWidget {
-    constructor() {
-        super(kTangoTree);
-    }
+    constructor(app) {
+        super(kTangoTree, app);
 
-    getUserContext(){
-        return this.app.getContext(kUserContext);
-    }
-
-    config(){
         const proxy = {
             $proxy: true,
             load:() => {
@@ -86,6 +80,10 @@ export default class TangoTree extends WaltzWidget {
 
         this.listen(id => console.debug(`tango:tree select device ${id.getTangoDeviceId()}`), kActionSelectTangoDevice)
         this.listen(id => console.debug(`tango:tree select host ${id.getTangoHostId()}`), kActionSelectTangoHost)
+    }
+
+    getUserContext(){
+        return this.app.getContext(kUserContext);
     }
 
     ui(){

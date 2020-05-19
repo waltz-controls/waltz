@@ -8,11 +8,8 @@ import {Controller} from "@waltz-controls/middleware";
 import {kLogin, kUser} from "widgets/login";
 
 export default class LoginController extends Controller{
-    constructor() {
-        super('controller:login');
-    }
-
-    config(){
+    constructor(app) {
+        super('controller:login', app);
         this.listen(() => {
             webix.storage.session.remove(kUser)
             this.app.getContext(kLogin).then(login => login

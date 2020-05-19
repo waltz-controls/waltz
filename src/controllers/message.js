@@ -12,17 +12,15 @@ const kMessage = "<span class='webix_icon mdi mdi-bell-ring'></span>Something ba
 
 const expire = 3000;
 export default class WebixMessageController extends Controller {
-    constructor() {
-        super(kControllerWebixMessage);
+    constructor(app) {
+        super(kControllerWebixMessage,app);
 
         this.errors = new Subject();
 
         this.errors.pipe(
             throttleTime(expire)
         ).subscribe(() => this.show(kMessage, 'error'));
-    }
 
-    config(){
         this.listen({error: msg => {
                 this.errors.next(Array.isArray(msg.errors) ? msg.errors[0].description : msg.message)
             }},kAnyTopic, kChannelTangoRest)

@@ -27,11 +27,8 @@ const kInfoControlPanelHeader = kInfoControlPanelHeaderIcon + " Info Control Pan
 
 const kWidgetTangoInfo = "widget:tango_info";
 export default class TangoInfoPanelWidget extends WaltzWidget {
-    constructor() {
-        super(kWidgetTangoInfo);
-    }
-
-    config(){
+    constructor(app) {
+        super(kWidgetTangoInfo, app);
         this.listen(id => this.setDevice(id),kActionSelectTangoDevice);
         this.listen(id => this.setAttribute(id),kActionSelectTangoAttribute);
         this.listen(id => this.setCommand(id),kActionSelectTangoCommand);

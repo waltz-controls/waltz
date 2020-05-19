@@ -14,11 +14,8 @@ export const kChannelLog = 'channel:log';
 export const kTopicError = 'topic:error';
 export const kTopicLog = 'topic:log';
 export default class ApplicationLogController extends Controller{
-    constructor() {
-        super(kApplicationLogController);
-    }
-
-    config(){
+    constructor(app) {
+        super(kApplicationLogController, app);
         this.listen({error: err => {
                 $$('main-log').log({
                     type:'error',
