@@ -1,4 +1,4 @@
-import {StringUtils} from "utils";
+import {StringUtils} from "@waltz-controls/waltz-webix-extensions";
 import {kControllerUserAction, UpdateDeviceAlias} from "@waltz-controls/waltz-user-actions-plugin";
 import {kUserContext} from "@waltz-controls/waltz-user-context-plugin";
 import {filter, map, toArray} from "rxjs/operators";

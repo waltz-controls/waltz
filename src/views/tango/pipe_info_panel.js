@@ -10,9 +10,8 @@
  * @since 9/10/18
  */
 import {newInfoDatatable, newInfoDatatableToolbar} from "./info_control_panel";
-import {WaltzWidgetMixin} from "@waltz-controls/waltz-webix-extensions";
+import {StringUtils, WaltzWidgetMixin} from "@waltz-controls/waltz-webix-extensions";
 import {TangoPipe} from "@waltz-controls/waltz-tango-rest-plugin";
-import {StringUtils} from "utils";
 
 function parseInfo(pipe){
     return Object.entries(pipe.info).map(entity => ({info:StringUtils.classize(entity[0]),value:entity[1]}));

@@ -1,8 +1,7 @@
-import {StringUtils} from "utils";
 import {TangoAttribute} from "@waltz-controls/waltz-tango-rest-plugin";
 import {UpdateTangoAttributeInfo} from "@waltz-controls/waltz-user-actions-plugin";
 import {newInfoDatatable, newInfoDatatableToolbar, parsePollable, savePolling} from "./info_control_panel";
-import {WaltzWidgetMixin} from "@waltz-controls/waltz-webix-extensions";
+import {StringUtils, WaltzWidgetMixin} from "@waltz-controls/waltz-webix-extensions";
 
 const kAttr_info_values = [
     'label','writable','data_format','data_type','max_dim_x','max_dim_y','format','description'];

@@ -1,6 +1,5 @@
 import {newInfoDatatable, newInfoDatatableToolbar, parsePollable, savePolling} from "./info_control_panel";
-import {StringUtils} from "utils";
-import {WaltzWidgetMixin} from "@waltz-controls/waltz-webix-extensions";
+import {StringUtils, WaltzWidgetMixin} from "@waltz-controls/waltz-webix-extensions";
 
 function parseInfo(command){
     return Object.entries(command.info).map(entity => ({info:StringUtils.classize(entity[0]),value:entity[1]}));
