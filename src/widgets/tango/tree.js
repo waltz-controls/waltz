@@ -8,6 +8,7 @@ import {kChannelLog, kTopicError, kTopicLog} from "controllers/log";
 import {TangoId} from "@waltz-controls/tango-rest-client";
 import {kTangoDeviceWidget} from "widgets/tango/device";
 import {newToolbarButton} from "views/helpers";
+import {from} from "rxjs";
 import {last, mergeMap} from "rxjs/operators";
 import {kActionSelectTangoDevice, kActionSelectTangoHost, kAddTangoDevices} from "./actions";
 import {kChannelTango, kTangoRestContext, TangoHost} from "@waltz-controls/waltz-tango-rest-plugin";
