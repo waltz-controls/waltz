@@ -46,7 +46,7 @@ const bottom_toolbar = webix.protoUI(
                     borderless: true,
                     type: "header",
                     id: "rest-url",
-                    template: "<span style='color: #606060;'>#msg#: #type# #url#</span>",
+                    template: "<span style='color: #606060;'>#msg# #type# #url#</span>",
                     data: {type: "", url: "", msg: ""}
                 },
                 //TODO rest api call result

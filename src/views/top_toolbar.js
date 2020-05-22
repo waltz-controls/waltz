@@ -32,7 +32,7 @@ const toolsMenu = webix.ui({
         data: [
             {id: "toolsScripting", value: "Scripting"},
             {id: "toolsAstor", value: "Manager"},
-            {id: "toolsTerminal", value: "Terminal"}
+            // {id: "toolsTerminal", value: "Terminal"}
         ],
         autoheight: true,
         borderless: true,

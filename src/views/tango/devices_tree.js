@@ -263,66 +263,6 @@ const wizard = webix.protoUI(
         }
     }, webix.IdSpace, webix.ui.layout);
 
-/**
- * @constant
- * @memberof ui.DevicesTree
- */
-const tree_context_menu = {
-    view: "contextmenu",
-    id: "devices_tree_context_menu",
-    data: [
-        {id: 'configure', value: 'Configure'},
-        {id: 'view', value: 'Monitor'}
-    ],
-    on: {
-        /**
-         * @event tango_webapp.device_configure
-         * @property {{device:TangoDevice}} data
-         * @type {OpenAjax}
-         * @memberof ui
-         */
-        /**
-         * @event tango_webapp.device_monitor
-         * @property {{device:TangoDevice}} data
-         * @type {OpenAjax}
-         * @memberof ui
-         */
-        /**
-         * @event tango_webapp.device_delete
-         * @property {{device:TangoDevice}} data
-         * @type {OpenAjax}
-         * @memberof ui
-         */
-        /**
-         * Fires {@link #uieventtango_webappdevice_configure event:device_configure}
-         *
-         * Fires {@link #uieventtango_webappdevice_monitor event:device_monitor}
-         *
-         * Fires {@link #uieventtango_webappdevice_delete event:device_delete}
-         *
-         *
-         * @fires event:device_configure
-         * @fires event:device_monitor
-         * @fires event:device_delete
-         * @param id
-         * @memberof ui.DevicesTree.tree_context_menu
-         */
-        onItemClick: function (id) {
-            var tree = this.config.master;
-            var item = tree.getItem(this.getContext().id);
-
-            var tango_host = TangoHost.find_one(tree._get_tango_host_id(item));
-
-            tango_host.fetchDevice(item.device_name).then(function (device) {
-                OpenAjax.hub.publish("tango_webapp.device_" + id, {
-                    data: {
-                        device: device
-                    }
-                });
-            })
-        }
-    }
-};
 
 /**
  * @extends webix.ui.tree
@@ -342,7 +282,6 @@ const devices_tree = webix.protoUI(
      * @constructor
      */
     $init: function (config) {
-        webix.ui(tree_context_menu).attachTo(this);
     },
     getTangoHostId: function (item) {
         while (item.$css !== 'tango_host') {
