@@ -167,7 +167,9 @@ export default class TableViewWidget extends WaltzWidget {
     async restoreState(){
         const userContext = await this.getUserContext();
         if(!userContext.get(this.id)) return;
-        const attributes = userContext.get(this.id).attributes.map(attr => new TangoAttribute(attr));
+        const attributes = userContext.get(this.id).attributes
+            .map(attr => new TangoAttribute(attr))
+            .filter((v, i, a) => a.findIndex(item => item.name === v.name) === i);
         const devices = userContext.get(this.id).devices;
 
         this.$$datatable.addColumns(attributes);
