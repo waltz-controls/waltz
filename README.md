@@ -89,7 +89,6 @@ $> REST_API_PROTOCOL=[http|https] REST_API_HOST=[ip/fqdn] REST_API_PORT=[e.g. 10
 
 ## Implementation details
 
-* [JavaScriptMVC-1.5.x](https://bitbucket.org/Ingvord/javascriptmvc-1.5.x) is used for MVC implementation
 * [Webix](http://webix.com) is used for UI
 * [CodeMirror](https://codemirror.net/) is used for scripting console
 * [Plotly](https://plot.ly/javascript/) is used to display plots and images
