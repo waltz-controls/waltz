@@ -30,7 +30,7 @@ const scalar_text = webix.protoUI(
                 type: {
                     height: "auto",
                     template(obj){
-                        return `<span class="webix_strong">${obj.value}</span>@${obj.timestamp} [${new Date(obj.timestamp)}]`
+                        return `<span class="webix_strong">${obj.value}</span><div>@${obj.timestamp} [${new Date(obj.timestamp)}]</div>`
                     }
                 }
             }
