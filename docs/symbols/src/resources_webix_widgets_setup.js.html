@@ -1,0 +1,26 @@
+<html><head><meta http-equiv="content-type" content="text/html; charset=utf-8"> <style>
+	.KEYW {color: #933;}
+	.COMM {color: #bbb; font-style: italic;}
+	.NUMB {color: #393;}
+	.STRN {color: #393;}
+	.REGX {color: #339;}
+	.line {border-right: 1px dotted #666; color: #666; font-style: normal;}
+	</style></head><body><pre><span class='line'>  1</span> <span class="NAME">TangoWebappPlatform.ui</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'>  2</span> </span><span class="WHIT">    </span><span class="NAME">_webix_files</span><span class="PUNC">:</span><span class="WHIT"> </span><span class="PUNC">[</span><span class="WHIT">
+<span class='line'>  3</span> </span><span class="WHIT">        </span><span class="STRN">"critical_error_no_rest"</span><span class="PUNC">,</span><span class="WHIT"> </span><span class="STRN">"toolbar"</span><span class="PUNC">,</span><span class="WHIT">
+<span class='line'>  4</span> </span><span class="WHIT">        </span><span class="STRN">"settings"</span><span class="PUNC">,</span><span class="WHIT">
+<span class='line'>  5</span> </span><span class="WHIT">        </span><span class="STRN">"devices_tree"</span><span class="PUNC">,</span><span class="STRN">"device_tree"</span><span class="PUNC">,</span><span class="WHIT">
+<span class='line'>  6</span> </span><span class="WHIT">        </span><span class="STRN">"plot"</span><span class="PUNC">,</span><span class="WHIT"> </span><span class="STRN">"device_control_panel"</span><span class="PUNC">,</span><span class="WHIT">
+<span class='line'>  7</span> </span><span class="WHIT">        </span><span class="STRN">"tango_host_view"</span><span class="PUNC">,</span><span class="WHIT">
+<span class='line'>  8</span> </span><span class="WHIT">        </span><span class="STRN">"device_view"</span><span class="PUNC">,</span><span class="WHIT"> </span><span class="STRN">"device_properties_view"</span><span class="PUNC">,</span><span class="WHIT"> </span><span class="STRN">"device_polling_view"</span><span class="PUNC">,</span><span class="WHIT"> </span><span class="STRN">"device_events_view"</span><span class="PUNC">,</span><span class="WHIT">
+<span class='line'>  9</span> </span><span class="WHIT">        </span><span class="STRN">"device_attributes_config_view"</span><span class="PUNC">,</span><span class="WHIT"> </span><span class="STRN">"device_logging_view"</span><span class="PUNC">,</span><span class="WHIT">
+<span class='line'> 10</span> </span><span class="WHIT">        </span><span class="STRN">"attrs_monitor_view"</span><span class="PUNC">,</span><span class="STRN">"device_monitor_view"</span><span class="PUNC">,</span><span class="STRN">"scripting_console"</span><span class="WHIT">
+<span class='line'> 11</span> </span><span class="WHIT">    </span><span class="PUNC">]</span><span class="WHIT">
+<span class='line'> 12</span> </span><span class="PUNC">}</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'> 13</span> 
+<span class='line'> 14</span> </span><span class="KEYW">if</span><span class="WHIT"> </span><span class="PUNC">(</span><span class="NAME">MVC.Browser.Rhino</span><span class="PUNC">)</span><span class="WHIT">
+<span class='line'> 15</span> </span><span class="WHIT">    </span><span class="NAME">print</span><span class="PUNC">(</span><span class="STRN">"Skipping webix for Rhino"</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'> 16</span> </span><span class="KEYW">else</span><span class="WHIT"> </span><span class="KEYW">if</span><span class="WHIT"> </span><span class="PUNC">(</span><span class="NAME">MVC.env</span><span class="PUNC">(</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="PUNC">===</span><span class="WHIT"> </span><span class="STRN">'production'</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'> 17</span> </span><span class="WHIT">    </span><span class="NAME">include.add</span><span class="PUNC">(</span><span class="NAME">include.add_defaults</span><span class="PUNC">(</span><span class="STRN">'../../apps/'</span><span class="PUNC">+</span><span class="NAME">MVC.app_name</span><span class="PUNC">+</span><span class="STRN">'/webix'</span><span class="PUNC">)</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT"> </span><span class="COMM">//this file is created during compression</span><span class="WHIT">
+<span class='line'> 18</span> </span><span class="PUNC">}</span><span class="WHIT"> </span><span class="KEYW">else</span><span class="WHIT">
+<span class='line'> 19</span> </span><span class="WHIT">    </span><span class="NAME">include.apply</span><span class="PUNC">(</span><span class="NAME">include</span><span class="PUNC">,</span><span class="WHIT"> </span><span class="NAME">TangoWebappPlatform.ui._webix_files</span><span class="PUNC">)</span><span class="PUNC">;</span></pre></body></html>

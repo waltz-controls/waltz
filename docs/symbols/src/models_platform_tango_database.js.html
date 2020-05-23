@@ -1,0 +1,111 @@
+<html><head><meta http-equiv="content-type" content="text/html; charset=utf-8"> <style>
+	.KEYW {color: #933;}
+	.COMM {color: #bbb; font-style: italic;}
+	.NUMB {color: #393;}
+	.STRN {color: #393;}
+	.REGX {color: #339;}
+	.line {border-right: 1px dotted #666; color: #666; font-style: normal;}
+	</style></head><body><pre><span class='line'>  1</span> <span class="COMM">/**
+<span class='line'>  2</span>  * Model tango_database
+<span class='line'>  3</span>  *
+<span class='line'>  4</span>  * @type {TangoDatabase}
+<span class='line'>  5</span>  */</span><span class="WHIT">
+<span class='line'>  6</span> </span><span class="NAME">TangoWebappPlatform.TangoDatabase</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="NAME">MVC.Model.extend</span><span class="PUNC">(</span><span class="STRN">'tango_database'</span><span class="PUNC">,</span><span class="WHIT">
+<span class='line'>  7</span> </span><span class="WHIT">    </span><span class="COMM">/* @Static */</span><span class="WHIT">
+<span class='line'>  8</span> </span><span class="WHIT">    </span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'>  9</span> 
+<span class='line'> 10</span> </span><span class="WHIT">        </span><span class="NAME">attributes</span><span class="PUNC">:</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'> 11</span> </span><span class="WHIT">            </span><span class="NAME">id</span><span class="PUNC">:</span><span class="WHIT"> </span><span class="STRN">'string'</span><span class="PUNC">,</span><span class="WHIT">
+<span class='line'> 12</span> </span><span class="WHIT">            </span><span class="NAME">info</span><span class="PUNC">:</span><span class="WHIT"> </span><span class="STRN">'string[]'</span><span class="PUNC">,</span><span class="WHIT">
+<span class='line'> 13</span> </span><span class="WHIT">            </span><span class="NAME">device</span><span class="PUNC">:</span><span class="WHIT"> </span><span class="STRN">'TangoDevice'</span><span class="WHIT">
+<span class='line'> 14</span> </span><span class="WHIT">        </span><span class="PUNC">}</span><span class="PUNC">,</span><span class="WHIT">
+<span class='line'> 15</span> </span><span class="WHIT">        </span><span class="NAME">default_attributes</span><span class="PUNC">:</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="PUNC">}</span><span class="WHIT">
+<span class='line'> 16</span> 
+<span class='line'> 17</span> 
+<span class='line'> 18</span> </span><span class="WHIT">    </span><span class="PUNC">}</span><span class="PUNC">,</span><span class="WHIT">
+<span class='line'> 19</span> </span><span class="WHIT">    </span><span class="COMM">/* @Prototype */</span><span class="WHIT">
+<span class='line'> 20</span> </span><span class="WHIT">    </span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'> 21</span> </span><span class="WHIT">        </span><span class="COMM">/**
+<span class='line'> 22</span>          *
+<span class='line'> 23</span>          * @param name
+<span class='line'> 24</span>          * @return {*|Promise}
+<span class='line'> 25</span>          */</span><span class="WHIT">
+<span class='line'> 26</span> </span><span class="WHIT">        </span><span class="NAME">getDeviceInfo</span><span class="PUNC">:</span><span class="WHIT"> </span><span class="KEYW">function</span><span class="WHIT"> </span><span class="PUNC">(</span><span class="NAME">name</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'> 27</span> 
+<span class='line'> 28</span> </span><span class="WHIT">            </span><span class="KEYW">return</span><span class="WHIT"> </span><span class="NAME">this.device.executeCommand</span><span class="PUNC">(</span><span class="STRN">"DbGetDeviceInfo"</span><span class="PUNC">,</span><span class="WHIT"> </span><span class="NAME">name</span><span class="PUNC">)</span><span class="PUNC">.</span><span class="NAME">then</span><span class="PUNC">(</span><span class="KEYW">function</span><span class="WHIT"> </span><span class="PUNC">(</span><span class="NAME">resp</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'> 29</span> </span><span class="WHIT">                </span><span class="KEYW">return</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'> 30</span> </span><span class="WHIT">                    </span><span class="NAME">exported</span><span class="PUNC">:</span><span class="WHIT"> </span><span class="NAME">resp.output.lvalue</span><span class="PUNC">[</span><span class="NUMB">0</span><span class="PUNC">]</span><span class="WHIT"> </span><span class="PUNC">==</span><span class="WHIT"> </span><span class="NUMB">1</span><span class="PUNC">,</span><span class="WHIT">
+<span class='line'> 31</span> </span><span class="WHIT">                    </span><span class="NAME">pid</span><span class="PUNC">:</span><span class="WHIT"> </span><span class="NAME">resp.output.lvalue</span><span class="PUNC">[</span><span class="NUMB">1</span><span class="PUNC">]</span><span class="PUNC">,</span><span class="WHIT">
+<span class='line'> 32</span> </span><span class="WHIT">                    </span><span class="NAME">name</span><span class="PUNC">:</span><span class="WHIT"> </span><span class="NAME">resp.output.svalue</span><span class="PUNC">[</span><span class="NUMB">0</span><span class="PUNC">]</span><span class="PUNC">,</span><span class="WHIT">
+<span class='line'> 33</span> </span><span class="WHIT">                    </span><span class="NAME">ior</span><span class="PUNC">:</span><span class="WHIT"> </span><span class="NAME">resp.output.svalue</span><span class="PUNC">[</span><span class="NUMB">1</span><span class="PUNC">]</span><span class="PUNC">,</span><span class="WHIT">
+<span class='line'> 34</span> </span><span class="WHIT">                    </span><span class="NAME">idl</span><span class="PUNC">:</span><span class="WHIT"> </span><span class="NAME">resp.output.svalue</span><span class="PUNC">[</span><span class="NUMB">2</span><span class="PUNC">]</span><span class="PUNC">,</span><span class="WHIT">
+<span class='line'> 35</span> </span><span class="WHIT">                    </span><span class="NAME">admin</span><span class="PUNC">:</span><span class="WHIT"> </span><span class="NAME">resp.output.svalue</span><span class="PUNC">[</span><span class="NUMB">3</span><span class="PUNC">]</span><span class="PUNC">,</span><span class="WHIT">
+<span class='line'> 36</span> </span><span class="WHIT">                    </span><span class="NAME">host</span><span class="PUNC">:</span><span class="WHIT"> </span><span class="NAME">resp.output.svalue</span><span class="PUNC">[</span><span class="NUMB">4</span><span class="PUNC">]</span><span class="PUNC">,</span><span class="WHIT">
+<span class='line'> 37</span> </span><span class="WHIT">                    </span><span class="NAME">started_at</span><span class="PUNC">:</span><span class="WHIT"> </span><span class="NAME">resp.output.svalue</span><span class="PUNC">[</span><span class="NUMB">5</span><span class="PUNC">]</span><span class="PUNC">,</span><span class="WHIT"> </span><span class="COMM">//TODO parse</span><span class="WHIT">
+<span class='line'> 38</span> </span><span class="WHIT">                    </span><span class="NAME">stopped_at</span><span class="PUNC">:</span><span class="WHIT"> </span><span class="NAME">resp.output.svalue</span><span class="PUNC">[</span><span class="NUMB">6</span><span class="PUNC">]</span><span class="PUNC">,</span><span class="WHIT"> </span><span class="COMM">//TODO parse</span><span class="WHIT">
+<span class='line'> 39</span> </span><span class="WHIT">                    </span><span class="NAME">device_class</span><span class="PUNC">:</span><span class="WHIT"> </span><span class="NAME">resp.output.svalue</span><span class="PUNC">[</span><span class="NUMB">7</span><span class="PUNC">]</span><span class="WHIT">
+<span class='line'> 40</span> </span><span class="WHIT">                </span><span class="PUNC">}</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'> 41</span> </span><span class="WHIT">            </span><span class="PUNC">}</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'> 42</span> </span><span class="WHIT">        </span><span class="PUNC">}</span><span class="PUNC">,</span><span class="WHIT">
+<span class='line'> 43</span> </span><span class="WHIT">        </span><span class="COMM">/**
+<span class='line'> 44</span>          * Returns error response if alias is not set - limitation of the native Tango API
+<span class='line'> 45</span>          *
+<span class='line'> 46</span>          * @param name
+<span class='line'> 47</span>          * @return {*|Promise}
+<span class='line'> 48</span>          */</span><span class="WHIT">
+<span class='line'> 49</span> </span><span class="WHIT">        </span><span class="NAME">getDeviceAlias</span><span class="PUNC">:</span><span class="WHIT"> </span><span class="KEYW">function</span><span class="WHIT"> </span><span class="PUNC">(</span><span class="NAME">name</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'> 50</span> </span><span class="WHIT">            </span><span class="KEYW">return</span><span class="WHIT"> </span><span class="NAME">this.device.executeCommand</span><span class="PUNC">(</span><span class="STRN">"DbGetDeviceAlias"</span><span class="PUNC">,</span><span class="WHIT"> </span><span class="NAME">name</span><span class="PUNC">)</span><span class="WHIT">
+<span class='line'> 51</span> </span><span class="WHIT">                </span><span class="PUNC">.</span><span class="NAME">then</span><span class="PUNC">(</span><span class="KEYW">function</span><span class="PUNC">(</span><span class="NAME">resp</span><span class="PUNC">)</span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'> 52</span> </span><span class="WHIT">                    </span><span class="KEYW">return</span><span class="WHIT"> </span><span class="NAME">resp.output</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'> 53</span> </span><span class="WHIT">                </span><span class="PUNC">}</span><span class="PUNC">)</span><span class="WHIT">
+<span class='line'> 54</span> </span><span class="WHIT">        </span><span class="PUNC">}</span><span class="PUNC">,</span><span class="WHIT">
+<span class='line'> 55</span> </span><span class="WHIT">        </span><span class="COMM">/**
+<span class='line'> 56</span>          *
+<span class='line'> 57</span>          * @param svalue
+<span class='line'> 58</span>          */</span><span class="WHIT">
+<span class='line'> 59</span> </span><span class="WHIT">        </span><span class="NAME">addDevice</span><span class="PUNC">:</span><span class="WHIT"> </span><span class="KEYW">function</span><span class="WHIT"> </span><span class="PUNC">(</span><span class="NAME">svalue</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'> 60</span> </span><span class="WHIT">            </span><span class="KEYW">return</span><span class="WHIT"> </span><span class="NAME">this.device.executeCommand</span><span class="PUNC">(</span><span class="STRN">"DbAddDevice"</span><span class="PUNC">,</span><span class="WHIT"> </span><span class="NAME">svalue</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'> 61</span> </span><span class="WHIT">        </span><span class="PUNC">}</span><span class="PUNC">,</span><span class="WHIT">
+<span class='line'> 62</span> </span><span class="WHIT">        </span><span class="COMM">/**
+<span class='line'> 63</span>          *
+<span class='line'> 64</span>          * @param wildcard
+<span class='line'> 65</span>          */</span><span class="WHIT">
+<span class='line'> 66</span> </span><span class="WHIT">        </span><span class="NAME">getDeviceDomainList</span><span class="PUNC">:</span><span class="WHIT"> </span><span class="KEYW">function</span><span class="WHIT"> </span><span class="PUNC">(</span><span class="NAME">wildcard</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'> 67</span> </span><span class="WHIT">            </span><span class="KEYW">return</span><span class="WHIT"> </span><span class="NAME">this.device.executeCommand</span><span class="PUNC">(</span><span class="STRN">"DbGetDeviceDomainList"</span><span class="PUNC">,</span><span class="WHIT"> </span><span class="NAME">wildcard</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'> 68</span> </span><span class="WHIT">        </span><span class="PUNC">}</span><span class="PUNC">,</span><span class="WHIT">
+<span class='line'> 69</span> </span><span class="WHIT">        </span><span class="COMM">/**
+<span class='line'> 70</span>          *
+<span class='line'> 71</span>          * @param wildcard
+<span class='line'> 72</span>          */</span><span class="WHIT">
+<span class='line'> 73</span> </span><span class="WHIT">        </span><span class="NAME">getDeviceFamilyList</span><span class="PUNC">:</span><span class="WHIT"> </span><span class="KEYW">function</span><span class="WHIT"> </span><span class="PUNC">(</span><span class="NAME">wildcard</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'> 74</span> </span><span class="WHIT">            </span><span class="KEYW">return</span><span class="WHIT"> </span><span class="NAME">this.device.executeCommand</span><span class="PUNC">(</span><span class="STRN">"DbGetDeviceFamilyList"</span><span class="PUNC">,</span><span class="WHIT"> </span><span class="NAME">wildcard</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'> 75</span> </span><span class="WHIT">        </span><span class="PUNC">}</span><span class="PUNC">,</span><span class="WHIT">
+<span class='line'> 76</span> </span><span class="WHIT">        </span><span class="COMM">/**
+<span class='line'> 77</span>          *
+<span class='line'> 78</span>          * @param wildcard
+<span class='line'> 79</span>          */</span><span class="WHIT">
+<span class='line'> 80</span> </span><span class="WHIT">        </span><span class="NAME">getDeviceMemberList</span><span class="PUNC">:</span><span class="WHIT"> </span><span class="KEYW">function</span><span class="WHIT"> </span><span class="PUNC">(</span><span class="NAME">wildcard</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'> 81</span> </span><span class="WHIT">            </span><span class="KEYW">return</span><span class="WHIT"> </span><span class="NAME">this.device.executeCommand</span><span class="PUNC">(</span><span class="STRN">"DbGetDeviceMemberList"</span><span class="PUNC">,</span><span class="WHIT"> </span><span class="NAME">wildcard</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'> 82</span> </span><span class="WHIT">        </span><span class="PUNC">}</span><span class="PUNC">,</span><span class="WHIT">
+<span class='line'> 83</span> </span><span class="WHIT">        </span><span class="COMM">/**
+<span class='line'> 84</span>          *
+<span class='line'> 85</span>          * @param {[]} args
+<span class='line'> 86</span>          * @returns {*|webix.promise}
+<span class='line'> 87</span>          */</span><span class="WHIT">
+<span class='line'> 88</span> </span><span class="WHIT">        </span><span class="NAME">getDeviceProperty</span><span class="PUNC">:</span><span class="WHIT"> </span><span class="KEYW">function</span><span class="WHIT"> </span><span class="PUNC">(</span><span class="NAME">args</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'> 89</span> </span><span class="WHIT">            </span><span class="KEYW">return</span><span class="WHIT"> </span><span class="NAME">this.device.executeCommand</span><span class="PUNC">(</span><span class="STRN">"DbGetDeviceProperty"</span><span class="PUNC">,</span><span class="WHIT"> </span><span class="NAME">args</span><span class="PUNC">)</span><span class="WHIT">
+<span class='line'> 90</span> </span><span class="WHIT">        </span><span class="PUNC">}</span><span class="PUNC">,</span><span class="WHIT">
+<span class='line'> 91</span> </span><span class="WHIT">        </span><span class="COMM">/**
+<span class='line'> 92</span>          *
+<span class='line'> 93</span>          * @param device
+<span class='line'> 94</span>          * @return {*|webix.promise}
+<span class='line'> 95</span>          */</span><span class="WHIT">
+<span class='line'> 96</span> </span><span class="WHIT">        </span><span class="NAME">deleteDevice</span><span class="PUNC">:</span><span class="WHIT"> </span><span class="KEYW">function</span><span class="WHIT"> </span><span class="PUNC">(</span><span class="NAME">device</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'> 97</span> </span><span class="WHIT">            </span><span class="KEYW">return</span><span class="WHIT"> </span><span class="NAME">this.device.executeCommand</span><span class="PUNC">(</span><span class="STRN">"DbDeleteDevice"</span><span class="PUNC">,</span><span class="WHIT"> </span><span class="NAME">device</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'> 98</span> </span><span class="WHIT">        </span><span class="PUNC">}</span><span class="WHIT">
+<span class='line'> 99</span> </span><span class="WHIT">        </span><span class="COMM">//TODO commands</span><span class="WHIT">
+<span class='line'>100</span> </span><span class="WHIT">    </span><span class="PUNC">}</span><span class="WHIT">
+<span class='line'>101</span> </span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>102</span> 
+<span class='line'>103</span> </span><span class="KEYW">if</span><span class="WHIT"> </span><span class="PUNC">(</span><span class="NAME">window</span><span class="PUNC">[</span><span class="STRN">'TangoDatabase'</span><span class="PUNC">]</span><span class="WHIT"> </span><span class="PUNC">===</span><span class="WHIT"> </span><span class="NAME">undefined</span><span class="PUNC">)</span><span class="WHIT">
+<span class='line'>104</span> </span><span class="WHIT">    </span><span class="NAME">TangoDatabase</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="NAME">TangoWebappPlatform.TangoDatabase</span><span class="PUNC">;</span></pre></body></html>
