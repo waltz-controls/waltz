@@ -12,6 +12,7 @@ function defaultButtons(){
                 height: 24,
                 width: 32,
                 borderless: true,
+                type: 'clean',
                 template: `<button class="webix_icon_button" style="width: 24px; height: 24px;"><span class="goto webix_list_icon mdi mdi-open-in-new"></span></button>`,
                 onClick: {
                     "goto"() {
@@ -23,6 +24,7 @@ function defaultButtons(){
                 height:24,
                 width:32,
                 borderless: true,
+                type: 'clean',
                 template:`<button class="webix_icon_button" style="width: 24px; height: 24px;"><span class="close webix_list_icon mdi mdi-close"></span></button>`,
                 onClick:{
                     "close"() {
