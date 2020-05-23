@@ -25,23 +25,25 @@ const scalar_text = webix.protoUI(
     /** @lends spectrum_text*/
     {
         name: 'scalar_text',
+        _config(){
+            return {
+                type: {
+                    height: "auto",
+                    template(obj){
+                        return `<span class="webix_strong">${obj.value}</span>@${obj.timestamp} [${new Date(obj.timestamp)}]`
+                    }
+                }
+            }
+        },
         /**
          * @param {TangoAttribute} data
          * @memberof ui.Plot.spectrum_text
          */
         update: function (data) {
-            this.add({value: data.value, timestamp: data.timestamp}, 0);
+            this.add(data, 0);
         },
-        defaults: {
-            template: `
-                   <span class="webix_strong">Updated: </span>{common.date()}<br>
-                   <span class="webix_strong">Data: </span>#value#`,
-            type: {
-                height: "auto",
-                date(obj) {
-                    return new Date(obj.timestamp);
-                }
-            }
+        $init(config){
+            webix.extend(config, this._config());
         }
     }, webix.ui.list);
 
@@ -191,7 +193,7 @@ const scalar = webix.protoUI(
                     title: ""
                 });
         },
-        _newPlot: function (config) {
+        _newPlot: function () {
             this._traces = [];
             try {
                 Plotly.newPlot(this.getNode(), [], {
@@ -210,11 +212,11 @@ const scalar = webix.protoUI(
          * @constructor
          */
         $init: function (config) {
-            this.$ready.push(this._newPlot.bind(this, config));
+            this.$ready.push(this._newPlot.bind(this));
             this.$ready.push(function () {
                 if (!config.empty) {
-                    this.addTrace(config.name, [], [], 0);
-                    this.update(config);
+                    this.addTrace(config.attr.name, [], [], 0);
+                    this.update(config.attr);
                 }
             }.bind(this));
             this.$ready.push(function () {
@@ -265,13 +267,15 @@ const scalar_view = webix.protoUI({
     _ui(config){
         const attr = config.root.attribute;
         const rows = [];
-        const view = attr.info.data_type === 'DevString' ||
-        attr.info.data_type === 'State' ? "scalar_text" : "scalar";
+        const view = (attr.info.data_type === 'DevString' || attr.info.data_type === 'State') ?
+            "scalar_text" :
+            "scalar";
 
-        rows.push(webix.extend({
+        rows.push({
             view: view,
-            id: 'plot'
-        }, attr));
+            id: 'plot',
+            attr
+        });
 
         if(attr.writable){
             rows.push({view:"resizer"});
