@@ -60,7 +60,7 @@ var spectrum = webix.protoUI(
                     Plotly.newPlot(this.getNode(), [{
                         y: [],
                         // line: {shape: 'spline'},
-                        type: 'scattergl'
+                        type: 'bar'
                     }]);
                 } catch (e) {
                     TangoWebappHelpers.error("Failed to initialize Plotly", e)
