@@ -63,7 +63,7 @@ var spectrum = webix.protoUI(
                         type: 'bar'
                     }]);
                 } catch (e) {
-                    TangoWebappHelpers.error("Failed to initialize Plotly", e)
+                    throw new Error("Failed to initialize Plotly:" + e.message);
                 }
             }.bind(this));
         }
