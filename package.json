@@ -70,7 +70,7 @@
     "@waltz-controls/eventbus": "^1.2.4",
     "@waltz-controls/middleware": "^2.0.0",
     "@waltz-controls/tango-rest-client": "^1.5.0",
-    "@waltz-controls/waltz-tango-rest-plugin": "^2.0.1",
+    "@waltz-controls/waltz-tango-rest-plugin": "^2.0.2",
     "@waltz-controls/waltz-user-actions-plugin": "^2.0.0",
     "@waltz-controls/waltz-user-context-plugin": "^2.0.0",
     "@waltz-controls/waltz-webix-extensions": "^1.0.10",
