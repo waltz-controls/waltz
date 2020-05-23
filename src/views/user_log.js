@@ -5,7 +5,6 @@ import {
     ReadTangoPipe,
     UpdateDeviceAlias,
     UpdateTangoAttributeInfo,
-    UserAction,
     WriteTangoAttribute
 } from "@waltz-controls/waltz-user-actions-plugin";
 import {BoundedReverseList} from "@waltz-controls/waltz-webix-extensions";

@@ -5,7 +5,6 @@ import {WaltzWidget} from "@waltz-controls/middleware";
 import {kTangoRestContext, TangoAttribute, TangoDevice} from "@waltz-controls/waltz-tango-rest-plugin";
 import {kUserContext} from "@waltz-controls/waltz-user-context-plugin";
 import {kChannelLog, kTopicLog} from "controllers/log";
-import {TangoId} from "@waltz-controls/tango-rest-client";
 import {kControllerUserAction, WriteTangoAttribute} from "@waltz-controls/waltz-user-actions-plugin";
 import {kControllerWebixMessage} from "controllers/message";
 
