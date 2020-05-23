@@ -77,7 +77,7 @@ export function newRemoveAttributeSettings(config) {
 export function toolbar_extension() {
     return [{
         view: "icon",
-        icon: "mdi mdi-settings",
+        icon: "mdi mdi-cog",
         tooltip: "Show/hide settings",
         click: function () {
             this.getTopParentView().toggleSettings();
