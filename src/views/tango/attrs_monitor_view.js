@@ -3,8 +3,8 @@ import {WriteTangoAttribute} from "@waltz-controls/waltz-user-actions-plugin";
 import {newToolbar, Runnable, ToggleSettings, WaltzWidgetMixin} from "@waltz-controls/waltz-webix-extensions";
 import {TangoId} from "@waltz-controls/tango-rest-client";
 import {toolbar_extension} from "./remove_attribute_toolbar";
-import {mergeMap} from "rxjs/operators";
-import {from} from "rxjs";
+import {catchError} from "rxjs/operators";
+import {of} from "rxjs";
 import {kActionSelectTangoDevice} from "widgets/tango/actions";
 
 const kOverlayDelayTimeout = 3000;
@@ -272,18 +272,25 @@ const kOverlayDelayTimeout = 3000;
 
             const attrs = this.$$('scalars').find(() => true);
 
-            //TODO group by devices e.g. sys/tg_test/1/ampli&sys/tg_test/2/ampli => sys/tg_test/*/ampli ?
-            rest.toTangoRestApiRequest()
-                .attributes()
-                .value()
-                .get(`?${attrs.map(attr => "wildcard=" + attr.id).join('&')}`)
-                .pipe(
-                    mergeMap(resp => from(resp))
-                )
-                .subscribe(resp => {
+            //TODO requires TangoRestApi to return host, device and name even for failed attributes
+            // rest.toTangoRestApiRequest()
+            //     .attributes()
+            //     .value()
+            //     .get(`?${attrs.map(attr => "wildcard=" + attr.id).join('&')}`)
+            //     .pipe(
+            //         mergeMap(resp => from(resp))
+            //     )
+            //     .subscribe(resp => {
+            //         const {value, timestamp, quality} = resp;
+            //         this.$$('scalars').updateItem(`${resp.host}/${resp.device}/${resp.name}`, {value, timestamp, quality})
+            //     })
+
+            attrs.forEach(attr => rest.newTangoAttribute(TangoId.fromMemberId(attr.id))
+                .read().pipe(
+                    catchError(err => of(err))
+                ).subscribe( resp => {
                     const {value, timestamp, quality} = resp;
-                    this.$$('scalars').updateItem(`${resp.host}/${resp.device}/${resp.name}`, {value, timestamp, quality})
-                })
+                    this.$$('scalars').updateItem(attr.id, {value, timestamp, quality})}));
         },
         _ui: function (config) {
             return {
