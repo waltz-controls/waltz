@@ -67,7 +67,7 @@ var helpMenu = webix.ui({
         data: [
             {id: "helpAbout", value: "About"},
             {id: "helpDocs", value: "User docs"},
-            {id: "reportIssue", value: "New issue", icon: "mdi mdi-github-circle"}
+            {id: "reportIssue", value: "New issue", icon: "mdi mdi-github"}
         ],
         autoheight: true,
         borderless: true,
