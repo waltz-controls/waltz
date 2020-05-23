@@ -149,11 +149,7 @@ const kOverlayDelayTimeout = 3000;
                 on: {
                     onHeaderClick(obj){
                         if(obj.column === 'remove'){
-                            const top = this.getTopParentView();
-
-                            TangoWebappHelpers.iterate(this, (el) => {
-                                top.removeAttribute(el);
-                            });
+                            this.data.each(row => this.config.root.removeAttribute(TangoId.fromMemberId(row.id)))
                             return false;
                         }
                         if(obj.column === 'save'){
