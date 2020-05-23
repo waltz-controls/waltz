@@ -1,8 +1,8 @@
 [![](images/logo_Waltz_small.png)](http://www.waltz-controls.space/?badge=latest)
 
 [![time tracker](https://wakatime.com/badge/github/waltz-controls/waltz.svg)](https://wakatime.com/badge/github/waltz-controls/waltz)
-[![Codacy Badge](https://api.codacy.com/project/badge/Grade/512287ad5da94ac7af157a94eec80c5a)](https://www.codacy.com/app/tango-controls/tango-webapp?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=tango-controls/tango-webapp&amp;utm_campaign=Badge_Grade)
-[![codebeat badge](https://codebeat.co/badges/23388ba2-feda-479d-a8c8-abf68eb7b01a)](https://codebeat.co/projects/github-com-tango-controls-tango-webapp-master)
+[![Codacy Badge](https://app.codacy.com/project/badge/Grade/7cb28455b1804063bc0134efd6e6d0bc)](https://www.codacy.com/gh/waltz-controls/waltz?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=waltz-controls/waltz&amp;utm_campaign=Badge_Grade)
+[![codebeat badge](https://codebeat.co/badges/2e6d3263-449e-4eb1-9edb-e916202d4567)](https://codebeat.co/projects/github-com-waltz-controls-waltz-master)
 [![Build Status](https://travis-ci.org/waltz-controls/waltz.svg?branch=master)](https://travis-ci.org/waltz-controls/waltz)
 
 [![release](https://img.shields.io/github/release/tango-controls/tango-webapp.svg?style=flat)](https://github.com/tango-controls/tango-webapp/releases/latest)
