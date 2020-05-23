@@ -6,7 +6,7 @@ import {throttleTime} from "rxjs/operators";
 import {kChannelTangoRest} from "@waltz-controls/waltz-tango-rest-plugin";
 import {kControllerUserAction} from "@waltz-controls/waltz-user-actions-plugin";
 
-const kControllerWebixMessage = 'controller:webix_message';
+export const kControllerWebixMessage = 'controller:webix_message';
 
 const kMessage = "<span class='webix_icon mdi mdi-bell-ring'></span>Something bad has just happened. Check out the log..."
 

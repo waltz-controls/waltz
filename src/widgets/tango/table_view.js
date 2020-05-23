@@ -7,6 +7,7 @@ import {kUserContext} from "@waltz-controls/waltz-user-context-plugin";
 import {kChannelLog, kTopicLog} from "controllers/log";
 import {TangoId} from "@waltz-controls/tango-rest-client";
 import {kControllerUserAction, WriteTangoAttribute} from "@waltz-controls/waltz-user-actions-plugin";
+import {kControllerWebixMessage} from "controllers/message";
 
 const kWidgetTableView = 'widget:table_view';
 const kFrozenOverlayMessage = "<span class='webix_icon mdi mdi-bell-ring'></span>This TableWidget's configuration is" +
@@ -201,6 +202,10 @@ export default class TableViewWidget extends WaltzWidget {
      * @return {Promise<void>}
      */
     async addAttribute(id, force = false){
+        if(this.attributes.exists(id.getTangoMemberId())){
+            this.app.getController(kControllerWebixMessage).show("Already added", 'info');
+            return;
+        }
         const rest = await this.getTangoRest();
 
         const attr = await rest.newTangoAttribute(id).toTangoRestApiRequest().get().toPromise().then(resp => new TangoAttribute(resp));
