@@ -60,7 +60,7 @@ const kOverlayDelayTimeout = 3000;
                 }
             ]
         }
-    };
+    }
 
     function newScalarsColumns() {
         return [

@@ -140,9 +140,7 @@ export const device_control_command = webix.protoUI({
     execute(){
         if(!this.command) return;
         let argin;
-        if (this.command.isVoid()) {
-            argin = undefined;
-        } else {
+        if (!this.command.isVoid()) {
             if (!this.$$input.validate()) return;
             argin = this.$$input.getValue();
         }
