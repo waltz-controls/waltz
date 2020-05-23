@@ -1,9 +1,0 @@
-REST_API_PROTOCOL = "http";
-REST_API_HOST = "localhost";
-REST_API_PORT = 10001;
-REST_API_VERSION = "rc4";
-TANGO_HOST = "localhost";
-TANGO_PORT = 10000;
-VERSION = "development";
-USER_CONTEXT_URL = "/user-context/cache";
-TERMINAL_URL = 'http://ec2-35-156-104-8.eu-central-1.compute.amazonaws.com:8010/index.html';

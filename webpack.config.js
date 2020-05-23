@@ -17,7 +17,7 @@ module.exports = function(env) {
     const config = {
         mode: production ? "production" : "development",
         entry: {
-            main: "./apps/main.js"
+            main: "./src/main.js"
         },
         output: {
             path: path.join(__dirname, "codebase"),
@@ -38,13 +38,17 @@ module.exports = function(env) {
                 {
                     test: /\.(less|css)$/,
                     use: [ MiniCssExtractPlugin.loader, "css-loader", "less-loader" ]
+                },
+                {
+                    test: /webix\.js$/,
+                    use: [ 'script-loader' ]
                 }
             ]
         },
         stats:"minimal",
         resolve: {
             extensions: [".js"],
-            modules: ["./apps","./controllers","./models","./resources", "node_modules"],
+            modules: ["./src", "node_modules",path.resolve(__dirname, "..")],
             alias:{
                 "jet-views":path.resolve(__dirname, "sources/views"),
                 "jet-locales":path.resolve(__dirname, "sources/locales")
