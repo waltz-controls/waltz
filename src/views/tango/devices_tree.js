@@ -239,7 +239,6 @@ const wizard = webix.protoUI(
                                     if (!form.validate()) return;
 
                                     config.root.addTangoDevices({
-                                        host: form.elements.tango_host.data.value,
                                         ...form.getValues()
                                     });
                                 }
