@@ -260,6 +260,14 @@ export default class TangoTree extends WaltzWidget {
         this.tango_hosts.remove(host);
     }
 
+    /**
+     *
+     * @param {string} tango_host e.g. localhost:10000
+     * @param {string} server
+     * @param {string} className
+     * @param {[string]} devices
+     * @return {Promise<void>}
+     */
     async addTangoDevices({tango_host, server, className, devices}){
         const rest = await this.app.getContext(kTangoRestContext);
 
