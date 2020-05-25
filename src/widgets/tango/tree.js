@@ -260,10 +260,12 @@ export default class TangoTree extends WaltzWidget {
         this.tango_hosts.remove(host);
     }
 
-    async addTangoDevices({host, server, className, devices}){
+    async addTangoDevices({tango_host, server, className, devices}){
         const rest = await this.app.getContext(kTangoRestContext);
 
-        const req = rest.newTangoHost({...host.split(':')}).database()
+        const [host, port] = tango_host.split(':')
+
+        const req = rest.newTangoHost({host, port}).database()
             .pipe(
                 mergeMap(db => from(devices.map(name => db.addDevice([server,name,className])))),
                 last()
