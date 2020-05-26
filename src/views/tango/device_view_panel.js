@@ -63,6 +63,9 @@ const device_tree_list = webix.protoUI(
                         this.select(id);
                     }
                 },
+                onItemDblClick(id){
+                    this.panel.goto();
+                },
                 /**
                  * Fires {@link event:item_selected}
                  *
