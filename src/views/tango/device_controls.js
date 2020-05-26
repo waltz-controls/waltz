@@ -40,7 +40,7 @@ export const device_control_attr = webix.protoUI({
     ui(){
         return {
             elements:[
-                defaultButtons(),
+                // defaultButtons(),
                 {
                     cols:[
                         {view:"button",id:"read",value:"read", click(){ this.getFormView().read()}},
@@ -156,7 +156,7 @@ export const device_control_command = webix.protoUI({
     },
     defaults:{
         elements:[
-            defaultButtons(),
+            // defaultButtons(),
             {id:"input_holder",rows:[
                     {}
                 ], hidden: true},
@@ -207,7 +207,7 @@ export const device_control_pipe = webix.protoUI({
     },
     defaults:{
         elements:[
-            defaultButtons(),
+            // defaultButtons(),
             {view:"button",value:"read", click(){this.getFormView().read();}}
         ],
         rules:{

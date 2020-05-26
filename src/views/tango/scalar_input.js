@@ -93,9 +93,6 @@ export const scalar_input = webix.protoUI({
             {},
             webix.extend(btnWrite,{tooltip:"Hotkey: Ctrl + Enter", hotkey: "ctrl+enter"}));
 
-
-
-
         return {
             cols
         }
