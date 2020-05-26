@@ -144,10 +144,10 @@ export default class TangoTree extends WaltzWidget {
                                 }
                             },
                             {},
-                            newToolbarButton('auto-fix',"wizard"),
-                            newToolbarButton('filter',"devices_filter"),
-                            newToolbarButton('information-variant',"tango_host_info"),
-                            newToolbarButton("plus","tango_hosts")
+                            webix.extend(newToolbarButton('auto-fix',"wizard"), {tooltip: 'Devices Wizard'}),
+                            webix.extend(newToolbarButton('filter',"devices_filter"), {tooltip: 'Devices filters'}),
+                            webix.extend(newToolbarButton('information-variant',"tango_host_info"), {tooltip: 'Selected Tango Db info'}),
+                            webix.extend(newToolbarButton("plus","tango_hosts"), {tooltip: 'Add Tango host'})
                         ]
                     }
                 ]
