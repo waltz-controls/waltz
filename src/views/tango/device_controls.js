@@ -174,13 +174,18 @@ export const device_control_command = webix.protoUI({
                 this.command = command;
                 if(command === null) return;
 
-                if(command.data_type !== 'DevVoid') {
-                    const value = this.$$input ? this.$$input.getValue(): undefined;
-                    this.$$input = $$(webix.ui([{view: "command_input", cmd: command, type: "mini", borderless: true}], this.$$('input_holder'))[0].id);
+                if (command.isVoid()) {
+                    this.$$('input_holder').hide();
+                } else {
+                    const value = this.$$input ? this.$$input.getValue() : undefined;
+                    this.$$input = $$(webix.ui([{
+                        view: "command_input",
+                        cmd: command,
+                        type: "mini",
+                        borderless: true
+                    }], this.$$('input_holder'))[0].id);
                     this.$$input.setValue(value);
                     this.$$('input_holder').show();
-                } else {
-                    this.$$('input_holder').hide();
                 }
             }
         }
