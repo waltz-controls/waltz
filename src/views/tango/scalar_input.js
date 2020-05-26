@@ -2,6 +2,8 @@ const btnMinus = {view:"button",value:"-", width: 20, click(){ this.getFormView(
 const btnPlus = {view:"button",value:"+", width: 20, click(){ this.getFormView()._write_plus()}};
 const btnWrite = {view:"button", maxWidth:120, value:"Write",click(){this.getFormView()._write() }};
 
+const kOverride = true;
+
 export const scalar_input = webix.protoUI({
     name:"scalar_input",
     getValue(){
@@ -50,14 +52,17 @@ export const scalar_input = webix.protoUI({
      * @private
      */
     _compact_view(attr){
-        const cols = [
-            {view:"text", name:"value", placeholder: `Input: ${attr.data_type} [min:${attr.min_value};max:${attr.max_value}]`, gravity:2}
-        ];
+        const cols = [];
 
         if(attr.isScalar())
-            cols.push(btnMinus, btnPlus);
+            cols.push(btnMinus)
 
-        cols.push(btnWrite);
+        cols.push({view:"text", name:"value", placeholder: `Input: ${attr.data_type} [min:${attr.min_value};max:${attr.max_value}]`, gravity:2})
+
+        if(attr.isScalar())
+            cols.push(btnPlus)
+
+        cols.push({}, btnWrite);
 
         return {
             cols
@@ -70,25 +75,29 @@ export const scalar_input = webix.protoUI({
      * @private
      */
     _normal_view(attr){
-        const cols = [
-            {}
-        ];
+        const cols = [];
 
         if(attr.isScalar())
             cols.push(
-                webix.extend(btnMinus,{tooltip:"Hotkey: Ctrl + numpad(-)", hotkey: "ctrl+109"}),
-                webix.extend(btnPlus, {tooltip:"Hotkey: Ctrl + numpad(+)", hotkey: "ctrl+107"}));
+                webix.extend(btnMinus,{width:30,tooltip:"Hotkey: Ctrl + numpad(-)", hotkey: "ctrl+109"}, kOverride));
 
         cols.push(
+            {view:"text", name:"value", label:`Input: ${attr.info.data_type} [min:${attr.info.min_value};max:${attr.info.max_value}]`, labelPosition: "top", placeholder: attr.info.format, tooltip:attr.info.description, validate:webix.rules.isNotEmpty},
+        )
+
+        if(attr.isScalar())
+            cols.push(webix.extend(btnPlus, {width: 30, tooltip:"Hotkey: Ctrl + numpad(+)", hotkey: "ctrl+107"}, kOverride));
+
+
+        cols.push(
+            {},
             webix.extend(btnWrite,{tooltip:"Hotkey: Ctrl + Enter", hotkey: "ctrl+enter"}));
 
+
+
+
         return {
-            elements:[
-                {view:"text", name:"value", label:`Input: ${attr.info.data_type} [min:${attr.info.min_value};max:${attr.info.max_value}]`, labelPosition: "top", placeholder: attr.info.format, tooltip:attr.info.description, validate:webix.rules.isNotEmpty},
-                {
-                    cols
-                }
-            ]
+            cols
         }
     },
     _config(config){
