@@ -13,7 +13,7 @@ import ApplicationLogController from "controllers/log";
 import WebixMessageController from "controllers/message";
 import TangoDeviceWidget from "widgets/tango/device";
 import {UserContextController} from "@waltz-controls/waltz-user-context-plugin";
-import {UserActionController} from "@waltz-controls/waltz-user-actions-plugin";
+import {UserActionController, UserLogWidget} from "@waltz-controls/waltz-user-actions-plugin";
 import TangoInfoPanelWidget from "widgets/tango/info";
 import {TangoRestController, TangoSubscriptionsController} from "@waltz-controls/waltz-tango-rest-plugin";
 import DashboardWidget from "widgets/tango/dashboard";
@@ -35,6 +35,7 @@ const waltz = new Application({name: APPNAME, version: VERSION})
     .registerWidget(application => new TangoTree(application))
     .registerWidget(application => new TangoDeviceWidget(application))
     .registerWidget(application => new TangoInfoPanelWidget(application))
+    .registerWidget(application => new UserLogWidget(application))
 
 
 export const kWaltz = 'app:waltz';
