@@ -39,6 +39,8 @@ const command_input = webix.protoUI({
             value : JSON.parse(value); //TODO clever logic here
     },
     setValue(value){
+        if(this.config.cmd.info.in_type !== 'DevString')
+            value = JSON.stringify(value)
         this.elements.argin.setValue(value);
     },
     _normal_view(command){
