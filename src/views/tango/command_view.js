@@ -34,7 +34,9 @@ const command_output = webix.protoUI(
 const command_input = webix.protoUI({
     name: 'command_input',
     getValue(){
-        return this.elements.argin.getValue(); //TODO clever logic here
+        const value = this.elements.argin.getValue()
+        return this.config.cmd.info.in_type === 'DevString' ?
+            value : JSON.parse(value); //TODO clever logic here
     },
     setValue(value){
         this.elements.argin.setValue(value);
