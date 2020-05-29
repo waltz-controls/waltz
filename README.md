@@ -27,7 +27,7 @@
 # Documentation
 
 [![Docs](https://img.shields.io/badge/Generated-Docs-green.svg)](https://waltz-controls.github.io/waltz/)
-[![Documentation Status](https://readthedocs.org/projects/waltz-docs/badge/?version=latest)](https://www.waltz-controls.space?badge=latest)
+[![Documentation Status](https://readthedocs.org/projects/waltz-docs/badge/?version=latest)](https://waltz-docs.readthedocs.io/en/latest/?badge=latest)
 
 [Waltz User/Developer guides](http://www.waltz-controls.space/?badge=latest)
  
