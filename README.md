@@ -1,4 +1,4 @@
-[![](images/logo_Waltz_small.png)](http://www.waltz-controls.space/?badge=latest)
+![](images/logo_Waltz_small.png)
 
 [![time tracker](https://wakatime.com/badge/github/waltz-controls/waltz.svg)](https://wakatime.com/badge/github/waltz-controls/waltz)
 [![Codacy Badge](https://app.codacy.com/project/badge/Grade/7cb28455b1804063bc0134efd6e6d0bc)](https://www.codacy.com/gh/waltz-controls/waltz?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=waltz-controls/waltz&amp;utm_campaign=Badge_Grade)
@@ -29,9 +29,9 @@
 [![Docs](https://img.shields.io/badge/Generated-Docs-green.svg)](https://waltz-controls.github.io/waltz/)
 [![Documentation Status](https://readthedocs.org/projects/waltz-docs/badge/?version=latest)](https://waltz-docs.readthedocs.io/en/latest/?badge=latest)
 
-[Waltz User/Developer guides](http://www.waltz-controls.space/?badge=latest)
+[Waltz User/Developer guides](https://waltz-docs.readthedocs.io/en/latest/)
  
-[WaltzPlatform API reference](https://tango-controls.github.io/waltz/)
+[WaltzPlatform API reference](https://waltz-controls.github.io/waltz/)
 
 ## Other useful resources
 
