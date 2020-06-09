@@ -1,4 +1,4 @@
-![](images/logo_Waltz_small.png)
+[![](images/logo_Waltz_small.png)](https://github.com/waltz-controls/waltz)
 
 [![time tracker](https://wakatime.com/badge/github/waltz-controls/waltz.svg)](https://wakatime.com/badge/github/waltz-controls/waltz)
 [![Codacy Badge](https://app.codacy.com/project/badge/Grade/7cb28455b1804063bc0134efd6e6d0bc)](https://www.codacy.com/gh/waltz-controls/waltz?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=waltz-controls/waltz&amp;utm_campaign=Badge_Grade)
@@ -31,7 +31,7 @@
 
 [Waltz User/Developer guides](https://waltz-docs.readthedocs.io/en/latest/)
  
-[WaltzPlatform API reference](https://waltz-controls.github.io/waltz/)
+[Waltz API reference](https://waltz-controls.github.io/waltz/)
 
 ## Other useful resources
 
