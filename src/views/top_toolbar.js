@@ -74,10 +74,10 @@ var helpMenu = webix.ui({
         on: {
             onItemClick: function (id) {
                 if (id === "helpAbout") {
-                    window.open("https://www.waltz-controls.space/en/latest/", "_blank");
+                    window.open("https://waltz-docs.readthedocs.io/en/latest/", "_blank");
                 }
                 if (id === "helpDocs") {
-                    window.open("https://www.waltz-controls.space/en/latest/user_guide/", "_blank");
+                    window.open("https://waltz-docs.readthedocs.io/en/latest/user_guide/", "_blank");
                 }
                 if (id === "reportIssue") {
                     window.open("https://github.com/tango-controls/waltz/issues/new", "_blank");//TODO issue template ?template=issue.md; put issue.md into .github/ISSUE_TEMPLATE
