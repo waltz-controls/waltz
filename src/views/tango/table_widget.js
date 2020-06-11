@@ -1,5 +1,5 @@
 import {newRemoveAttributeSettings, toolbar_extension} from "./remove_attribute_toolbar.js";
-import {newToolbar, Runnable, ToggleSettings, WaltzWidgetMixin} from "@waltz-controls/waltz-webix-extensions";
+import {newToolbar, Runnable, ToggleSettings, TangoDropTarget, WaltzWidgetMixin} from "@waltz-controls/waltz-webix-extensions";
 import {TangoId} from "@waltz-controls/tango-rest-client";
 import {kChannelLog, kTopicLog} from "controllers/log";
 import {kActionSelectTangoDevice} from "widgets/tango/actions";
@@ -14,14 +14,6 @@ const kRemoveSingleHeader = "<span class='remove-single webix_icon wxi-trash'></
 const kAlertInvalid = `<span class="webix_icon mdi mdi-alert" style="color: red"></span>`;
 const kAlertWarning = `<span class="webix_icon mdi mdi-alert" style="color: orange"></span>`;
 const kAlertFailure = `<span class="webix_icon mdi mdi-alert-octagram-outline" style="color: red"></span>`;
-
-function devicesTreeIdToTangoId(tree, id){
-    const item = tree.getItem(id);
-    const host = tree.getTangoHostId(item);
-
-    return TangoId.fromDeviceId(`${host}/${item.device_name}`)
-}
-
 
 function respToUpdate(update, resp){
     update[resp.name + "_quality"] = resp.quality;
@@ -104,20 +96,6 @@ const table_datatable = webix.protoUI({
                     const id = TangoId.fromMemberId(`${editor.row}/${editor.column}`);
 
                     this.config.root.writeAttribute(id, value.value);
-                },
-                onBeforeDrop(context){
-                    if(context.from === this) return true;
-                    if(context.from.config.view === 'device_tree_list' &&
-                        context.from.config.$id === 'attrs') {
-                            this.config.root.addAttribute(TangoId.fromMemberId(context.source[0]));
-                    } else if(context.from.config.view === 'devices_tree' &&
-                        (context.from.getItem(context.source[0]).isAlias || context.from.getItem(context.source[0]).isMember)){
-                        this.config.root.addDevice(devicesTreeIdToTangoId(context.from, context.source[0]));
-                    } else {
-                        this.getTopParentView().showOverlay(`${context.from.config.$id} are not supported by this widget`);
-                    }
-
-                    return false;
                 }
             }
         }
@@ -217,7 +195,7 @@ const table_datatable = webix.protoUI({
     $init(config) {
         webix.extend(config, this._config());
     }
-}, WaltzWidgetMixin, webix.ProgressBar, webix.ui.datatable);
+}, TangoDropTarget, WaltzWidgetMixin, webix.ProgressBar, webix.ui.datatable);
 
 
 function newTableWidgetTable(config) {

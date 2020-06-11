@@ -280,4 +280,12 @@ export default class TableViewWidget extends WaltzWidget {
         this.$$datatable.removeDevice(id.getTangoDeviceId());
         this.devices.remove(id.getTangoDeviceId());
     }
+
+    /**
+     *
+     * @param {TangoId} id
+     */
+    addCommand(id){
+        //TODO check if void -> add
+    }
 }

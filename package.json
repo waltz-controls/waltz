@@ -39,8 +39,8 @@
   },
   "homepage": "https://www.waltz-controls.space",
   "devDependencies": {
-    "@babel/core": "^7.10.0",
-    "@babel/preset-env": "^7.10.0",
+    "@babel/core": "^7.10.2",
+    "@babel/preset-env": "^7.10.2",
     "archiver": "^3.1.1",
     "atob": "^2.1.2",
     "babel-loader": "^8.1.0",
@@ -73,10 +73,10 @@
     "@waltz-controls/waltz-tango-rest-plugin": "^2.0.2",
     "@waltz-controls/waltz-user-actions-plugin": "^2.0.3",
     "@waltz-controls/waltz-user-context-plugin": "^2.0.0",
-    "@waltz-controls/waltz-webix-extensions": "^1.0.10",
+    "@waltz-controls/waltz-webix-extensions": "^1.0.13",
     "codemirror": "^5.54.0",
     "jquery": "^3.5.1",
-    "plotly.js-dist": "^1.54.1",
+    "plotly.js-dist": "^1.54.2",
     "rxjs": "^6.5.5",
     "webix": "^7.3.0"
   }
