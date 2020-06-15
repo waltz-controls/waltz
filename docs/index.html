@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
   <meta charset='utf-8'>
-  <title>waltz 1.0.5 | Documentation</title>
+  <title>waltz 1.0.6 | Documentation</title>
   <meta name='description' content='Waltz controls - lightweight SCADA web frontend'>
   <meta name='viewport' content='width=device-width,initial-scale=1'>
   <link href='assets/bass.css' rel='stylesheet'>
@@ -15,7 +15,7 @@
       <div id='split-left' class='overflow-auto fs0 height-viewport-100'>
         <div class='py1 px2'>
           <h3 class='mb0 no-anchor'>waltz</h3>
-          <div class='mb1'><code>1.0.5</code></div>
+          <div class='mb1'><code>1.0.6</code></div>
           <input
             placeholder='Filter'
             id='filter-input'
@@ -871,6 +871,16 @@
               
                 
                 <li><a
+                  href='#addcommand'
+                  class="">
+                  addCommand
+                  
+                </a>
+                
+                </li>
+              
+                
+                <li><a
                   href='#adddevice'
                   class="">
                   addDevice
@@ -914,6 +924,16 @@
                   href='#addattribute'
                   class="">
                   addAttribute
+                  
+                </a>
+                
+                </li>
+              
+                
+                <li><a
+                  href='#addcommand'
+                  class="">
+                  addCommand
                   
                 </a>
                 
@@ -1304,6 +1324,26 @@
                   href='#removedevice'
                   class="">
                   removeDevice
+                  
+                </a>
+                
+                </li>
+              
+                
+                <li><a
+                  href='#addcommand'
+                  class="">
+                  addCommand
+                  
+                </a>
+                
+                </li>
+              
+                
+                <li><a
+                  href='#execute'
+                  class="">
+                  execute
                   
                 </a>
                 
@@ -8015,6 +8055,68 @@
   
   <div class='clearfix'>
     
+    <h3 class='fl m0' id='addcommand'>
+      addCommand
+    </h3>
+    
+    
+  </div>
+  
+
+  
+    <div class='pre p1 fill-light mt0'>addCommand(cmd: TangoCommand)</div>
+  
+  
+
+  
+  
+  
+  
+  
+  
+
+  
+    <div class='py1 quiet mt1 prose-big'>Parameters</div>
+    <div class='prose'>
+      
+        <div class='space-bottom0'>
+          <div>
+            <span class='code bold'>cmd</span> <code class='quiet'>(TangoCommand)</code>
+	    
+          </div>
+          
+        </div>
+      
+    </div>
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+</section>
+
+          
+        
+          
+          <section class='p2 mb2 clearfix bg-white minishadow'>
+
+  
+  <div class='clearfix'>
+    
     <h3 class='fl m0' id='adddevice'>
       addDevice
     </h3>
@@ -8264,6 +8366,68 @@
         <div class='space-bottom0'>
           <div>
             <span class='code bold'>attr</span> <code class='quiet'>(TangoAttribute)</code>
+	    
+          </div>
+          
+        </div>
+      
+    </div>
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+</section>
+
+          
+        
+          
+          <section class='p2 mb2 clearfix bg-white minishadow'>
+
+  
+  <div class='clearfix'>
+    
+    <h3 class='fl m0' id='addcommand'>
+      addCommand
+    </h3>
+    
+    
+  </div>
+  
+
+  
+    <div class='pre p1 fill-light mt0'>addCommand(cmd: TangoCommand)</div>
+  
+  
+
+  
+  
+  
+  
+  
+  
+
+  
+    <div class='py1 quiet mt1 prose-big'>Parameters</div>
+    <div class='prose'>
+      
+        <div class='space-bottom0'>
+          <div>
+            <span class='code bold'>cmd</span> <code class='quiet'>(TangoCommand)</code>
 	    
           </div>
           
@@ -10756,6 +10920,139 @@
 
   
     <div class='pre p1 fill-light mt0'>removeDevice(id: <a href="#tangoid">TangoId</a>)</div>
+  
+  
+
+  
+  
+  
+  
+  
+  
+
+  
+    <div class='py1 quiet mt1 prose-big'>Parameters</div>
+    <div class='prose'>
+      
+        <div class='space-bottom0'>
+          <div>
+            <span class='code bold'>id</span> <code class='quiet'>(<a href="#tangoid">TangoId</a>)</code>
+	    
+          </div>
+          
+        </div>
+      
+    </div>
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+</section>
+
+          
+        
+          
+          <section class='p2 mb2 clearfix bg-white minishadow'>
+
+  
+  <div class='clearfix'>
+    
+    <h3 class='fl m0' id='addcommand'>
+      addCommand
+    </h3>
+    
+    
+  </div>
+  
+
+  
+    <div class='pre p1 fill-light mt0'>addCommand(id: <a href="#tangoid">TangoId</a>, force: any)</div>
+  
+  
+
+  
+  
+  
+  
+  
+  
+
+  
+    <div class='py1 quiet mt1 prose-big'>Parameters</div>
+    <div class='prose'>
+      
+        <div class='space-bottom0'>
+          <div>
+            <span class='code bold'>id</span> <code class='quiet'>(<a href="#tangoid">TangoId</a>)</code>
+	    
+          </div>
+          
+        </div>
+      
+        <div class='space-bottom0'>
+          <div>
+            <span class='code bold'>force</span> <code class='quiet'>(any
+            = <code>false</code>)</code>
+	    
+          </div>
+          
+        </div>
+      
+    </div>
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+</section>
+
+          
+        
+          
+          <section class='p2 mb2 clearfix bg-white minishadow'>
+
+  
+  <div class='clearfix'>
+    
+    <h3 class='fl m0' id='execute'>
+      execute
+    </h3>
+    
+    
+  </div>
+  
+
+  
+    <div class='pre p1 fill-light mt0'>execute(id: <a href="#tangoid">TangoId</a>)</div>
   
   
 
