@@ -58,6 +58,16 @@ function getColumnConfig(attr){
     }, attr.isWritable() ? {editor:"text"} : {});
 }
 
+function getCommandColumnConfig(cmd){
+    return {
+        id: cmd.name,
+        header: { text:`${cmd.name} <span class="execute-all webix_icon mdi mdi-play-box-multiple-outline"></span>`, tooltip: "Execute All" },
+        template(obj){
+            return `${cmd.name} <span class="execute webix_icon mdi mdi-play-box-outline"></span>`
+        }
+    }
+}
+
 const table_datatable = webix.protoUI({
     name:"table_datatable",
     _config() {
@@ -66,6 +76,7 @@ const table_datatable = webix.protoUI({
             drag: true,
             resizeColumn: true,
             dragColumn: true,
+            tooltip: true,
             columns: [
                 {id: "id", hidden: true},
                 {id: "device", header: "Device", fillspace: true},
@@ -78,26 +89,7 @@ const table_datatable = webix.protoUI({
                         return kRemoveSingleHeader;
                     }
                 }
-            ],
-            on:{
-                onHeaderClick(obj){
-                    if(obj.column === 'remove'){
-                        this.config.root.clear();
-                    }
-                },
-                onItemClick(id) {
-                    const device_id = TangoId.fromDeviceId(id.row);
-
-                    this.config.root.dispatch(device_id,kActionSelectTangoDevice);
-                },
-                onAfterEditStop(value, editor) {
-                    if (value.value == value.old) return;
-
-                    const id = TangoId.fromMemberId(`${editor.row}/${editor.column}`);
-
-                    this.config.root.writeAttribute(id, value.value);
-                }
-            }
+            ]
         }
     },
     addColumns(attrs){
@@ -110,6 +102,14 @@ const table_datatable = webix.protoUI({
     },
     addColumn(attr){
         this.addColumns([attr])
+    },
+    addCommandColumn(cmd){
+        const columns = this.config.columns;
+
+        const config = getCommandColumnConfig(cmd)
+
+        columns.splice(columns.length - 1, 0, config);
+        this.refreshColumns();
     },
     /**
      *
@@ -127,6 +127,22 @@ const table_datatable = webix.protoUI({
                 [attr.name + "_quality"]: ""
             })
             }
+
+        this.run();
+    },
+
+    /**
+     *
+     * @param {TangoCommand} cmd
+     */
+    async addCommand(cmd){
+        if(this.config.columns.filter(column => column.id === cmd.name).length === 0)
+            this.addCommandColumn(cmd);
+
+        const item = this.getItem(cmd.tango_id.getTangoDeviceId());
+        if(item ===  undefined){
+            await this.config.root.addDevice(cmd.tango_id);
+        }
 
         this.run();
     },
@@ -204,9 +220,34 @@ function newTableWidgetTable(config) {
         root: config.root,
         stateId: config.id,
         view:"table_datatable",
+        on:{
+        onHeaderClick(obj){
+            if(obj.column === 'remove'){
+                this.config.root.clear();
+            }
+        },
+        onItemClick(id) {
+            const device_id = TangoId.fromDeviceId(id.row);
+
+            this.config.root.dispatch(device_id,kActionSelectTangoDevice);
+        },
+        onAfterEditStop(value, editor) {
+            if (value.value == value.old) return;
+
+            const id = TangoId.fromMemberId(`${editor.row}/${editor.column}`);
+
+            this.config.root.writeAttribute(id, value.value);
+        }
+    },
         onClick: {
             "remove-single":function(event, id){
                 this.config.root.removeDevice(TangoId.fromDeviceId(id.row));
+            },
+            "execute-all":function(event, id){
+                this.config.root.executeAll(id.column);
+            },
+            "execute":function(event, id){
+                this.config.root.execute(TangoId.fromMemberId(`${id.row}/${id.column}`));
             }
         }
     }

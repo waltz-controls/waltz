@@ -2,11 +2,16 @@ import "views/tango/table_widget";
 
 import {WaltzWidget} from "@waltz-controls/middleware";
 
-import {kTangoRestContext, TangoAttribute, TangoDevice} from "@waltz-controls/waltz-tango-rest-plugin";
+import {kTangoRestContext, TangoAttribute, TangoCommand, TangoDevice} from "@waltz-controls/waltz-tango-rest-plugin";
 import {kUserContext} from "@waltz-controls/waltz-user-context-plugin";
 import {kChannelLog, kTopicLog} from "controllers/log";
-import {kControllerUserAction, WriteTangoAttribute} from "@waltz-controls/waltz-user-actions-plugin";
+import {
+    ExecuteTangoCommand,
+    kControllerUserAction,
+    WriteTangoAttribute
+} from "@waltz-controls/waltz-user-actions-plugin";
 import {kControllerWebixMessage} from "controllers/message";
+import {TangoId} from "@waltz-controls/tango-rest-client";
 
 const kWidgetTableView = 'widget:table_view';
 const kFrozenOverlayMessage = "<span class='webix_icon mdi mdi-bell-ring'></span>This TableWidget's configuration is" +
@@ -25,6 +30,7 @@ class Context{
     constructor() {
         this.devices = [];
         this.attributes = [];
+        this.commands = [];
         this.frozen = false;
     }
 }
@@ -84,6 +90,8 @@ export default class TableViewWidget extends WaltzWidget {
 
         const attributes = newProxy.call(this,'attributes');
 
+        const commands = newProxy.call(this,'commands');
+
         this.devices = new webix.DataCollection({
             url: devices,
             save: devices
@@ -92,6 +100,11 @@ export default class TableViewWidget extends WaltzWidget {
             url: attributes,
             save: attributes
         });
+
+        this.commands = new webix.DataCollection({
+            url: commands,
+            save: commands
+        })
 
         this.restoreState();
     }
@@ -169,10 +182,17 @@ export default class TableViewWidget extends WaltzWidget {
         const attributes = userContext.get(this.id).attributes
             .map(attr => new TangoAttribute(attr))
             .filter((v, i, a) => a.findIndex(item => item.name === v.name) === i);
+        const commands = userContext.get(this.id).commands
+            .map(cmd => new TangoCommand(cmd))
+            .filter((v, i, a) => a.findIndex(item => item.name === v.name) === i);
         const devices = userContext.get(this.id).devices;
 
         this.$$datatable.addColumns(attributes);
+        commands.forEach(cmd => {
+            this.$$datatable.addCommand(cmd);
+        });
         this.$$settings.addAttributes(attributes);
+        this.$$settings.addAttributes(commands);
 
         this.$$datatable.parse(devices.map(device => ({...device, device: device.alias || device.name})));
 
@@ -193,7 +213,13 @@ export default class TableViewWidget extends WaltzWidget {
         this.$$datatable.removeAttribute(id.name);
         this.$$settings.removeAttribute(id.name);
 
-        this.attributes.remove(id.getTangoMemberId());
+        const tangoId = id.getTangoMemberId();
+
+        //TODO refactor, see #254
+        if(this.attributes.exists(tangoId))
+            this.attributes.remove(tangoId);
+        if(this.commands.exists(tangoId))
+            this.commands.remove(tangoId);
     }
 
     /**
@@ -285,7 +311,48 @@ export default class TableViewWidget extends WaltzWidget {
      *
      * @param {TangoId} id
      */
-    addCommand(id){
-        //TODO check if void -> add
+    async addCommand(id, force = false){
+        if(this.commands.exists(id.getTangoMemberId())){
+            this.app.getController(kControllerWebixMessage).show("Already added", 'info');
+            return;
+        }
+        if(this.frozen && !force) {
+            this.$$view.showOverlay(kFrozenOverlayMessage);
+            return;
+        }
+
+        const rest = await this.getTangoRest();
+
+        const cmd = await rest.newTangoCommand(id).toTangoRestApiRequest().get().toPromise().then(resp => new TangoCommand(resp));
+
+        if(!cmd.isVoid()) {
+            this.$$view.showOverlay("Only void commands are supported by this widget!");
+            return;
+        }
+
+        this.$$datatable.addCommand(cmd, force);
+        this.$$settings.addCommand(cmd, force);
+
+        this.commands.add(cmd);
+
+        this.$$view.run();
+    }
+
+    executeAll(name){
+        this.devices.data.each(device => {
+            this.execute(TangoId.fromDeviceId(device.id).setName(name))
+        })
+    }
+
+    /**
+     *
+     * @param {TangoId} id
+     */
+    async execute(id){
+        const rest = await this.getTangoRest();
+        const user = (await this.getUserContext()).user;
+        const command = await rest.newTangoCommand(id).toTangoRestApiRequest().get().toPromise().then(resp => new TangoCommand(resp));
+
+        this.app.getController(kControllerUserAction).submit(new ExecuteTangoCommand({user,command}))
     }
 }

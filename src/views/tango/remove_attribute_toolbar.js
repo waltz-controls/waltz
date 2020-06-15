@@ -55,6 +55,13 @@ const widget_settings = webix.protoUI({
     },
     /**
      *
+     * @param {TangoCommand} cmd
+     */
+    addCommand(cmd){
+        this.addAttribute(cmd);
+    },
+    /**
+     *
      * @param {TangoDevice} device
      */
     addDevice(device) {
