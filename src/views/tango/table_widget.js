@@ -89,7 +89,26 @@ const table_datatable = webix.protoUI({
                         return kRemoveSingleHeader;
                     }
                 }
-            ]
+            ],
+            on:{
+                onHeaderClick(obj){
+                    if(obj.column === 'remove'){
+                        this.config.root.clear();
+                    }
+                },
+                onItemClick(id) {
+                    const device_id = TangoId.fromDeviceId(id.row);
+
+                    this.config.root.dispatch(device_id,kActionSelectTangoDevice);
+                },
+                onAfterEditStop(value, editor) {
+                    if (value.value == value.old) return;
+
+                    const id = TangoId.fromMemberId(`${editor.row}/${editor.column}`);
+
+                    this.config.root.writeAttribute(id, value.value);
+                }
+            }
         }
     },
     addColumns(attrs){
@@ -220,25 +239,7 @@ function newTableWidgetTable(config) {
         root: config.root,
         stateId: config.id,
         view:"table_datatable",
-        on:{
-        onHeaderClick(obj){
-            if(obj.column === 'remove'){
-                this.config.root.clear();
-            }
-        },
-        onItemClick(id) {
-            const device_id = TangoId.fromDeviceId(id.row);
 
-            this.config.root.dispatch(device_id,kActionSelectTangoDevice);
-        },
-        onAfterEditStop(value, editor) {
-            if (value.value == value.old) return;
-
-            const id = TangoId.fromMemberId(`${editor.row}/${editor.column}`);
-
-            this.config.root.writeAttribute(id, value.value);
-        }
-    },
         onClick: {
             "remove-single":function(event, id){
                 this.config.root.removeDevice(TangoId.fromDeviceId(id.row));
