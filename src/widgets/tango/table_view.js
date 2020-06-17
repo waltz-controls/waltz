@@ -40,19 +40,23 @@ function newProxy(target){
     return {
         $proxy: true,
         load: () => {
-            return this.app.getContext(kUserContext).then(userContext => userContext.getOrDefault(this.id, new Context())[target])
+            return this.app.getContext(kUserContext).then(userContext => userContext.getOrDefault(this.id, new Context())[target] === undefined ? [] : userContext.getOrDefault(this.id, new Context())[target])
         },
         save: (master, params, dataProcessor) => {
             if(!dataProcessor.config.autoupdate) return;
             switch (params.operation) {
                 case "insert":
                     return this.getUserContext()
-                        .then(userContext => userContext.updateExt(this.id, ext => ext[target].push(new ContextEntity(params.data))))
+                        .then(userContext => userContext.updateExt(this.id, ext => {
+                            if(ext[target] === undefined) ext[target] = [];
+                            ext[target].push(new ContextEntity(params.data))
+                        }))
                         .then(userContext => userContext.save())
                         .then(() => this.dispatch(`Successfully added new ${target} ${params.data.name}`,kTopicLog, kChannelLog));
                 case "delete":
                     return this.getUserContext()
                         .then(userContext => userContext.updateExt(this.id, ext => {
+                            if(ext[target] === undefined) ext[target] = [];
                             const index = ext[target].findIndex(device => device.id === params.id)
                             ext[target].splice(index,1);
                         }))
@@ -182,7 +186,7 @@ export default class TableViewWidget extends WaltzWidget {
         const attributes = userContext.get(this.id).attributes
             .map(attr => new TangoAttribute(attr))
             .filter((v, i, a) => a.findIndex(item => item.name === v.name) === i);
-        const commands = userContext.get(this.id).commands
+        const commands = (userContext.get(this.id).commands === undefined ? [] : userContext.get(this.id).commands)
             .map(cmd => new TangoCommand(cmd))
             .filter((v, i, a) => a.findIndex(item => item.name === v.name) === i);
         const devices = userContext.get(this.id).devices;
