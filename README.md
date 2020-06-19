@@ -40,9 +40,9 @@
 
 ### Videos
 
-[1] [UI and features presentation](https://vimeo.com/268669625)
+[1] [UI and features presentation, 2018](https://vimeo.com/268669625)
 
-[2] [Tech stack presentation: TangoWebapp + Tango REST + Tango Controls](https://rutube.ru/video/00d518e2aa8958b891430fbdf24f270a/)
+[2] [Tech stack presentation: Waltz (ex. TangoWebapp) + Tango REST + Tango Controls, 2017](https://youtu.be/mrXEg9NkcT0)
 
 [3] [Waltz Workshop@DESY, 2019, part I](https://www.youtube.com/watch?v=rKnVGFP_VCA)
 
