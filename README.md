@@ -44,6 +44,12 @@
 
 [2] [Tech stack presentation: TangoWebapp + Tango REST + Tango Controls](https://rutube.ru/video/00d518e2aa8958b891430fbdf24f270a/)
 
+[3] [Waltz Workshop@DESY, 2019, part I](https://www.youtube.com/watch?v=rKnVGFP_VCA)
+
+[4] [Waltz Workshop@DESY, 2019, part II](https://www.youtube.com/watch?v=npj8paRuF0Q)
+
+[5] [Waltz Workshop@DESY, 2019, part III](https://www.youtube.com/watch?v=2ryBt_Cztb0)
+
 ### Slides
 
 [1] [TangoWebapp Insights, 32 Tango Users meeting, 2018](https://www.slideshare.net/IgorKhokhryakov/tangowebapp-insights)
