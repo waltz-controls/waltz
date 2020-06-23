@@ -31,12 +31,20 @@ const command_output = webix.protoUI(
         }
     }, webix.ui.list);
 
+function parseValue(value) {
+    try{
+        return JSON.parse(value)
+    } catch (e) {
+        return undefined;
+    }
+}
+
 const command_input = webix.protoUI({
     name: 'command_input',
     getValue(){
         const value = this.elements.argin.getValue()
         return this.config.cmd.info.in_type === 'DevString' ?
-            value : JSON.parse(value); //TODO clever logic here
+            value : parseValue(value);
     },
     setValue(value){
         if(this.config.cmd.info.in_type !== 'DevString')
