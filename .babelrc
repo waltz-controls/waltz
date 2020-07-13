@@ -7,7 +7,6 @@
           "esmodules": true
         }
       }
-    ],
-    "@babel/preset-react"
+    ]
   ]
 }

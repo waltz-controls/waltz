@@ -13,7 +13,7 @@ const grid_widget = webix.protoUI({
         webix.extend(config, this.ui())
 
         this.$ready.push(() => {
-            ReactDOM.render(<GridWidget geometry={config.geometry || {cols:2, rows: 2}} devices={config.devices || []}></GridWidget>, this.getNode())
+            ReactDOM.render(React.createElement(GridWidget, {geometry:{cols:2, rows: 2}, devices:[]}, null), this.getNode())
         })
     }
 }, webix.ui.layout);
