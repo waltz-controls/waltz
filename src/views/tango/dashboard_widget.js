@@ -69,7 +69,7 @@ export function newDashboardProfilesPanel(dashboard){
                                     view: "richselect",
                                     id: "type",
                                     name: "type",
-                                    options: ["table", "plot", "list"],
+                                    options: ["table", "plot", "list", "grid"],
                                     value: "table",
                                     validate: webix.rules.isNotEmpty
                                 },

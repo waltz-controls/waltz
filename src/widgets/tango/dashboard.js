@@ -11,6 +11,7 @@ import {
 } from "views/tango/dashboard_widget";
 import PlotlyWidget from "./plotly";
 import ListViewWidget from "./list_view";
+import GridViewWidget from "./grid_view";
 
 const kDashboardHeader = "<span class='webix_icon mdi mdi-gauge'></span> Dashboard";
 const kWidgetDashboard = 'widget:dashboard';
@@ -43,6 +44,8 @@ class Profile{
                 return "chart-line";
             case "list":
                 return "format-list-bulleted";
+            case "grid":
+                return "view-grid-plus-outline";
             default:
                 return "help";
         }
@@ -57,6 +60,8 @@ function createInnerWidgetUI(type, config){
             return new PlotlyWidget(config).ui();
         case "list":
             return new ListViewWidget(config).ui();
+        case "grid":
+            return new GridViewWidget(config).ui();
     }
 }
 
