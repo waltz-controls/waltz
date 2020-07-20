@@ -30,7 +30,7 @@ module.exports = function(env) {
         module: {
             rules: [
                 {
-                    test: /\.js|\.jsx$/,
+                    test: /\.jsx?$/,
                     use: "babel-loader?" + JSON.stringify(babelSettings)
                 },
                 {
