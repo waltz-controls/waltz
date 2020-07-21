@@ -1,4 +1,4 @@
-import "views/tango/grid_widget";
+import "views/tango/grid_widget.jsx";
 import {WaltzWidget} from "@waltz-controls/middleware";
 
 
