@@ -161,10 +161,8 @@ const testDevice = {
 const grid_widget = webix.protoUI({
     name: 'grid_widget',
 
-    ui(){
-        return {
-            rows: [{}]
-        }
+    defaults:{
+        borderless:true
     },
 
     
@@ -194,7 +192,6 @@ const grid_widget = webix.protoUI({
         // global.gridSlice = gridSlice
         console.log(gridSlice, gridStore);
 
-        webix.extend(config, this.ui())
         this.$ready.push(() => {
             ReactDOM.render(
                 <Provider store={gridStore}>
@@ -203,4 +200,4 @@ const grid_widget = webix.protoUI({
             this.getNode())
         })
     }
-}, webix.ui.layout);
+}, webix.ui.view);
