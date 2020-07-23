@@ -4,6 +4,7 @@ import ReactDOM from "react-dom";
 
 import { Provider, useSelector } from 'react-redux'
 import {createSlice, createStore} from "@reduxjs/toolkit"
+import {TangoDropTarget} from "@waltz-controls/waltz-webix-extensions";
 
 const testDevice = {
     attributes: {
@@ -161,10 +162,8 @@ const testDevice = {
 const grid_widget = webix.protoUI({
     name: 'grid_widget',
 
-    ui(){
-        return {
-            rows: [{}]
-        }
+    defaults:{
+        borderless:true
     },
 
     
@@ -194,7 +193,6 @@ const grid_widget = webix.protoUI({
         // global.gridSlice = gridSlice
         console.log(gridSlice, gridStore);
 
-        webix.extend(config, this.ui())
         this.$ready.push(() => {
             ReactDOM.render(
                 <Provider store={gridStore}>
@@ -203,4 +201,4 @@ const grid_widget = webix.protoUI({
             this.getNode())
         })
     }
-}, webix.ui.layout);
+}, TangoDropTarget, webix.ui.view);
