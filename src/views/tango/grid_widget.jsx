@@ -4,6 +4,7 @@ import ReactDOM from "react-dom";
 
 import { Provider, useSelector } from 'react-redux'
 import {createSlice, createStore} from "@reduxjs/toolkit"
+import {TangoDropTarget} from "@waltz-controls/waltz-webix-extensions";
 
 const testDevice = {
     attributes: {
@@ -200,4 +201,4 @@ const grid_widget = webix.protoUI({
             this.getNode())
         })
     }
-}, webix.ui.view);
+}, TangoDropTarget, webix.ui.view);

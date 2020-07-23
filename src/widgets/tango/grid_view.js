@@ -16,9 +16,18 @@ export default class GridViewWidget extends WaltzWidget {
     ui(){
         return {
             view: 'grid_widget',
+            root: this,
             id: this.id
         }
     }
 
 
+    /**
+     *
+     * @param {TangoId} id
+     */
+    addDevice(id){
+        alert(id.getTangoDeviceFQDN())
+        //TODO fetch device with attributes and void commands and pass to GridWidget
+    }
 }
