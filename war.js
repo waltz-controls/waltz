@@ -17,6 +17,6 @@ archive.pipe(output);
 archive.directory("codebase");
 archive.directory("images");
 archive.directory("stylesheets");
-archive.file("index.html");
+archive.file("codebase/index.html", {name: 'index.html'});
 
 archive.finalize();
