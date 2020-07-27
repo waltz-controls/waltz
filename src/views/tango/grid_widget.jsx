@@ -5,6 +5,18 @@ import ReactDOM from "react-dom";
 import {TangoDropTarget} from "@waltz-controls/waltz-webix-extensions";
 
 
+// const testDevice = {
+//     host: "localhost:10000",
+//     device: "test",
+//     attributes: [
+//         {
+//             name: "double_scalar",
+//             value: 249.43882402802603
+//         }
+//     ],
+//     commands: []
+// }
+
 const grid_widget = webix.protoUI({
     name: 'grid_widget',
 
@@ -12,21 +24,11 @@ const grid_widget = webix.protoUI({
         borderless:true
     },
 
+    addDevice(device){
+        gridStore.dispatch(gridSlice.actions.setDevice(device))
+    },
+
     $init(config){
-
-        const testDevice = {
-          host: "localhost:10000",
-          device: "test",
-          attributes: [
-            {
-              name: "double_scalar",
-              value: 249.43882402802603
-            }
-          ],
-          commands: []
-        }
-        gridStore.dispatch(gridSlice.actions.setDevice(testDevice))
-
         this.$ready.push(() => {
             ReactDOM.render(
                 <GridWidget/>,
