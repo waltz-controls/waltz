@@ -1,4 +1,4 @@
-import {GridWidget, gridSlice, gridStore} from "@waltz-controls/waltz-grid-widget";
+import {makeGridWidget} from "@waltz-controls/waltz-grid-widget";
 import React from "react";
 import ReactDOM from "react-dom";
 
@@ -13,19 +13,84 @@ const grid_widget = webix.protoUI({
     },
 
     $init(config){
-
-        const testDevice = {
-          host: "localhost:10000",
-          device: "test",
-          attributes: [
+      
+      const testProps = {
+          devices: [
             {
-              name: "double_scalar",
-              value: 249.43882402802603
-            }
+              name: {
+                host: "localhost:10000",
+                device: "test"
+              },
+              attributes: [
+                {
+                  name: "double_scalar",
+                  value: 249.43882402802603,
+                  history: [{
+                    time: 0,
+                    value: 240
+                  },{
+                    time: 1,
+                    value: 241
+                  },{
+                    time: 2,
+                    value: 242
+                  },{
+                    time: 3,
+                    value: 243
+                  },{
+                    time: 4,
+                    value: 244
+                  },],
+                }
+              ],
+              commands: [
+                {
+                  name: "test_command"
+                }
+              ]
+            }, 
           ],
-          commands: []
-        }
-        gridStore.dispatch(gridSlice.actions.setDevice(testDevice))
+          config: {
+            devices: [
+              {
+                name: {
+                  host: "localhost:10000",
+                  device: "test",
+                },
+                attributes: [
+                  {
+                    name: "double_scalar",
+                    show: true,
+                    pollingPeriodS: 5,
+                    displayPlot: "1"
+                  }
+                ],
+                commands: [
+                  {
+                    name: "test_command",
+                    show: true
+                  }
+                ]
+              }
+            ]
+          },
+          general: {
+            geometry: {
+              cols: 2,
+              rows: 2
+            },
+            bgcolor: "#f4f5f9",
+            plots: [
+              {
+                id: "1",
+                name: "Test Plot"
+              }
+            ]
+          }
+      }
+
+        const {GridWidget, api} = makeGridWidget(console.log)
+        api.setState(testProps)
 
         this.$ready.push(() => {
             ReactDOM.render(

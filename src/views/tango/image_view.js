@@ -1,6 +1,8 @@
 import {kMargins} from "./plot.js"
 import {newToolbar, Runnable} from "@waltz-controls/waltz-webix-extensions";
 
+import {newPlot, update} from "plotly.js"
+
 /**
  *
  * @author Igor Khokhriakov <igor.khokhriakov@hzg.de>
@@ -38,7 +40,7 @@ var image = webix.protoUI(
                 margin: kMargins
             };
 
-            Plotly.update(this.getNode(), {z: [data]}, layout);
+            update(this.getNode(), {z: [data]}, layout);
         },
         /**
          * @memberof ui.Plot.image_plot
@@ -47,7 +49,7 @@ var image = webix.protoUI(
         $init: function (config) {
             this.$ready.push(function () {
                 try {
-                    Plotly.newPlot(this.getNode(), [{
+                    newPlot(this.getNode(), [{
                         z: [[0]],
                         type: 'heatmapgl'
                     }]);
