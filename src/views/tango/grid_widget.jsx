@@ -93,9 +93,9 @@ const grid_widget = webix.protoUI({
         api.setState(testProps)
 
         this.$ready.push(() => {
-            ReactDOM.render(
-                <GridWidget/>,
-            this.getNode())
-        })
+          ReactDOM.render(
+              <GridWidget/>,
+          this.getNode())
+      })
     }
 }, TangoDropTarget, webix.ui.view);
