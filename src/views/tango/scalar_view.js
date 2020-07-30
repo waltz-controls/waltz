@@ -1,6 +1,9 @@
 import {kMargins} from "./plot.js"
 import {newToolbar, Runnable} from "@waltz-controls/waltz-webix-extensions";
 
+
+import {newPlot, relayout, addTraces, extendTraces, deleteTraces} from "plotly.js"
+
 export const btnClearAll = {
     view:"button",
     value:"Clear all",
@@ -60,7 +63,7 @@ const scalar = webix.protoUI(
         name: 'scalar',
         _traces: null,
         _relayout: function (layout) {
-            Plotly.relayout(this.getNode(), layout);
+            relayout(this.getNode(), layout);
         },
         /**
          * @param trace name
@@ -70,7 +73,7 @@ const scalar = webix.protoUI(
          * @memberof ui.Plot.scalar_plot
          */
         addTrace: function (trace, x, y, ndx) {
-            Plotly.addTraces(this.getNode(), {
+            addTraces(this.getNode(), {
                 x: x.map(function (time) {
                     return new Date(time);
                 }),
@@ -92,7 +95,7 @@ const scalar = webix.protoUI(
          * @memberof ui.Plot.scalar_plot
          */
         addTraces: function (traces, x, y) {
-            Plotly.addTraces(this.getNode(),
+            addTraces(this.getNode(),
                 traces.map((trace, index) => {
                     return {
                         x: x[index].map(function (time) {
@@ -116,7 +119,7 @@ const scalar = webix.protoUI(
          * @memberof ui.Plot.scalar_plot
          */
         deleteTrace: function (ndx) {
-            Plotly.deleteTraces(this.getNode(), [ndx]);
+            deleteTraces(this.getNode(), [ndx]);
             this._traces.splice(ndx,1);
             this._relayout({
                 autosize: false,
@@ -138,7 +141,7 @@ const scalar = webix.protoUI(
                 height: this.$height,
                 margin: kMargins
             };
-            Plotly.extendTraces(this.getNode(), {
+            extendTraces(this.getNode(), {
                 x: times.map(function (time) {
                     return [new Date(time)];
                 }),
@@ -162,7 +165,7 @@ const scalar = webix.protoUI(
          * @memberof ui.Plot.scalar_plot
          */
         updateMulti:function(data){
-            Plotly.extendTraces(this.getNode(), {
+            extendTraces(this.getNode(), {
                 x: [data.map(function(el){ return new Date(el.timestamp)})],
                 y: [data.map(function(el){ return el.value;})]
             }, [0]);
@@ -180,15 +183,15 @@ const scalar = webix.protoUI(
          * @memberof ui.Plot.scalar_plot
          */
         clearAll:function(){
-            Plotly.deleteTraces(this.getNode(), this._traces.map(function(el, ndx){ return ndx;}));
+            deleteTraces(this.getNode(), this._traces.map(function(el, ndx){ return ndx;}));
             this._traces.forEach(function(trace){
-                Plotly.addTraces(this.getNode(), {
+                addTraces(this.getNode(), {
                     x: [],
                     y: [],
                     name : trace
                 });
             }.bind(this));
-            Plotly.relayout(this.getNode(),
+            relayout(this.getNode(),
                 {
                     title: ""
                 });
@@ -196,7 +199,7 @@ const scalar = webix.protoUI(
         _newPlot: function () {
             this._traces = [];
             try {
-                Plotly.newPlot(this.getNode(), [], {
+                newPlot(this.getNode(), [], {
                     type: 'scattergl',
                     mode: 'lines',
                     width: this.$width,
