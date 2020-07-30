@@ -77,7 +77,7 @@
     "@waltz-controls/middleware": "^2.0.0",
     "@waltz-controls/tango-rest-client": "^1.5.1",
     "@waltz-controls/waltz-grid-widget": "^1.0.1-rc6",
-    "@waltz-controls/waltz-shared-libs": "^1.0.0",
+    "@waltz-controls/waltz-shared-libs": "^1.0.1",
     "@waltz-controls/waltz-tango-rest-plugin": "^2.0.2",
     "@waltz-controls/waltz-user-actions-plugin": "^2.0.3",
     "@waltz-controls/waltz-user-context-plugin": "^2.0.0",
