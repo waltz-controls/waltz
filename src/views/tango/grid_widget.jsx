@@ -1,4 +1,3 @@
-import {makeGridWidget} from "@waltz-controls/waltz-grid-widget";
 import React from "react";
 import ReactDOM from "react-dom";
 
