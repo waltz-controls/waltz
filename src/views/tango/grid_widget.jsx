@@ -12,6 +12,10 @@ const grid_widget = webix.protoUI({
         borderless:true
     },
 
+    addDevice(device) {
+      this.config.api.setDevice(device);
+    },
+
     $init(config){
       
       const testProps = {
@@ -89,12 +93,9 @@ const grid_widget = webix.protoUI({
           }
       }
 
-        const {GridWidget, api} = makeGridWidget(console.log)
-        api.setState(testProps)
-
         this.$ready.push(() => {
           ReactDOM.render(
-              <GridWidget/>,
+              <config.GridWidget/>,
           this.getNode())
       })
     }

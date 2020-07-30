@@ -4,11 +4,12 @@ import {kTangoRestContext} from "@waltz-controls/waltz-tango-rest-plugin";
 import {forkJoin, of} from "rxjs";
 import {catchError, map} from "rxjs/operators";
 import {kChannelLog, kTopicLog} from "controllers/log";
+import {makeGridWidget} from "@waltz-controls/waltz-grid-widget";
 
+//TODO replace with Device from GridWidget
 export class GridWidgetDevice {
     constructor({host, device, attributes, commands}) {
-        this.host = host;
-        this.device = device;
+        this.name = {host, device};
         this.attributes = attributes;
         this.commands = commands;
     }
@@ -44,9 +45,12 @@ export default class GridViewWidget extends WaltzWidget {
     }
 
     ui(){
+        const {GridWidget, api} = makeGridWidget(console.log);
         return {
             view: 'grid_widget',
             root: this,
+            GridWidget,
+            api,
             id: this.id
         }
     }
