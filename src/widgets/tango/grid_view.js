@@ -5,6 +5,7 @@ import {forkJoin, of} from "rxjs";
 import {catchError, map} from "rxjs/operators";
 import {kChannelLog, kTopicLog} from "controllers/log";
 import {makeGridWidget} from "@waltz-controls/waltz-grid-widget";
+import attribute from "./attribute";
 
 //TODO replace with Device from GridWidget
 export class GridWidgetDevice {
@@ -25,7 +26,6 @@ function catchFetchMembersError(members){
 export default class GridViewWidget extends WaltzWidget {
     constructor({id, app}) {
         super(id, app);
-
     }
 
     /**
@@ -44,10 +44,14 @@ export default class GridViewWidget extends WaltzWidget {
         return $$(this.id);
     }
 
+    get $grid(){
+        return $$(this.id).$$('grid_widget');
+    }
+
     ui(){
         const {GridWidget, api} = makeGridWidget(console.log);
         return {
-            view: 'grid_widget',
+            view: 'grid_widget_layout',
             root: this,
             GridWidget,
             api,
@@ -88,11 +92,36 @@ export default class GridViewWidget extends WaltzWidget {
                     map(resp => resp.filter(cmd => cmd.info.in_type === 'DevVoid'))
                 )]
         ).subscribe(([device, attributes, commands]) => {
-            this.$view.addDevice(new GridWidgetDevice({
+            this.$grid.addDevice(new GridWidgetDevice({
                 ...device,
                 attributes,
                 commands
             }));
+        })
+    }
+
+    async run(){
+        const rest = await this.getTangoRest();
+
+        const api = this.$grid.config.api;
+
+        const devices = api.store.getState().config.devices;
+
+        devices.forEach(device => {
+            rest.toTangoRestApiRequest().attributes().value().get("?" +
+                device.attributes
+                    .filter(attribute => attribute.show)
+                    .map(attribute => `wildcard=${device.name.host}/${device.name.device}/${attribute.name}`)
+                    .join('&')
+                )
+                .toPromise()
+                .then(values => {
+                        api.updateAttributes({
+                            ...device,
+                            attributes: values
+                        })
+                    }
+                )
         })
     }
 }

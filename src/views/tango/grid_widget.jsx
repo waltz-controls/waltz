@@ -1,7 +1,7 @@
 import React from "react";
 import ReactDOM from "react-dom";
 
-import {TangoDropTarget} from "@waltz-controls/waltz-webix-extensions";
+import {TangoDropTarget, Runnable, newToolbar} from "@waltz-controls/waltz-webix-extensions";
 
 
 const grid_widget = webix.protoUI({
@@ -16,82 +16,6 @@ const grid_widget = webix.protoUI({
     },
 
     $init(config){
-      
-      const testProps = {
-          devices: [
-            {
-              name: {
-                host: "localhost:10000",
-                device: "test"
-              },
-              attributes: [
-                {
-                  name: "double_scalar",
-                  value: 249.43882402802603,
-                  history: [{
-                    time: 0,
-                    value: 240
-                  },{
-                    time: 1,
-                    value: 241
-                  },{
-                    time: 2,
-                    value: 242
-                  },{
-                    time: 3,
-                    value: 243
-                  },{
-                    time: 4,
-                    value: 244
-                  },],
-                }
-              ],
-              commands: [
-                {
-                  name: "test_command"
-                }
-              ]
-            }, 
-          ],
-          config: {
-            devices: [
-              {
-                name: {
-                  host: "localhost:10000",
-                  device: "test",
-                },
-                attributes: [
-                  {
-                    name: "double_scalar",
-                    show: true,
-                    pollingPeriodS: 5,
-                    displayPlot: "1"
-                  }
-                ],
-                commands: [
-                  {
-                    name: "test_command",
-                    show: true
-                  }
-                ]
-              }
-            ]
-          },
-          general: {
-            geometry: {
-              cols: 2,
-              rows: 2
-            },
-            bgcolor: "#f4f5f9",
-            plots: [
-              {
-                id: "1",
-                name: "Test Plot"
-              }
-            ]
-          }
-      }
-
         this.$ready.push(() => {
           ReactDOM.render(
               <config.GridWidget/>,
@@ -99,3 +23,29 @@ const grid_widget = webix.protoUI({
       })
     }
 }, TangoDropTarget, webix.ui.view);
+
+const grid_widget_layout = webix.protoUI({
+    name: 'grid_widget_layout',
+    run(){
+        this.config.root.run();
+    },
+    ui(config){
+        debugger
+        const {GridWidget, root, api} = config;
+        return {
+            rows:[
+                {
+                    id: 'grid_widget',
+                    view: 'grid_widget',
+                    root,
+                    GridWidget,
+                    api
+                },
+                newToolbar()
+            ]
+        }
+    },
+    $init(config){
+        webix.extend(config, this.ui(config))
+    }
+},Runnable,webix.IdSpace,webix.ui.layout);
