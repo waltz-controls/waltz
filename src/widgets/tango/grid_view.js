@@ -6,6 +6,7 @@ import {catchError, map} from "rxjs/operators";
 import {kChannelLog, kTopicLog} from "controllers/log";
 import {makeGridWidget} from "@waltz-controls/waltz-grid-widget";
 import attribute from "./attribute";
+import {kUserContext} from "@waltz-controls/waltz-user-context-plugin";
 
 //TODO replace with Device from GridWidget
 export class GridWidgetDevice {
@@ -59,6 +60,25 @@ export default class GridViewWidget extends WaltzWidget {
         }
     }
 
+    get api() {
+        return this.$grid.config.api;
+    }
+
+    async restoreState(){
+        const context = await this.app.getContext(kUserContext);
+        const state = context.get(this.id, this.api.store.getState())
+        this.api.setState(state);
+    }
+
+    async saveState(){
+        const state = this.api.store.getState()
+
+        const context = await this.app.getContext(kUserContext);
+        context.ext[this.id] = state
+        context.save().then(() => {
+            this.dispatch(`Successfully saved state!`,kTopicLog,kChannelLog)
+        })
+    }
 
     /**
      *
@@ -103,9 +123,8 @@ export default class GridViewWidget extends WaltzWidget {
     async run(){
         const rest = await this.getTangoRest();
 
-        const api = this.$grid.config.api;
 
-        const devices = api.store.getState().config.devices;
+        const devices = this.api.store.getState().config.devices;
 
         devices.forEach(device => {
             rest.toTangoRestApiRequest().attributes().value().get("?" +
@@ -116,7 +135,7 @@ export default class GridViewWidget extends WaltzWidget {
                 )
                 .toPromise()
                 .then(values => {
-                        api.updateAttributes({
+                        this.api.updateAttributes({
                             ...device,
                             attributes: values
                         })

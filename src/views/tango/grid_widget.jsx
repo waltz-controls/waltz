@@ -21,6 +21,9 @@ const grid_widget = webix.protoUI({
               <config.GridWidget/>,
           this.getNode())
       })
+        this.$ready.push(() => {
+            config.root.restoreState()
+        })
     }
 }, TangoDropTarget, webix.ui.view);
 
@@ -30,7 +33,6 @@ const grid_widget_layout = webix.protoUI({
         this.config.root.run();
     },
     ui(config){
-        debugger
         const {GridWidget, root, api} = config;
         return {
             rows:[
@@ -41,7 +43,13 @@ const grid_widget_layout = webix.protoUI({
                     GridWidget,
                     api
                 },
-                newToolbar()
+                newToolbar({
+                    view:'icon',
+                    icon:'mdi mdi-content-save',
+                    click(){
+                        config.root.saveState()
+                    }
+                })
             ]
         }
     },
