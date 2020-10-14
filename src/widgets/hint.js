@@ -1,5 +1,7 @@
 import {WaltzWidget} from "@waltz-controls/middleware";
 import {kWidgetDashboardProfilesId, kWidgetDashboardProfilesPanelId} from "views/tango/dashboard_widget";
+import {kUserContext} from "@waltz-controls/waltz-user-context-plugin";
+import {kWidgetDashboard} from "widgets/tango/dashboard";
 
 const kHintWidget = "widget:hint";
 
@@ -8,7 +10,7 @@ export default class WaltzHintWidget extends WaltzWidget {
         super(kHintWidget,app);
     }
 
-    run(){
+    async run(){
         const hint = webix.ui({
             view: "hint",
             id: "hint",
@@ -43,12 +45,12 @@ export default class WaltzHintWidget extends WaltzWidget {
             ]
         });
 
-        const profiles = $$(kWidgetDashboardProfilesPanelId).$$(kWidgetDashboardProfilesId);
+        const context = await this.app.getContext(kUserContext);
 
-        profiles.waitData.then(() => {
-            if(profiles.count() === 0)
-                hint.start()
-        })
+        const profiles = context.get(kWidgetDashboard)
+
+        if(profiles.length === 0)
+            hint.start()
 
     }
 }
