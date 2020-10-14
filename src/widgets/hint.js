@@ -1,5 +1,5 @@
 import {WaltzWidget} from "@waltz-controls/middleware";
-import {kWidgetDashboardProfilesPanelId} from "views/tango/dashboard_widget";
+import {kWidgetDashboardProfilesId, kWidgetDashboardProfilesPanelId} from "views/tango/dashboard_widget";
 
 const kHintWidget = "widget:hint";
 
@@ -43,6 +43,12 @@ export default class WaltzHintWidget extends WaltzWidget {
             ]
         });
 
-        hint.start()
+        const profiles = $$(kWidgetDashboardProfilesPanelId).$$(kWidgetDashboardProfilesId);
+
+        profiles.waitData.then(() => {
+            if(profiles.count() === 0)
+                hint.start()
+        })
+
     }
 }
