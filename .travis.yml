@@ -26,24 +26,6 @@ jobs:
     - sonar-scanner -Dsonar.login=${SONAR_TOKEN} -Dsonar.projectKey=waltz-controls_waltz
       -Dsonar.projectName=waltz -Dsonar.projectVersion=$TRAVIS_BRANCH -Dsonar.sources=.
       -Dsonar.exclusions=jmvc/**,docs/**
-  - name: Deploy to Amazon cloud
-    env:
-    - REST_API_PROTOCOL="http"
-    - REST_API_HOST="ec2-18-184-90-206.eu-central-1.compute.amazonaws.com"
-    - REST_API_PORT=10001
-    - REST_API_VERSION="rc4"
-    - TANGO_HOST="ip-172-31-39-180"
-    - TANGO_PORT=10000
-    - VERSION="$TRAVIS_BRANCH"
-    script:
-    - ".travis/build.sh"
-    - mv dist/waltz.war dist/$TRAVIS_BRANCH.war
-    deploy:
-    - provider: script
-      script: bash .travis/deploy.sh
-      skip_cleanup: true
-      on:
-        all_branches: true
   - name: Deploy to GitHub releases
     script: ".travis/build.sh"
     deploy:
