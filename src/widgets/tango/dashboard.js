@@ -14,7 +14,7 @@ import ListViewWidget from "./list_view";
 import GridViewWidget from "./grid_view";
 
 const kDashboardHeader = "<span class='webix_icon mdi mdi-gauge'></span> Dashboard";
-const kWidgetDashboard = 'widget:dashboard';
+export const kWidgetDashboard = 'widget:dashboard';
 
 
 export const mainView = {
