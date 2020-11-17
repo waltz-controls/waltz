@@ -65,7 +65,7 @@ Pass: tango
 
 ## Getting started ##
 
-1. Execute `docker-copmpose.yml` using [`docker-compose`](https://docs.docker.com/compose/install/) i.e. `docker-compose up`
+1. Execute `docker-compose.yml` using [`docker-compose`](https://docs.docker.com/compose/install/) i.e. `docker-compose up`
 2. Open browser and navigate to `http://localhost:8080/waltz`
 3. Login using tango-cs/tango
 4. Explore Tango Controls via Waltz...
