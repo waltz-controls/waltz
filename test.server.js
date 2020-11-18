@@ -15,10 +15,11 @@ app.use((req, res, next) => {
 });
 
 const port = 3000;
+const hostname = "0.0.0.0";
 
 const userContext = {
     user: 'tango-cs',
-    tango_hosts:{'localhost:10000':null},
+    tango_hosts:{'tango-cs:10000':null},
     device_filters: ['*/*/*'],
     ext:{}
 };
@@ -38,6 +39,6 @@ app.post("/user-context/cache", (req, res) => {
     else res.sendStatus(404);
 });
 
-app.listen(port, () => {
+app.listen(port, hostname, () => {
     console.log("Server was started on 3000 port...");
 });

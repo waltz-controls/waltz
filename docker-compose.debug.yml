@@ -1,0 +1,50 @@
+version: '3.2'
+services:
+  tango-db:
+    image: tangocs/tango-db
+    ports:
+    - "9999:3306"
+    environment:
+    - MYSQL_ROOT_PASSWORD=root
+    - MYSQL_USER=tango
+    - MYSQL_PASSWORD=tango
+    - MYSQL_DATABASE=tango
+  tango-cs:
+    image: tangocs/tango-cs
+    ports:
+    - "10000:10000"
+    environment:
+    - TANGO_HOST=localhost:10000
+    - MYSQL_HOST=tango-db:3306
+    - MYSQL_USER=tango
+    - MYSQL_PASSWORD=tango
+    - MYSQL_DATABASE=tango
+    depends_on:
+    - tango-db
+  tango-rest:
+    image: tangocs/rest-server:rest-server-1.21
+    ports:
+      - "10001:10001"
+    environment:
+      - TANGO_HOST=tango-cs:10000
+    depends_on:
+      - tango-cs
+  tango-test:
+    image: tangocs/tango-test
+    restart: on-failure
+    environment:
+      - TANGO_HOST=tango-cs:10000
+    depends_on:
+      - tango-db
+      - tango-cs
+    command: "test"
+  user-context-server:
+    image: node
+    ports:
+      - "3000:3000"
+    volumes: 
+      - ./:/root/waltz
+    working_dir: /root/waltz
+    command: npm run-script user-context-server
+    depends_on:
+      - tango-cs

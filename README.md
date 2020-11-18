@@ -93,6 +93,20 @@ $> REST_API_PROTOCOL=[http|https] REST_API_HOST=[ip/fqdn] REST_API_PORT=[e.g. 10
    npm run build
 ```
 
+## Develop
+
+1. Start Tango containers
+
+   ```bash
+   docker-compose -f docker-compose.debug.yml up
+   ```
+
+2. Start development server
+
+   ```bash
+   npm run-script start
+   ```
+
 ## Implementation details
 
 * [Webix](http://webix.com) is used for UI

@@ -1,5 +1,7 @@
 const path = require("path");
 const webpack = require("webpack");
+const HtmlWebpackPlugin = require('html-webpack-plugin');
+const AddAssetHtmlPlugin = require("add-asset-html-webpack-plugin");
 
 module.exports = function(env) {
 
@@ -21,14 +23,14 @@ module.exports = function(env) {
         },
         output: {
             path: path.join(__dirname, "codebase"),
-            publicPath:"/codebase/",
+            publicPath:"codebase/",
             filename: "[name].js",
             chunkFilename: "[name].bundle.js"
         },
         module: {
             rules: [
                 {
-                    test: /\.js$/,
+                    test: /\.jsx?$/,
                     use: "babel-loader?" + JSON.stringify(babelSettings)
                 },
                 {
@@ -70,10 +72,23 @@ module.exports = function(env) {
                 TANGO_HOST : `"${env.TANGO_HOST}"`,
                 TANGO_PORT : `${env.TANGO_PORT}`,
                 USER_CONTEXT_URL : `"${env.USER_CONTEXT_URL}"`
+            }),
+            new webpack.DllReferencePlugin({
+                context: __dirname,
+                manifest: require("@waltz-controls/waltz-shared-libs/dist/vendor-manifest.json"),
+
+            }),
+            new AddAssetHtmlPlugin({
+                filepath: path.resolve(__dirname, "node_modules/@waltz-controls/waltz-shared-libs/dist/vendor.js")
+            }),
+            new HtmlWebpackPlugin({
+                template: "./templates/index.html",
             })
         ],
         devServer:{
-            stats:"errors-only",
+            publicPath: "/codebase",
+            contentBase: './codebase',
+            writeToDisk: true,
             proxy: {
                 "/tango":{
                     target: 'http://localhost:10001'
