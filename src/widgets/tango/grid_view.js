@@ -123,7 +123,7 @@ export default class GridViewWidget extends WaltzWidget {
     async run(){
         const rest = await this.getTangoRest();
 
-
+        const state = this.api.store.getState()
         const devices = this.api.store.getState().config.devices;
 
         devices.forEach(device => {
@@ -135,9 +135,21 @@ export default class GridViewWidget extends WaltzWidget {
                 )
                 .toPromise()
                 .then(values => {
+                    let deviceState = (state.devices.find(value => value.name.device === device.name.device))
+                    let attributes = values.map(value => {
+                        let attrState = deviceState.attributes.find(attr => attr.name === value.name)
+                        if (!attrState.hasOwnProperty("history")) {
+                            attrState.history = []
+                        }
+                        attrState.value = value.value
+                        attrState.history.push({time: new Date(value.timestamp), value: value.value})
+                        if(attrState.history.length > 100)
+                            attrState.history = attrState.history.slice(-100)
+                        return attrState
+                    })
                         this.api.updateAttributes({
                             ...device,
-                            attributes: values
+                            attributes: attributes
                         })
                     }
                 )
