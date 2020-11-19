@@ -1,6 +1,6 @@
 {
   "name": "waltz",
-  "version": "1.0.8",
+  "version": "1.0.9",
   "description": "Waltz controls - lightweight SCADA web frontend",
   "main": "index.html",
   "directories": {
