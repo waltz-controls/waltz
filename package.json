@@ -71,7 +71,7 @@
     "@waltz-controls/middleware": "^2.0.0",
     "@waltz-controls/tango-rest-client": "^1.5.1",
     "@waltz-controls/waltz-tango-rest-plugin": "^2.0.2",
-    "@waltz-controls/waltz-user-actions-plugin": "^2.0.3",
+    "@waltz-controls/waltz-user-actions-plugin": "^2.0.4",
     "@waltz-controls/waltz-user-context-plugin": "^2.0.0",
     "@waltz-controls/waltz-webix-extensions": "^1.0.14",
     "codemirror": "^5.54.0",
