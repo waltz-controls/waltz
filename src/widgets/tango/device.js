@@ -12,8 +12,8 @@ import {
     TangoPipe
 } from "@waltz-controls/waltz-tango-rest-plugin";
 
-import {forkJoin, of} from "rxjs";
-import {catchError} from "rxjs/operators";
+import {forkJoin, of, throwError, timer} from "rxjs";
+import {catchError, retryWhen, switchMap, tap} from "rxjs/operators";
 import {kChannelLog, kTopicLog} from "controllers/log";
 import {
     ExecuteTangoCommand,
@@ -26,6 +26,7 @@ import {kUserContext} from "@waltz-controls/waltz-user-context-plugin";
 import PipeWidget from "widgets/tango/pipe";
 import CommandWidget from "widgets/tango/command";
 import AttributeWidget from "widgets/tango/attribute";
+import {fromArray} from "rxjs/internal/observable/fromArray";
 
 export const kTangoDeviceWidget = 'widget:tango_device';
 
@@ -44,6 +45,18 @@ function catchFetchMembersError(members){
         this.dispatchError(`Failed to get ${members} for device ${this.deviceId}`, kTopicLog, kChannelLog);
         return of([]);
     });
+}
+
+/**
+ * Should retry when errors stack does not contain DEVICE_NOT_EXPORTED
+ *
+ * @param error
+ * @return {boolean}
+ */
+function shouldRetry(error){
+    if(error.errors && error.errors.length)
+        return error.errors.find(err => err.reason && err.reason.includes("DEVICE_NOT_EXPORTED")) === undefined
+    else return false;
 }
 
 export default class TangoDeviceWidget extends WaltzWidget {
@@ -122,17 +135,34 @@ export default class TangoDeviceWidget extends WaltzWidget {
                 rest.newTangoDevice(this.deviceId)
                     .attributes()
                     .get().pipe(//"?filter=id&filter=name&filter=data_format&filter=data_type&filter=writable&filter=min_value&filter=max_value"
+                    retryWhen(errors =>
+                        errors.pipe(
+                            tap(err => console.debug(`Failed to load device ${this.deviceId} attributes! ${err}`)),
+                            switchMap(err => shouldRetry(err) ? timer(10): throwError(err))
+                        )
+                    ),
                     catchFetchMembersError.call(this, 'attributes')
             ),
                 rest.newTangoDevice(this.deviceId)
                     .commands()
                     .get().pipe(//"?filter=id&filter=name&filter=in_type"
+                    retryWhen(errors =>
+                        errors.pipe(
+                            tap(err => console.debug(`Failed to load device ${this.deviceId} commands! ${err}`)),
+                            switchMap(err => shouldRetry(err) ? timer(10): throwError(err))
+                        )
+                    ),
                     catchFetchMembersError.call(this, 'commands')
             ),
                 rest.newTangoDevice(this.deviceId)
                     .pipes()
                     .get().pipe(//"?filter=id&filter=name"
-
+                    retryWhen(errors =>
+                        errors.pipe(
+                            tap(err => console.debug(`Failed to load device ${this.deviceId} pipes! ${err}`)),
+                            switchMap(err => shouldRetry(err) ? timer(10): throwError(err))
+                        )
+                    ),
                     catchFetchMembersError.call(this, 'pipes')
             )]
         ).subscribe(([device, attributes, commands, pipes]) => {
