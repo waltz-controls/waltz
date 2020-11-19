@@ -48,14 +48,16 @@ function catchFetchMembersError(members){
 }
 
 /**
- * Should retry when errors stack does not contain DEVICE_NOT_EXPORTED
+ * Should retry when errors stack does not contain DEVICE_NOT_EXPORTED or Api_NOT_SUPPORTED
  *
  * @param error
  * @return {boolean}
  */
 function shouldRetry(error){
     if(error.errors && error.errors.length)
-        return error.errors.find(err => err.reason && err.reason.includes("DEVICE_NOT_EXPORTED")) === undefined
+        return error.errors.find(err => err.reason && (
+            err.reason.includes("DEVICE_NOT_EXPORTED") ||
+            err.reason.includes("Api_NOT_SUPPORTED"))) === undefined
     else return false;
 }
 
