@@ -49,7 +49,7 @@
 
 [5] [Waltz Workshop@DESY, 2019, part III](https://www.youtube.com/watch?v=2ryBt_Cztb0)
 
-[6] [Integrating React based widegt into Waltz](https://yadi.sk/i/ce893D5mi1KcbQ)
+[6] [Integrating React based widget into Waltz](https://yadi.sk/i/ce893D5mi1KcbQ)
 
 ### Slides
 
