@@ -73,9 +73,9 @@ Pass: tango
 
 ## Developer requirements ##
 
-* Tango Controls environment (tested on Tango 9)
-* Tango REST Server that supports API spec version rc4 (tested on [rest-server-1.6](https://github.com/tango-controls/rest-server/releases/tag/rest-server-1.6))
-* Web server that can handle .war files (tested on Apache Tomcat 8&9)
+* Tango Controls environment (tested on Tango 9.3+)
+* Tango REST Server that supports API spec version v1.1 (tested on [rest-server-2.1](https://github.com/tango-controls/rest-server/releases/tag/rest-server-2.1))
+* Web server that can handle .war files (tested on Apache Tomcat 8+)
 
 ## Build ##
 
