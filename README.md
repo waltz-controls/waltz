@@ -75,6 +75,7 @@ Pass: tango
 
 * Tango Controls environment (tested on Tango 9.3+)
 * Tango REST Server that supports API spec version v1.1 (tested on [rest-server-2.1](https://github.com/tango-controls/rest-server/releases/tag/rest-server-2.1))
+* [User-Context](https://github.com/waltz-controls/user-context)
 * Web server that can handle .war files (tested on Apache Tomcat 8+)
 
 ## Build ##
