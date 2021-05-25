@@ -4,12 +4,12 @@ jobs:
   npm-war:
     runs-on: ubuntu-latest
     steps:
+      env:
+        NODE_AUTH_TOKEN: ${{ secrets.NPM_GITHUB_TOKEN }}
       - uses: actions/checkout@v2
       - uses: actions/setup-node@v2
         with:
           node-version: '10'
-          registry-url: https://npm.pkg.github.com/
+          registry-url: https://npm.pkg.github.com/:_authToken=NODE_AUTH_TOKEN
       - run: npm install
       - run: npm run war
-        env:
-          NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
