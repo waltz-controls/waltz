@@ -10,3 +10,5 @@ jobs:
           node-version: '10'
       - run: npm install
       - run: npm run war
+      - env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_GITHUB_TOKEN }}
