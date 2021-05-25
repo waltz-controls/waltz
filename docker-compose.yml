@@ -1,31 +1,68 @@
-version: '3.2'
+version: '3.7'
+
+networks:
+  default:
+    external:
+      name: adminer_backend
+  public_net:
+    driver: bridge
+    ipam:
+      config:
+        - subnet: 192.169.0.0/24
+      driver: default
+
 services:
   tango-db:
-    image: tangocs/mysql:9.2.2
+    image: tangocs/mysql:Database-Release-5.9
     ports:
-    - "9999:3306"
+      - "9999:3306"
     environment:
-    - MYSQL_ROOT_PASSWORD=root
+      - MYSQL_ROOT_PASSWORD=root
+    networks:
+      public_net:
+        ipv4_address: 192.169.0.20
   tango-cs:
-    image: ingvord/tango-cs-with-rest:1.14
+    image: tangocs/tango-cs:9.3.3-rc1
     ports:
-    - "10000:10000"
-    - "10001:10001"
+      - "20000:10000"
     environment:
-    - TANGO_HOST=localhost:10000
-    - MYSQL_HOST=tango-db:3306
-    - MYSQL_USER=tango
-    - MYSQL_PASSWORD=tango
-    - MYSQL_DATABASE=tango
+      - TANGO_HOST=localhost:10000
+      - MYSQL_HOST=tango-db:3306
+      - MYSQL_USER=tango
+      - MYSQL_PASSWORD=tango
+      - MYSQL_DATABASE=tango
     depends_on:
-    - tango-db
-  tango-test:
-    image: tangocs/tango-test
+      - tango-db
+    networks:
+      public_net:
+        ipv4_address: 192.169.0.30
+  tango-rest:
+    image: tangocs/rest-server:rest-server-2.1
     environment:
-    - TANGO_HOST=tango-cs:10000
+      - TANGO_HOST=tango-cs:10000
+    links:
+      - "tango-cs:localhost"
     depends_on:
-    - tango-cs
+      - tango-cs
+    networks:
+      public_net:
+        ipv4_address: 192.169.0.40
   waltz:
-    image: tangocs/waltz:v0.7.3
+    #image: tangocs/waltz:1.0.10
+    build: .
+    networks:
+      public_net:
+        ipv4_address: 192.169.0.22
+  haproxy:
+    build: ./haproxy
     ports:
       - "8080:8080"
+    environment:
+      WALTZ_IP: 192.169.0.22
+      TANGGO_REST_IP: 192.169.0.40
+    networks:
+      public_net:
+        ipv4_address: 192.169.0.100
+    depends_on:
+      - tango-rest
+      - waltz
