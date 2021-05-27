@@ -36,33 +36,17 @@ services:
     networks:
       public_net:
         ipv4_address: 192.169.0.30
-  tango-rest:
-    image: tangocs/rest-server:rest-server-2.1
+  tango-test:
+    image: tangocs/tango-test:9.3.3-rc1
     environment:
-      - TANGO_HOST=tango-cs:10000
-    links:
-      - "tango-cs:localhost"
-    depends_on:
-      - tango-cs
+      - TANGO_HOST=192.169.0.30:10000
     networks:
       public_net:
-        ipv4_address: 192.169.0.40
+        ipv4_address: 192.169.0.31
+    depends_on:
+      - tango-cs
   waltz:
-    #image: tangocs/waltz:1.0.10
     build: .
     networks:
       public_net:
         ipv4_address: 192.169.0.22
-  haproxy:
-    build: ./haproxy
-    ports:
-      - "8080:8080"
-    environment:
-      WALTZ_IP: 192.169.0.22
-      TANGGO_REST_IP: 192.169.0.40
-    networks:
-      public_net:
-        ipv4_address: 192.169.0.100
-    depends_on:
-      - tango-rest
-      - waltz
