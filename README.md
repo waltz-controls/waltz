@@ -107,7 +107,3 @@ When using Waltz, please cite:
 
 I.Khokhriakov, O. Merkulova, F. Wilde, Waltz – A Platform for Tango Controls Web Applications, Proceedings of ICALEPCS2019, WESH3003, 2019
 [icalepcs2019/papers/wesh3003.pdf](https://accelconf.web.cern.ch/icalepcs2019/papers/wesh3003.pdf)
-
-
-
-
